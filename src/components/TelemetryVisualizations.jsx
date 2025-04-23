@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
-import { Sun, Moon, Thermometer, Wind, Droplet, Clock } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, Cell, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
+import { Sun, Moon, Thermometer, Wind, Droplet } from 'lucide-react';
 
 // F1 team colors for 2024 season
 const teamColors = {
@@ -65,10 +65,12 @@ const weatherData = {
 const TelemetryVisualizations = () => {
     // State for API data
     const [drivers, setDrivers] = useState({});
+    // eslint-disable-next-line no-unused-vars
     const [meetings, setMeetings] = useState([]);
     const [sessions, setSessions] = useState([]);
     const [circuits, setCircuits] = useState([]);
     const [lapData, setLapData] = useState([]);
+    // eslint-disable-next-line no-unused-vars
     const [carData, setCarData] = useState([]);
     const [pitStops, setPitStops] = useState([]);
     const [stints, setStints] = useState([]);
@@ -95,8 +97,16 @@ const TelemetryVisualizations = () => {
             const data = await response.json();
             setMeetings(data);
 
-            // Extract unique circuits
-            const uniqueCircuits = [...new Set(data.map(meeting => meeting.circuit_name))];
+            // Use circuit_short_name to get unique circuit names
+            const uniqueCircuits = [...new Set(data.map(meeting => meeting.circuit_short_name))];
+            console.log("Available circuits:", uniqueCircuits); // Debug to see what was found
+
+            // Additionally, create a mapping of circuit names to their location for better display
+            const circuitDisplay = {};
+            data.forEach(meeting => {
+                circuitDisplay[meeting.circuit_short_name] = `${meeting.circuit_short_name} (${meeting.location}, ${meeting.country_name})`;
+            });
+
             setCircuits(uniqueCircuits);
 
             // Set default selected circuit
@@ -277,6 +287,7 @@ const TelemetryVisualizations = () => {
 
         // Set dark mode by default
         document.body.classList.add('dark-mode');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Load sessions when circuit changes
@@ -284,6 +295,7 @@ const TelemetryVisualizations = () => {
         if (selectedCircuit) {
             fetchSessions();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCircuit]);
 
     // Load drivers when session changes
@@ -291,6 +303,7 @@ const TelemetryVisualizations = () => {
         if (selectedSession && selectedCircuit) {
             fetchDrivers();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedSession, selectedCircuit]);
 
     // Load lap data when drivers or session change
@@ -300,6 +313,7 @@ const TelemetryVisualizations = () => {
             fetchPitStops();
             fetchStints();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedDrivers, selectedSession, selectedCircuit]);
 
     // Load car data when lap changes
@@ -307,6 +321,7 @@ const TelemetryVisualizations = () => {
         if (selectedLap && selectedDrivers.length > 0 && selectedSession && selectedCircuit) {
             fetchCarData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedLap, selectedDrivers, selectedSession, selectedCircuit]);
 
     // Toggle dark/light mode
@@ -731,9 +746,19 @@ const TelemetryVisualizations = () => {
                                 {circuits.length === 0 ? (
                                     <option key="loading-circuits" value="">Loading circuits...</option>
                                 ) : (
-                                    circuits.map(circuit => (
-                                        <option key={`circuit-${circuit}`} value={circuit}>{circuit}</option>
-                                    ))
+                                    circuits.map(circuit => {
+                                        // Find the first meeting with this circuit to get location and country
+                                        const meeting = meetings.find(m => m.circuit_short_name === circuit);
+                                        const displayName = meeting
+                                            ? `${circuit} (${meeting.location}, ${meeting.country_name})`
+                                            : circuit;
+
+                                        return (
+                                            <option key={`circuit-${circuit}`} value={circuit}>
+                                                {displayName}
+                                            </option>
+                                        );
+                                    })
                                 )}
                             </select>
                         </div>
@@ -747,10 +772,10 @@ const TelemetryVisualizations = () => {
                                 disabled={isLoading || sessions.length === 0}
                             >
                                 {sessions.length === 0 ? (
-                                    <option value="">Select a circuit first</option>
+                                    <option key="no-session" value="">Select a circuit first</option>
                                 ) : (
                                     sessions.map(session => (
-                                        <option key={session.session_key} value={session.session_name}>
+                                        <option key={`session-${session.session_key}`} value={session.session_name}>
                                             {session.session_name}
                                         </option>
                                     ))
@@ -797,10 +822,10 @@ const TelemetryVisualizations = () => {
                                     disabled={isLoading || Object.keys(drivers).length === 0}
                                 >
                                     {Object.keys(drivers).length === 0 ? (
-                                        <option value="">Select session first</option>
+                                        <option key="no-drivers" value="">Select session first</option>
                                     ) : (
                                         <>
-                                            <option value="">Select a driver</option>
+                                            <option key="select-driver" value="">Select a driver</option>
                                             {Object.entries(drivers).map(([id, driver]) => (
                                                 <option key={`driver-${id}`} value={id}>
                                                     {driver.name} ({driver.team})
@@ -833,7 +858,7 @@ const TelemetryVisualizations = () => {
                                     disabled={isLoading}
                                 >
                                     {availableLaps.map(lap => (
-                                        <option key={lap} value={lap}>Lap {lap}</option>
+                                        <option key={`lap-${lap}`} value={lap}>Lap {lap}</option>
                                     ))}
                                 </select>
                             </div>
@@ -1091,7 +1116,7 @@ const TelemetryVisualizations = () => {
                                             <td className="p-2">
                                                 <div className="flex items-center">
                                                     {data.pitStops.map((stop, i) => (
-                                                        <React.Fragment key={i}>
+                                                        <React.Fragment key={`stop-${i}-${stop.lap}`}>
                                                             {i > 0 && <span className="mx-1">→</span>}
                                                             <div
                                                                 className="w-4 h-4 rounded-full"
@@ -1141,15 +1166,14 @@ const TelemetryVisualizations = () => {
                                         {pitStopData.map((data, driverIndex) => (
                                             data.pitStops.map((stop, stopIndex) => (
                                                 <Bar
-                                                    key={`${driverIndex}-${stopIndex}`}
+                                                    key={`pit-${driverIndex}-${stopIndex}-${stop.lap}`}
                                                     dataKey={() => stop.lap}
                                                     name={`stop-${stopIndex}`}
                                                     fill={tireCompounds[stop.tireCompound]?.color || '#999'}
                                                     barSize={15}
                                                     background={{ fill: 'transparent' }}
                                                 >
-                                                    {/* Single cell for this specific stop */}
-                                                    <Cell fill={tireCompounds[stop.tireCompound]?.color || '#999'} />
+                                                    <Cell key={`cell-${driverIndex}-${stopIndex}`} fill={tireCompounds[stop.tireCompound]?.color || '#999'} />
                                                 </Bar>
                                             ))
                                         ))}
@@ -1161,11 +1185,8 @@ const TelemetryVisualizations = () => {
                             <h4 className="text-lg font-bold mt-6 mb-2">Tire Compound Performance</h4>
                             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
                                 {Object.entries(tireCompounds).map(([name, data]) => (
-                                    <div
-                                        key={name}
-                                        className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-900' : 'bg-gray-200'} flex flex-col items-center`}
-                                    >
-                                        <div className="w-6 h-6 rounded-full mb-2" style={{ backgroundColor: data.color, border: '1px solid #666' }}></div>
+                                    <div key={`tire-${name}`} className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-900' : 'bg-gray-200'} flex flex-col items-center`}>
+                                    <div className="w-6 h-6 rounded-full mb-2" style={{ backgroundColor: data.color, border: '1px solid #666' }}></div>
                                         <h5 className="font-bold capitalize">{name}</h5>
                                         <div className="w-full mt-2 space-y-1">
                                             <div className="flex justify-between text-xs">
@@ -1244,7 +1265,7 @@ const TelemetryVisualizations = () => {
                                                     .sort((a, b) => b.score - a.score)
                                                     .slice(0, 2)
                                                     .map(({ name, data, score }, i) => (
-                                                        <div key={name} className="flex items-center">
+                                                        <div key={`optimal-tire-${name}`} className="flex items-center">
                                                             <div
                                                                 className="w-4 h-4 rounded-full mr-1"
                                                                 style={{ backgroundColor: data.color, border: '1px solid #666' }}
@@ -1265,7 +1286,7 @@ const TelemetryVisualizations = () => {
                                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-900' : 'bg-gray-200'}`}>
                                         <ul className="space-y-2">
                                             {generateWeatherRecommendations(weatherCondition).map((rec, i) => (
-                                                <li key={i} className="flex items-start">
+                                                <li key={`weather-rec-${i}`} className="flex items-start">
                                                     <div className="text-cyan-400 mr-2">•</div>
                                                     <span>{rec}</span>
                                                 </li>
