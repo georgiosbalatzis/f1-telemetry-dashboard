@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
