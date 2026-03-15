@@ -1,10 +1,14 @@
 // ─── OpenF1 API Client ───────────────────────────────────────────────────────
-// Docs: https://openf1.org/docs
-// Free historical data (2023+), no auth needed.
+// https://openf1.org/docs — Free historical data (2023+), no auth.
+//
+// IMPORTANT: OpenF1 uses filter operators in query param names like:
+//   ?date>=2024-03-01T12:00:00  (NOT date%3E%3D= or date>==)
+//   ?speed>=300
+// We must build these URLs manually without URLSearchParams encoding.
 
 const BASE = 'https://api.openf1.org/v1';
 
-// ─── Response Types ──────────────────────────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface OpenF1Meeting {
   meeting_key: number;
@@ -21,8 +25,8 @@ export interface OpenF1Meeting {
 
 export interface OpenF1Session {
   session_key: number;
-  session_name: string;  // "Practice 1", "Qualifying", "Race", etc.
-  session_type: string;  // "Practice", "Qualifying", "Race", etc.
+  session_name: string;
+  session_type: string;
   meeting_key: number;
   date_start: string;
   date_end: string;
@@ -51,7 +55,7 @@ export interface OpenF1CarData {
   driver_number: number;
   speed: number;
   throttle: number;
-  brake: number;       // 0 or 100 (binary in API)
+  brake: number;
   n_gear: number;
   rpm: number;
   drs: number;
@@ -83,7 +87,7 @@ export interface OpenF1Stint {
   stint_number: number;
   lap_start: number;
   lap_end: number;
-  compound: string;        // "SOFT", "MEDIUM", "HARD", etc.
+  compound: string;
   tyre_age_at_start: number;
   session_key: number;
   meeting_key: number;
@@ -132,127 +136,103 @@ export interface OpenF1TeamRadio {
   meeting_key: number;
 }
 
-export interface OpenF1Position {
-  date: string;
-  driver_number: number;
-  position: number;
-  session_key: number;
-  meeting_key: number;
+// ─── URL builder ─────────────────────────────────────────────────────────────
+// OpenF1 requires literal operators in param names: date>=VALUE, speed<=VALUE
+// We must NOT percent-encode the keys, but we DO encode values (except dates
+// where the API accepts ISO strings with colons).
+
+function buildUrl(endpoint: string, params: Record<string, string | number | boolean>): string {
+  const parts = Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== null && v !== '')
+    .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`);
+  return `${BASE}/${endpoint}${parts.length ? '?' + parts.join('&') : ''}`;
 }
 
-// ─── Fetcher with retry ──────────────────────────────────────────────────────
+// For date range filters: key already includes the operator, value is an ISO date
+function buildUrlWithDateFilters(
+  endpoint: string,
+  params: Record<string, string | number>,
+  dateFilters: Record<string, string>,
+): string {
+  const parts: string[] = [];
+  for (const [k, v] of Object.entries(params)) {
+    parts.push(`${k}=${encodeURIComponent(String(v))}`);
+  }
+  // Date filters: key is like "date>=" and value is ISO — don't encode colons in dates
+  for (const [k, v] of Object.entries(dateFilters)) {
+    parts.push(`${k}${v}`);  // e.g. "date>=2024-03-01T12:00:00.000+00:00"
+  }
+  return `${BASE}/${endpoint}?${parts.join('&')}`;
+}
 
-async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
+// ─── Fetch with retry ────────────────────────────────────────────────────────
+
+async function fetchJson<T>(url: string, retries = 2): Promise<T[]> {
+  let lastErr: Error | null = null;
   for (let i = 0; i <= retries; i++) {
     try {
       const res = await fetch(url);
-      if (res.ok) return res;
-      // 429 rate limit — wait and retry
-      if (res.status === 429 && i < retries) {
+      if (res.ok) {
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      }
+      if ((res.status === 429 || res.status >= 500) && i < retries) {
         await new Promise(r => setTimeout(r, 1500 * (i + 1)));
         continue;
       }
-      // 5xx — retry
-      if (res.status >= 500 && i < retries) {
-        await new Promise(r => setTimeout(r, 1000 * (i + 1)));
-        continue;
-      }
-      throw new Error(`API ${res.status}: ${res.statusText}`);
-    } catch (err) {
-      if (i === retries) throw err;
-      await new Promise(r => setTimeout(r, 1000));
+      throw new Error(`OpenF1 API ${res.status} ${res.statusText}`);
+    } catch (err: any) {
+      lastErr = err;
+      if (i < retries) await new Promise(r => setTimeout(r, 1000 * (i + 1)));
     }
   }
-  throw new Error('Max retries exceeded');
+  throw lastErr || new Error('Fetch failed');
 }
 
-async function fetchApi<T>(endpoint: string, params: Record<string, string | number>): Promise<T[]> {
-  const url = new URL(`${BASE}/${endpoint}`);
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
-  const res = await fetchWithRetry(url.toString());
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
-}
+// ─── API functions ───────────────────────────────────────────────────────────
 
-// OpenF1 uses special query params like date>= which need manual URL building
-function buildFilterUrl(endpoint: string, params: Record<string, string | number>, filters?: Record<string, string>): string {
-  let url = `${BASE}/${endpoint}?`;
-  const parts: string[] = [];
-  Object.entries(params).forEach(([k, v]) => parts.push(`${k}=${encodeURIComponent(v)}`));
-  if (filters) {
-    Object.entries(filters).forEach(([k, v]) => parts.push(`${k}=${encodeURIComponent(v)}`));
-  }
-  return url + parts.join('&');
-}
+export const getMeetings = (year: number) =>
+  fetchJson<OpenF1Meeting>(buildUrl('meetings', { year }));
 
-// ─── Public API Functions ────────────────────────────────────────────────────
+export const getSessionsByCircuit = (year: number, circuit: string) =>
+  fetchJson<OpenF1Session>(buildUrl('sessions', { year, circuit_short_name: circuit }));
 
-export async function getMeetings(year: number): Promise<OpenF1Meeting[]> {
-  return fetchApi<OpenF1Meeting>('meetings', { year });
-}
+export const getDrivers = (sessionKey: number) =>
+  fetchJson<OpenF1Driver>(buildUrl('drivers', { session_key: sessionKey }));
 
-export async function getSessions(meetingKey: number): Promise<OpenF1Session[]> {
-  return fetchApi<OpenF1Session>('sessions', { meeting_key: meetingKey });
-}
+export const getLaps = (sessionKey: number, driverNumber: number) =>
+  fetchJson<OpenF1Lap>(buildUrl('laps', { session_key: sessionKey, driver_number: driverNumber }));
 
-export async function getSessionsByCircuit(year: number, circuitShortName: string): Promise<OpenF1Session[]> {
-  return fetchApi<OpenF1Session>('sessions', { year, circuit_short_name: circuitShortName });
-}
+export const getStints = (sessionKey: number) =>
+  fetchJson<OpenF1Stint>(buildUrl('stints', { session_key: sessionKey }));
 
-export async function getDrivers(sessionKey: number): Promise<OpenF1Driver[]> {
-  return fetchApi<OpenF1Driver>('drivers', { session_key: sessionKey });
-}
+export const getPits = (sessionKey: number) =>
+  fetchJson<OpenF1Pit>(buildUrl('pit', { session_key: sessionKey }));
 
-export async function getLaps(sessionKey: number, driverNumber: number): Promise<OpenF1Lap[]> {
-  return fetchApi<OpenF1Lap>('laps', { session_key: sessionKey, driver_number: driverNumber });
-}
+export const getWeather = (sessionKey: number) =>
+  fetchJson<OpenF1Weather>(buildUrl('weather', { session_key: sessionKey }));
 
-export async function getStints(sessionKey: number): Promise<OpenF1Stint[]> {
-  return fetchApi<OpenF1Stint>('stints', { session_key: sessionKey });
-}
+export const getRaceControl = (sessionKey: number) =>
+  fetchJson<OpenF1RaceControl>(buildUrl('race_control', { session_key: sessionKey }));
 
-export async function getPits(sessionKey: number): Promise<OpenF1Pit[]> {
-  return fetchApi<OpenF1Pit>('pit', { session_key: sessionKey });
-}
+export const getTeamRadio = (sessionKey: number) =>
+  fetchJson<OpenF1TeamRadio>(buildUrl('team_radio', { session_key: sessionKey }));
 
-export async function getWeather(sessionKey: number): Promise<OpenF1Weather[]> {
-  return fetchApi<OpenF1Weather>('weather', { session_key: sessionKey });
-}
-
-export async function getIntervals(sessionKey: number): Promise<OpenF1RaceControl[]> {
-  return fetchApi<OpenF1RaceControl>('intervals', { session_key: sessionKey });
-}
-
-export async function getRaceControl(sessionKey: number): Promise<OpenF1RaceControl[]> {
-  return fetchApi<OpenF1RaceControl>('race_control', { session_key: sessionKey });
-}
-
-export async function getTeamRadio(sessionKey: number): Promise<OpenF1TeamRadio[]> {
-  return fetchApi<OpenF1TeamRadio>('team_radio', { session_key: sessionKey });
-}
-
-export async function getPositions(sessionKey: number): Promise<OpenF1Position[]> {
-  return fetchApi<OpenF1Position>('position', { session_key: sessionKey });
-}
-
-/** Fetch car telemetry scoped to a single lap using date_start windowing.
- *  Falls back to a 2-minute window if nextLap is unavailable (last lap). */
-export async function getCarDataForLap(
+/** Car telemetry for a single lap, windowed by date_start of this lap and next lap.
+ *  If nextLapDateStart is missing (last lap), uses a 2-min window. */
+export function getCarDataForLap(
   sessionKey: number,
   driverNumber: number,
   lapDateStart: string,
   nextLapDateStart?: string,
 ): Promise<OpenF1CarData[]> {
-  // If we don't have the next lap's start time, use a 2-min window
   const dateEnd = nextLapDateStart
     || new Date(new Date(lapDateStart).getTime() + 120_000).toISOString();
 
-  const url = buildFilterUrl('car_data',
+  const url = buildUrlWithDateFilters(
+    'car_data',
     { session_key: sessionKey, driver_number: driverNumber },
-    { 'date>=': lapDateStart, 'date<=': dateEnd }
+    { 'date>=': lapDateStart, 'date<=': dateEnd },
   );
-
-  const res = await fetchWithRetry(url);
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
+  return fetchJson<OpenF1CarData>(url);
 }

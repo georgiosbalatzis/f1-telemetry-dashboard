@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
@@ -9,143 +9,144 @@ import {
   getStints, getPits, getWeather, getRaceControl, getTeamRadio
 } from '../api/openf1';
 
-// ─── Generic fetch hook ──────────────────────────────────────────────────────
+// ─── Cache ───────────────────────────────────────────────────────────────────
 
-export interface AsyncState<T> {
+const cache = new Map<string, { data: unknown; ts: number }>();
+const CACHE_TTL = 10 * 60 * 1000;
+
+// ─── Generic hook ────────────────────────────────────────────────────────────
+
+export interface FetchState<T> {
   data: T | null;
   loading: boolean;
   error: string | null;
 }
 
-const cache = new Map<string, { data: unknown; ts: number }>();
-const CACHE_TTL = 10 * 60 * 1000; // 10 min for historical data
-
-function useApi<T>(
-  cacheKey: string | null,
-  fetcher: (() => Promise<T>) | null,
-): AsyncState<T> {
-  const [state, setState] = useState<AsyncState<T>>({ data: null, loading: false, error: null });
+/**
+ * Core data-fetching hook.
+ * - `key`: null = disabled (no fetch). A unique string that encodes all params.
+ * - `fetcher`: the async function to call. Stored in a ref so it's always fresh.
+ *
+ * The effect runs whenever `key` changes. The fetcher ref is updated every render
+ * so the closure always captures the latest params.
+ */
+function useFetch<T>(key: string | null, fetcher: () => Promise<T>): FetchState<T> {
+  const [state, setState] = useState<FetchState<T>>({ data: null, loading: false, error: null });
+  const fetcherRef = useRef(fetcher);
   const seqRef = useRef(0);
 
+  // Always keep fetcherRef current
+  fetcherRef.current = fetcher;
+
   useEffect(() => {
-    // No key or no fetcher → reset
-    if (!cacheKey || !fetcher) {
+    if (!key) {
       setState({ data: null, loading: false, error: null });
       return;
     }
 
-    // Check cache
-    const hit = cache.get(cacheKey);
+    // Cache hit?
+    const hit = cache.get(key);
     if (hit && Date.now() - hit.ts < CACHE_TTL) {
       setState({ data: hit.data as T, loading: false, error: null });
       return;
     }
 
     const seq = ++seqRef.current;
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState({ data: null, loading: true, error: null });
 
-    fetcher()
+    fetcherRef.current()
       .then(data => {
-        if (seqRef.current !== seq) return;
-        cache.set(cacheKey, { data, ts: Date.now() });
+        if (seqRef.current !== seq) return; // stale
+        cache.set(key, { data, ts: Date.now() });
         setState({ data, loading: false, error: null });
       })
-      .catch(err => {
+      .catch((err: any) => {
         if (seqRef.current !== seq) return;
-        console.warn(`[OpenF1] ${cacheKey}:`, err);
-        setState(prev => ({ ...prev, loading: false, error: String(err?.message || err) }));
+        console.warn(`[OpenF1] ${key}:`, err);
+        setState({ data: null, loading: false, error: String(err?.message || 'Unknown error') });
       });
-  // We use cacheKey as the single dependency — it encodes all params
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheKey]);
+  }, [key]); // ONLY key — fetcher is accessed via ref
 
   return state;
 }
 
-// ─── Meetings ────────────────────────────────────────────────────────────────
+// ─── Typed hooks ─────────────────────────────────────────────────────────────
 
 export function useMeetings(year: number) {
-  const key = `meetings:${year}`;
-  return useApi<OpenF1Meeting[]>(key, () => getMeetings(year));
+  return useFetch<OpenF1Meeting[]>(
+    `meetings:${year}`,
+    () => getMeetings(year),
+  );
 }
-
-// ─── Sessions ────────────────────────────────────────────────────────────────
 
 export function useSessions(year: number, circuit: string | null) {
-  const key = circuit ? `sessions:${year}:${circuit}` : null;
-  const fetcher = circuit ? () => getSessionsByCircuit(year, circuit) : null;
-  return useApi<OpenF1Session[]>(key, fetcher);
+  return useFetch<OpenF1Session[]>(
+    circuit ? `sessions:${year}:${circuit}` : null,
+    () => getSessionsByCircuit(year, circuit!),
+  );
 }
-
-// ─── Drivers ─────────────────────────────────────────────────────────────────
 
 export function useDrivers(sessionKey: number | null) {
-  const key = sessionKey ? `drivers:${sessionKey}` : null;
-  const fetcher = sessionKey ? () => getDrivers(sessionKey) : null;
-  return useApi<OpenF1Driver[]>(key, fetcher);
+  return useFetch<OpenF1Driver[]>(
+    sessionKey ? `drivers:${sessionKey}` : null,
+    () => getDrivers(sessionKey!),
+  );
 }
 
-// ─── Laps (per driver — ONLY fires if driverNumber is a real number) ─────────
-
+/** Only fetches if both sessionKey and driverNumber are valid positive numbers */
 export function useLaps(sessionKey: number | null, driverNumber: number | undefined) {
-  const valid = sessionKey != null && driverNumber != null && driverNumber > 0;
-  const key = valid ? `laps:${sessionKey}:${driverNumber}` : null;
-  const fetcher = valid ? () => getLaps(sessionKey!, driverNumber!) : null;
-  return useApi<OpenF1Lap[]>(key, fetcher);
+  const ok = sessionKey != null && driverNumber != null && driverNumber > 0;
+  return useFetch<OpenF1Lap[]>(
+    ok ? `laps:${sessionKey}:${driverNumber}` : null,
+    () => getLaps(sessionKey!, driverNumber!),
+  );
 }
 
-// ─── Telemetry for a lap ─────────────────────────────────────────────────────
-
+/** Telemetry for a specific lap, scoped by date window */
 export function useLapTelemetry(
   sessionKey: number | null,
   driverNumber: number | undefined,
   lapDateStart: string | null,
   nextLapDateStart: string | null | undefined,
 ) {
-  const valid = sessionKey != null && driverNumber != null && driverNumber > 0 && lapDateStart != null;
-  const key = valid ? `telem:${sessionKey}:${driverNumber}:${lapDateStart}` : null;
-  const fetcher = valid
-    ? () => getCarDataForLap(sessionKey!, driverNumber!, lapDateStart!, nextLapDateStart || undefined)
-    : null;
-  return useApi<OpenF1CarData[]>(key, fetcher);
+  const ok = sessionKey != null && driverNumber != null && driverNumber > 0 && !!lapDateStart;
+  return useFetch<OpenF1CarData[]>(
+    ok ? `telem:${sessionKey}:${driverNumber}:${lapDateStart}` : null,
+    () => getCarDataForLap(sessionKey!, driverNumber!, lapDateStart!, nextLapDateStart || undefined),
+  );
 }
-
-// ─── Stints ──────────────────────────────────────────────────────────────────
 
 export function useStints(sessionKey: number | null) {
-  const key = sessionKey ? `stints:${sessionKey}` : null;
-  const fetcher = sessionKey ? () => getStints(sessionKey) : null;
-  return useApi<OpenF1Stint[]>(key, fetcher);
+  return useFetch<OpenF1Stint[]>(
+    sessionKey ? `stints:${sessionKey}` : null,
+    () => getStints(sessionKey!),
+  );
 }
-
-// ─── Pits ────────────────────────────────────────────────────────────────────
 
 export function usePits(sessionKey: number | null) {
-  const key = sessionKey ? `pits:${sessionKey}` : null;
-  const fetcher = sessionKey ? () => getPits(sessionKey) : null;
-  return useApi<OpenF1Pit[]>(key, fetcher);
+  return useFetch<OpenF1Pit[]>(
+    sessionKey ? `pits:${sessionKey}` : null,
+    () => getPits(sessionKey!),
+  );
 }
-
-// ─── Weather ─────────────────────────────────────────────────────────────────
 
 export function useWeather(sessionKey: number | null) {
-  const key = sessionKey ? `weather:${sessionKey}` : null;
-  const fetcher = sessionKey ? () => getWeather(sessionKey) : null;
-  return useApi<OpenF1Weather[]>(key, fetcher);
+  return useFetch<OpenF1Weather[]>(
+    sessionKey ? `weather:${sessionKey}` : null,
+    () => getWeather(sessionKey!),
+  );
 }
-
-// ─── Race Control ────────────────────────────────────────────────────────────
 
 export function useRaceControl(sessionKey: number | null) {
-  const key = sessionKey ? `rc:${sessionKey}` : null;
-  const fetcher = sessionKey ? () => getRaceControl(sessionKey) : null;
-  return useApi<OpenF1RaceControl[]>(key, fetcher);
+  return useFetch<OpenF1RaceControl[]>(
+    sessionKey ? `rc:${sessionKey}` : null,
+    () => getRaceControl(sessionKey!),
+  );
 }
 
-// ─── Team Radio ──────────────────────────────────────────────────────────────
-
 export function useTeamRadio(sessionKey: number | null) {
-  const key = sessionKey ? `radio:${sessionKey}` : null;
-  const fetcher = sessionKey ? () => getTeamRadio(sessionKey) : null;
-  return useApi<OpenF1TeamRadio[]>(key, fetcher);
+  return useFetch<OpenF1TeamRadio[]>(
+    sessionKey ? `radio:${sessionKey}` : null,
+    () => getTeamRadio(sessionKey!),
+  );
 }
