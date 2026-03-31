@@ -37,8 +37,8 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
               if (!driver || !driverStints?.length) return null;
               const maxLap = Math.max(...driverStints.map((stint) => stint.lap_end || 0), 1);
               return (
-                <div key={driverNumber} className="flex items-center gap-4">
-                  <div className="w-16 text-right"><span className="text-xs font-bold tracking-[0.2em]" style={{ color: `#${driver.team_colour}` }}>{driver.name_acronym}</span></div>
+                <div key={driverNumber} className="grid gap-2 sm:grid-cols-[64px_1fr_56px] sm:items-center sm:gap-4">
+                  <div className="flex items-center justify-between sm:block sm:text-right"><span className="text-xs font-bold tracking-[0.2em]" style={{ color: `#${driver.team_colour}` }}>{driver.name_acronym}</span></div>
                   <div className="flex h-9 flex-1 overflow-hidden rounded-[12px] border border-white/[0.04] bg-[#0d0d1a]">
                     {driverStints.map((stint, index) => {
                       const width = Math.max(3, ((stint.lap_end - stint.lap_start + 1) / maxLap) * 100);
@@ -57,7 +57,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
                       );
                     })}
                   </div>
-                  <div className="w-14 text-right text-[10px] uppercase tracking-[0.16em] text-slate-600">{driverStints.length} stint{driverStints.length > 1 ? 's' : ''}</div>
+                  <div className="text-right text-[10px] uppercase tracking-[0.16em] text-slate-600">{driverStints.length} stint{driverStints.length > 1 ? 's' : ''}</div>
                 </div>
               );
             })}

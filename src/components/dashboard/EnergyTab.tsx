@@ -18,7 +18,7 @@ export function EnergyTab({ lapNum, driverNums, driverMap, speedData, telemetryL
 
   return (
     <>
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-[18px] border border-white/[0.04] bg-[#11111b]/95 p-4">
           <div className="mb-2 text-[10px] uppercase tracking-[0.28em] text-slate-500">DRS Window</div>
           <div className="text-3xl font-black text-cyan-300">{drsOpenPct}%</div>

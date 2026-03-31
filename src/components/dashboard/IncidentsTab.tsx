@@ -42,7 +42,7 @@ export function IncidentsTab({ loading, error, messages }: Props) {
       {loading ? <Spinner /> : error ? <Err msg={error} /> : messages.length > 0 ? (
         <>
           <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-            <div className="relative min-w-[240px] flex-1 xl:max-w-sm">
+            <div className="relative min-w-0 flex-1 xl:max-w-sm">
               <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-700" />
               <input
                 value={query}
@@ -51,13 +51,13 @@ export function IncidentsTab({ loading, error, messages }: Props) {
                 className="w-full rounded-[10px] border border-white/[0.05] bg-white/[0.02] py-2 pl-9 pr-3 text-sm text-slate-200 outline-none transition-colors placeholder:text-slate-700 focus:border-white/[0.08]"
               />
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide xl:mx-0 xl:flex-wrap xl:overflow-visible xl:px-0 xl:pb-0">
               {filters.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
                   className={cn(
-                    'rounded-[8px] border px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] transition-colors',
+                    'shrink-0 rounded-[8px] border px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] transition-colors',
                     activeFilter === filter ? 'border-white/[0.12] bg-white/[0.06] text-slate-200' : 'border-white/[0.04] bg-white/[0.02] text-slate-600 hover:text-slate-300',
                   )}
                 >

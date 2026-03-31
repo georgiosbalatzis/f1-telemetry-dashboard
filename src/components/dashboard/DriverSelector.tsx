@@ -15,7 +15,7 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle }: Props) {
       <label className="mb-3 block text-[10px] uppercase tracking-[0.3em] text-slate-700">
         Drivers ({selectedDrivers.length}/4) <span className="text-slate-800">- click to compare</span>
       </label>
-      <div className="flex flex-wrap gap-2.5">
+      <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 scrollbar-hide sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
         {drivers.map((driver) => (
           <DriverChip
             key={driver.driver_number}

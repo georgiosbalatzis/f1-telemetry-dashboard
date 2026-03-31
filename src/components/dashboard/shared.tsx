@@ -18,10 +18,10 @@ export function NoData({ msg }: { msg: string }) {
 
 export function Stat({ label, value, unit, color }: { label: string; value: string | number; unit?: string; color?: string }) {
   return (
-    <div className="rounded-[16px] border border-white/[0.04] bg-[#12121d]/95 p-4 shadow-[0_18px_40px_-28px_rgba(0,0,0,0.8)]">
+    <div className="rounded-[16px] border border-white/[0.04] bg-[#12121d]/95 p-3 shadow-[0_18px_40px_-28px_rgba(0,0,0,0.8)] sm:p-4">
       <div className="mb-1 text-[10px] uppercase tracking-[0.24em] text-slate-500">{label}</div>
       <div className="flex items-baseline gap-1">
-        <span className="text-lg font-bold font-mono" style={{ color: color || '#E7E8EE' }}>{value}</span>
+        <span className="text-base font-bold font-mono sm:text-lg" style={{ color: color || '#E7E8EE' }}>{value}</span>
         {unit && <span className="text-[10px] text-slate-500">{unit}</span>}
       </div>
     </div>
@@ -44,8 +44,8 @@ export function Panel({
   headerRight?: ReactNode;
 }) {
   return (
-    <div className={cn('rounded-[18px] border border-white/[0.035] bg-[linear-gradient(180deg,rgba(20,20,31,0.98),rgba(16,16,26,0.98))] p-5 shadow-[0_32px_60px_-42px_rgba(0,0,0,0.95)]', className)}>
-      <div className="mb-4 flex items-start justify-between gap-3">
+    <div className={cn('rounded-[18px] border border-white/[0.035] bg-[linear-gradient(180deg,rgba(20,20,31,0.98),rgba(16,16,26,0.98))] p-4 shadow-[0_32px_60px_-42px_rgba(0,0,0,0.95)] sm:p-5', className)}>
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <div>
           <h3 className="mb-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.32em] text-slate-400">{icon}{title}</h3>
           {sub ? <p className="text-[10px] text-slate-600">{sub}</p> : null}
@@ -64,7 +64,7 @@ export function DriverChip({ driver, selected, onClick }: { driver: OpenF1Driver
     <button
       onClick={onClick}
       className={cn(
-        'flex items-center gap-2 rounded-[10px] border px-3 py-2 text-xs font-semibold transition-all duration-200',
+        'flex min-w-[140px] items-center gap-2 rounded-[10px] border px-2.5 py-2 text-[11px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3 sm:text-xs',
         selected ? 'border-current bg-white/[0.03] text-slate-100 shadow-[0_0_0_1px_currentColor_inset]' : 'border-white/[0.05] text-slate-500 hover:border-white/[0.08] hover:text-slate-300',
       )}
       style={selected ? { color, borderColor: `${color}99`, background: `${color}10` } : {}}
@@ -110,7 +110,7 @@ export function ToolbarButton({
       )}
     >
       {icon}
-      <span>{label}</span>
+      <span className="hidden min-[380px]:inline">{label}</span>
     </button>
   );
 }
