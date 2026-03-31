@@ -41,6 +41,11 @@ function readInitialSplitMode() {
   return new URLSearchParams(window.location.search).get('layout') === 'split';
 }
 
+function readInitialEmbedMode() {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('embed') === '1';
+}
+
 function readSavedPresets() {
   if (typeof window === 'undefined') return {} as Record<string, SavedPreset>;
   try {
@@ -53,7 +58,7 @@ function readSavedPresets() {
   }
 }
 
-function buildDashboardUrl(snapshot: DashboardFilterSnapshot, splitMode: boolean) {
+function buildDashboardUrl(snapshot: DashboardFilterSnapshot, splitMode: boolean, embedMode = false) {
   if (typeof window === 'undefined') return '';
 
   const params = new URLSearchParams();
@@ -64,15 +69,31 @@ function buildDashboardUrl(snapshot: DashboardFilterSnapshot, splitMode: boolean
   params.set('lap', String(snapshot.lapNum));
   params.set('tab', snapshot.tab);
   if (splitMode) params.set('layout', 'split');
+  if (embedMode) params.set('embed', '1');
 
   const query = params.toString();
   return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+}
+
+function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolean) {
+  const src = buildDashboardUrl(snapshot, splitMode, true);
+  return [
+    `<iframe`,
+    `  src="${src}"`,
+    `  title="F1 Telemetry Dashboard"`,
+    `  width="100%"`,
+    `  height="920"`,
+    `  loading="lazy"`,
+    `  style="border:0; width:100%; max-width:100%; background:#090a12;"`,
+    `></iframe>`,
+  ].join('\n');
 }
 
 export default function F1TelemetryDashboard() {
   const filters = useDashboardFilters();
   const setLapNum = filters.setLapNum;
   const [splitMode, setSplitMode] = useState(readInitialSplitMode);
+  const [embedMode] = useState(readInitialEmbedMode);
   const [presetName, setPresetName] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [savedPresets, setSavedPresets] = useState<Record<string, SavedPreset>>(readSavedPresets);
@@ -200,13 +221,16 @@ export default function F1TelemetryDashboard() {
   const contentLayoutClass = splitMode
     ? 'grid gap-6 pb-16 xl:grid-cols-2 xl:[&>*:first-child]:col-span-2'
     : 'space-y-6 pb-16';
+  const pageShellClass = embedMode
+    ? 'relative mx-auto max-w-[1500px] px-3 py-2 sm:px-5'
+    : 'relative mx-auto max-w-[1500px] px-5 sm:px-8';
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const url = buildDashboardUrl(filters.snapshot, splitMode);
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode);
     window.history.replaceState({}, '', url);
-  }, [filters.snapshot, splitMode]);
+  }, [embedMode, filters.snapshot, splitMode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -249,7 +273,7 @@ export default function F1TelemetryDashboard() {
   }, [defaultPresetName, filters.snapshot, presetName, splitMode]);
 
   const handleShare = useCallback(async () => {
-    const url = buildDashboardUrl(filters.snapshot, splitMode);
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode);
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
@@ -272,6 +296,23 @@ export default function F1TelemetryDashboard() {
 
     window.prompt('Copy this link', url);
     setFeedback('Share link ready');
+  }, [embedMode, filters.snapshot, splitMode]);
+
+  const handleEmbed = useCallback(async () => {
+    const snippet = buildIframeSnippet(filters.snapshot, splitMode);
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(snippet);
+        setFeedback('Embed code copied');
+        return;
+      }
+    } catch {
+      // Fall back to a prompt when clipboard access is unavailable.
+    }
+
+    window.prompt('Copy this iframe snippet', snippet);
+    setFeedback('Embed code ready');
   }, [filters.snapshot, splitMode]);
 
   const handlePrint = useCallback(() => {
@@ -293,22 +334,24 @@ export default function F1TelemetryDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a14] text-slate-200 selection:bg-red-600/30">
+    <div className={`min-h-screen bg-[#0a0a14] text-slate-200 selection:bg-red-600/30 ${embedMode ? 'embed-mode' : ''}`}>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,83,54,0.07),transparent_24%),radial-gradient(circle_at_75%_20%,rgba(49,112,255,0.07),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(113,61,255,0.07),transparent_30%)]" />
         <div className="absolute inset-0 opacity-[0.18]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '72px 72px' }} />
       </div>
 
-      <div className="relative mx-auto max-w-[1500px] px-5 sm:px-8">
+      <div className={pageShellClass}>
         <DashboardHeader
           loading={anyLoading}
           presetName={presetName}
           presetNames={presetNames}
           feedback={feedback}
           splitMode={splitMode}
+          embedMode={embedMode}
           onPresetNameChange={handlePresetNameChange}
           onSavePreset={handleSavePreset}
           onShare={handleShare}
+          onEmbed={handleEmbed}
           onPrint={handlePrint}
           onToggleSplit={handleToggleSplit}
           onBack={handleBack}
