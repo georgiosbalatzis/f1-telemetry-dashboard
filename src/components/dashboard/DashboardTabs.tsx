@@ -12,16 +12,26 @@ const TABS: { key: Tab; label: string; icon: ReactNode }[] = [
   { key: 'weather', label: 'Weather', icon: <Sun size={14} /> },
 ];
 
-export function DashboardTabs({ activeTab, onChange }: { activeTab: Tab; onChange: (tab: Tab) => void }) {
+export function DashboardTabs({
+  activeTab,
+  onChange,
+  embedMode = false,
+}: {
+  activeTab: Tab;
+  onChange: (tab: Tab) => void;
+  embedMode?: boolean;
+}) {
   return (
-    <div className="mb-6">
-      <div className="dashboard-tabs-rail scrollbar-hide">
+    <div className={embedMode ? 'mb-4' : 'mb-6'}>
+      <div className={`dashboard-tabs-rail scrollbar-hide ${embedMode ? 'dashboard-tabs-rail-compact' : ''}`}>
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => onChange(tab.key)}
             className={cn(
-              'flex items-center gap-1.5 whitespace-nowrap rounded-[14px] border px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-200 sm:px-3.5 sm:text-[11px]',
+              embedMode
+                ? 'flex items-center gap-1.5 whitespace-nowrap rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] transition-all duration-200 sm:px-3'
+                : 'flex items-center gap-1.5 whitespace-nowrap rounded-[14px] border px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-200 sm:px-3.5 sm:text-[11px]',
               activeTab === tab.key
                 ? 'border-[#ff9a70]/24 bg-[color:var(--tabs-active)] text-[color:var(--text-strong)] shadow-[var(--tabs-active-shadow)]'
                 : 'border-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',

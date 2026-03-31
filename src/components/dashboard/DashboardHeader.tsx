@@ -1,7 +1,12 @@
-import { Code2, Columns2, Loader2, MoonStar, Printer, Save, Share2, SunMedium, Undo2 } from 'lucide-react';
+import { Code2, Columns2, ExternalLink, Loader2, MoonStar, Printer, Save, Share2, SunMedium, Undo2 } from 'lucide-react';
 import { ToolbarButton } from './shared';
 
 const f1StoriesLogo = `${import.meta.env.BASE_URL}logo192.png`;
+
+type EmbedContextChip = {
+  label: string;
+  value: string;
+};
 
 type Props = {
   loading: boolean;
@@ -11,6 +16,10 @@ type Props = {
   splitMode: boolean;
   embedMode: boolean;
   themeMode: 'dark' | 'light';
+  embedTitle: string;
+  embedSubtitle: string;
+  embedContext: EmbedContextChip[];
+  openDashboardUrl: string;
   onPresetNameChange: (value: string) => void;
   onSavePreset: () => void;
   onShare: () => void;
@@ -29,6 +38,10 @@ export function DashboardHeader({
   splitMode,
   embedMode,
   themeMode,
+  embedTitle,
+  embedSubtitle,
+  embedContext,
+  openDashboardUrl,
   onPresetNameChange,
   onSavePreset,
   onShare,
@@ -38,6 +51,65 @@ export function DashboardHeader({
   onToggleTheme,
   onBack,
 }: Props) {
+  if (embedMode) {
+    return (
+      <header className="pb-4 pt-3">
+        <div className="dashboard-embed-shell rounded-[24px] px-4 py-3.5 sm:px-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-start gap-3">
+              <img
+                src={f1StoriesLogo}
+                alt="f1stories.gr"
+                className="h-12 w-12 shrink-0 rounded-[14px] object-cover shadow-[0_14px_30px_-22px_rgba(15,23,42,0.4)]"
+              />
+              <div className="min-w-0">
+                <div className="text-[9px] font-semibold uppercase tracking-[0.28em] text-[#ffb089]">
+                  f1stories.gr embedded telemetry
+                </div>
+                <div className="mt-1 truncate text-lg font-black tracking-[-0.03em] text-[color:var(--text-strong)]" style={{ fontFamily: "'Orbitron', system-ui" }}>
+                  {embedTitle}
+                </div>
+                <div className="mt-1 text-[12px] leading-5 text-[color:var(--text-muted)]">
+                  {embedSubtitle}
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {embedContext.map((chip) => (
+                    <span key={`${chip.label}-${chip.value}`} className="dashboard-embed-chip rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.16em]">
+                      <span className="text-[color:var(--text-dim)]">{chip.label}</span>{' '}
+                      <span className="text-[color:var(--text-soft)]">{chip.value}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+              <a
+                href={openDashboardUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-9 items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface-soft-2)] px-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--text-soft)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]"
+              >
+                Open Full
+                <ExternalLink size={12} />
+              </a>
+              {loading ? (
+                <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-amber-400">
+                  <Loader2 size={12} className="animate-spin" />
+                  Syncing
+                </span>
+              ) : feedback ? (
+                <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-emerald-400">
+                  {feedback}
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className={embedMode ? 'pb-4 pt-4 sm:pt-5' : 'pb-6 pt-8'}>
       <div className="mb-6 flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">

@@ -57,21 +57,36 @@ export function Panel({
   );
 }
 
-export function DriverChip({ driver, selected, onClick }: { driver: OpenF1Driver; selected: boolean; onClick: () => void }) {
+export function DriverChip({
+  driver,
+  selected,
+  onClick,
+  compact = false,
+}: {
+  driver: OpenF1Driver;
+  selected: boolean;
+  onClick: () => void;
+  compact?: boolean;
+}) {
   const color = `#${driver.team_colour || '888'}`;
   const initials = driver.name_acronym.slice(0, 3);
   return (
     <button
       onClick={onClick}
       className={cn(
-        'flex min-w-[150px] items-center gap-2 rounded-[14px] border px-3 py-2.5 text-[11px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3.5 sm:text-xs',
+        compact
+          ? 'flex min-w-[132px] items-center gap-2 rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3'
+          : 'flex min-w-[150px] items-center gap-2 rounded-[14px] border px-3 py-2.5 text-[11px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3.5 sm:text-xs',
         selected
           ? 'border-current bg-[color:var(--surface-soft)] text-[color:var(--text-strong)] shadow-[0_0_0_1px_currentColor_inset]'
           : 'border-[color:var(--line)] text-[color:var(--text-muted)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
       )}
       style={selected ? { color, borderColor: `${color}99`, background: `${color}10` } : {}}
     >
-      <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--surface-avatar)] text-[9px] font-black text-[color:var(--text-soft)]">
+      <span className={cn(
+        'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--surface-avatar)] font-black text-[color:var(--text-soft)]',
+        compact ? 'h-6 w-6 text-[8px]' : 'h-7 w-7 text-[9px]',
+      )}>
         {driver.headshot_url ? (
           <img src={driver.headshot_url} alt={driver.full_name} className="h-full w-full object-cover" />
         ) : (
@@ -79,8 +94,8 @@ export function DriverChip({ driver, selected, onClick }: { driver: OpenF1Driver
         )}
       </span>
       <span className="h-2 w-2 rounded-full" style={{ backgroundColor: selected ? color : '#4b5563' }} />
-      <span className="tracking-[0.18em]">{driver.name_acronym}</span>
-      <span className="text-[10px] font-normal opacity-50">#{driver.driver_number}</span>
+      <span className={cn(compact ? 'tracking-[0.14em]' : 'tracking-[0.18em]')}>{driver.name_acronym}</span>
+      <span className={cn('font-normal opacity-50', compact ? 'text-[9px]' : 'text-[10px]')}>#{driver.driver_number}</span>
     </button>
   );
 }
