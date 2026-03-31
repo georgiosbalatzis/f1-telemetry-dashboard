@@ -1,6 +1,8 @@
 #!/bin/bash
 # Run this from your project root: bash check.sh
 
+set -euo pipefail
+
 echo "=== Checking file state ==="
 echo ""
 
@@ -66,6 +68,6 @@ else
 fi
 
 echo ""
-echo "=== Build test ==="
-echo "Running: yarn build"
-yarn build 2>&1 | tail -5
+echo "=== Validation ==="
+echo "Running: npm run ci"
+npm run ci

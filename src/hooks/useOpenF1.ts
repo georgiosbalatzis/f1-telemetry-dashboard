@@ -1,0 +1,236 @@
+import { useState, useEffect, useRef } from 'react';
+import type {
+  OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
+  OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
+  OpenF1RaceControl, OpenF1TeamRadio
+} from '../api/openf1';
+import {
+  getMeetings, getSessionsByCircuit, getDrivers, getLaps, getCarDataForLap,
+  getStints, getPits, getWeather, getRaceControl, getTeamRadio
+} from '../api/openf1';
+
+// ─── Cache ───────────────────────────────────────────────────────────────────
+
+type CacheEntry = {
+  data: unknown;
+  ts: number;
+  lastAccessed: number;
+};
+
+type InflightEntry<T> = {
+  controller: AbortController;
+  promise: Promise<T>;
+  consumers: number;
+};
+
+const cache = new Map<string, CacheEntry>();
+const inflight = new Map<string, InflightEntry<unknown>>();
+const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_STALE_TTL = 30 * 60 * 1000;
+const MAX_CACHE_ENTRIES = 200;
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+function getCacheEntry<T>(key: string) {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  entry.lastAccessed = Date.now();
+  return entry as CacheEntry & { data: T };
+}
+
+function setCacheEntry<T>(key: string, data: T) {
+  cache.set(key, { data, ts: Date.now(), lastAccessed: Date.now() });
+  if (cache.size <= MAX_CACHE_ENTRIES) return;
+
+  const oldest = [...cache.entries()].sort((left, right) => left[1].lastAccessed - right[1].lastAccessed);
+  while (cache.size > MAX_CACHE_ENTRIES && oldest.length > 0) {
+    const [staleKey] = oldest.shift()!;
+    cache.delete(staleKey);
+  }
+}
+
+function clearExpiredCacheEntries() {
+  const now = Date.now();
+  for (const [key, entry] of cache.entries()) {
+    if (now - entry.ts > CACHE_STALE_TTL) {
+      cache.delete(key);
+    }
+  }
+}
+
+// ─── Generic hook ────────────────────────────────────────────────────────────
+
+export interface FetchState<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+}
+
+/**
+ * Core data-fetching hook.
+ * - `key`: null = disabled (no fetch). A unique string that encodes all params.
+ * - `fetcher`: the async function to call. Stored in a ref so it's always fresh.
+ *
+ * The effect runs whenever `key` changes. The fetcher ref is updated every render
+ * so the closure always captures the latest params.
+ */
+function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promise<T>): FetchState<T> {
+  const [state, setState] = useState<FetchState<T>>({ data: null, loading: false, error: null });
+  const fetcherRef = useRef(fetcher);
+  const seqRef = useRef(0);
+
+  // Always keep fetcherRef current
+  fetcherRef.current = fetcher;
+
+  useEffect(() => {
+    if (!key) {
+      setState({ data: null, loading: false, error: null });
+      return;
+    }
+
+    clearExpiredCacheEntries();
+    const seq = ++seqRef.current;
+    const cached = getCacheEntry<T>(key);
+    const hasFreshCache = cached && Date.now() - cached.ts < CACHE_TTL;
+
+    if (hasFreshCache) {
+      setState({ data: cached.data, loading: false, error: null });
+      return;
+    }
+
+    setState({
+      data: cached?.data ?? null,
+      loading: true,
+      error: null,
+    });
+
+    let entry = inflight.get(key) as InflightEntry<T> | undefined;
+    if (!entry) {
+      const controller = new AbortController();
+      entry = {
+        controller,
+        consumers: 0,
+        promise: fetcherRef.current(controller.signal)
+          .then((data) => {
+            setCacheEntry(key, data);
+            inflight.delete(key);
+            return data;
+          })
+          .catch((err: unknown) => {
+            inflight.delete(key);
+            throw err;
+          }),
+      };
+      inflight.set(key, entry as InflightEntry<unknown>);
+    }
+    entry.consumers += 1;
+
+    entry.promise
+      .then(data => {
+        if (seqRef.current !== seq) return; // stale
+        setState({ data, loading: false, error: null });
+      })
+      .catch((err: unknown) => {
+        if (seqRef.current !== seq) return;
+        if (isAbortError(err)) return;
+        console.warn(`[OpenF1] ${key}:`, err);
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        setState({ data: cached?.data ?? null, loading: false, error: message });
+      });
+
+    return () => {
+      const active = inflight.get(key) as InflightEntry<T> | undefined;
+      if (!active) return;
+      active.consumers -= 1;
+      if (active.consumers <= 0) {
+        active.controller.abort();
+        inflight.delete(key);
+      }
+    };
+  }, [key]); // ONLY key — fetcher is accessed via ref
+
+  return state;
+}
+
+// ─── Typed hooks ─────────────────────────────────────────────────────────────
+
+export function useMeetings(year: number) {
+  return useFetch<OpenF1Meeting[]>(
+    `meetings:${year}`,
+    (signal) => getMeetings(year, { signal }),
+  );
+}
+
+export function useSessions(year: number, circuit: string | null) {
+  return useFetch<OpenF1Session[]>(
+    circuit ? `sessions:${year}:${circuit}` : null,
+    (signal) => getSessionsByCircuit(year, circuit!, { signal }),
+  );
+}
+
+export function useDrivers(sessionKey: number | null) {
+  return useFetch<OpenF1Driver[]>(
+    sessionKey ? `drivers:${sessionKey}` : null,
+    (signal) => getDrivers(sessionKey!, { signal }),
+  );
+}
+
+/** Only fetches if both sessionKey and driverNumber are valid positive numbers */
+export function useLaps(sessionKey: number | null, driverNumber: number | undefined) {
+  const ok = sessionKey != null && driverNumber != null && driverNumber > 0;
+  return useFetch<OpenF1Lap[]>(
+    ok ? `laps:${sessionKey}:${driverNumber}` : null,
+    (signal) => getLaps(sessionKey!, driverNumber!, { signal }),
+  );
+}
+
+/** Telemetry for a specific lap, scoped by date window */
+export function useLapTelemetry(
+  sessionKey: number | null,
+  driverNumber: number | undefined,
+  lapDateStart: string | null,
+  nextLapDateStart: string | null | undefined,
+) {
+  const ok = sessionKey != null && driverNumber != null && driverNumber > 0 && !!lapDateStart;
+  return useFetch<OpenF1CarData[]>(
+    ok ? `telem:${sessionKey}:${driverNumber}:${lapDateStart}` : null,
+    (signal) => getCarDataForLap(sessionKey!, driverNumber!, lapDateStart!, nextLapDateStart || undefined, { signal, timeoutMs: 20_000 }),
+  );
+}
+
+export function useStints(sessionKey: number | null) {
+  return useFetch<OpenF1Stint[]>(
+    sessionKey ? `stints:${sessionKey}` : null,
+    (signal) => getStints(sessionKey!, { signal }),
+  );
+}
+
+export function usePits(sessionKey: number | null) {
+  return useFetch<OpenF1Pit[]>(
+    sessionKey ? `pits:${sessionKey}` : null,
+    (signal) => getPits(sessionKey!, { signal }),
+  );
+}
+
+export function useWeather(sessionKey: number | null) {
+  return useFetch<OpenF1Weather[]>(
+    sessionKey ? `weather:${sessionKey}` : null,
+    (signal) => getWeather(sessionKey!, { signal }),
+  );
+}
+
+export function useRaceControl(sessionKey: number | null) {
+  return useFetch<OpenF1RaceControl[]>(
+    sessionKey ? `rc:${sessionKey}` : null,
+    (signal) => getRaceControl(sessionKey!, { signal }),
+  );
+}
+
+export function useTeamRadio(sessionKey: number | null) {
+  return useFetch<OpenF1TeamRadio[]>(
+    sessionKey ? `radio:${sessionKey}` : null,
+    (signal) => getTeamRadio(sessionKey!, { signal }),
+  );
+}
