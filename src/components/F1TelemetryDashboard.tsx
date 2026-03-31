@@ -11,6 +11,7 @@ import {
   usePits,
   useRaceControl,
   useSessions,
+  useSessionResult,
   useStints,
   useTeamRadio,
   useWeather,
@@ -117,7 +118,7 @@ function buildDashboardUrl(
 
 function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolean, themeMode: ThemeMode) {
   const src = buildDashboardUrl(snapshot, splitMode, true, themeMode);
-  const background = themeMode === 'light' ? '#f6efe3' : '#090a12';
+  const background = themeMode === 'light' ? '#ffffff' : '#111113';
   return [
     `<iframe`,
     `  src="${src}"`,
@@ -143,6 +144,7 @@ export default function F1TelemetryDashboard() {
   const meetings = useMeetings(filters.year);
   const sessions = useSessions(filters.year, filters.circuit);
   const drivers = useDrivers(filters.sessionKey);
+  const sessionResults = useSessionResult(filters.sessionKey);
 
   const lapStates = [
     useLaps(filters.sessionKey, filters.driverNums[0]),
@@ -161,15 +163,19 @@ export default function F1TelemetryDashboard() {
     meetings: meetings.data,
     sessions: sessions.data,
     drivers: drivers.data,
+    sessionResults: sessionResults.data,
+    sessionResultsLoading: sessionResults.loading,
     lapStates,
     circuit: filters.circuit,
     sessionKey: filters.sessionKey,
     driverNums: filters.driverNums,
     lapNum: filters.lapNum,
+    driverSelectionAuto: filters.driverSelectionAuto,
+    lapSelectionAuto: filters.lapSelectionAuto,
     setCircuit: filters.setCircuit,
     setSessionKey: filters.setSessionKey,
-    setDriverNums: filters.setDriverNums,
-    setLapNum: filters.setLapNum,
+    setDriverNums: filters.setAutoDriverNums,
+    setLapNum: filters.setAutoLapNum,
   });
 
   const telemetryStates = [
@@ -217,7 +223,7 @@ export default function F1TelemetryDashboard() {
     telemetryByDriver,
   });
 
-  const anyLoading = meetings.loading || sessions.loading || drivers.loading;
+  const anyLoading = meetings.loading || sessions.loading || drivers.loading || sessionResults.loading;
   const lapsLoading = lapStates.some((state) => state.loading);
   const telemetryLoading = telemetryStates.some((state) => state.loading);
   const totalLaps = selectionData.lapOptions.length > 0 ? selectionData.lapOptions[selectionData.lapOptions.length - 1] : null;
@@ -285,11 +291,11 @@ export default function F1TelemetryDashboard() {
     [filters.snapshot, splitMode, themeMode],
   );
   const contentLayoutClass = splitMode
-    ? `grid ${embedMode ? 'gap-4 pb-8' : 'gap-6 pb-16'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
-    : `${embedMode ? 'space-y-4 pb-8' : 'space-y-6 pb-16'}`;
+    ? `grid ${embedMode ? 'gap-3 pb-8' : 'gap-3 pb-10 sm:gap-4 sm:pb-14'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
+    : `${embedMode ? 'space-y-3 pb-8' : 'space-y-3 pb-10 sm:space-y-4 sm:pb-14'}`;
   const pageShellClass = embedMode
-    ? 'relative mx-auto max-w-[1500px] px-2 py-2 sm:px-4'
-    : 'relative mx-auto max-w-[1500px] px-5 sm:px-8';
+    ? 'relative mx-auto max-w-[1440px] px-2 py-2 sm:px-3'
+    : 'relative mx-auto max-w-[1440px] px-3 py-1.5 sm:px-6 sm:py-2';
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -321,7 +327,7 @@ export default function F1TelemetryDashboard() {
     root.classList.toggle('theme-light', themeMode === 'light');
     root.classList.toggle('theme-dark', themeMode === 'dark');
 
-    const themeColor = themeMode === 'light' ? '#f6efe3' : '#090a12';
+    const themeColor = themeMode === 'light' ? '#ffffff' : '#111113';
     window.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
 
     try {
@@ -430,10 +436,10 @@ export default function F1TelemetryDashboard() {
     <div className={`dashboard-app min-h-screen ${themeMode === 'light' ? 'theme-light' : 'theme-dark'} ${embedMode ? 'embed-mode' : ''}`}>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 opacity-[0.035] sm:opacity-[0.08]"
           style={{
             backgroundImage: 'linear-gradient(var(--app-grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px)',
-            backgroundSize: '72px 72px',
+            backgroundSize: '96px 96px',
           }}
         />
       </div>
@@ -510,6 +516,7 @@ export default function F1TelemetryDashboard() {
               telemetryPoints={primaryTelemetry?.data?.length || 0}
               speedData={viewModel.speedData}
               comparisonSpeedData={viewModel.comparisonSpeedData}
+              comparisonControlData={viewModel.comparisonControlData}
               lapTimeData={viewModel.lapTimeData}
               lapDeltaData={viewModel.lapDeltaData}
               lapSummaries={viewModel.lapSummaries}

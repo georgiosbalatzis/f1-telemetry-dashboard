@@ -4,18 +4,17 @@
   color-scheme: dark;
   --bg: #111113;
   --app-bg-image:
-    radial-gradient(circle at 18% 8%, rgba(59, 130, 246, 0.14), transparent 26%),
-    radial-gradient(circle at 84% 14%, rgba(91, 156, 245, 0.09), transparent 23%),
-    linear-gradient(180deg, #161618 0%, #111113 100%);
+    radial-gradient(circle at 78% 0%, rgba(59, 130, 246, 0.08), transparent 22%),
+    linear-gradient(180deg, #131416 0%, #111113 100%);
   --app-grid-line: rgba(255, 255, 255, 0.018);
-  --surface: linear-gradient(180deg, rgba(22, 22, 24, 0.9), rgba(17, 17, 19, 0.94));
-  --surface-card: linear-gradient(180deg, rgba(30, 30, 32, 0.94), rgba(22, 22, 24, 0.96));
-  --surface-soft: rgba(255, 255, 255, 0.04);
-  --surface-soft-2: rgba(255, 255, 255, 0.025);
+  --surface: linear-gradient(180deg, rgba(21, 21, 23, 0.92), rgba(17, 17, 19, 0.96));
+  --surface-card: linear-gradient(180deg, rgba(24, 24, 26, 0.94), rgba(21, 21, 23, 0.97));
+  --surface-soft: rgba(255, 255, 255, 0.03);
+  --surface-soft-2: rgba(255, 255, 255, 0.018);
   --surface-track: rgba(255, 255, 255, 0.06);
   --surface-avatar: #1e1e20;
-  --surface-highlight: rgba(255, 255, 255, 0.035);
-  --surface-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 56%);
+  --surface-highlight: rgba(255, 255, 255, 0.022);
+  --surface-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 48%);
   --line: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.14);
   --text: #e5e5e7;
@@ -38,21 +37,21 @@
   --accent-blue: #3b82f6;
   --accent-purple: #2563eb;
   --accent-amber: #d1d1d6;
-  --shadow-panel: 0 24px 58px -40px rgba(0, 0, 0, 0.78);
-  --shadow-card: 0 18px 40px -30px rgba(0, 0, 0, 0.68);
-  --shadow-stat: 0 16px 34px -24px rgba(0, 0, 0, 0.58);
-  --brand-card-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(22, 22, 24, 0.9) 62%, rgba(17, 17, 19, 0.98) 100%);
-  --brand-card-border: rgba(59, 130, 246, 0.18);
-  --brand-card-shadow: 0 22px 44px -30px rgba(59, 130, 246, 0.28);
-  --embed-shell-bg: linear-gradient(180deg, rgba(22, 22, 24, 0.9), rgba(17, 17, 19, 0.94));
-  --embed-focus-bg: linear-gradient(145deg, rgba(59, 130, 246, 0.16), rgba(37, 99, 235, 0.08) 52%, rgba(255, 255, 255, 0.02) 100%);
-  --embed-focus-border: rgba(59, 130, 246, 0.18);
-  --embed-focus-shadow: 0 18px 36px -28px rgba(59, 130, 246, 0.24);
-  --input-bg: linear-gradient(180deg, rgba(30, 30, 32, 0.95), rgba(22, 22, 24, 0.98));
+  --shadow-panel: 0 10px 24px -18px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 8px 18px -16px rgba(0, 0, 0, 0.38);
+  --shadow-stat: 0 6px 16px -14px rgba(0, 0, 0, 0.34);
+  --brand-card-bg: linear-gradient(180deg, rgba(24, 24, 26, 0.94), rgba(21, 21, 23, 0.97));
+  --brand-card-border: var(--line);
+  --brand-card-shadow: 0 8px 18px -16px rgba(0, 0, 0, 0.38);
+  --embed-shell-bg: linear-gradient(180deg, rgba(24, 24, 26, 0.94), rgba(21, 21, 23, 0.97));
+  --embed-focus-bg: linear-gradient(180deg, rgba(24, 24, 26, 0.94), rgba(21, 21, 23, 0.97));
+  --embed-focus-border: var(--line-strong);
+  --embed-focus-shadow: 0 6px 14px -12px rgba(0, 0, 0, 0.28);
+  --input-bg: linear-gradient(180deg, rgba(24, 24, 26, 0.95), rgba(21, 21, 23, 0.98));
   --input-placeholder: #6e6e73;
-  --tabs-rail: rgba(17, 17, 19, 0.58);
-  --tabs-active: var(--accent);
-  --tabs-active-shadow: 0 14px 26px -18px rgba(59, 130, 246, 0.28);
+  --tabs-rail: rgba(17, 17, 19, 0.44);
+  --tabs-active: var(--accent-muted);
+  --tabs-active-shadow: 0 6px 16px -12px rgba(59, 130, 246, 0.18);
   --selection: rgba(59, 130, 246, 0.24);
   --chart-grid: rgba(255, 255, 255, 0.06);
   --chart-axis: #8c8c91;
@@ -65,18 +64,17 @@
   color-scheme: light;
   --bg: #ffffff;
   --app-bg-image:
-    radial-gradient(circle at 16% 8%, rgba(14, 76, 166, 0.08), transparent 24%),
-    radial-gradient(circle at 88% 10%, rgba(37, 99, 235, 0.06), transparent 20%),
-    linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%);
+    radial-gradient(circle at 78% 0%, rgba(14, 76, 166, 0.05), transparent 20%),
+    linear-gradient(180deg, #ffffff 0%, #f7f7f8 100%);
   --app-grid-line: rgba(17, 17, 19, 0.035);
-  --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 245, 247, 0.95));
-  --surface-card: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 247, 0.98));
-  --surface-soft: rgba(14, 76, 166, 0.05);
-  --surface-soft-2: rgba(255, 255, 255, 0.86);
+  --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 247, 248, 0.98));
+  --surface-card: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 248, 0.99));
+  --surface-soft: rgba(14, 76, 166, 0.04);
+  --surface-soft-2: rgba(255, 255, 255, 0.92);
   --surface-track: rgba(17, 17, 19, 0.08);
   --surface-avatar: #f5f5f7;
-  --surface-highlight: rgba(255, 255, 255, 0.66);
-  --surface-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.86), transparent 60%);
+  --surface-highlight: rgba(255, 255, 255, 0.42);
+  --surface-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 54%);
   --line: rgba(0, 0, 0, 0.08);
   --line-strong: rgba(0, 0, 0, 0.12);
   --text: #1d1d1f;
@@ -99,21 +97,21 @@
   --accent-blue: #0e4ca6;
   --accent-purple: #2563eb;
   --accent-amber: #1d1d1f;
-  --shadow-panel: 0 18px 36px -28px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 12px 28px -22px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-stat: 0 10px 24px -18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
-  --brand-card-bg: linear-gradient(135deg, rgba(14, 76, 166, 0.09), rgba(255, 255, 255, 0.98) 55%, rgba(245, 245, 247, 0.98) 100%);
-  --brand-card-border: rgba(14, 76, 166, 0.12);
-  --brand-card-shadow: 0 20px 38px -28px rgba(14, 76, 166, 0.18);
-  --embed-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 245, 247, 0.94));
-  --embed-focus-bg: linear-gradient(145deg, rgba(14, 76, 166, 0.12), rgba(37, 99, 235, 0.06) 52%, rgba(255, 255, 255, 0.7) 100%);
-  --embed-focus-border: rgba(14, 76, 166, 0.16);
-  --embed-focus-shadow: 0 16px 28px -22px rgba(14, 76, 166, 0.16);
-  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 245, 247, 0.98));
+  --shadow-panel: 0 8px 18px -16px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 6px 14px -12px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-stat: 0 4px 10px -8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --brand-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 248, 0.99));
+  --brand-card-border: var(--line);
+  --brand-card-shadow: 0 6px 14px -12px rgba(0, 0, 0, 0.06);
+  --embed-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 248, 0.99));
+  --embed-focus-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 248, 0.99));
+  --embed-focus-border: var(--line-strong);
+  --embed-focus-shadow: 0 4px 10px -8px rgba(0, 0, 0, 0.08);
+  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 247, 248, 0.99));
   --input-placeholder: #86868b;
-  --tabs-rail: rgba(245, 245, 247, 0.88);
-  --tabs-active: var(--accent);
-  --tabs-active-shadow: 0 10px 20px -14px rgba(14, 76, 166, 0.18);
+  --tabs-rail: rgba(247, 247, 248, 0.88);
+  --tabs-active: var(--accent-muted);
+  --tabs-active-shadow: 0 4px 12px -10px rgba(14, 76, 166, 0.12);
   --selection: rgba(14, 76, 166, 0.14);
   --chart-grid: rgba(17, 17, 19, 0.08);
   --chart-axis: #6e6e73;
@@ -183,7 +181,7 @@ code, .font-mono {
   border: 1px solid var(--line);
   background: var(--surface);
   box-shadow: var(--shadow-panel);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(10px);
 }
 
 .dashboard-card {
@@ -192,7 +190,7 @@ code, .font-mono {
   border: 1px solid var(--line);
   background: var(--surface-card);
   box-shadow: var(--shadow-card);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px);
 }
 
 .dashboard-stat {
@@ -201,7 +199,7 @@ code, .font-mono {
   border: 1px solid var(--line);
   background: var(--surface-card);
   box-shadow: var(--shadow-stat);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(8px);
 }
 
 .dashboard-pill {
@@ -216,7 +214,7 @@ code, .font-mono {
   border: 1px solid var(--brand-card-border);
   background: var(--brand-card-bg);
   box-shadow: var(--brand-card-shadow);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(10px);
 }
 
 .dashboard-embed-shell {
@@ -225,7 +223,7 @@ code, .font-mono {
   border: 1px solid var(--line);
   background: var(--embed-shell-bg);
   box-shadow: var(--shadow-card);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(10px);
 }
 
 .dashboard-embed-focus {
@@ -243,12 +241,12 @@ code, .font-mono {
 }
 
 .dashboard-input {
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--line);
   background: var(--input-bg);
   color: var(--text-soft);
   outline: none;
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(10px);
   transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
@@ -259,28 +257,26 @@ code, .font-mono {
 .dashboard-input:hover,
 .dashboard-input:focus {
   border-color: var(--line-strong);
-  transform: translateY(-1px);
 }
 
 .dashboard-select {
   width: 100%;
   cursor: pointer;
   appearance: none;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--line);
   background: var(--input-bg);
   padding: 0.7rem 2.4rem 0.7rem 0.95rem;
   font-size: 0.92rem;
   color: var(--text-soft);
   outline: none;
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(10px);
   transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .dashboard-select:hover,
 .dashboard-select:focus {
   border-color: var(--line-strong);
-  transform: translateY(-1px);
 }
 
 .dashboard-select:disabled {
@@ -303,18 +299,17 @@ code, .font-mono {
   width: 2.7rem;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--line);
   background: var(--input-bg);
   color: var(--text-muted);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(10px);
   transition: border-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .dashboard-nav-button:hover:not(:disabled) {
   border-color: var(--line-strong);
   color: var(--text-soft);
-  transform: translateY(-1px);
 }
 
 .dashboard-nav-button:disabled {
@@ -352,7 +347,7 @@ select {
   inset: 1px;
   border: 1px solid var(--surface-highlight);
   border-radius: inherit;
-  opacity: 0.7;
+  opacity: 0.45;
   pointer-events: none;
 }
 
@@ -372,20 +367,20 @@ select {
   inset: 1px;
   border: 1px solid var(--surface-highlight);
   border-radius: inherit;
-  opacity: 0.7;
+  opacity: 0.45;
   pointer-events: none;
 }
 
 .dashboard-tabs-rail {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.25rem;
   overflow-x: auto;
-  padding: 0.35rem;
+  padding: 0.25rem;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 14px;
   background: var(--tabs-rail);
   box-shadow: inset 0 1px 0 var(--surface-highlight);
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(10px);
 }
 
 .dashboard-tabs-rail > * {
@@ -395,7 +390,7 @@ select {
 .dashboard-tabs-rail-compact {
   gap: 0.25rem;
   padding: 0.25rem;
-  border-radius: 16px;
+  border-radius: 12px;
   background: var(--surface-soft);
   flex-wrap: wrap;
   overflow: visible;
@@ -406,10 +401,145 @@ select {
   flex: 1 1 152px;
 }
 
+.dashboard-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-self: stretch;
+}
+
+.dashboard-toolbar-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-soft-2);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(10px);
+}
+
+.dashboard-chart-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (min-width: 1280px) {
+  .dashboard-toolbar {
+    justify-content: flex-end;
+    align-self: flex-end;
+  }
+}
+
+.dashboard-chart-frame:fullscreen {
+  padding: 1rem;
+  background: var(--bg);
+  overflow: auto;
+}
+
+.dashboard-chart-frame:fullscreen .dashboard-panel {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.9rem;
+}
+
+.dashboard-chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.dashboard-chart-legend-swatch {
+  display: inline-block;
+  width: 1.1rem;
+  min-width: 1.1rem;
+  height: 0.65rem;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+}
+
 .dashboard-app.embed-mode .dashboard-panel,
 .dashboard-app.embed-mode .dashboard-card,
 .dashboard-app.embed-mode .dashboard-stat {
-  box-shadow: 0 18px 40px -30px rgba(0, 0, 0, 0.26);
+  box-shadow: 0 6px 14px -12px rgba(0, 0, 0, 0.16);
+}
+
+@media (max-width: 639px) {
+  .dashboard-panel,
+  .dashboard-card,
+  .dashboard-stat,
+  .dashboard-brand-card,
+  .dashboard-embed-shell,
+  .dashboard-embed-focus {
+    backdrop-filter: blur(6px);
+  }
+
+  .dashboard-panel::before,
+  .dashboard-card::before,
+  .dashboard-stat::before,
+  .dashboard-brand-card::before,
+  .dashboard-embed-shell::before,
+  .dashboard-embed-focus::before {
+    opacity: 0.55;
+  }
+
+  .dashboard-panel::after,
+  .dashboard-card::after,
+  .dashboard-stat::after,
+  .dashboard-brand-card::after,
+  .dashboard-embed-shell::after,
+  .dashboard-embed-focus::after {
+    opacity: 0.2;
+  }
+
+  .dashboard-tabs-rail {
+    gap: 0.2rem;
+    padding: 0.2rem;
+    border-radius: 12px;
+  }
+
+  .dashboard-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.125rem;
+    margin-right: -0.125rem;
+  }
+
+  .dashboard-toolbar-group {
+    flex-wrap: nowrap;
+    min-width: max-content;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .dashboard-chart-actions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.125rem;
+    margin-right: -0.125rem;
+  }
+
+  .dashboard-chart-legend {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.125rem;
+  }
+
+  .dashboard-chart-legend-item {
+    white-space: nowrap;
+  }
 }
 
 .recharts-cartesian-grid-horizontal line,

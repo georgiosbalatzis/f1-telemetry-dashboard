@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
-  OpenF1RaceControl, OpenF1TeamRadio
+  OpenF1RaceControl, OpenF1TeamRadio, OpenF1SessionResult
 } from '../api/openf1';
 import {
   getMeetings, getSessionsByCircuit, getDrivers, getLaps, getCarDataForLap,
-  getStints, getPits, getWeather, getRaceControl, getTeamRadio
+  getStints, getPits, getWeather, getRaceControl, getTeamRadio, getSessionResult
 } from '../api/openf1';
 
 // ─── Cache ───────────────────────────────────────────────────────────────────
@@ -232,5 +232,12 @@ export function useTeamRadio(sessionKey: number | null) {
   return useFetch<OpenF1TeamRadio[]>(
     sessionKey ? `radio:${sessionKey}` : null,
     (signal) => getTeamRadio(sessionKey!, { signal }),
+  );
+}
+
+export function useSessionResult(sessionKey: number | null) {
+  return useFetch<OpenF1SessionResult[]>(
+    sessionKey ? `result:${sessionKey}` : null,
+    (signal) => getSessionResult(sessionKey!, { signal }),
   );
 }

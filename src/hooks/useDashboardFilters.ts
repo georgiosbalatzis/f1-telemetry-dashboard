@@ -47,37 +47,70 @@ function readInitialSnapshot(): Partial<DashboardFilterSnapshot> {
 
 export function useDashboardFilters() {
   const initial = readInitialSnapshot();
+  const hasInitialDrivers = (initial.driverNums?.length ?? 0) > 0;
+  const hasInitialLap = initial.lapNum != null;
 
   const [year, setYear] = useState(initial.year ?? new Date().getFullYear());
   const [circuit, setCircuit] = useState<string | null>(initial.circuit ?? null);
   const [sessionKey, setSessionKey] = useState<number | null>(initial.sessionKey ?? null);
-  const [driverNums, setDriverNums] = useState<number[]>(initial.driverNums ?? []);
-  const [lapNum, setLapNum] = useState(initial.lapNum ?? 1);
+  const [driverNums, setDriverNumsState] = useState<number[]>(initial.driverNums ?? []);
+  const [driverSelectionAuto, setDriverSelectionAuto] = useState(!hasInitialDrivers);
+  const [lapNum, setLapNumState] = useState(initial.lapNum ?? 1);
+  const [lapSelectionAuto, setLapSelectionAuto] = useState(!hasInitialLap);
   const [tab, setTab] = useState<Tab>(initial.tab ?? 'telemetry');
+
+  const setDriverNums = useCallback((nextDriverNums: number[]) => {
+    setDriverNumsState(nextDriverNums);
+    setDriverSelectionAuto(false);
+    setLapSelectionAuto(false);
+  }, []);
+
+  const setAutoDriverNums = useCallback((nextDriverNums: number[]) => {
+    setDriverNumsState(nextDriverNums);
+    setDriverSelectionAuto(true);
+  }, []);
+
+  const setLapNum = useCallback((nextLapNum: number) => {
+    setLapNumState(nextLapNum);
+    setLapSelectionAuto(false);
+  }, []);
+
+  const setAutoLapNum = useCallback((nextLapNum: number) => {
+    setLapNumState(nextLapNum);
+    setLapSelectionAuto(true);
+  }, []);
 
   const handleYearChange = useCallback((nextYear: number) => {
     setYear(nextYear);
     setCircuit(null);
     setSessionKey(null);
-    setDriverNums([]);
-    setLapNum(1);
+    setDriverNumsState([]);
+    setDriverSelectionAuto(true);
+    setLapNumState(1);
+    setLapSelectionAuto(true);
   }, []);
 
   const handleCircuitChange = useCallback((nextCircuit: string) => {
     setCircuit(nextCircuit);
     setSessionKey(null);
-    setDriverNums([]);
-    setLapNum(1);
+    setDriverNumsState([]);
+    setDriverSelectionAuto(true);
+    setLapNumState(1);
+    setLapSelectionAuto(true);
   }, []);
 
   const handleSessionChange = useCallback((nextSessionKey: number) => {
     setSessionKey(nextSessionKey);
-    setDriverNums([]);
-    setLapNum(1);
+    setDriverNumsState([]);
+    setDriverSelectionAuto(true);
+    setLapNumState(1);
+    setLapSelectionAuto(true);
   }, []);
 
   const toggleDriver = useCallback((driverNumber: number) => {
-    setDriverNums((prev) => {
+    setDriverSelectionAuto(false);
+    setLapSelectionAuto(false);
+    setDriverNumsState((prev) => {
       if (prev.includes(driverNumber)) {
         return prev.length > 1 ? prev.filter((num) => num !== driverNumber) : prev;
       }
@@ -89,8 +122,14 @@ export function useDashboardFilters() {
     if (snapshot.year != null) setYear(snapshot.year);
     if (snapshot.circuit !== undefined) setCircuit(snapshot.circuit);
     if (snapshot.sessionKey !== undefined) setSessionKey(snapshot.sessionKey);
-    if (snapshot.driverNums !== undefined) setDriverNums(snapshot.driverNums);
-    if (snapshot.lapNum != null) setLapNum(snapshot.lapNum);
+    if (snapshot.driverNums !== undefined) {
+      setDriverNumsState(snapshot.driverNums);
+      setDriverSelectionAuto(false);
+    }
+    if (snapshot.lapNum != null) {
+      setLapNumState(snapshot.lapNum);
+      setLapSelectionAuto(false);
+    }
     if (snapshot.tab != null) setTab(snapshot.tab);
   }, []);
 
@@ -113,8 +152,12 @@ export function useDashboardFilters() {
     setCircuit,
     setSessionKey,
     setDriverNums,
+    setAutoDriverNums,
     setLapNum,
+    setAutoLapNum,
     setTab,
+    driverSelectionAuto,
+    lapSelectionAuto,
     handleYearChange,
     handleCircuitChange,
     handleSessionChange,

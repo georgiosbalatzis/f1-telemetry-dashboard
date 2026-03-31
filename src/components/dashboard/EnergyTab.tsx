@@ -2,7 +2,8 @@ import { Gauge, Zap } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver } from '../../api/openf1';
 import type { SpeedPoint } from './types';
-import { ChartTip, NoData, Panel, Spinner } from './shared';
+import { ChartTip, NoData, Spinner } from './shared';
+import { ChartPanel } from './ChartPanel';
 
 type Props = {
   lapNum: number;
@@ -34,7 +35,7 @@ export function EnergyTab({ lapNum, driverNums, driverMap, speedData, telemetryL
         </div>
       </div>
 
-      <Panel title="DRS Activation" icon={<Zap size={14} style={{ color: 'var(--accent)' }} />} sub={`${driverMap[driverNums[0]]?.name_acronym || '—'} — Lap ${lapNum} · DRS values ≥ 10 = active`}>
+      <ChartPanel title="DRS Activation" icon={<Zap size={14} style={{ color: 'var(--accent)' }} />} sub={`${driverMap[driverNums[0]]?.name_acronym || '—'} — Lap ${lapNum} · DRS values ≥ 10 = active`} exportName={`drs-activation-lap-${lapNum}`} legend={[{ label: 'DRS', color: 'var(--accent)', variant: 'area' }]}>
         {telemetryLoading ? <Spinner /> : speedData.length > 0 ? (
           <ResponsiveContainer width="100%" height={140}>
             <AreaChart data={speedData}>
@@ -46,9 +47,9 @@ export function EnergyTab({ lapNum, driverNums, driverMap, speedData, telemetryL
             </AreaChart>
           </ResponsiveContainer>
         ) : <NoData msg="No car data for this lap. Try a race session lap." />}
-      </Panel>
+      </ChartPanel>
 
-      <Panel title="Gear & RPM" icon={<Gauge size={14} style={{ color: 'var(--accent-strong)' }} />}>
+      <ChartPanel title="Gear & RPM" icon={<Gauge size={14} style={{ color: 'var(--accent-strong)' }} />} exportName={`gear-rpm-lap-${lapNum}`} legend={[{ label: 'Gear', color: 'var(--accent-strong)' }, { label: 'RPM', color: chartRpm }]}>
         {speedData.length > 0 ? (
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={speedData}>
@@ -62,7 +63,7 @@ export function EnergyTab({ lapNum, driverNums, driverMap, speedData, telemetryL
             </LineChart>
           </ResponsiveContainer>
         ) : <NoData msg="No data." />}
-      </Panel>
+      </ChartPanel>
     </>
   );
 }

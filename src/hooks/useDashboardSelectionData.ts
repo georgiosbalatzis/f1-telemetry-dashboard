@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session } from '../api/openf1';
+import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session, OpenF1SessionResult } from '../api/openf1';
 import type { FetchState } from './useOpenF1';
 import type { SelectOption } from '../components/dashboard/types';
 
@@ -7,26 +7,56 @@ type Params = {
   meetings: OpenF1Meeting[] | null;
   sessions: OpenF1Session[] | null;
   drivers: OpenF1Driver[] | null;
+  sessionResults: OpenF1SessionResult[] | null;
+  sessionResultsLoading: boolean;
   lapStates: Array<FetchState<OpenF1Lap[]>>;
   circuit: string | null;
   sessionKey: number | null;
   driverNums: number[];
   lapNum: number;
+  driverSelectionAuto: boolean;
+  lapSelectionAuto: boolean;
   setCircuit: (circuit: string) => void;
   setSessionKey: (sessionKey: number) => void;
   setDriverNums: (driverNums: number[]) => void;
   setLapNum: (lapNum: number) => void;
 };
 
+function getPreferredMeetingList(meetings: OpenF1Meeting[]) {
+  const now = Date.now();
+  const completedMeetings = meetings.filter((meeting) => {
+    const endTime = Date.parse(meeting.date_end);
+    return Number.isFinite(endTime) && endTime <= now;
+  });
+  const pool = (completedMeetings.length > 0 ? completedMeetings : meetings).slice();
+  pool.sort((left, right) => Date.parse(right.date_end) - Date.parse(left.date_end));
+  return pool;
+}
+
+function getPreferredRaceSession(sessions: OpenF1Session[]) {
+  const sortedSessions = sessions.slice().sort((left, right) => Date.parse(left.date_start) - Date.parse(right.date_start));
+  return (
+    sortedSessions.find((session) => session.session_type.toLowerCase() === 'race' && session.session_name.toLowerCase() === 'race')
+    || sortedSessions.find((session) => session.session_type.toLowerCase() === 'race')
+    || sortedSessions.find((session) => session.session_name.toLowerCase().includes('race'))
+    || sortedSessions[sortedSessions.length - 1]
+    || null
+  );
+}
+
 export function useDashboardSelectionData({
   meetings,
   sessions,
   drivers,
+  sessionResults,
+  sessionResultsLoading,
   lapStates,
   circuit,
   sessionKey,
   driverNums,
   lapNum,
+  driverSelectionAuto,
+  lapSelectionAuto,
   setCircuit,
   setSessionKey,
   setDriverNums,
@@ -35,7 +65,7 @@ export function useDashboardSelectionData({
   const circuitOptions = useMemo<SelectOption<string>[]>(() => {
     if (!meetings?.length) return [];
     const seen = new Set<string>();
-    return meetings
+    return getPreferredMeetingList(meetings)
       .filter((meeting) => {
         if (seen.has(meeting.circuit_short_name)) return false;
         seen.add(meeting.circuit_short_name);
@@ -46,7 +76,10 @@ export function useDashboardSelectionData({
 
   const sessionOptions = useMemo<SelectOption<number>[]>(() => {
     if (!sessions?.length) return [];
-    return sessions.map((session) => ({ v: session.session_key, l: session.session_name }));
+    return sessions
+      .slice()
+      .sort((left, right) => Date.parse(left.date_start) - Date.parse(right.date_start))
+      .map((session) => ({ v: session.session_key, l: session.session_name }));
   }, [sessions]);
 
   const driverList = useMemo(() => drivers || [], [drivers]);
@@ -74,6 +107,28 @@ export function useDashboardSelectionData({
     Object.values(allLaps).forEach((laps) => laps.forEach((lap) => lapSet.add(lap.lap_number)));
     return Array.from(lapSet).sort((a, b) => a - b);
   }, [allLaps]);
+
+  const preferredDriverNums = useMemo(() => {
+    return (sessionResults || [])
+      .filter((result) => typeof result.position === 'number' && !result.dsq && !result.dns)
+      .sort((left, right) => left.position - right.position)
+      .slice(0, 2)
+      .map((result) => result.driver_number);
+  }, [sessionResults]);
+
+  const preferredWinnerNumber = preferredDriverNums[0] ?? null;
+  const preferredWinnerLaps = useMemo(
+    () => (preferredWinnerNumber != null ? allLaps[preferredWinnerNumber] || [] : []),
+    [allLaps, preferredWinnerNumber],
+  );
+  const preferredLapNum = useMemo(() => {
+    const fastestWinnerLap = preferredWinnerLaps
+      .filter((lap) => !lap.is_pit_out_lap && lap.lap_duration != null)
+      .sort((left, right) => (left.lap_duration ?? Number.POSITIVE_INFINITY) - (right.lap_duration ?? Number.POSITIVE_INFINITY))[0];
+
+    return fastestWinnerLap?.lap_number
+      ?? (lapOptions.includes(2) ? 2 : lapOptions[0] ?? null);
+  }, [lapOptions, preferredWinnerLaps]);
 
   const primaryDriverNumber = driverNums[0];
   const telemetryWindows = useMemo(() => {
@@ -104,23 +159,38 @@ export function useDashboardSelectionData({
   }, [circuit, circuitOptions, setCircuit]);
 
   useEffect(() => {
-    if (sessionOptions.length > 0 && !sessionKey) {
-      const raceSession = sessionOptions.find((option) => option.l.toLowerCase().includes('race'));
-      setSessionKey(raceSession?.v || sessionOptions[sessionOptions.length - 1].v);
+    if (sessions?.length && !sessionKey) {
+      const raceSession = getPreferredRaceSession(sessions);
+      if (raceSession) {
+        setSessionKey(raceSession.session_key);
+      }
     }
-  }, [sessionKey, sessionOptions, setSessionKey]);
+  }, [sessionKey, sessions, setSessionKey]);
 
   useEffect(() => {
-    if (driverList.length > 0 && driverNums.length === 0) {
-      setDriverNums(driverList.slice(0, 2).map((driver) => driver.driver_number));
+    if (driverNums.length === 0) {
+      if (preferredDriverNums.length >= 2) {
+        setDriverNums(preferredDriverNums);
+        return;
+      }
+      if (!sessionResultsLoading && driverList.length > 0) {
+        setDriverNums(driverList.slice(0, 2).map((driver) => driver.driver_number));
+      }
     }
-  }, [driverList, driverNums.length, setDriverNums]);
+  }, [driverList, driverNums.length, preferredDriverNums, sessionResultsLoading, setDriverNums]);
 
   useEffect(() => {
-    if (lapOptions.length > 0 && !lapOptions.includes(lapNum)) {
-      setLapNum(lapOptions.includes(2) ? 2 : lapOptions[0]);
+    if (lapOptions.length === 0) return;
+
+    if (!lapOptions.includes(lapNum)) {
+      setLapNum(preferredLapNum ?? lapOptions[0]);
+      return;
     }
-  }, [lapNum, lapOptions, setLapNum]);
+
+    if (driverSelectionAuto && lapSelectionAuto && preferredLapNum != null && lapNum !== preferredLapNum) {
+      setLapNum(preferredLapNum);
+    }
+  }, [driverSelectionAuto, lapNum, lapOptions, lapSelectionAuto, preferredLapNum, setLapNum]);
 
   return {
     circuitOptions,

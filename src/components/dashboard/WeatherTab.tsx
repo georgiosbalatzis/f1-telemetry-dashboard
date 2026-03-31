@@ -2,7 +2,8 @@ import { Sun } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Weather } from '../../api/openf1';
 import type { WeatherRadarPoint, WeatherTrendPoint } from './types';
-import { ChartTip, Err, NoData, Panel, Spinner, Stat } from './shared';
+import { ChartTip, Err, NoData, Spinner, Stat } from './shared';
+import { ChartPanel } from './ChartPanel';
 
 type Props = {
   loading: boolean;
@@ -35,7 +36,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         <Stat label="Wind Direction" value={latestWeather.wind_direction.toFixed(0)} unit="°" />
         <Stat label="Weather Samples" value={sampleCount} />
       </div>
-      <Panel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes">
+      <ChartPanel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes" exportName="conditions-radar" legend={[{ label: 'Conditions', color: 'var(--accent)', variant: 'area' }]}>
         <ResponsiveContainer width="100%" height={280}>
           <RadarChart data={weatherRadar} outerRadius="70%">
             <PolarGrid stroke={chartGrid} />
@@ -43,8 +44,8 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
             <Radar name="Conditions" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.12} strokeWidth={2} />
           </RadarChart>
         </ResponsiveContainer>
-      </Panel>
-      <Panel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session">
+      </ChartPanel>
+      <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={[{ label: 'Air °C', color: '#EF4444' }, { label: 'Track °C', color: '#F97316' }, { label: 'Humidity %', color: '#3B82F6' }, { label: 'Wind m/s', color: '#06B6D4' }]}>
         {weatherTrend.length > 1 ? (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={weatherTrend}>
@@ -60,7 +61,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
             </LineChart>
           </ResponsiveContainer>
         ) : <NoData msg="More weather samples are needed to draw a session trend." />}
-      </Panel>
+      </ChartPanel>
     </>
   );
 }

@@ -138,6 +138,19 @@ export interface OpenF1TeamRadio {
   meeting_key: number;
 }
 
+export interface OpenF1SessionResult {
+  driver_number: number;
+  position: number;
+  dnf: boolean;
+  dns: boolean;
+  dsq: boolean;
+  number_of_laps: number;
+  duration: number | number[] | null;
+  gap_to_leader: number | string | Array<number | string> | null;
+  session_key: number;
+  meeting_key: number;
+}
+
 // ─── URL builder ─────────────────────────────────────────────────────────────
 // OpenF1 requires literal operators in param names: date>=VALUE, speed<=VALUE
 // We must NOT percent-encode the keys, but we DO encode values (except dates
@@ -312,6 +325,9 @@ export const getRaceControl = (sessionKey: number, options?: RequestOptions) =>
 
 export const getTeamRadio = (sessionKey: number, options?: RequestOptions) =>
   fetchJson<OpenF1TeamRadio>(buildUrl('team_radio', { session_key: sessionKey }), options);
+
+export const getSessionResult = (sessionKey: number, options?: RequestOptions) =>
+  fetchJson<OpenF1SessionResult>(buildUrl('session_result', { session_key: sessionKey }), options);
 
 /** Car telemetry for a single lap, windowed by date_start of this lap and next lap.
  *  If nextLapDateStart is missing (last lap), uses a 2-min window. */

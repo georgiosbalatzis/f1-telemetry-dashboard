@@ -128,6 +128,25 @@ export function useDashboardViewModel({
     });
   }, [driverNums, telemetryByDriver]);
 
+  const comparisonControlData = useMemo<ComparisonPoint[]>(() => {
+    const activeDrivers = driverNums.filter((driverNumber) => (telemetryByDriver[driverNumber] || []).length > 0);
+    if (activeDrivers.length < 2) return [];
+
+    const points = 120;
+    return Array.from({ length: points }, (_, index) => {
+      const progress = Math.round((index / (points - 1)) * 100);
+      const point: ComparisonPoint = { progress };
+      activeDrivers.forEach((driverNumber) => {
+        const telemetry = telemetryByDriver[driverNumber] || [];
+        const sampleIndex = Math.min(telemetry.length - 1, Math.round((index / (points - 1)) * (telemetry.length - 1)));
+        const sample = telemetry[sampleIndex];
+        point[`throttle_${driverNumber}`] = sample?.throttle;
+        point[`brake_${driverNumber}`] = sample?.brake != null ? -sample.brake : undefined;
+      });
+      return point;
+    });
+  }, [driverNums, telemetryByDriver]);
+
   const lapDeltaData = useMemo(() => {
     return lapOptions.map((lap) => {
       const durations = driverNums
@@ -213,6 +232,7 @@ export function useDashboardViewModel({
   return {
     speedData,
     comparisonSpeedData,
+    comparisonControlData,
     lapTimeData,
     lapDeltaData,
     lapSummaries,

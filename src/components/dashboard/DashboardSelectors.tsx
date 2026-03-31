@@ -65,7 +65,7 @@ export function DashboardSelectors({
 }: Props) {
   const labelClass = embedMode
     ? 'mb-1.5 block text-[9px] uppercase tracking-[0.22em] text-[color:var(--text-dim)]'
-    : 'mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]';
+    : 'mb-1.5 block text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]';
   const summaryToneStyles = {
     blue: { color: 'var(--accent)' },
     purple: { color: 'var(--accent-strong)' },
@@ -160,18 +160,18 @@ export function DashboardSelectors({
 
   if (embedMode) {
     return (
-      <div className="mb-4">
-        <div className="dashboard-card rounded-[24px] p-3 sm:p-4">
+      <div className="mb-3">
+        <div className="dashboard-card rounded-[18px] p-3">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-stretch">
-            <div className="dashboard-embed-focus shrink-0 rounded-[20px] px-3.5 py-3 sm:px-4 xl:w-[210px]">
-              <div className="text-[9px] uppercase tracking-[0.26em] text-[color:var(--accent)]">Focus Lap</div>
+            <div className="dashboard-embed-focus shrink-0 rounded-[16px] px-3 py-3 xl:w-[184px]">
+              <div className="text-[9px] uppercase tracking-[0.16em] text-[color:var(--accent)]">Focus Lap</div>
               <div className="mt-3 flex items-center justify-between gap-2">
                 <button onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button">
                   <ChevronLeft size={14} />
                 </button>
                 <div className="min-w-[82px] text-center">
-                  <div className="text-4xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</div>
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--text-muted)]">of {totalLaps ?? '—'}</div>
+                  <div className="text-3xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</div>
+                  <div className="text-[10px] uppercase tracking-[0.12em] text-[color:var(--text-muted)]">of {totalLaps ?? '—'}</div>
                 </div>
                 <button onClick={() => onStepLap(1)} disabled={!canStepForward} className="dashboard-nav-button">
                   <ChevronRight size={14} />
@@ -203,41 +203,78 @@ export function DashboardSelectors({
   }
 
   return (
-    <div className="mb-6">
-      <div className="dashboard-panel rounded-[28px] p-4 sm:p-5">
-        <div className="grid gap-4 sm:gap-6 xl:grid-cols-[200px_minmax(0,1fr)]">
-          <div className="dashboard-embed-focus relative overflow-hidden rounded-[24px] p-4 sm:p-5">
-            <div className="absolute inset-x-0 top-0 h-px bg-white/25 opacity-30" />
-            <div className="text-[10px] uppercase tracking-[0.32em] text-[color:var(--accent)]">Lap Focus</div>
-            <div className="mt-3 flex items-end gap-2">
-              <span className="text-5xl font-black tracking-tight text-[color:var(--text-strong)] sm:text-6xl">{lapNum}</span>
-              <span className="mb-2 text-base font-medium text-[color:var(--text-muted)] sm:text-lg">/ {totalLaps ?? '—'}</span>
+    <div className="mb-4 sm:mb-5">
+      <div className="sm:hidden">
+        <div className="dashboard-card rounded-[16px] p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[9px] uppercase tracking-[0.16em] text-[color:var(--accent)]">Lap Focus</div>
+              <div className="mt-1.5 flex items-end gap-1.5">
+                <span className="text-3xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</span>
+                <span className="mb-1 text-[11px] font-medium text-[color:var(--text-muted)]">/ {totalLaps ?? '—'}</span>
+              </div>
             </div>
-            <div className="mt-2 text-sm text-[color:var(--text-muted)]">
-              Current telemetry lens for comparison, strategy, and radio context.
+            <div className="dashboard-pill rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-muted)]">
+              current lap
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="dashboard-card rounded-[24px] p-4 sm:p-5">
-              <div className="mb-4">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]">Session Controls</div>
-                <div className="mt-1 text-sm text-[color:var(--text-muted)]">
-                  Move between season, session, and lap focus without losing comparison context.
-                </div>
+          <div className="mt-3">{lapField}</div>
+
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {seasonField}
+            {sessionField}
+          </div>
+
+          <div className="mt-2">{circuitField}</div>
+
+          {(summaryRow || quickChips.length > 0) && (
+            <div className="mt-3 border-t border-[color:var(--line)] pt-3">
+              {summaryRow}
+              <div className={summaryRow ? 'mt-2' : ''}>
+                {quickRow}
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {seasonField}
-                {circuitField}
-                {sessionField}
-                {lapField}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="hidden sm:block">
+        <div className="dashboard-card rounded-[20px] p-3.5 sm:p-4">
+          <div className="grid gap-4 xl:grid-cols-[164px_minmax(0,1fr)]">
+            <div className="dashboard-embed-focus relative overflow-hidden rounded-[16px] p-3.5">
+              <div className="absolute inset-x-0 top-0 h-px bg-white/25 opacity-30" />
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[color:var(--accent)]">Lap Focus</div>
+              <div className="mt-2.5 flex items-end gap-2">
+                <span className="text-4xl font-black tracking-tight text-[color:var(--text-strong)] sm:text-5xl">{lapNum}</span>
+                <span className="mb-1.5 text-sm font-medium text-[color:var(--text-muted)] sm:text-base">/ {totalLaps ?? '—'}</span>
+              </div>
+              <div className="mt-2 text-[12px] leading-[1.45] text-[color:var(--text-muted)]">
+                Current telemetry lens.
               </div>
             </div>
 
-            {summaryRow}
+            <div className="space-y-3">
+              <div>
+                <div className="mb-3">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">Session Controls</div>
+                  <div className="mt-1 text-[12px] leading-[1.45] text-[color:var(--text-muted)]">
+                    Change season, session, and lap focus without losing comparison state.
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  {seasonField}
+                  {circuitField}
+                  {sessionField}
+                  {lapField}
+                </div>
+              </div>
 
-            <div className="border-t border-[color:var(--line)] pt-3">
-              {quickRow}
+              {summaryRow}
+
+              <div className="border-t border-[color:var(--line)] pt-3">
+                {quickRow}
+              </div>
             </div>
           </div>
         </div>

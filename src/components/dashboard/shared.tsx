@@ -18,7 +18,7 @@ export function NoData({ msg }: { msg: string }) {
 
 export function Stat({ label, value, unit, color }: { label: string; value: string | number; unit?: string; color?: string }) {
   return (
-    <div className="dashboard-stat rounded-[18px] p-3 sm:p-4">
+    <div className="dashboard-stat rounded-[14px] p-2.5 sm:p-3">
       <div className="mb-1 text-[10px] uppercase tracking-[0.22em] text-[color:var(--text-muted)]">{label}</div>
       <div className="flex items-baseline gap-1">
         <span className="text-lg font-bold font-mono sm:text-xl" style={{ color: color || 'var(--text-strong)' }}>{value}</span>
@@ -44,11 +44,11 @@ export function Panel({
   headerRight?: ReactNode;
 }) {
   return (
-    <div className={cn('dashboard-panel rounded-[22px] p-4 sm:p-5', className)}>
-      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+    <div className={cn('dashboard-panel rounded-[16px] p-3 sm:rounded-[18px] sm:p-4', className)}>
+      <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <div>
-          <h3 className="mb-1 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.28em] text-[color:var(--text-muted)]">{icon}{title}</h3>
-          {sub ? <p className="max-w-3xl text-[11px] leading-5 text-[color:var(--text-dim)]">{sub}</p> : null}
+          <h3 className="mb-1 flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[color:var(--text-muted)] sm:text-[10px] sm:tracking-[0.24em]">{icon}{title}</h3>
+          {sub ? <p className="max-w-3xl text-[11px] leading-[1.45] text-[color:var(--text-dim)]">{sub}</p> : null}
         </div>
         {headerRight}
       </div>
@@ -78,16 +78,16 @@ export function DriverChip({
       <button
         onClick={onClick}
         className={cn(
-          'group relative flex min-h-[116px] flex-col items-start rounded-[18px] border px-3 py-3 text-left transition-all duration-200',
+          'group relative flex min-h-[88px] flex-col items-start rounded-[14px] border px-2.5 py-2.5 text-left transition-all duration-200 sm:min-h-[98px]',
           selected
-            ? 'text-[color:var(--text-strong)] shadow-[0_18px_30px_-24px_rgba(0,0,0,0.42)]'
+            ? 'text-[color:var(--text-strong)] shadow-[0_8px_18px_-16px_rgba(0,0,0,0.28)]'
             : 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-soft)] hover:-translate-y-0.5 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]',
         )}
         style={selected ? { borderColor: `${color}88`, background: `linear-gradient(180deg, ${color}20, transparent 78%), var(--surface-card)` } : {}}
       >
-        <span className="absolute inset-x-0 top-0 h-1 rounded-t-[18px]" style={{ backgroundColor: color, opacity: selected ? 1 : 0.8 }} />
-        <div className="flex w-full items-start justify-between gap-2 pt-1">
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--surface-avatar)] font-black text-[11px] text-[color:var(--text-soft)]">
+        <span className="absolute inset-x-0 top-0 h-px rounded-t-[14px]" style={{ backgroundColor: color, opacity: selected ? 0.9 : 0.55 }} />
+        <div className="flex w-full items-start justify-between gap-2">
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--surface-avatar)] font-black text-[10px] text-[color:var(--text-soft)]">
             {driver.headshot_url ? (
               <img src={driver.headshot_url} alt={driver.full_name} className="h-full w-full object-cover" />
             ) : (
@@ -107,13 +107,13 @@ export function DriverChip({
           </span>
         </div>
         <div className="mt-3 min-w-0">
-          <div className="text-sm font-black uppercase tracking-[0.16em] text-[color:var(--text-strong)]">
+          <div className="text-[13px] font-black uppercase tracking-[0.12em] text-[color:var(--text-strong)]">
             {driver.name_acronym}
           </div>
-          <div className="mt-1 truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--text-soft)]">
+          <div className="mt-1 truncate text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
             {driver.last_name}
           </div>
-          <div className="mt-1 truncate text-[10px] uppercase tracking-[0.12em] text-[color:var(--text-dim)]">
+          <div className="mt-1 truncate text-[9px] uppercase tracking-[0.1em] text-[color:var(--text-dim)]">
             {driver.team_name}
           </div>
         </div>
@@ -126,8 +126,8 @@ export function DriverChip({
       onClick={onClick}
       className={cn(
         compact
-          ? 'flex min-w-[132px] items-center gap-2 rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3'
-          : 'flex min-w-[150px] items-center gap-2 rounded-[14px] border px-3 py-2.5 text-[11px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3.5 sm:text-xs',
+          ? 'flex w-full min-w-0 items-center justify-start gap-2 rounded-[10px] border px-2.5 py-1.5 text-[10px] font-semibold transition-all duration-200'
+          : 'flex min-w-[138px] items-center gap-2 rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3',
         selected
           ? 'border-current bg-[color:var(--surface-soft)] text-[color:var(--text-strong)] shadow-[0_0_0_1px_currentColor_inset]'
           : 'border-[color:var(--line)] text-[color:var(--text-muted)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
@@ -144,8 +144,8 @@ export function DriverChip({
           initials
         )}
       </span>
-      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: selected ? color : '#4b5563' }} />
-      <span className={cn(compact ? 'tracking-[0.14em]' : 'tracking-[0.18em]')}>{driver.name_acronym}</span>
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: selected ? color : '#4b5563' }} />
+      <span className={cn(compact ? 'tracking-[0.12em]' : 'tracking-[0.14em]')}>{driver.name_acronym}</span>
       <span className={cn('font-normal opacity-50', compact ? 'text-[9px]' : 'text-[10px]')}>#{driver.driver_number}</span>
     </button>
   );
@@ -167,8 +167,8 @@ export function ToolbarButton({
   const activeStyle = active
     ? {
       borderColor: 'var(--accent-border)',
-      background: 'var(--accent)',
-      color: '#ffffff',
+      background: 'var(--accent-muted)',
+      color: 'var(--accent)',
     }
     : undefined;
 
@@ -179,15 +179,15 @@ export function ToolbarButton({
       disabled={disabled}
       style={activeStyle}
       className={cn(
-        'inline-flex h-8 items-center gap-1.5 rounded-[999px] border px-3 text-[10px] uppercase tracking-[0.16em] transition-all duration-200',
+        'inline-flex h-8 min-w-8 items-center justify-center gap-1.5 rounded-[9px] border px-2 text-[10px] uppercase tracking-[0.08em] transition-all duration-200 sm:rounded-[10px] sm:px-2.5',
         active
-          ? 'shadow-[var(--tabs-active-shadow)]'
-          : 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-muted)] hover:-translate-y-0.5 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
+          ? 'text-[color:var(--accent)] shadow-[var(--tabs-active-shadow)]'
+          : 'border-transparent bg-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
         disabled && 'cursor-not-allowed opacity-45 hover:translate-y-0 hover:border-[color:var(--line)] hover:text-[color:var(--text-muted)]',
       )}
     >
       {icon}
-      <span className="hidden min-[380px]:inline">{label}</span>
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }
@@ -224,7 +224,7 @@ export function AccentChip({
   return (
     <span
       style={tones[tone]}
-      className="inline-flex items-center rounded-[999px] border px-3 py-1.5 text-[10px] uppercase tracking-[0.16em]"
+      className="inline-flex items-center rounded-[999px] border px-2 py-1 text-[8px] uppercase tracking-[0.12em] sm:px-2.5 sm:text-[9px]"
     >
       {label}
     </span>
@@ -240,7 +240,7 @@ type ChartTipPayload = {
 export function ChartTip({ active, payload, label }: { active?: boolean; payload?: ChartTipPayload[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="dashboard-card rounded-[16px] px-3 py-2.5 text-xs backdrop-blur-xl">
+    <div className="dashboard-card rounded-[12px] px-3 py-2 text-xs backdrop-blur-xl">
       <div className="mb-1 text-[color:var(--text-muted)]">{label}</div>
       {payload.map((item, index) => (
         <div key={index} className="flex items-center gap-2">
