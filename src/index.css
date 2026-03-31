@@ -35,6 +35,10 @@
   --brand-card-bg: linear-gradient(135deg, rgba(255, 104, 71, 0.18), rgba(255, 179, 71, 0.1) 42%, rgba(13, 18, 28, 0.94) 100%);
   --brand-card-border: rgba(255, 161, 111, 0.22);
   --brand-card-shadow: 0 24px 58px -36px rgba(255, 104, 71, 0.46);
+  --embed-shell-bg: linear-gradient(180deg, rgba(16, 20, 29, 0.76), rgba(10, 14, 21, 0.88));
+  --embed-focus-bg: linear-gradient(145deg, rgba(255, 83, 54, 0.18), rgba(255, 179, 71, 0.08) 52%, rgba(255, 255, 255, 0.02) 100%);
+  --embed-focus-border: rgba(255, 139, 93, 0.18);
+  --embed-focus-shadow: 0 18px 36px -28px rgba(255, 83, 54, 0.32);
   --input-bg: linear-gradient(180deg, rgba(20, 24, 35, 0.9), rgba(14, 18, 26, 0.96));
   --input-placeholder: #748296;
   --tabs-rail: rgba(12, 16, 24, 0.48);
@@ -79,6 +83,10 @@
   --brand-card-bg: linear-gradient(135deg, rgba(16, 42, 67, 0.1), rgba(255, 104, 71, 0.14) 44%, rgba(255, 249, 238, 0.98) 100%);
   --brand-card-border: rgba(16, 42, 67, 0.12);
   --brand-card-shadow: 0 22px 42px -32px rgba(16, 42, 67, 0.16);
+  --embed-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(249, 242, 233, 0.92));
+  --embed-focus-bg: linear-gradient(145deg, rgba(255, 104, 71, 0.16), rgba(255, 179, 71, 0.1) 52%, rgba(255, 255, 255, 0.52) 100%);
+  --embed-focus-border: rgba(255, 139, 93, 0.18);
+  --embed-focus-shadow: 0 16px 28px -22px rgba(255, 104, 71, 0.18);
   --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 242, 233, 0.98));
   --input-placeholder: #94a3b8;
   --tabs-rail: rgba(255, 255, 255, 0.54);
@@ -187,6 +195,29 @@ code, .font-mono {
   background: var(--brand-card-bg);
   box-shadow: var(--brand-card-shadow);
   backdrop-filter: blur(18px);
+}
+
+.dashboard-embed-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--embed-shell-bg);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+}
+
+.dashboard-embed-focus {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--embed-focus-border);
+  background: var(--embed-focus-bg);
+  box-shadow: var(--embed-focus-shadow);
+}
+
+.dashboard-embed-chip {
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  backdrop-filter: blur(12px);
 }
 
 .dashboard-input {
@@ -303,6 +334,26 @@ select {
   pointer-events: none;
 }
 
+.dashboard-embed-shell::before,
+.dashboard-embed-focus::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--surface-sheen);
+  pointer-events: none;
+}
+
+.dashboard-embed-shell::after,
+.dashboard-embed-focus::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border: 1px solid var(--surface-highlight);
+  border-radius: inherit;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .dashboard-tabs-rail {
   display: flex;
   gap: 0.35rem;
@@ -317,6 +368,19 @@ select {
 
 .dashboard-tabs-rail > * {
   flex-shrink: 0;
+}
+
+.dashboard-tabs-rail-compact {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.dashboard-app.embed-mode .dashboard-panel,
+.dashboard-app.embed-mode .dashboard-card,
+.dashboard-app.embed-mode .dashboard-stat {
+  box-shadow: 0 18px 40px -30px rgba(0, 0, 0, 0.26);
 }
 
 .recharts-cartesian-grid-horizontal line,

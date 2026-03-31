@@ -39,6 +39,14 @@ type SavedPreset = {
 
 const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
 const THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
+const TAB_LABELS = {
+  telemetry: 'Telemetry',
+  tires: 'Tyres & Strategy',
+  energy: 'DRS & Gears',
+  radio: 'Team Radio',
+  incidents: 'Race Control',
+  weather: 'Weather',
+} as const;
 
 function readInitialSplitMode() {
   if (typeof window === 'undefined') return false;
@@ -252,11 +260,35 @@ export default function F1TelemetryDashboard() {
     () => Object.values(savedPresets).sort((left, right) => right.savedAt.localeCompare(left.savedAt)).map((preset) => preset.name),
     [savedPresets],
   );
+  const sessionLabel = useMemo(
+    () => selectionData.sessionOptions.find((option) => option.v === filters.sessionKey)?.l ?? (filters.sessionKey != null ? `Session ${filters.sessionKey}` : 'Session'),
+    [filters.sessionKey, selectionData.sessionOptions],
+  );
+  const embedTitle = useMemo(() => {
+    const parts = [filters.circuit, sessionLabel].filter(Boolean);
+    return parts.length > 0 ? parts.join(' · ') : 'F1 Telemetry Embed';
+  }, [filters.circuit, sessionLabel]);
+  const embedSubtitle = useMemo(
+    () => `${filters.year} season · ${TAB_LABELS[filters.tab]} view`,
+    [filters.tab, filters.year],
+  );
+  const embedContext = useMemo(
+    () => [
+      { label: 'Lap', value: `L${filters.lapNum}` },
+      { label: 'Drivers', value: `${filters.driverNums.length}/4` },
+      { label: 'View', value: TAB_LABELS[filters.tab] },
+    ],
+    [filters.driverNums.length, filters.lapNum, filters.tab],
+  );
+  const openDashboardUrl = useMemo(
+    () => buildDashboardUrl(filters.snapshot, splitMode, false, themeMode),
+    [filters.snapshot, splitMode, themeMode],
+  );
   const contentLayoutClass = splitMode
-    ? 'grid gap-6 pb-16 xl:grid-cols-2 xl:[&>*:first-child]:col-span-2'
-    : 'space-y-6 pb-16';
+    ? `grid ${embedMode ? 'gap-4 pb-8' : 'gap-6 pb-16'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
+    : `${embedMode ? 'space-y-4 pb-8' : 'space-y-6 pb-16'}`;
   const pageShellClass = embedMode
-    ? 'relative mx-auto max-w-[1500px] px-3 py-2 sm:px-5'
+    ? 'relative mx-auto max-w-[1500px] px-2 py-2 sm:px-4'
     : 'relative mx-auto max-w-[1500px] px-5 sm:px-8';
 
   useEffect(() => {
@@ -415,6 +447,10 @@ export default function F1TelemetryDashboard() {
           splitMode={splitMode}
           embedMode={embedMode}
           themeMode={themeMode}
+          embedTitle={embedTitle}
+          embedSubtitle={embedSubtitle}
+          embedContext={embedContext}
+          openDashboardUrl={openDashboardUrl}
           onPresetNameChange={handlePresetNameChange}
           onSavePreset={handleSavePreset}
           onShare={handleShare}
@@ -442,6 +478,7 @@ export default function F1TelemetryDashboard() {
           quickChips={quickChips}
           canStepBackward={canStepBackward}
           canStepForward={canStepForward}
+          embedMode={embedMode}
           onYearChange={filters.handleYearChange}
           onCircuitChange={filters.handleCircuitChange}
           onSessionChange={filters.handleSessionChange}
@@ -456,10 +493,11 @@ export default function F1TelemetryDashboard() {
         <DriverSelector
           drivers={selectionData.driverList}
           selectedDrivers={filters.driverNums}
+          embedMode={embedMode}
           onToggle={filters.toggleDriver}
         />
 
-        <DashboardTabs activeTab={filters.tab} onChange={filters.setTab} />
+        <DashboardTabs activeTab={filters.tab} onChange={filters.setTab} embedMode={embedMode} />
 
         <div className={contentLayoutClass}>
           {filters.tab === 'telemetry' && (
