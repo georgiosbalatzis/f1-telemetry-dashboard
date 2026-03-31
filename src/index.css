@@ -1,17 +1,41 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  --bg: #090a12;
+  --panel: #11111a;
+  --panel-2: #151624;
+  --line: rgba(255, 255, 255, 0.06);
+  --muted: #6b7284;
+  --text: #e7e8ee;
+  --accent-red: #ff5336;
+  --accent-blue: #3e89ff;
+  --accent-purple: #9462ff;
+  --accent-amber: #f7a31b;
+}
+
+html {
+  background: var(--bg);
+}
 
 body {
   margin: 0;
   font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #0a0a14;
-  color: #e0e0e0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 83, 54, 0.05), transparent 22%),
+    radial-gradient(circle at top right, rgba(62, 137, 255, 0.05), transparent 20%),
+    linear-gradient(180deg, #0a0a12, #08090f);
+  color: var(--text);
 }
 
 code, .font-mono {
   font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 /* Custom scrollbar */
@@ -39,19 +63,73 @@ code, .font-mono {
   display: none;
 }
 
-/* Selection */
-::selection {
-  background: rgba(220, 38, 38, 0.3);
+.dashboard-select {
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(20, 21, 32, 0.95), rgba(15, 15, 24, 0.95));
+  padding: 0.7rem 2.4rem 0.7rem 0.95rem;
+  font-size: 0.92rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
 }
 
-/* Smooth transitions for recharts */
+.dashboard-select:hover,
+.dashboard-select:focus {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-select:disabled {
+  cursor: not-allowed;
+  color: #647085;
+}
+
+.dashboard-select-icon {
+  pointer-events: none;
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #596173;
+}
+
+.dashboard-nav-button {
+  display: inline-flex;
+  height: 2.7rem;
+  width: 2.7rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(20, 21, 32, 0.95), rgba(15, 15, 24, 0.95));
+  color: #7b8394;
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.dashboard-nav-button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+.dashboard-nav-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+input,
+button,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(255, 83, 54, 0.3);
+}
+
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
   opacity: 0.03;
-}
-
-/* Pulse animation */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
 }

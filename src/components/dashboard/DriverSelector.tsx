@@ -11,9 +11,11 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle }: Props) {
   if (drivers.length === 0) return null;
 
   return (
-    <div className="mb-6">
-      <label className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-gray-600">Drivers <span className="text-gray-700">(up to 4)</span></label>
-      <div className="flex flex-wrap gap-2">
+    <div className="mb-5">
+      <label className="mb-3 block text-[10px] uppercase tracking-[0.3em] text-slate-700">
+        Drivers ({selectedDrivers.length}/4) <span className="text-slate-800">- click to compare</span>
+      </label>
+      <div className="flex flex-wrap gap-2.5">
         {drivers.map((driver) => (
           <DriverChip
             key={driver.driver_number}

@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboardFilters } from '../hooks/useDashboardFilters';
+import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import { useDashboardSelectionData } from '../hooks/useDashboardSelectionData';
 import { useDashboardViewModel } from '../hooks/useDashboardViewModel';
 import {
@@ -26,8 +27,55 @@ import { StrategyTab } from './dashboard/StrategyTab';
 import { WeatherTab } from './dashboard/WeatherTab';
 import { Err } from './dashboard/shared';
 
+type SavedPreset = {
+  name: string;
+  snapshot: DashboardFilterSnapshot;
+  splitMode: boolean;
+  savedAt: string;
+};
+
+const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
+
+function readInitialSplitMode() {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('layout') === 'split';
+}
+
+function readSavedPresets() {
+  if (typeof window === 'undefined') return {} as Record<string, SavedPreset>;
+  try {
+    const raw = window.localStorage.getItem(PRESET_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, SavedPreset>;
+    return parsed ?? {};
+  } catch {
+    return {};
+  }
+}
+
+function buildDashboardUrl(snapshot: DashboardFilterSnapshot, splitMode: boolean) {
+  if (typeof window === 'undefined') return '';
+
+  const params = new URLSearchParams();
+  params.set('year', String(snapshot.year));
+  if (snapshot.circuit) params.set('circuit', snapshot.circuit);
+  if (snapshot.sessionKey != null) params.set('session', String(snapshot.sessionKey));
+  if (snapshot.driverNums.length > 0) params.set('drivers', snapshot.driverNums.join(','));
+  params.set('lap', String(snapshot.lapNum));
+  params.set('tab', snapshot.tab);
+  if (splitMode) params.set('layout', 'split');
+
+  const query = params.toString();
+  return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+}
+
 export default function F1TelemetryDashboard() {
   const filters = useDashboardFilters();
+  const setLapNum = filters.setLapNum;
+  const [splitMode, setSplitMode] = useState(readInitialSplitMode);
+  const [presetName, setPresetName] = useState('');
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [savedPresets, setSavedPresets] = useState<Record<string, SavedPreset>>(readSavedPresets);
 
   const meetings = useMeetings(filters.year);
   const sessions = useSessions(filters.year, filters.circuit);
@@ -109,26 +157,169 @@ export default function F1TelemetryDashboard() {
   const anyLoading = meetings.loading || sessions.loading || drivers.loading;
   const lapsLoading = lapStates.some((state) => state.loading);
   const telemetryLoading = telemetryStates.some((state) => state.loading);
+  const totalLaps = selectionData.lapOptions.length > 0 ? selectionData.lapOptions[selectionData.lapOptions.length - 1] : null;
+  const currentLapIndex = selectionData.lapOptions.indexOf(filters.lapNum);
+  const canStepBackward = currentLapIndex > 0;
+  const canStepForward = currentLapIndex >= 0 && currentLapIndex < selectionData.lapOptions.length - 1;
+  const stepLap = useCallback((direction: -1 | 1) => {
+    const nextIndex = currentLapIndex + direction;
+    const nextLap = selectionData.lapOptions[nextIndex];
+    if (nextLap != null) {
+      setLapNum(nextLap);
+    }
+  }, [currentLapIndex, selectionData.lapOptions, setLapNum]);
   const yearOptions = useMemo(
     () => Array.from({ length: new Date().getFullYear() - 2022 }, (_, index) => 2023 + index),
     [],
   );
+  const summaryPills = useMemo(() => {
+    return viewModel.lapSummaries.slice(0, 2).map((summary, index) => ({
+      label: `P${index + 1}`,
+      driver: summary.name,
+      detail: summary.gapToLeader != null && summary.gapToLeader > 0 ? `+${summary.gapToLeader.toFixed(3)}s` : summary.lapTime != null ? `${summary.lapTime.toFixed(3)}s` : '—',
+      tone: index === 0 ? 'blue' as const : 'purple' as const,
+    }));
+  }, [viewModel.lapSummaries]);
+  const quickChips = useMemo(() => {
+    const leader = viewModel.lapSummaries[0];
+    return [
+      { label: leader?.lapTime ? `Fastest ${leader.name} ${leader.lapTime.toFixed(3)}s` : `Focus L${filters.lapNum}`, tone: 'purple' as const },
+      { label: `Pits ${viewModel.filteredPits.length}`, tone: 'amber' as const },
+      { label: `Drivers ${filters.driverNums.length}`, tone: 'blue' as const },
+      { label: `Laps ${selectionData.lapOptions.length}`, tone: 'neutral' as const },
+    ];
+  }, [filters.driverNums.length, filters.lapNum, selectionData.lapOptions.length, viewModel.filteredPits.length, viewModel.lapSummaries]);
+  const defaultPresetName = useMemo(() => {
+    const gp = filters.circuit || 'session';
+    return `${gp.toLowerCase().replace(/\s+/g, '-')}-lap-${filters.lapNum}`;
+  }, [filters.circuit, filters.lapNum]);
+  const presetNames = useMemo(
+    () => Object.values(savedPresets).sort((left, right) => right.savedAt.localeCompare(left.savedAt)).map((preset) => preset.name),
+    [savedPresets],
+  );
+  const contentLayoutClass = splitMode
+    ? 'grid gap-6 pb-16 xl:grid-cols-2 xl:[&>*:first-child]:col-span-2'
+    : 'space-y-6 pb-16';
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const url = buildDashboardUrl(filters.snapshot, splitMode);
+    window.history.replaceState({}, '', url);
+  }, [filters.snapshot, splitMode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(savedPresets));
+    } catch {
+      // Ignore storage failures and keep the app usable.
+    }
+  }, [savedPresets]);
+
+  useEffect(() => {
+    if (!feedback || typeof window === 'undefined') return;
+
+    const timeoutId = window.setTimeout(() => setFeedback(null), 2600);
+    return () => window.clearTimeout(timeoutId);
+  }, [feedback]);
+
+  const handlePresetNameChange = useCallback((value: string) => {
+    setPresetName(value);
+    const preset = savedPresets[value];
+    if (!preset) return;
+
+    filters.applySnapshot(preset.snapshot);
+    setSplitMode(preset.splitMode);
+    setFeedback(`Loaded preset ${preset.name}`);
+  }, [filters, savedPresets]);
+
+  const handleSavePreset = useCallback(() => {
+    const name = presetName.trim() || defaultPresetName;
+    const preset: SavedPreset = {
+      name,
+      snapshot: filters.snapshot,
+      splitMode,
+      savedAt: new Date().toISOString(),
+    };
+
+    setSavedPresets((prev) => ({ ...prev, [name]: preset }));
+    setPresetName(name);
+    setFeedback(`Saved preset ${name}`);
+  }, [defaultPresetName, filters.snapshot, presetName, splitMode]);
+
+  const handleShare = useCallback(async () => {
+    const url = buildDashboardUrl(filters.snapshot, splitMode);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+        setFeedback('Share link copied');
+        return;
+      }
+    } catch {
+      // Fall back to navigator.share or prompt flow below.
+    }
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'F1 Telemetry Dashboard', url });
+        setFeedback('Share sheet opened');
+        return;
+      }
+    } catch {
+      // Ignore canceled shares and use the prompt fallback.
+    }
+
+    window.prompt('Copy this link', url);
+    setFeedback('Share link ready');
+  }, [filters.snapshot, splitMode]);
+
+  const handlePrint = useCallback(() => {
+    setFeedback('Opening print dialog');
+    window.print();
+  }, []);
+
+  const handleToggleSplit = useCallback(() => {
+    setSplitMode((prev) => !prev);
+    setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled');
+  }, [splitMode]);
+
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      setFeedback('No previous page in history');
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a14] text-gray-200 selection:bg-red-600/30">
+    <div className="min-h-screen bg-[#0a0a14] text-slate-200 selection:bg-red-600/30">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-1/4 -top-1/2 h-[800px] w-[800px] rounded-full bg-red-600/[0.03] blur-[120px]" />
-        <div className="absolute -bottom-1/2 -right-1/4 h-[600px] w-[600px] rounded-full bg-cyan-500/[0.02] blur-[100px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,83,54,0.07),transparent_24%),radial-gradient(circle_at_75%_20%,rgba(49,112,255,0.07),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(113,61,255,0.07),transparent_30%)]" />
+        <div className="absolute inset-0 opacity-[0.18]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '72px 72px' }} />
       </div>
 
-      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6">
-        <DashboardHeader loading={anyLoading} />
+      <div className="relative mx-auto max-w-[1500px] px-5 sm:px-8">
+        <DashboardHeader
+          loading={anyLoading}
+          presetName={presetName}
+          presetNames={presetNames}
+          feedback={feedback}
+          splitMode={splitMode}
+          onPresetNameChange={handlePresetNameChange}
+          onSavePreset={handleSavePreset}
+          onShare={handleShare}
+          onPrint={handlePrint}
+          onToggleSplit={handleToggleSplit}
+          onBack={handleBack}
+        />
 
         <DashboardSelectors
           year={filters.year}
           circuit={filters.circuit}
           sessionKey={filters.sessionKey}
           lapNum={filters.lapNum}
+          totalLaps={totalLaps}
           yearOptions={yearOptions}
           circuitOptions={selectionData.circuitOptions}
           sessionOptions={selectionData.sessionOptions}
@@ -136,10 +327,15 @@ export default function F1TelemetryDashboard() {
           meetingsLoading={meetings.loading}
           sessionsLoading={sessions.loading}
           lapsLoading={lapsLoading}
+          summaryPills={summaryPills}
+          quickChips={quickChips}
+          canStepBackward={canStepBackward}
+          canStepForward={canStepForward}
           onYearChange={filters.handleYearChange}
           onCircuitChange={filters.handleCircuitChange}
           onSessionChange={filters.handleSessionChange}
-          onLapChange={filters.setLapNum}
+          onLapChange={setLapNum}
+          onStepLap={stepLap}
         />
 
         {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} />}
@@ -154,7 +350,7 @@ export default function F1TelemetryDashboard() {
 
         <DashboardTabs activeTab={filters.tab} onChange={filters.setTab} />
 
-        <div className="space-y-6 pb-16">
+        <div className={contentLayoutClass}>
           {filters.tab === 'telemetry' && (
             <TelemetryTab
               lapNum={filters.lapNum}
@@ -176,6 +372,7 @@ export default function F1TelemetryDashboard() {
 
           {filters.tab === 'tires' && (
             <StrategyTab
+              lapNum={filters.lapNum}
               driverNums={filters.driverNums}
               driverMap={selectionData.driverMap}
               stintsLoading={stints.loading}

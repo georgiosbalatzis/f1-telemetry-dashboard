@@ -14,15 +14,15 @@ const TABS: { key: Tab; label: string; icon: ReactNode }[] = [
 
 export function DashboardTabs({ activeTab, onChange }: { activeTab: Tab; onChange: (tab: Tab) => void }) {
   return (
-    <div className="mb-6 border-b border-white/[0.06]">
-      <div className="-mb-px flex gap-1 overflow-x-auto scrollbar-hide">
+    <div className="mb-5 border-b border-white/[0.04]">
+      <div className="-mb-px flex gap-2 overflow-x-auto scrollbar-hide">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => onChange(tab.key)}
             className={cn(
-              'flex items-center gap-1.5 whitespace-nowrap border-b-2 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-all',
-              activeTab === tab.key ? 'border-red-600 text-white' : 'border-transparent text-gray-600 hover:text-gray-400',
+              'flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] transition-all',
+              activeTab === tab.key ? 'border-[#ff5336] text-slate-100' : 'border-transparent text-slate-600 hover:text-slate-300',
             )}
           >
             {tab.icon} {tab.label}

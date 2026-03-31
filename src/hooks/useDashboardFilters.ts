@@ -1,13 +1,59 @@
 import { useCallback, useState } from 'react';
 import type { Tab } from '../components/dashboard/types';
 
+export type DashboardFilterSnapshot = {
+  year: number;
+  circuit: string | null;
+  sessionKey: number | null;
+  driverNums: number[];
+  lapNum: number;
+  tab: Tab;
+};
+
+function parsePositiveInt(value: string | null) {
+  if (!value) return null;
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function parseDriverNumbers(value: string | null) {
+  if (!value) return [];
+  return value
+    .split(',')
+    .map((part) => parsePositiveInt(part))
+    .filter((part): part is number => part != null)
+    .filter((part, index, all) => all.indexOf(part) === index)
+    .slice(0, 4);
+}
+
+function parseTab(value: string | null): Tab | null {
+  const tabs: Tab[] = ['telemetry', 'tires', 'energy', 'radio', 'incidents', 'weather'];
+  return value && tabs.includes(value as Tab) ? value as Tab : null;
+}
+
+function readInitialSnapshot(): Partial<DashboardFilterSnapshot> {
+  if (typeof window === 'undefined') return {};
+
+  const params = new URLSearchParams(window.location.search);
+  return {
+    year: parsePositiveInt(params.get('year')) ?? undefined,
+    circuit: params.get('circuit') || null,
+    sessionKey: parsePositiveInt(params.get('session')),
+    driverNums: parseDriverNumbers(params.get('drivers')),
+    lapNum: parsePositiveInt(params.get('lap')) ?? undefined,
+    tab: parseTab(params.get('tab')) ?? undefined,
+  };
+}
+
 export function useDashboardFilters() {
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [circuit, setCircuit] = useState<string | null>(null);
-  const [sessionKey, setSessionKey] = useState<number | null>(null);
-  const [driverNums, setDriverNums] = useState<number[]>([]);
-  const [lapNum, setLapNum] = useState(1);
-  const [tab, setTab] = useState<Tab>('telemetry');
+  const initial = readInitialSnapshot();
+
+  const [year, setYear] = useState(initial.year ?? new Date().getFullYear());
+  const [circuit, setCircuit] = useState<string | null>(initial.circuit ?? null);
+  const [sessionKey, setSessionKey] = useState<number | null>(initial.sessionKey ?? null);
+  const [driverNums, setDriverNums] = useState<number[]>(initial.driverNums ?? []);
+  const [lapNum, setLapNum] = useState(initial.lapNum ?? 1);
+  const [tab, setTab] = useState<Tab>(initial.tab ?? 'telemetry');
 
   const handleYearChange = useCallback((nextYear: number) => {
     setYear(nextYear);
@@ -39,6 +85,24 @@ export function useDashboardFilters() {
     });
   }, []);
 
+  const applySnapshot = useCallback((snapshot: Partial<DashboardFilterSnapshot>) => {
+    if (snapshot.year != null) setYear(snapshot.year);
+    if (snapshot.circuit !== undefined) setCircuit(snapshot.circuit);
+    if (snapshot.sessionKey !== undefined) setSessionKey(snapshot.sessionKey);
+    if (snapshot.driverNums !== undefined) setDriverNums(snapshot.driverNums);
+    if (snapshot.lapNum != null) setLapNum(snapshot.lapNum);
+    if (snapshot.tab != null) setTab(snapshot.tab);
+  }, []);
+
+  const snapshot: DashboardFilterSnapshot = {
+    year,
+    circuit,
+    sessionKey,
+    driverNums,
+    lapNum,
+    tab,
+  };
+
   return {
     year,
     circuit,
@@ -55,5 +119,7 @@ export function useDashboardFilters() {
     handleCircuitChange,
     handleSessionChange,
     toggleDriver,
+    applySnapshot,
+    snapshot,
   };
 }

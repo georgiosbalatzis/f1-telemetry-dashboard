@@ -32,7 +32,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         <Stat label="Wind Direction" value={latestWeather.wind_direction.toFixed(0)} unit="°" />
         <Stat label="Weather Samples" value={sampleCount} />
       </div>
-      <Panel title="Conditions Radar" icon={<Sun size={14} className="text-yellow-400" />}>
+      <Panel title="Conditions Radar" icon={<Sun size={14} className="text-yellow-400" />} sub="Session snapshot normalized to radar axes">
         <ResponsiveContainer width="100%" height={280}>
           <RadarChart data={weatherRadar} outerRadius="70%">
             <PolarGrid stroke="#ffffff08" />
