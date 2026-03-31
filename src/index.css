@@ -375,6 +375,13 @@ select {
   padding: 0.25rem;
   border-radius: 16px;
   background: var(--surface-soft);
+  flex-wrap: wrap;
+  overflow: visible;
+  align-items: stretch;
+}
+
+.dashboard-tabs-rail-compact > * {
+  flex: 1 1 152px;
 }
 
 .dashboard-app.embed-mode .dashboard-panel,

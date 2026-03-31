@@ -30,7 +30,7 @@ export function DashboardTabs({
             onClick={() => onChange(tab.key)}
             className={cn(
               embedMode
-                ? 'flex items-center gap-1.5 whitespace-nowrap rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] transition-all duration-200 sm:px-3'
+                ? 'flex min-h-[40px] items-center justify-center gap-1.5 rounded-[12px] border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] transition-all duration-200'
                 : 'flex items-center gap-1.5 whitespace-nowrap rounded-[14px] border px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-200 sm:px-3.5 sm:text-[11px]',
               activeTab === tab.key
                 ? 'border-[#ff9a70]/24 bg-[color:var(--tabs-active)] text-[color:var(--text-strong)] shadow-[var(--tabs-active-shadow)]'
