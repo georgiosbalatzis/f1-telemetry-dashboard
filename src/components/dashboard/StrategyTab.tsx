@@ -39,7 +39,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
               return (
                 <div key={driverNumber} className="grid gap-2 sm:grid-cols-[64px_1fr_56px] sm:items-center sm:gap-4">
                   <div className="flex items-center justify-between sm:block sm:text-right"><span className="text-xs font-bold tracking-[0.2em]" style={{ color: `#${driver.team_colour}` }}>{driver.name_acronym}</span></div>
-                  <div className="flex h-9 flex-1 overflow-hidden rounded-[12px] border border-white/[0.04] bg-[#0d0d1a]">
+                  <div className="dashboard-card flex h-9 flex-1 overflow-hidden rounded-[12px]">
                     {driverStints.map((stint, index) => {
                       const width = Math.max(3, ((stint.lap_end - stint.lap_start + 1) / maxLap) * 100);
                       const compound = (stint.compound || 'UNKNOWN').toUpperCase();
@@ -47,7 +47,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
                       return (
                         <div
                           key={index}
-                          className="flex h-full min-w-[24px] items-center justify-center border-r border-white/10 text-[10px] font-bold"
+                          className="flex h-full min-w-[24px] items-center justify-center border-r border-[color:var(--line-strong)] text-[10px] font-bold"
                           style={{ width: `${width}%`, backgroundColor: `${color}18`, color }}
                           title={`${compound}: Lap ${stint.lap_start}–${stint.lap_end}`}
                         >
@@ -57,7 +57,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
                       );
                     })}
                   </div>
-                  <div className="text-right text-[10px] uppercase tracking-[0.16em] text-slate-600">{driverStints.length} stint{driverStints.length > 1 ? 's' : ''}</div>
+                  <div className="text-right text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-muted)]">{driverStints.length} stint{driverStints.length > 1 ? 's' : ''}</div>
                 </div>
               );
             })}
@@ -76,24 +76,24 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
               const compound = (activeStint.compound || 'UNKNOWN').toUpperCase();
               const color = COMPOUND_COLORS[compound] || COMPOUND_COLORS.UNKNOWN;
               return (
-                <div key={driverNumber} className="rounded-[16px] border border-white/[0.04] bg-[#10111a] p-4">
+                <div key={driverNumber} className="dashboard-card rounded-[16px] p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-xs font-black tracking-[0.2em]" style={{ color: `#${driver.team_colour}` }}>{driver.name_acronym}</span>
                     <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: `${color}1c`, color }}>{compound}</span>
                   </div>
                   <div className="mb-3 text-3xl font-black text-emerald-300">{remaining}</div>
-                  <div className="grid grid-cols-3 gap-3 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                  <div className="grid grid-cols-3 gap-3 text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
                     <div>
-                      <div className="mb-1 text-slate-700">Laps Left</div>
-                      <div className="font-mono text-slate-200">{remaining}</div>
+                      <div className="mb-1 text-[color:var(--text-dim)]">Laps Left</div>
+                      <div className="font-mono text-[color:var(--text-soft)]">{remaining}</div>
                     </div>
                     <div>
-                      <div className="mb-1 text-slate-700">Stint Age</div>
-                      <div className="font-mono text-slate-200">{lapNum - activeStint.lap_start + 1}</div>
+                      <div className="mb-1 text-[color:var(--text-dim)]">Stint Age</div>
+                      <div className="font-mono text-[color:var(--text-soft)]">{lapNum - activeStint.lap_start + 1}</div>
                     </div>
                     <div>
-                      <div className="mb-1 text-slate-700">Stop Est.</div>
-                      <div className="font-mono text-slate-200">L{activeStint.lap_end}</div>
+                      <div className="mb-1 text-[color:var(--text-dim)]">Stop Est.</div>
+                      <div className="font-mono text-[color:var(--text-soft)]">L{activeStint.lap_end}</div>
                     </div>
                   </div>
                 </div>
@@ -109,13 +109,13 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
             {filteredPits.map((pit, index) => {
               const driver = driverMap[pit.driver_number];
               return (
-                <div key={index} className="rounded-[16px] border border-white/[0.04] bg-[#0d0d1a] p-3">
+                <div key={index} className="dashboard-card rounded-[16px] p-3">
                   <div className="mb-2 flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full" style={{ backgroundColor: `#${driver?.team_colour || '888'}` }} />
                     <span className="text-xs font-bold tracking-[0.2em]" style={{ color: `#${driver?.team_colour || '888'}` }}>{driver?.name_acronym || `#${pit.driver_number}`}</span>
                   </div>
-                  <div className="text-xl font-black font-mono text-white">{pit.stop_duration?.toFixed(1) || '—'}<span className="text-sm text-gray-500">s</span></div>
-                  <div className="text-[10px] uppercase tracking-[0.15em] text-slate-600">Lap {pit.lap_number} · Pit lane: {pit.pit_duration?.toFixed(1)}s</div>
+                  <div className="text-xl font-black font-mono text-[color:var(--text-strong)]">{pit.stop_duration?.toFixed(1) || '—'}<span className="text-sm text-[color:var(--text-muted)]">s</span></div>
+                  <div className="text-[10px] uppercase tracking-[0.15em] text-[color:var(--text-muted)]">Lap {pit.lap_number} · Pit lane: {pit.pit_duration?.toFixed(1)}s</div>
                 </div>
               );
             })}

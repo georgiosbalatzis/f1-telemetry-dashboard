@@ -27,14 +27,18 @@ import { StrategyTab } from './dashboard/StrategyTab';
 import { WeatherTab } from './dashboard/WeatherTab';
 import { Err } from './dashboard/shared';
 
+type ThemeMode = 'dark' | 'light';
+
 type SavedPreset = {
   name: string;
   snapshot: DashboardFilterSnapshot;
   splitMode: boolean;
+  themeMode?: ThemeMode;
   savedAt: string;
 };
 
 const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
+const THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
 
 function readInitialSplitMode() {
   if (typeof window === 'undefined') return false;
@@ -44,6 +48,28 @@ function readInitialSplitMode() {
 function readInitialEmbedMode() {
   if (typeof window === 'undefined') return false;
   return new URLSearchParams(window.location.search).get('embed') === '1';
+}
+
+function normalizeThemeMode(value: string | null | undefined): ThemeMode | null {
+  if (value === 'light' || value === 'dark') return value;
+  return null;
+}
+
+function readInitialThemeMode(): ThemeMode {
+  if (typeof window === 'undefined') return 'dark';
+
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = normalizeThemeMode(params.get('theme'));
+  if (fromQuery) return fromQuery;
+
+  try {
+    const fromStorage = normalizeThemeMode(window.localStorage.getItem(THEME_STORAGE_KEY));
+    if (fromStorage) return fromStorage;
+  } catch {
+    // Ignore storage failures and fall back to the default theme.
+  }
+
+  return 'dark';
 }
 
 function readSavedPresets() {
@@ -58,7 +84,12 @@ function readSavedPresets() {
   }
 }
 
-function buildDashboardUrl(snapshot: DashboardFilterSnapshot, splitMode: boolean, embedMode = false) {
+function buildDashboardUrl(
+  snapshot: DashboardFilterSnapshot,
+  splitMode: boolean,
+  embedMode = false,
+  themeMode: ThemeMode = 'dark',
+) {
   if (typeof window === 'undefined') return '';
 
   const params = new URLSearchParams();
@@ -70,13 +101,15 @@ function buildDashboardUrl(snapshot: DashboardFilterSnapshot, splitMode: boolean
   params.set('tab', snapshot.tab);
   if (splitMode) params.set('layout', 'split');
   if (embedMode) params.set('embed', '1');
+  if (themeMode === 'light') params.set('theme', 'light');
 
   const query = params.toString();
   return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
 }
 
-function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolean) {
-  const src = buildDashboardUrl(snapshot, splitMode, true);
+function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolean, themeMode: ThemeMode) {
+  const src = buildDashboardUrl(snapshot, splitMode, true, themeMode);
+  const background = themeMode === 'light' ? '#f6efe3' : '#090a12';
   return [
     `<iframe`,
     `  src="${src}"`,
@@ -84,7 +117,7 @@ function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolea
     `  width="100%"`,
     `  height="920"`,
     `  loading="lazy"`,
-    `  style="border:0; width:100%; max-width:100%; background:#090a12;"`,
+    `  style="border:0; width:100%; max-width:100%; background:${background};"`,
     `></iframe>`,
   ].join('\n');
 }
@@ -94,6 +127,7 @@ export default function F1TelemetryDashboard() {
   const setLapNum = filters.setLapNum;
   const [splitMode, setSplitMode] = useState(readInitialSplitMode);
   const [embedMode] = useState(readInitialEmbedMode);
+  const [themeMode, setThemeMode] = useState<ThemeMode>(readInitialThemeMode);
   const [presetName, setPresetName] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [savedPresets, setSavedPresets] = useState<Record<string, SavedPreset>>(readSavedPresets);
@@ -228,9 +262,9 @@ export default function F1TelemetryDashboard() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode);
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, themeMode);
     window.history.replaceState({}, '', url);
-  }, [embedMode, filters.snapshot, splitMode]);
+  }, [embedMode, filters.snapshot, splitMode, themeMode]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -248,6 +282,23 @@ export default function F1TelemetryDashboard() {
     return () => window.clearTimeout(timeoutId);
   }, [feedback]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const root = window.document.documentElement;
+    root.classList.toggle('theme-light', themeMode === 'light');
+    root.classList.toggle('theme-dark', themeMode === 'dark');
+
+    const themeColor = themeMode === 'light' ? '#f6efe3' : '#090a12';
+    window.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
+
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+    } catch {
+      // Ignore storage failures and keep the app usable.
+    }
+  }, [themeMode]);
+
   const handlePresetNameChange = useCallback((value: string) => {
     setPresetName(value);
     const preset = savedPresets[value];
@@ -255,6 +306,9 @@ export default function F1TelemetryDashboard() {
 
     filters.applySnapshot(preset.snapshot);
     setSplitMode(preset.splitMode);
+    if (preset.themeMode) {
+      setThemeMode(preset.themeMode);
+    }
     setFeedback(`Loaded preset ${preset.name}`);
   }, [filters, savedPresets]);
 
@@ -264,16 +318,17 @@ export default function F1TelemetryDashboard() {
       name,
       snapshot: filters.snapshot,
       splitMode,
+      themeMode,
       savedAt: new Date().toISOString(),
     };
 
     setSavedPresets((prev) => ({ ...prev, [name]: preset }));
     setPresetName(name);
     setFeedback(`Saved preset ${name}`);
-  }, [defaultPresetName, filters.snapshot, presetName, splitMode]);
+  }, [defaultPresetName, filters.snapshot, presetName, splitMode, themeMode]);
 
   const handleShare = useCallback(async () => {
-    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode);
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, themeMode);
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
@@ -296,10 +351,10 @@ export default function F1TelemetryDashboard() {
 
     window.prompt('Copy this link', url);
     setFeedback('Share link ready');
-  }, [embedMode, filters.snapshot, splitMode]);
+  }, [embedMode, filters.snapshot, splitMode, themeMode]);
 
   const handleEmbed = useCallback(async () => {
-    const snippet = buildIframeSnippet(filters.snapshot, splitMode);
+    const snippet = buildIframeSnippet(filters.snapshot, splitMode, themeMode);
 
     try {
       if (navigator.clipboard?.writeText) {
@@ -313,7 +368,7 @@ export default function F1TelemetryDashboard() {
 
     window.prompt('Copy this iframe snippet', snippet);
     setFeedback('Embed code ready');
-  }, [filters.snapshot, splitMode]);
+  }, [filters.snapshot, splitMode, themeMode]);
 
   const handlePrint = useCallback(() => {
     setFeedback('Opening print dialog');
@@ -325,6 +380,12 @@ export default function F1TelemetryDashboard() {
     setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled');
   }, [splitMode]);
 
+  const handleToggleTheme = useCallback(() => {
+    const nextTheme = themeMode === 'light' ? 'dark' : 'light';
+    setThemeMode(nextTheme);
+    setFeedback(nextTheme === 'light' ? 'Light mode enabled' : 'Dark mode enabled');
+  }, [themeMode]);
+
   const handleBack = useCallback(() => {
     if (window.history.length > 1) {
       window.history.back();
@@ -334,10 +395,15 @@ export default function F1TelemetryDashboard() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-[#0a0a14] text-slate-200 selection:bg-red-600/30 ${embedMode ? 'embed-mode' : ''}`}>
+    <div className={`dashboard-app min-h-screen ${themeMode === 'light' ? 'theme-light' : 'theme-dark'} ${embedMode ? 'embed-mode' : ''}`}>
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,83,54,0.07),transparent_24%),radial-gradient(circle_at_75%_20%,rgba(49,112,255,0.07),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(113,61,255,0.07),transparent_30%)]" />
-        <div className="absolute inset-0 opacity-[0.18]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '72px 72px' }} />
+        <div
+          className="absolute inset-0 opacity-[0.18]"
+          style={{
+            backgroundImage: 'linear-gradient(var(--app-grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px)',
+            backgroundSize: '72px 72px',
+          }}
+        />
       </div>
 
       <div className={pageShellClass}>
@@ -348,12 +414,14 @@ export default function F1TelemetryDashboard() {
           feedback={feedback}
           splitMode={splitMode}
           embedMode={embedMode}
+          themeMode={themeMode}
           onPresetNameChange={handlePresetNameChange}
           onSavePreset={handleSavePreset}
           onShare={handleShare}
           onEmbed={handleEmbed}
           onPrint={handlePrint}
           onToggleSplit={handleToggleSplit}
+          onToggleTheme={handleToggleTheme}
           onBack={handleBack}
         />
 

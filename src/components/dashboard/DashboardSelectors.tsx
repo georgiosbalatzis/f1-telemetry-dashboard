@@ -62,21 +62,21 @@ export function DashboardSelectors({
   onStepLap,
 }: Props) {
   return (
-    <div className="mb-6 border-b border-white/[0.04] pb-4">
+    <div className="mb-6 border-b border-[color:var(--line)] pb-4">
       <div className="grid gap-4 sm:gap-6 xl:grid-cols-[180px_minmax(0,1fr)]">
-        <div className="rounded-[18px] border border-white/[0.04] bg-white/[0.01] p-4 sm:p-5">
+        <div className="dashboard-card rounded-[18px] p-4 sm:p-5">
           <div className="flex items-end gap-2">
             <span className="text-4xl font-black tracking-tight text-[#ff5a3a] sm:text-5xl">{lapNum}</span>
-            <span className="mb-1 text-base font-medium text-slate-600 sm:text-lg">/ {totalLaps ?? '—'}</span>
+            <span className="mb-1 text-base font-medium text-[color:var(--text-muted)] sm:text-lg">/ {totalLaps ?? '—'}</span>
           </div>
-          <div className="mt-2 text-[10px] uppercase tracking-[0.32em] text-slate-700">Lap Focus</div>
+          <div className="mt-2 text-[10px] uppercase tracking-[0.32em] text-[color:var(--text-dim)]">Lap Focus</div>
         </div>
 
         <div className="space-y-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="grid flex-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <div>
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-slate-700">Season</label>
+                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]">Season</label>
                 <div className="relative">
                   <select value={year} onChange={(event) => onYearChange(+event.target.value)} className="dashboard-select">
                     {yearOptions.map((option) => <option key={option} value={option}>{option}</option>)}
@@ -85,7 +85,7 @@ export function DashboardSelectors({
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-slate-700">Grand Prix</label>
+                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]">Grand Prix</label>
                 <div className="relative">
                   <select value={circuit || ''} onChange={(event) => onCircuitChange(event.target.value)} disabled={!circuitOptions.length} className="dashboard-select">
                     {meetingsLoading && <option>Loading circuits…</option>}
@@ -96,7 +96,7 @@ export function DashboardSelectors({
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-slate-700">Session</label>
+                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]">Session</label>
                 <div className="relative">
                   <select value={sessionKey || ''} onChange={(event) => onSessionChange(+event.target.value)} disabled={!sessionOptions.length} className="dashboard-select">
                     {sessionsLoading && <option>Loading sessions…</option>}
@@ -107,7 +107,7 @@ export function DashboardSelectors({
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-slate-700">
+                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]">
                   Lap {lapsLoading && <Loader2 size={10} className="ml-1 inline animate-spin" />}
                 </label>
                 <div className="flex items-center gap-2">
@@ -130,9 +130,9 @@ export function DashboardSelectors({
             {summaryPills.length > 0 && (
               <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide xl:mx-0 xl:flex-wrap xl:overflow-visible xl:px-0 xl:pb-0">
                 {summaryPills.map((pill) => (
-                  <div key={`${pill.label}-${pill.driver}`} className="shrink-0 rounded-[999px] border border-white/[0.05] bg-white/[0.02] px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                  <div key={`${pill.label}-${pill.driver}`} className="dashboard-pill shrink-0 rounded-[999px] px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-[color:var(--text-muted)]">
                     <span className={pill.tone === 'blue' ? 'text-cyan-300' : pill.tone === 'purple' ? 'text-violet-300' : 'text-amber-300'}>{pill.label}</span>{' '}
-                    <span className="text-slate-200">{pill.driver}</span>{' '}
+                    <span className="text-[color:var(--text-strong)]">{pill.driver}</span>{' '}
                     <span className="font-mono">{pill.detail}</span>
                   </div>
                 ))}

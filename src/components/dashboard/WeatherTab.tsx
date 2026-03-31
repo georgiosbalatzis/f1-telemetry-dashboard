@@ -17,6 +17,9 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
   if (loading) return <Spinner />;
   if (error) return <Err msg={error} />;
   if (!latestWeather) return <NoData msg="No weather data for this session." />;
+  const chartGrid = 'var(--chart-grid)';
+  const chartAxis = 'var(--chart-axis)';
+  const chartAxisSoft = 'var(--chart-axis-soft)';
 
   return (
     <>
@@ -35,8 +38,8 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
       <Panel title="Conditions Radar" icon={<Sun size={14} className="text-yellow-400" />} sub="Session snapshot normalized to radar axes">
         <ResponsiveContainer width="100%" height={280}>
           <RadarChart data={weatherRadar} outerRadius="70%">
-            <PolarGrid stroke="#ffffff08" />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: '#666', fontSize: 10 }} />
+            <PolarGrid stroke={chartGrid} />
+            <PolarAngleAxis dataKey="subject" tick={{ fill: chartAxis, fontSize: 10 }} />
             <Radar name="Conditions" dataKey="value" stroke="#22D3EE" fill="#22D3EE" fillOpacity={0.12} strokeWidth={2} />
           </RadarChart>
         </ResponsiveContainer>
@@ -45,10 +48,10 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         {weatherTrend.length > 1 ? (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={weatherTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff06" />
-              <XAxis dataKey="time" tick={{ fill: '#666', fontSize: 10 }} stroke="#ffffff06" interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
-              <YAxis yAxisId="temp" tick={{ fill: '#666', fontSize: 10 }} stroke="#ffffff06" />
-              <YAxis yAxisId="aux" orientation="right" tick={{ fill: '#444', fontSize: 9 }} stroke="#ffffff04" />
+              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+              <XAxis dataKey="time" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
+              <YAxis yAxisId="temp" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+              <YAxis yAxisId="aux" orientation="right" tick={{ fill: chartAxisSoft, fontSize: 9 }} stroke={chartGrid} />
               <Tooltip content={<ChartTip />} />
               <Line yAxisId="temp" type="monotone" dataKey="air" stroke="#EF4444" strokeWidth={2} dot={false} name="Air °C" />
               <Line yAxisId="temp" type="monotone" dataKey="track" stroke="#F97316" strokeWidth={2} dot={false} name="Track °C" />

@@ -3,15 +3,87 @@
 :root {
   color-scheme: dark;
   --bg: #090a12;
-  --panel: #11111a;
-  --panel-2: #151624;
+  --app-bg-image:
+    radial-gradient(circle at top left, rgba(255, 83, 54, 0.07), transparent 24%),
+    radial-gradient(circle at 75% 20%, rgba(49, 112, 255, 0.07), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(113, 61, 255, 0.07), transparent 30%),
+    linear-gradient(180deg, #0a0a12, #08090f);
+  --app-grid-line: rgba(255, 255, 255, 0.02);
+  --surface: linear-gradient(180deg, rgba(20, 20, 31, 0.98), rgba(16, 16, 26, 0.98));
+  --surface-card: rgba(16, 17, 26, 0.95);
+  --surface-soft: rgba(255, 255, 255, 0.02);
+  --surface-soft-2: rgba(255, 255, 255, 0.01);
+  --surface-track: rgba(255, 255, 255, 0.04);
+  --surface-avatar: #1c1c2a;
   --line: rgba(255, 255, 255, 0.06);
-  --muted: #6b7284;
+  --line-strong: rgba(255, 255, 255, 0.1);
   --text: #e7e8ee;
+  --text-strong: #ffffff;
+  --text-soft: #dbe1eb;
+  --text-muted: #758095;
+  --text-dim: #5d677a;
+  --text-faint: #414b5b;
   --accent-red: #ff5336;
   --accent-blue: #3e89ff;
   --accent-purple: #9462ff;
   --accent-amber: #f7a31b;
+  --shadow-panel: 0 32px 60px -42px rgba(0, 0, 0, 0.95);
+  --shadow-card: 0 20px 50px -35px rgba(0, 0, 0, 0.95);
+  --shadow-stat: 0 18px 40px -28px rgba(0, 0, 0, 0.8);
+  --brand-card-bg: linear-gradient(135deg, rgba(255, 104, 71, 0.14), rgba(255, 179, 71, 0.08) 48%, rgba(15, 17, 25, 0.94) 100%);
+  --brand-card-border: rgba(255, 136, 71, 0.15);
+  --brand-card-shadow: 0 22px 55px -38px rgba(255, 104, 71, 0.75);
+  --input-bg: linear-gradient(180deg, rgba(20, 21, 32, 0.95), rgba(15, 15, 24, 0.95));
+  --input-placeholder: #5d677a;
+  --selection: rgba(255, 83, 54, 0.3);
+  --chart-grid: rgba(255, 255, 255, 0.06);
+  --chart-axis: #586072;
+  --chart-axis-soft: #444d61;
+  --chart-rpm: rgba(255, 255, 255, 0.15);
+  --chart-reference: rgba(255, 255, 255, 0.15);
+}
+
+.theme-light {
+  color-scheme: light;
+  --bg: #f6efe3;
+  --app-bg-image:
+    radial-gradient(circle at top left, rgba(255, 104, 71, 0.12), transparent 24%),
+    radial-gradient(circle at 76% 16%, rgba(16, 42, 67, 0.1), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(255, 198, 129, 0.18), transparent 26%),
+    linear-gradient(180deg, #fff9f0, #f1e7d7);
+  --app-grid-line: rgba(15, 23, 42, 0.04);
+  --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(250, 245, 236, 0.96));
+  --surface-card: rgba(255, 255, 255, 0.98);
+  --surface-soft: rgba(16, 42, 67, 0.04);
+  --surface-soft-2: rgba(255, 255, 255, 0.72);
+  --surface-track: rgba(15, 23, 42, 0.08);
+  --surface-avatar: #e2e8f0;
+  --line: rgba(15, 23, 42, 0.1);
+  --line-strong: rgba(15, 23, 42, 0.16);
+  --text: #233246;
+  --text-strong: #102030;
+  --text-soft: #334155;
+  --text-muted: #66768b;
+  --text-dim: #8b98aa;
+  --text-faint: #b3bcc8;
+  --shadow-panel: 0 22px 44px -32px rgba(15, 23, 42, 0.22);
+  --shadow-card: 0 18px 36px -28px rgba(15, 23, 42, 0.18);
+  --shadow-stat: 0 14px 30px -22px rgba(15, 23, 42, 0.16);
+  --brand-card-bg: linear-gradient(135deg, rgba(16, 42, 67, 0.08), rgba(255, 104, 71, 0.12) 46%, rgba(255, 248, 235, 0.98) 100%);
+  --brand-card-border: rgba(16, 42, 67, 0.12);
+  --brand-card-shadow: 0 20px 40px -28px rgba(16, 42, 67, 0.18);
+  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 244, 236, 0.98));
+  --input-placeholder: #94a3b8;
+  --selection: rgba(255, 104, 71, 0.18);
+  --chart-grid: rgba(15, 23, 42, 0.08);
+  --chart-axis: #64748b;
+  --chart-axis-soft: #94a3b8;
+  --chart-rpm: rgba(15, 23, 42, 0.24);
+  --chart-reference: rgba(15, 23, 42, 0.16);
+}
+
+.theme-dark {
+  color-scheme: dark;
 }
 
 html {
@@ -23,10 +95,7 @@ body {
   font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background:
-    radial-gradient(circle at top left, rgba(255, 83, 54, 0.05), transparent 22%),
-    radial-gradient(circle at top right, rgba(62, 137, 255, 0.05), transparent 20%),
-    linear-gradient(180deg, #0a0a12, #08090f);
+  background: var(--bg);
   color: var(--text);
 }
 
@@ -63,28 +132,80 @@ code, .font-mono {
   display: none;
 }
 
+.dashboard-app {
+  background: var(--app-bg-image);
+  color: var(--text);
+}
+
+.dashboard-panel {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.dashboard-card {
+  border: 1px solid var(--line);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+
+.dashboard-stat {
+  border: 1px solid var(--line);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-stat);
+}
+
+.dashboard-pill {
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.dashboard-brand-card {
+  border: 1px solid var(--brand-card-border);
+  background: var(--brand-card-bg);
+  box-shadow: var(--brand-card-shadow);
+}
+
+.dashboard-input {
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+  color: var(--text-soft);
+  outline: none;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.dashboard-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.dashboard-input:hover,
+.dashboard-input:focus {
+  border-color: var(--line-strong);
+}
+
 .dashboard-select {
   width: 100%;
   cursor: pointer;
   appearance: none;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background: linear-gradient(180deg, rgba(20, 21, 32, 0.95), rgba(15, 15, 24, 0.95));
+  border: 1px solid var(--line);
+  background: var(--input-bg);
   padding: 0.7rem 2.4rem 0.7rem 0.95rem;
   font-size: 0.92rem;
-  color: var(--text);
+  color: var(--text-soft);
   outline: none;
   transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
 }
 
 .dashboard-select:hover,
 .dashboard-select:focus {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--line-strong);
 }
 
 .dashboard-select:disabled {
   cursor: not-allowed;
-  color: #647085;
+  color: var(--text-dim);
 }
 
 .dashboard-select-icon {
@@ -93,7 +214,7 @@ code, .font-mono {
   right: 0.8rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #596173;
+  color: var(--text-dim);
 }
 
 .dashboard-nav-button {
@@ -103,15 +224,15 @@ code, .font-mono {
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background: linear-gradient(180deg, rgba(20, 21, 32, 0.95), rgba(15, 15, 24, 0.95));
-  color: #7b8394;
+  border: 1px solid var(--line);
+  background: var(--input-bg);
+  color: var(--text-muted);
   transition: border-color 140ms ease, color 140ms ease;
 }
 
 .dashboard-nav-button:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.1);
-  color: var(--text);
+  border-color: var(--line-strong);
+  color: var(--text-soft);
 }
 
 .dashboard-nav-button:disabled {
@@ -126,7 +247,7 @@ select {
 }
 
 ::selection {
-  background: rgba(255, 83, 54, 0.3);
+  background: var(--selection);
 }
 
 .recharts-cartesian-grid-horizontal line,
