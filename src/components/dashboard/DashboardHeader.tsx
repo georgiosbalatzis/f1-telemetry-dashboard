@@ -1,6 +1,7 @@
 import { Code2, Columns2, Loader2, MoonStar, Printer, Save, Share2, SunMedium, Undo2 } from 'lucide-react';
-import f1StoriesLogo from '../../assets/f1stories-logo.png';
 import { ToolbarButton } from './shared';
+
+const f1StoriesLogo = `${import.meta.env.BASE_URL}logo192.png`;
 
 type Props = {
   loading: boolean;
