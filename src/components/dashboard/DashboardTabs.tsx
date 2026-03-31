@@ -33,7 +33,7 @@ export function DashboardTabs({
                 ? 'flex min-h-[40px] items-center justify-center gap-1.5 rounded-[12px] border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] transition-all duration-200'
                 : 'flex items-center gap-1.5 whitespace-nowrap rounded-[14px] border px-3 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition-all duration-200 sm:px-3.5 sm:text-[11px]',
               activeTab === tab.key
-                ? 'border-[#ff9a70]/24 bg-[color:var(--tabs-active)] text-[color:var(--text-strong)] shadow-[var(--tabs-active-shadow)]'
+                ? 'border-[color:var(--accent-border)] bg-[color:var(--tabs-active)] text-white shadow-[var(--tabs-active-shadow)]'
                 : 'border-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
             )}
           >

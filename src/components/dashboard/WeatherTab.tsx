@@ -35,16 +35,16 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         <Stat label="Wind Direction" value={latestWeather.wind_direction.toFixed(0)} unit="°" />
         <Stat label="Weather Samples" value={sampleCount} />
       </div>
-      <Panel title="Conditions Radar" icon={<Sun size={14} className="text-yellow-400" />} sub="Session snapshot normalized to radar axes">
+      <Panel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes">
         <ResponsiveContainer width="100%" height={280}>
           <RadarChart data={weatherRadar} outerRadius="70%">
             <PolarGrid stroke={chartGrid} />
             <PolarAngleAxis dataKey="subject" tick={{ fill: chartAxis, fontSize: 10 }} />
-            <Radar name="Conditions" dataKey="value" stroke="#22D3EE" fill="#22D3EE" fillOpacity={0.12} strokeWidth={2} />
+            <Radar name="Conditions" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.12} strokeWidth={2} />
           </RadarChart>
         </ResponsiveContainer>
       </Panel>
-      <Panel title="Conditions Trend" icon={<Sun size={14} className="text-cyan-400" />} sub="Downsampled timeline across the current session">
+      <Panel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session">
         {weatherTrend.length > 1 ? (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={weatherTrend}>

@@ -66,6 +66,11 @@ export function DashboardSelectors({
   const labelClass = embedMode
     ? 'mb-1.5 block text-[9px] uppercase tracking-[0.22em] text-[color:var(--text-dim)]'
     : 'mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--text-dim)]';
+  const summaryToneStyles = {
+    blue: { color: 'var(--accent)' },
+    purple: { color: 'var(--accent-strong)' },
+    amber: { color: 'var(--accent-neutral)' },
+  } as const;
 
   const seasonField = (
     <div>
@@ -137,7 +142,7 @@ export function DashboardSelectors({
           key={`${pill.label}-${pill.driver}`}
           className={`dashboard-pill shrink-0 rounded-[999px] ${embedMode ? 'px-3 py-1.5 text-[9px] tracking-[0.16em]' : 'px-3.5 py-2 text-[10px] tracking-[0.18em]'} uppercase text-[color:var(--text-muted)]`}
         >
-          <span className={pill.tone === 'blue' ? 'text-cyan-300' : pill.tone === 'purple' ? 'text-violet-300' : 'text-amber-300'}>{pill.label}</span>{' '}
+          <span style={summaryToneStyles[pill.tone]}>{pill.label}</span>{' '}
           <span className="text-[color:var(--text-strong)]">{pill.driver}</span>{' '}
           <span className="font-mono">{pill.detail}</span>
         </div>
@@ -159,14 +164,14 @@ export function DashboardSelectors({
         <div className="dashboard-card rounded-[24px] p-3 sm:p-4">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-stretch">
             <div className="dashboard-embed-focus shrink-0 rounded-[20px] px-3.5 py-3 sm:px-4 xl:w-[210px]">
-              <div className="text-[9px] uppercase tracking-[0.26em] text-[#ffd7ab]">Focus Lap</div>
+              <div className="text-[9px] uppercase tracking-[0.26em] text-[color:var(--accent)]">Focus Lap</div>
               <div className="mt-3 flex items-center justify-between gap-2">
                 <button onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button">
                   <ChevronLeft size={14} />
                 </button>
                 <div className="min-w-[82px] text-center">
-                  <div className="text-4xl font-black tracking-tight text-white">{lapNum}</div>
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">of {totalLaps ?? '—'}</div>
+                  <div className="text-4xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-[color:var(--text-muted)]">of {totalLaps ?? '—'}</div>
                 </div>
                 <button onClick={() => onStepLap(1)} disabled={!canStepForward} className="dashboard-nav-button">
                   <ChevronRight size={14} />
@@ -201,14 +206,14 @@ export function DashboardSelectors({
     <div className="mb-6">
       <div className="dashboard-panel rounded-[28px] p-4 sm:p-5">
         <div className="grid gap-4 sm:gap-6 xl:grid-cols-[200px_minmax(0,1fr)]">
-          <div className="relative overflow-hidden rounded-[24px] border border-[#ff8b5d]/20 bg-[linear-gradient(145deg,rgba(255,83,54,0.18),rgba(255,179,71,0.06)_48%,rgba(255,255,255,0.02)_100%)] p-4 shadow-[0_22px_50px_-30px_rgba(255,83,54,0.36)] sm:p-5">
+          <div className="dashboard-embed-focus relative overflow-hidden rounded-[24px] p-4 sm:p-5">
             <div className="absolute inset-x-0 top-0 h-px bg-white/25 opacity-30" />
-            <div className="text-[10px] uppercase tracking-[0.32em] text-[#ffd7ab]">Lap Focus</div>
+            <div className="text-[10px] uppercase tracking-[0.32em] text-[color:var(--accent)]">Lap Focus</div>
             <div className="mt-3 flex items-end gap-2">
-              <span className="text-5xl font-black tracking-tight text-white sm:text-6xl">{lapNum}</span>
-              <span className="mb-2 text-base font-medium text-white/65 sm:text-lg">/ {totalLaps ?? '—'}</span>
+              <span className="text-5xl font-black tracking-tight text-[color:var(--text-strong)] sm:text-6xl">{lapNum}</span>
+              <span className="mb-2 text-base font-medium text-[color:var(--text-muted)] sm:text-lg">/ {totalLaps ?? '—'}</span>
             </div>
-            <div className="mt-2 text-sm text-white/70">
+            <div className="mt-2 text-sm text-[color:var(--text-muted)]">
               Current telemetry lens for comparison, strategy, and radio context.
             </div>
           </div>

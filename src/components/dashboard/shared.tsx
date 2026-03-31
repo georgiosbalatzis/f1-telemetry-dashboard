@@ -164,15 +164,24 @@ export function ToolbarButton({
   active?: boolean;
   disabled?: boolean;
 }) {
+  const activeStyle = active
+    ? {
+      borderColor: 'var(--accent-border)',
+      background: 'var(--accent)',
+      color: '#ffffff',
+    }
+    : undefined;
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
+      style={activeStyle}
       className={cn(
         'inline-flex h-8 items-center gap-1.5 rounded-[999px] border px-3 text-[10px] uppercase tracking-[0.16em] transition-all duration-200',
         active
-          ? 'border-cyan-500/25 bg-cyan-500/[0.1] text-cyan-300 shadow-[0_12px_24px_-20px_rgba(34,211,238,0.6)]'
+          ? 'shadow-[var(--tabs-active-shadow)]'
           : 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-muted)] hover:-translate-y-0.5 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
         disabled && 'cursor-not-allowed opacity-45 hover:translate-y-0 hover:border-[color:var(--line)] hover:text-[color:var(--text-muted)]',
       )}
@@ -191,13 +200,32 @@ export function AccentChip({
   tone?: 'neutral' | 'blue' | 'purple' | 'amber';
 }) {
   const tones = {
-    neutral: 'border-[color:var(--line)] bg-[color:var(--surface-soft)] text-[color:var(--text-muted)]',
-    blue: 'border-cyan-500/20 bg-cyan-500/[0.08] text-cyan-300',
-    purple: 'border-violet-500/20 bg-violet-500/[0.1] text-violet-300',
-    amber: 'border-amber-500/20 bg-amber-500/[0.1] text-amber-300',
+    neutral: {
+      borderColor: 'var(--line)',
+      background: 'var(--surface-soft)',
+      color: 'var(--text-muted)',
+    },
+    blue: {
+      borderColor: 'var(--accent-border)',
+      background: 'var(--accent-muted)',
+      color: 'var(--accent)',
+    },
+    purple: {
+      borderColor: 'var(--accent-strong-border)',
+      background: 'var(--accent-strong-muted)',
+      color: 'var(--accent-strong)',
+    },
+    amber: {
+      borderColor: 'var(--accent-neutral-border)',
+      background: 'var(--accent-neutral-muted)',
+      color: 'var(--accent-neutral)',
+    },
   };
   return (
-    <span className={cn('inline-flex items-center rounded-[999px] border px-3 py-1.5 text-[10px] uppercase tracking-[0.16em]', tones[tone])}>
+    <span
+      style={tones[tone]}
+      className="inline-flex items-center rounded-[999px] border px-3 py-1.5 text-[10px] uppercase tracking-[0.16em]"
+    >
       {label}
     </span>
   );

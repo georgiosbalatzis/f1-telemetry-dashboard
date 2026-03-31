@@ -84,15 +84,15 @@ export function TelemetryTab({
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr]">
         <div className="dashboard-card rounded-[18px] p-4 sm:col-span-2 xl:col-span-1">
           <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[color:var(--text-muted)]">
-            <Trophy size={12} className="text-amber-300" />
+            <Trophy size={12} style={{ color: 'var(--accent)' }} />
             Race Reference
           </div>
           <div className="text-lg font-black uppercase tracking-[0.18em] text-[color:var(--text-strong)]">{leader?.name || 'No leader'}</div>
-          <div className="mt-1 text-2xl font-black font-mono text-violet-300">{fmtLap(leader?.lapTime ?? null)}</div>
+          <div className="mt-1 text-2xl font-black font-mono text-[color:var(--accent)]">{fmtLap(leader?.lapTime ?? null)}</div>
         </div>
         <div className="dashboard-card rounded-[18px] p-4">
           <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[color:var(--text-muted)]">
-            <Waves size={12} className="text-cyan-300" />
+            <Waves size={12} style={{ color: 'var(--accent-strong)' }} />
             Telemetry Density
           </div>
           <div className="text-lg font-black uppercase tracking-[0.18em] text-[color:var(--text-strong)]">{telemetryPoints}</div>
@@ -108,7 +108,7 @@ export function TelemetryTab({
         </div>
       </div>
 
-      <Panel title="Sector Comparison" icon={<Activity size={14} className="text-cyan-400" />} sub="Share of lap time by sector for the selected lap">
+      <Panel title="Sector Comparison" icon={<Activity size={14} style={{ color: 'var(--accent)' }} />} sub="Share of lap time by sector for the selected lap">
         {sectorRows.some((row) => row.total) ? (
           <div className="space-y-4">
             {sectorRows.map((row) => {
@@ -124,9 +124,9 @@ export function TelemetryTab({
                   </div>
                   <div className="overflow-hidden rounded-full bg-[color:var(--surface-track)]">
                     <div className="flex h-6">
-                      <div className="flex items-center justify-center bg-violet-500/80 text-[10px] font-bold text-white" style={{ width: `${s1Width}%` }}>{row.s1?.toFixed(3) ?? '—'}</div>
-                      <div className="flex items-center justify-center bg-blue-500/75 text-[10px] font-bold text-white" style={{ width: `${s2Width}%` }}>{row.s2?.toFixed(3) ?? '—'}</div>
-                      <div className="flex items-center justify-center bg-emerald-500/70 text-[10px] font-bold text-white" style={{ width: `${s3Width}%` }}>{row.s3?.toFixed(3) ?? '—'}</div>
+                      <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s1Width}%`, backgroundColor: 'var(--accent)' }}>{row.s1?.toFixed(3) ?? '—'}</div>
+                      <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s2Width}%`, backgroundColor: 'var(--accent-strong)' }}>{row.s2?.toFixed(3) ?? '—'}</div>
+                      <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s3Width}%`, backgroundColor: '#1AA34A' }}>{row.s3?.toFixed(3) ?? '—'}</div>
                     </div>
                   </div>
                   <div className="hidden text-right text-sm font-black font-mono text-[color:var(--text-soft)] md:block">{fmtLap(row.total ?? null)}</div>
@@ -137,7 +137,7 @@ export function TelemetryTab({
         ) : lapsLoading ? <Spinner label="Building sector split..." /> : <NoData msg="No sector comparison available for this lap." />}
       </Panel>
 
-      <Panel title="Sector Times" icon={<Timer size={14} className="text-purple-500" />} sub={`Lap ${lapNum} — sector benchmark against selected drivers`}>
+      <Panel title="Sector Times" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={`Lap ${lapNum} — sector benchmark against selected drivers`}>
         {sectorRows.some((row) => row.total) ? (
           <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <table className="min-w-[560px] w-full text-sm">
@@ -156,16 +156,16 @@ export function TelemetryTab({
                   <tr key={row.name} className="border-b border-[color:var(--line)]">
                     <td className="py-2 text-xs font-bold" style={{ color: row.color }}>{row.name}</td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span className={row.s1 != null && row.s1 <= bestS1 ? 'text-violet-300' : ''}>{row.s1?.toFixed(3) ?? '—'}</span>
+                      <span style={row.s1 != null && row.s1 <= bestS1 ? { color: 'var(--accent)' } : undefined}>{row.s1?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span className={row.s2 != null && row.s2 <= bestS2 ? 'text-blue-300' : ''}>{row.s2?.toFixed(3) ?? '—'}</span>
+                      <span style={row.s2 != null && row.s2 <= bestS2 ? { color: 'var(--accent-strong)' } : undefined}>{row.s2?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span className={row.s3 != null && row.s3 <= bestS3 ? 'text-emerald-300' : ''}>{row.s3?.toFixed(3) ?? '—'}</span>
+                      <span style={row.s3 != null && row.s3 <= bestS3 ? { color: '#1AA34A' } : undefined}>{row.s3?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right text-xs font-bold font-mono text-[color:var(--text-strong)]">{fmtLap(row.total ?? null)}</td>
-                    <td className="py-2 text-right font-mono text-xs text-[#ff7d67]">{summary?.gapToLeader != null ? `+${summary.gapToLeader.toFixed(3)}` : '—'}</td>
+                    <td className="py-2 text-right font-mono text-xs text-[color:var(--accent-strong)]">{summary?.gapToLeader != null ? `+${summary.gapToLeader.toFixed(3)}` : '—'}</td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-muted)]">{row.st ?? '—'}</td>
                   </tr>
                 );
@@ -175,7 +175,7 @@ export function TelemetryTab({
         ) : lapsLoading ? <Spinner label="Loading lap data..." /> : <NoData msg="No sector times for this lap. Try a different lap number." />}
       </Panel>
 
-      <Panel title="Speed Trace" icon={<Gauge size={14} className="text-red-500" />} sub={`${driverMap[driverNums[0]]?.full_name || 'Select a driver'} — Lap ${lapNum}${telemetryPoints ? ` (${telemetryPoints} points)` : ''}`} className="overflow-hidden">
+      <Panel title="Speed Trace" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />} sub={`${driverMap[driverNums[0]]?.full_name || 'Select a driver'} — Lap ${lapNum}${telemetryPoints ? ` (${telemetryPoints} points)` : ''}`} className="overflow-hidden">
         {telemetryLoading ? <Spinner label="Fetching car telemetry..." /> : telemetryError ? <NoData msg={telemetryError} /> : speedData.length > 0 ? (
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={speedData}>
@@ -189,7 +189,7 @@ export function TelemetryTab({
         ) : <NoData msg="No telemetry data. The API may not have car data for this session/lap. Try a race session." />}
       </Panel>
 
-      <Panel title="Telemetry Comparison" icon={<Gauge size={14} className="text-cyan-400" />} sub={comparisonSpeedData.length > 0 ? `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — normalized by lap progress` : 'Select at least two drivers with telemetry on this lap'} className="overflow-hidden">
+      <Panel title="Telemetry Comparison" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />} sub={comparisonSpeedData.length > 0 ? `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — normalized by lap progress` : 'Select at least two drivers with telemetry on this lap'} className="overflow-hidden">
         {comparisonSpeedData.length > 0 ? (
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={comparisonSpeedData}>
@@ -206,7 +206,7 @@ export function TelemetryTab({
       </Panel>
 
       {speedData.length > 0 && (
-        <Panel title="Throttle & Brake" icon={<Activity size={14} className="text-emerald-500" />} className="overflow-hidden">
+        <Panel title="Throttle & Brake" icon={<Activity size={14} style={{ color: 'var(--accent-strong)' }} />} className="overflow-hidden">
           <ResponsiveContainer width="100%" height={200}>
             <ComposedChart data={speedData}>
               <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
@@ -221,7 +221,7 @@ export function TelemetryTab({
         </Panel>
       )}
 
-      <Panel title="Lap Times Comparison" icon={<Timer size={14} className="text-purple-500" />} sub={lapsLoading ? 'Loading lap data...' : `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — excludes pit out-laps`} className="overflow-hidden">
+      <Panel title="Lap Times Comparison" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={lapsLoading ? 'Loading lap data...' : `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — excludes pit out-laps`} className="overflow-hidden">
         {lapsLoading ? <Spinner /> : lapTimeData.some((point) => Object.keys(point).length > 1) ? (
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={lapTimeData}>
@@ -237,7 +237,7 @@ export function TelemetryTab({
         ) : <NoData msg="No lap time data yet. Select drivers above." />}
       </Panel>
 
-      <Panel title="Gap To Best Lap" icon={<Timer size={14} className="text-amber-400" />} sub="Per-lap delta to the fastest selected driver on that same lap" className="overflow-hidden">
+      <Panel title="Gap To Best Lap" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Per-lap delta to the fastest selected driver on that same lap" className="overflow-hidden">
         {lapsLoading ? <Spinner /> : lapDeltaData.some((point) => Object.keys(point).length > 1) ? (
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={lapDeltaData}>

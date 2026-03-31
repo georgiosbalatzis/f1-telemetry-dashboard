@@ -28,7 +28,7 @@ type Props = {
 export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stintsByDriver, pitsLoading, filteredPits }: Props) {
   return (
     <>
-      <Panel title="Tyre Strategy" icon={<CircleDot size={14} className="text-red-400" />} sub={`Stint map through lap ${lapNum}`}>
+      <Panel title="Tyre Strategy" icon={<CircleDot size={14} style={{ color: 'var(--accent)' }} />} sub={`Stint map through lap ${lapNum}`}>
         {stintsLoading ? <Spinner label="Loading stint data…" /> : Object.keys(stintsByDriver).length > 0 ? (
           <div className="space-y-3">
             {(driverNums.length > 0 ? driverNums : Object.keys(stintsByDriver).map(Number).slice(0, 6)).map((driverNumber) => {
@@ -65,7 +65,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
         ) : <NoData msg="No stint data for this session. Stint data is typically available for race and sprint sessions." />}
       </Panel>
 
-      <Panel title="Tyre Life Projection" icon={<CircleDot size={14} className="text-cyan-400" />} sub="Current stint context at the focused lap">
+      <Panel title="Tyre Life Projection" icon={<CircleDot size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Current stint context at the focused lap">
         {Object.keys(stintsByDriver).length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-2">
             {(driverNums.length > 0 ? driverNums : Object.keys(stintsByDriver).map(Number).slice(0, 4)).map((driverNumber) => {
@@ -103,7 +103,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
         ) : <NoData msg="No active stint context available for this lap." />}
       </Panel>
 
-      <Panel title="Pit Stops" icon={<Timer size={14} className="text-amber-500" />} sub="Ordered by stationary time">
+      <Panel title="Pit Stops" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Ordered by stationary time">
         {pitsLoading ? <Spinner /> : filteredPits.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {filteredPits.map((pit, index) => {

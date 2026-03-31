@@ -63,7 +63,7 @@ export function DashboardHeader({
                 className="h-12 w-12 shrink-0 rounded-[14px] object-cover shadow-[0_14px_30px_-22px_rgba(15,23,42,0.4)]"
               />
               <div className="min-w-0">
-                <div className="text-[9px] font-semibold uppercase tracking-[0.28em] text-[#ffb089]">
+                <div className="text-[9px] font-semibold uppercase tracking-[0.28em] text-[color:var(--accent)]">
                   f1stories.gr embedded telemetry
                 </div>
                 <div className="mt-1 truncate text-lg font-black tracking-[-0.03em] text-[color:var(--text-strong)]" style={{ fontFamily: "'Orbitron', system-ui" }}>
@@ -94,7 +94,7 @@ export function DashboardHeader({
                 <ExternalLink size={12} />
               </a>
               {loading ? (
-                <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-amber-400">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--accent-border)] bg-[color:var(--accent-muted)] px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-[color:var(--accent)]">
                   <Loader2 size={12} className="animate-spin" />
                   Syncing
                 </span>
@@ -114,11 +114,11 @@ export function DashboardHeader({
     <header className={embedMode ? 'pb-4 pt-4 sm:pt-5' : 'pb-6 pt-8'}>
       <div className="mb-6 flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div>
-          <div className="ml-[19px] mb-2 text-[10px] font-semibold uppercase tracking-[0.34em] text-[#ff9d6c]">
+          <div className="mb-2 ml-[19px] text-[10px] font-semibold uppercase tracking-[0.34em] text-[color:var(--accent)]">
             f1stories.gr telemetry desk
           </div>
           <div className="mb-1 flex items-center gap-3">
-            <div className="h-10 w-1.5 rounded-full bg-[linear-gradient(180deg,#ff5336,#ffb347)]" />
+            <div className="h-10 w-1.5 rounded-full bg-[linear-gradient(180deg,var(--accent),var(--accent-strong))]" />
             <h1 className="text-2xl font-black tracking-[-0.04em] text-[color:var(--text-strong)] min-[380px]:text-3xl sm:text-5xl" style={{ fontFamily: "'Orbitron', system-ui" }}>
               F1 TELEMETRY
             </h1>
@@ -127,12 +127,12 @@ export function DashboardHeader({
             Lap-by-lap comparisons, strategy context, weather trend lines, and embed-ready session coverage.
           </div>
           <div className="ml-[19px] mt-3 flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-[#ffb347]/18 bg-[#ffb347]/[0.08] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.24em] text-[#ffd792]">
+            <span className="rounded-full border border-[color:var(--accent-border)] bg-[color:var(--accent-muted)] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.24em] text-[color:var(--accent)]">
               f1stories.gr edition
             </span>
             <p className="text-[10px] uppercase tracking-[0.38em] text-[color:var(--text-dim)]">Powered by OpenF1</p>
             {embedMode && (
-              <span className="rounded-full border border-cyan-500/20 bg-cyan-500/[0.08] px-2 py-0.5 text-[9px] uppercase tracking-[0.24em] text-cyan-300">
+              <span className="rounded-full border border-[color:var(--accent-strong-border)] bg-[color:var(--accent-strong-muted)] px-2 py-0.5 text-[9px] uppercase tracking-[0.24em] text-[color:var(--accent-strong)]">
                 Embed Mode
               </span>
             )}
@@ -174,12 +174,12 @@ export function DashboardHeader({
               className="h-16 w-16 shrink-0 rounded-[18px] object-cover shadow-[0_18px_40px_-24px_rgba(15,23,42,0.48)]"
             />
             <div className="min-w-0">
-              <div className="text-[9px] uppercase tracking-[0.3em] text-[#ffd792]">Editorial Partner</div>
+              <div className="text-[9px] uppercase tracking-[0.3em] text-[color:var(--accent)]">Editorial Partner</div>
               <div className="mt-1 flex items-baseline gap-1.5">
                 <span className="truncate text-base font-black uppercase tracking-[0.16em] text-[color:var(--text-strong)]" style={{ fontFamily: "'Orbitron', system-ui" }}>
                   f1stories
                 </span>
-                <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#ff8a56]">.gr</span>
+                <span className="text-sm font-bold uppercase tracking-[0.18em] text-[color:var(--accent)]">.gr</span>
               </div>
               <div className="mt-1 text-[12px] leading-5 text-[color:var(--text-muted)] transition-colors group-hover:text-[color:var(--text-soft)]">
                 Editorial race coverage, data analysis, and embeddable motorsport tools.
@@ -202,7 +202,7 @@ export function DashboardHeader({
             </div>
           )}
           {loading ? (
-            <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-amber-400"><Loader2 size={12} className="animate-spin" /> Syncing live sector data</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--accent-border)] bg-[color:var(--accent-muted)] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-[color:var(--accent)]"><Loader2 size={12} className="animate-spin" /> Syncing live sector data</span>
           ) : feedback ? (
             <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-emerald-400">{feedback}</span>
           ) : null}
