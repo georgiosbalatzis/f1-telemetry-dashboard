@@ -80,7 +80,7 @@ function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolea
   return [
     `<iframe`,
     `  src="${src}"`,
-    `  title="F1 Telemetry Dashboard"`,
+    `  title="f1stories.gr F1 Telemetry Dashboard"`,
     `  width="100%"`,
     `  height="920"`,
     `  loading="lazy"`,
@@ -286,7 +286,7 @@ export default function F1TelemetryDashboard() {
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'F1 Telemetry Dashboard', url });
+        await navigator.share({ title: 'f1stories.gr F1 Telemetry Dashboard', url });
         setFeedback('Share sheet opened');
         return;
       }
