@@ -2,39 +2,44 @@
 
 :root {
   color-scheme: dark;
-  --bg: #090a12;
+  --bg: #090b11;
   --app-bg-image:
-    radial-gradient(circle at top left, rgba(255, 83, 54, 0.07), transparent 24%),
-    radial-gradient(circle at 75% 20%, rgba(49, 112, 255, 0.07), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(113, 61, 255, 0.07), transparent 30%),
-    linear-gradient(180deg, #0a0a12, #08090f);
-  --app-grid-line: rgba(255, 255, 255, 0.02);
-  --surface: linear-gradient(180deg, rgba(20, 20, 31, 0.98), rgba(16, 16, 26, 0.98));
-  --surface-card: rgba(16, 17, 26, 0.95);
-  --surface-soft: rgba(255, 255, 255, 0.02);
-  --surface-soft-2: rgba(255, 255, 255, 0.01);
-  --surface-track: rgba(255, 255, 255, 0.04);
-  --surface-avatar: #1c1c2a;
-  --line: rgba(255, 255, 255, 0.06);
-  --line-strong: rgba(255, 255, 255, 0.1);
-  --text: #e7e8ee;
-  --text-strong: #ffffff;
-  --text-soft: #dbe1eb;
-  --text-muted: #758095;
-  --text-dim: #5d677a;
-  --text-faint: #414b5b;
+    radial-gradient(circle at 12% 8%, rgba(255, 101, 69, 0.18), transparent 24%),
+    radial-gradient(circle at 84% 14%, rgba(36, 123, 255, 0.14), transparent 23%),
+    radial-gradient(circle at 68% 82%, rgba(255, 179, 71, 0.11), transparent 28%),
+    linear-gradient(180deg, #0c0f16 0%, #090b11 100%);
+  --app-grid-line: rgba(255, 255, 255, 0.018);
+  --surface: linear-gradient(180deg, rgba(16, 20, 29, 0.82), rgba(11, 14, 22, 0.9));
+  --surface-card: linear-gradient(180deg, rgba(18, 22, 31, 0.88), rgba(12, 16, 24, 0.92));
+  --surface-soft: rgba(255, 255, 255, 0.028);
+  --surface-soft-2: rgba(255, 255, 255, 0.016);
+  --surface-track: rgba(255, 255, 255, 0.05);
+  --surface-avatar: #1a2230;
+  --surface-highlight: rgba(255, 255, 255, 0.035);
+  --surface-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 52%);
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --text: #e6ebf3;
+  --text-strong: #f7fbff;
+  --text-soft: #d6deea;
+  --text-muted: #8a96a8;
+  --text-dim: #667387;
+  --text-faint: #485364;
   --accent-red: #ff5336;
   --accent-blue: #3e89ff;
   --accent-purple: #9462ff;
   --accent-amber: #f7a31b;
-  --shadow-panel: 0 32px 60px -42px rgba(0, 0, 0, 0.95);
-  --shadow-card: 0 20px 50px -35px rgba(0, 0, 0, 0.95);
-  --shadow-stat: 0 18px 40px -28px rgba(0, 0, 0, 0.8);
-  --brand-card-bg: linear-gradient(135deg, rgba(255, 104, 71, 0.14), rgba(255, 179, 71, 0.08) 48%, rgba(15, 17, 25, 0.94) 100%);
-  --brand-card-border: rgba(255, 136, 71, 0.15);
-  --brand-card-shadow: 0 22px 55px -38px rgba(255, 104, 71, 0.75);
-  --input-bg: linear-gradient(180deg, rgba(20, 21, 32, 0.95), rgba(15, 15, 24, 0.95));
-  --input-placeholder: #5d677a;
+  --shadow-panel: 0 28px 70px -44px rgba(0, 0, 0, 0.78);
+  --shadow-card: 0 22px 46px -34px rgba(0, 0, 0, 0.68);
+  --shadow-stat: 0 20px 42px -30px rgba(0, 0, 0, 0.58);
+  --brand-card-bg: linear-gradient(135deg, rgba(255, 104, 71, 0.18), rgba(255, 179, 71, 0.1) 42%, rgba(13, 18, 28, 0.94) 100%);
+  --brand-card-border: rgba(255, 161, 111, 0.22);
+  --brand-card-shadow: 0 24px 58px -36px rgba(255, 104, 71, 0.46);
+  --input-bg: linear-gradient(180deg, rgba(20, 24, 35, 0.9), rgba(14, 18, 26, 0.96));
+  --input-placeholder: #748296;
+  --tabs-rail: rgba(12, 16, 24, 0.48);
+  --tabs-active: rgba(255, 255, 255, 0.06);
+  --tabs-active-shadow: 0 16px 30px -22px rgba(0, 0, 0, 0.45);
   --selection: rgba(255, 83, 54, 0.3);
   --chart-grid: rgba(255, 255, 255, 0.06);
   --chart-axis: #586072;
@@ -45,35 +50,40 @@
 
 .theme-light {
   color-scheme: light;
-  --bg: #f6efe3;
+  --bg: #f7efe3;
   --app-bg-image:
-    radial-gradient(circle at top left, rgba(255, 104, 71, 0.12), transparent 24%),
-    radial-gradient(circle at 76% 16%, rgba(16, 42, 67, 0.1), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(255, 198, 129, 0.18), transparent 26%),
-    linear-gradient(180deg, #fff9f0, #f1e7d7);
-  --app-grid-line: rgba(15, 23, 42, 0.04);
-  --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(250, 245, 236, 0.96));
-  --surface-card: rgba(255, 255, 255, 0.98);
-  --surface-soft: rgba(16, 42, 67, 0.04);
-  --surface-soft-2: rgba(255, 255, 255, 0.72);
+    radial-gradient(circle at 12% 8%, rgba(255, 116, 74, 0.16), transparent 25%),
+    radial-gradient(circle at 86% 10%, rgba(16, 42, 67, 0.1), transparent 23%),
+    radial-gradient(circle at 72% 80%, rgba(255, 194, 112, 0.17), transparent 30%),
+    linear-gradient(180deg, #fffaf1 0%, #f1e6d6 100%);
+  --app-grid-line: rgba(15, 23, 42, 0.045);
+  --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(249, 242, 233, 0.9));
+  --surface-card: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(252, 247, 240, 0.96));
+  --surface-soft: rgba(16, 42, 67, 0.05);
+  --surface-soft-2: rgba(255, 255, 255, 0.76);
   --surface-track: rgba(15, 23, 42, 0.08);
-  --surface-avatar: #e2e8f0;
+  --surface-avatar: #e8eef5;
+  --surface-highlight: rgba(255, 255, 255, 0.55);
+  --surface-sheen: linear-gradient(135deg, rgba(255, 255, 255, 0.82), transparent 58%);
   --line: rgba(15, 23, 42, 0.1);
-  --line-strong: rgba(15, 23, 42, 0.16);
-  --text: #233246;
-  --text-strong: #102030;
+  --line-strong: rgba(15, 23, 42, 0.18);
+  --text: #263446;
+  --text-strong: #112133;
   --text-soft: #334155;
-  --text-muted: #66768b;
-  --text-dim: #8b98aa;
-  --text-faint: #b3bcc8;
-  --shadow-panel: 0 22px 44px -32px rgba(15, 23, 42, 0.22);
-  --shadow-card: 0 18px 36px -28px rgba(15, 23, 42, 0.18);
-  --shadow-stat: 0 14px 30px -22px rgba(15, 23, 42, 0.16);
-  --brand-card-bg: linear-gradient(135deg, rgba(16, 42, 67, 0.08), rgba(255, 104, 71, 0.12) 46%, rgba(255, 248, 235, 0.98) 100%);
+  --text-muted: #6a778b;
+  --text-dim: #93a1b3;
+  --text-faint: #b7c2cf;
+  --shadow-panel: 0 24px 48px -34px rgba(15, 23, 42, 0.16);
+  --shadow-card: 0 18px 36px -28px rgba(15, 23, 42, 0.14);
+  --shadow-stat: 0 14px 30px -22px rgba(15, 23, 42, 0.12);
+  --brand-card-bg: linear-gradient(135deg, rgba(16, 42, 67, 0.1), rgba(255, 104, 71, 0.14) 44%, rgba(255, 249, 238, 0.98) 100%);
   --brand-card-border: rgba(16, 42, 67, 0.12);
-  --brand-card-shadow: 0 20px 40px -28px rgba(16, 42, 67, 0.18);
-  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 244, 236, 0.98));
+  --brand-card-shadow: 0 22px 42px -32px rgba(16, 42, 67, 0.16);
+  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 242, 233, 0.98));
   --input-placeholder: #94a3b8;
+  --tabs-rail: rgba(255, 255, 255, 0.54);
+  --tabs-active: rgba(255, 255, 255, 0.88);
+  --tabs-active-shadow: 0 14px 26px -20px rgba(15, 23, 42, 0.12);
   --selection: rgba(255, 104, 71, 0.18);
   --chart-grid: rgba(15, 23, 42, 0.08);
   --chart-axis: #64748b;
@@ -116,11 +126,11 @@ code, .font-mono {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #ffffff12;
+  background: var(--surface-soft);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ffffff22;
+  background: var(--line-strong);
 }
 
 /* Hide scrollbar utility */
@@ -138,41 +148,55 @@ code, .font-mono {
 }
 
 .dashboard-panel {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--line);
   background: var(--surface);
   box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(18px);
 }
 
 .dashboard-card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--line);
   background: var(--surface-card);
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(16px);
 }
 
 .dashboard-stat {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--line);
   background: var(--surface-card);
   box-shadow: var(--shadow-stat);
+  backdrop-filter: blur(16px);
 }
 
 .dashboard-pill {
   border: 1px solid var(--line);
   background: var(--surface-soft);
+  backdrop-filter: blur(14px);
 }
 
 .dashboard-brand-card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--brand-card-border);
   background: var(--brand-card-bg);
   box-shadow: var(--brand-card-shadow);
+  backdrop-filter: blur(18px);
 }
 
 .dashboard-input {
   border-radius: 10px;
   border: 1px solid var(--line);
-  background: var(--surface-soft);
+  background: var(--input-bg);
   color: var(--text-soft);
   outline: none;
-  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+  backdrop-filter: blur(16px);
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .dashboard-input::placeholder {
@@ -182,6 +206,7 @@ code, .font-mono {
 .dashboard-input:hover,
 .dashboard-input:focus {
   border-color: var(--line-strong);
+  transform: translateY(-1px);
 }
 
 .dashboard-select {
@@ -195,12 +220,14 @@ code, .font-mono {
   font-size: 0.92rem;
   color: var(--text-soft);
   outline: none;
-  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+  backdrop-filter: blur(16px);
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .dashboard-select:hover,
 .dashboard-select:focus {
   border-color: var(--line-strong);
+  transform: translateY(-1px);
 }
 
 .dashboard-select:disabled {
@@ -227,12 +254,14 @@ code, .font-mono {
   border: 1px solid var(--line);
   background: var(--input-bg);
   color: var(--text-muted);
-  transition: border-color 140ms ease, color 140ms ease;
+  backdrop-filter: blur(16px);
+  transition: border-color 140ms ease, color 140ms ease, transform 140ms ease;
 }
 
 .dashboard-nav-button:hover:not(:disabled) {
   border-color: var(--line-strong);
   color: var(--text-soft);
+  transform: translateY(-1px);
 }
 
 .dashboard-nav-button:disabled {
@@ -248,6 +277,46 @@ select {
 
 ::selection {
   background: var(--selection);
+}
+
+.dashboard-panel::before,
+.dashboard-card::before,
+.dashboard-stat::before,
+.dashboard-brand-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--surface-sheen);
+  pointer-events: none;
+}
+
+.dashboard-panel::after,
+.dashboard-card::after,
+.dashboard-stat::after,
+.dashboard-brand-card::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border: 1px solid var(--surface-highlight);
+  border-radius: inherit;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.dashboard-tabs-rail {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--tabs-rail);
+  box-shadow: inset 0 1px 0 var(--surface-highlight);
+  backdrop-filter: blur(18px);
+}
+
+.dashboard-tabs-rail > * {
+  flex-shrink: 0;
 }
 
 .recharts-cartesian-grid-horizontal line,

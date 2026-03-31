@@ -39,13 +39,21 @@ export function DashboardHeader({
 }: Props) {
   return (
     <header className={embedMode ? 'pb-4 pt-4 sm:pt-5' : 'pb-6 pt-8'}>
-      <div className="mb-6 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <div className="mb-6 flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
         <div>
-          <div className="mb-1 flex items-center gap-3">
-            <div className="h-8 w-1 rounded-full bg-[#ff5336]" />
-            <h1 className="text-xl font-black tracking-tight text-[color:var(--text-strong)] min-[380px]:text-2xl sm:text-4xl" style={{ fontFamily: "'Orbitron', system-ui" }}>F1 TELEMETRY</h1>
+          <div className="ml-[19px] mb-2 text-[10px] font-semibold uppercase tracking-[0.34em] text-[#ff9d6c]">
+            f1stories.gr telemetry desk
           </div>
-          <div className="ml-[19px] mt-1 flex flex-wrap items-center gap-3">
+          <div className="mb-1 flex items-center gap-3">
+            <div className="h-10 w-1.5 rounded-full bg-[linear-gradient(180deg,#ff5336,#ffb347)]" />
+            <h1 className="text-2xl font-black tracking-[-0.04em] text-[color:var(--text-strong)] min-[380px]:text-3xl sm:text-5xl" style={{ fontFamily: "'Orbitron', system-ui" }}>
+              F1 TELEMETRY
+            </h1>
+          </div>
+          <div className="ml-[19px] mt-2 max-w-2xl text-sm leading-6 text-[color:var(--text-muted)]">
+            Lap-by-lap comparisons, strategy context, weather trend lines, and embed-ready session coverage.
+          </div>
+          <div className="ml-[19px] mt-3 flex flex-wrap items-center gap-3">
             <span className="rounded-full border border-[#ffb347]/18 bg-[#ffb347]/[0.08] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.24em] text-[#ffd792]">
               f1stories.gr edition
             </span>
@@ -57,13 +65,13 @@ export function DashboardHeader({
             )}
           </div>
           {!embedMode && (
-            <div className="mt-5 flex max-w-xl flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center">
+            <div className="mt-5 flex max-w-2xl flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center">
               <input
                 list="dashboard-preset-names"
                 value={presetName}
                 onChange={(event) => onPresetNameChange(event.target.value)}
                 placeholder="Save as preset..."
-                className="dashboard-input w-full flex-1 px-3 py-2 text-xs"
+                className="dashboard-input w-full flex-1 px-4 py-2.5 text-sm"
               />
               <datalist id="dashboard-preset-names">
                 {presetNames.map((name) => <option key={name} value={name} />)}
@@ -71,7 +79,7 @@ export function DashboardHeader({
               <button
                 type="button"
                 onClick={onSavePreset}
-                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-[10px] border border-[color:var(--line)] bg-[color:var(--surface-soft-2)] px-3 text-[10px] uppercase tracking-[0.2em] text-[color:var(--text-muted)] transition-colors hover:border-[color:var(--line-strong)] hover:text-[color:var(--text-soft)] sm:w-auto"
+                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-[999px] border border-[color:var(--line)] bg-[color:var(--surface-soft-2)] px-4 text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-muted)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)] sm:w-auto"
               >
                 <Save size={12} />
                 Save
@@ -85,28 +93,28 @@ export function DashboardHeader({
             href="https://f1stories.gr"
             target="_blank"
             rel="noreferrer"
-            className="dashboard-brand-card group inline-flex w-full max-w-full items-center gap-3 rounded-[18px] px-3 py-3 transition-transform duration-200 hover:-translate-y-0.5 xl:w-[340px]"
+            className="dashboard-brand-card group inline-flex w-full max-w-full items-center gap-4 rounded-[24px] px-4 py-3.5 transition-transform duration-200 hover:-translate-y-0.5 xl:w-[360px]"
           >
             <img
               src={f1StoriesLogo}
               alt="f1stories.gr"
-              className="h-14 w-14 shrink-0 rounded-[16px] object-cover shadow-[0_18px_40px_-24px_rgba(15,23,42,0.48)]"
+              className="h-16 w-16 shrink-0 rounded-[18px] object-cover shadow-[0_18px_40px_-24px_rgba(15,23,42,0.48)]"
             />
             <div className="min-w-0">
-              <div className="text-[9px] uppercase tracking-[0.34em] text-[#ffd792]">Editorial Partner</div>
+              <div className="text-[9px] uppercase tracking-[0.3em] text-[#ffd792]">Editorial Partner</div>
               <div className="mt-1 flex items-baseline gap-1.5">
-                <span className="truncate text-sm font-black uppercase tracking-[0.18em] text-[color:var(--text-strong)]" style={{ fontFamily: "'Orbitron', system-ui" }}>
+                <span className="truncate text-base font-black uppercase tracking-[0.16em] text-[color:var(--text-strong)]" style={{ fontFamily: "'Orbitron', system-ui" }}>
                   f1stories
                 </span>
-                <span className="text-xs font-bold uppercase tracking-[0.24em] text-[#ff8a56]">.gr</span>
+                <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#ff8a56]">.gr</span>
               </div>
-              <div className="mt-1 text-[11px] text-[color:var(--text-muted)] transition-colors group-hover:text-[color:var(--text-soft)]">
-                Race stories, data analysis, and embeddable motorsport tools.
+              <div className="mt-1 text-[12px] leading-5 text-[color:var(--text-muted)] transition-colors group-hover:text-[color:var(--text-soft)]">
+                Editorial race coverage, data analysis, and embeddable motorsport tools.
               </div>
             </div>
           </a>
           {!embedMode && (
-            <div className="flex w-full gap-2 overflow-x-auto scrollbar-hide pb-1 xl:w-auto xl:flex-wrap xl:justify-end xl:overflow-visible xl:pb-0">
+            <div className="dashboard-tabs-rail w-full xl:w-auto xl:max-w-[440px] xl:flex-wrap xl:justify-end xl:overflow-visible">
               <ToolbarButton icon={<Undo2 size={12} />} label="Back" onClick={onBack} />
               <ToolbarButton icon={<Share2 size={12} />} label="Share" onClick={onShare} />
               <ToolbarButton icon={<Code2 size={12} />} label="Embed" onClick={onEmbed} />
@@ -121,9 +129,9 @@ export function DashboardHeader({
             </div>
           )}
           {loading ? (
-            <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-amber-400"><Loader2 size={12} className="animate-spin" /> Syncing live sector data</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-amber-400"><Loader2 size={12} className="animate-spin" /> Syncing live sector data</span>
           ) : feedback ? (
-            <span className="text-[10px] uppercase tracking-[0.22em] text-emerald-400">{feedback}</span>
+            <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-emerald-400">{feedback}</span>
           ) : null}
         </div>
       </div>
