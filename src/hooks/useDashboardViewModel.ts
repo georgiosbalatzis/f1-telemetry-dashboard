@@ -14,11 +14,13 @@ import type {
   DriverLapSummary,
   SectorRow,
   SpeedPoint,
+  Tab,
   WeatherRadarPoint,
   WeatherTrendPoint,
 } from '../components/dashboard/types';
 
 type Params = {
+  activeTab: Tab;
   allLaps: Record<number, OpenF1Lap[]>;
   driverMap: Record<number, OpenF1Driver>;
   driverNums: number[];
@@ -32,7 +34,35 @@ type Params = {
   telemetryByDriver: Record<number, OpenF1CarData[] | null>;
 };
 
+const NORMALIZED_TELEMETRY_POINTS = 120;
+
+function buildNormalizedComparisonData(
+  driverNums: number[],
+  telemetryByDriver: Record<number, OpenF1CarData[] | null>,
+  assignSample: (point: ComparisonPoint, driverNumber: number, sample: OpenF1CarData | undefined) => void,
+) {
+  const activeDrivers = driverNums.filter((driverNumber) => (telemetryByDriver[driverNumber] || []).length > 0);
+  if (activeDrivers.length < 2) return [];
+
+  return Array.from({ length: NORMALIZED_TELEMETRY_POINTS }, (_, index) => {
+    const progress = Math.round((index / (NORMALIZED_TELEMETRY_POINTS - 1)) * 100);
+    const point: ComparisonPoint = { progress };
+
+    activeDrivers.forEach((driverNumber) => {
+      const telemetry = telemetryByDriver[driverNumber] || [];
+      const sampleIndex = Math.min(
+        telemetry.length - 1,
+        Math.round((index / (NORMALIZED_TELEMETRY_POINTS - 1)) * (telemetry.length - 1)),
+      );
+      assignSample(point, driverNumber, telemetry[sampleIndex]);
+    });
+
+    return point;
+  });
+}
+
 export function useDashboardViewModel({
+  activeTab,
   allLaps,
   driverMap,
   driverNums,
@@ -47,6 +77,7 @@ export function useDashboardViewModel({
 }: Params) {
   const primaryTelemetry = telemetryByDriver[driverNums[0]] || null;
   const speedData = useMemo<SpeedPoint[]>(() => {
+    if (activeTab !== 'telemetry' && activeTab !== 'energy') return [];
     if (!primaryTelemetry?.length) return [];
     const step = Math.max(1, Math.floor(primaryTelemetry.length / 250));
     return primaryTelemetry.filter((_, index) => index % step === 0).map((point, index) => ({
@@ -58,9 +89,10 @@ export function useDashboardViewModel({
       drs: point.drs >= 10 ? 1 : 0,
       rpm: point.rpm,
     }));
-  }, [primaryTelemetry]);
+  }, [activeTab, primaryTelemetry]);
 
   const lapTimeData = useMemo(() => {
+    if (activeTab !== 'telemetry') return [];
     return lapOptions.map((lap) => {
       const point: Record<string, number | string> = { lap: `L${lap}` };
       driverNums.forEach((driverNumber) => {
@@ -71,9 +103,10 @@ export function useDashboardViewModel({
       });
       return point;
     });
-  }, [allLaps, driverNums, lapOptions]);
+  }, [activeTab, allLaps, driverNums, lapOptions]);
 
   const sectorRows = useMemo<SectorRow[]>(() => {
+    if (activeTab !== 'telemetry') return [];
     return driverNums.map((driverNumber) => {
       const lap = allLaps[driverNumber]?.find((item) => item.lap_number === lapNum);
       const driver = driverMap[driverNumber];
@@ -89,65 +122,57 @@ export function useDashboardViewModel({
         st: lap?.st_speed,
       };
     });
-  }, [allLaps, driverMap, driverNums, lapNum]);
+  }, [activeTab, allLaps, driverMap, driverNums, lapNum]);
 
   const stintsByDriver = useMemo(() => {
+    if (activeTab !== 'tires') return {};
     const grouped: Record<number, OpenF1Stint[]> = {};
     (stints || []).forEach((stint) => {
       (grouped[stint.driver_number] ||= []).push(stint);
     });
     return grouped;
-  }, [stints]);
+  }, [activeTab, stints]);
 
   const filteredPits = useMemo(() => {
+    if (activeTab !== 'tires') return [];
     return (pits || [])
       .filter((pit) => driverNums.length === 0 || driverNums.includes(pit.driver_number))
       .sort((a, b) => a.stop_duration - b.stop_duration);
-  }, [driverNums, pits]);
+  }, [activeTab, driverNums, pits]);
 
   const filteredRadio = useMemo(() => {
+    if (activeTab !== 'radio') return [];
     return (teamRadio || []).filter((message) => driverNums.length === 0 || driverNums.includes(message.driver_number));
-  }, [driverNums, teamRadio]);
+  }, [activeTab, driverNums, teamRadio]);
 
-  const raceControlMessages = useMemo(() => raceControl || [], [raceControl]);
-  const latestWeather = useMemo(() => weather?.length ? weather[weather.length - 1] : null, [weather]);
+  const raceControlMessages = useMemo(() => activeTab === 'incidents' ? raceControl || [] : [], [activeTab, raceControl]);
+  const latestWeather = useMemo(() => activeTab === 'weather' && weather?.length ? weather[weather.length - 1] : null, [activeTab, weather]);
   const comparisonSpeedData = useMemo<ComparisonPoint[]>(() => {
-    const activeDrivers = driverNums.filter((driverNumber) => (telemetryByDriver[driverNumber] || []).length > 0);
-    if (activeDrivers.length < 2) return [];
-
-    const points = 120;
-    return Array.from({ length: points }, (_, index) => {
-      const progress = Math.round((index / (points - 1)) * 100);
-      const point: ComparisonPoint = { progress };
-      activeDrivers.forEach((driverNumber) => {
-        const telemetry = telemetryByDriver[driverNumber] || [];
-        const sampleIndex = Math.min(telemetry.length - 1, Math.round((index / (points - 1)) * (telemetry.length - 1)));
-        point[`speed_${driverNumber}`] = telemetry[sampleIndex]?.speed;
-      });
-      return point;
+    if (activeTab !== 'telemetry') return [];
+    return buildNormalizedComparisonData(driverNums, telemetryByDriver, (point, driverNumber, sample) => {
+      point[`speed_${driverNumber}`] = sample?.speed;
     });
-  }, [driverNums, telemetryByDriver]);
+  }, [activeTab, driverNums, telemetryByDriver]);
 
   const comparisonControlData = useMemo<ComparisonPoint[]>(() => {
-    const activeDrivers = driverNums.filter((driverNumber) => (telemetryByDriver[driverNumber] || []).length > 0);
-    if (activeDrivers.length < 2) return [];
-
-    const points = 120;
-    return Array.from({ length: points }, (_, index) => {
-      const progress = Math.round((index / (points - 1)) * 100);
-      const point: ComparisonPoint = { progress };
-      activeDrivers.forEach((driverNumber) => {
-        const telemetry = telemetryByDriver[driverNumber] || [];
-        const sampleIndex = Math.min(telemetry.length - 1, Math.round((index / (points - 1)) * (telemetry.length - 1)));
-        const sample = telemetry[sampleIndex];
-        point[`throttle_${driverNumber}`] = sample?.throttle;
-        point[`brake_${driverNumber}`] = sample?.brake != null ? -sample.brake : undefined;
-      });
-      return point;
+    if (activeTab !== 'telemetry') return [];
+    return buildNormalizedComparisonData(driverNums, telemetryByDriver, (point, driverNumber, sample) => {
+      point[`throttle_${driverNumber}`] = sample?.throttle;
+      point[`brake_${driverNumber}`] = sample?.brake != null ? -sample.brake : undefined;
     });
-  }, [driverNums, telemetryByDriver]);
+  }, [activeTab, driverNums, telemetryByDriver]);
+
+  const comparisonEnergyData = useMemo<ComparisonPoint[]>(() => {
+    if (activeTab !== 'energy') return [];
+    return buildNormalizedComparisonData(driverNums, telemetryByDriver, (point, driverNumber, sample) => {
+      point[`gear_${driverNumber}`] = sample?.n_gear;
+      point[`rpm_${driverNumber}`] = sample?.rpm;
+      point[`drs_${driverNumber}`] = sample ? (sample.drs >= 10 ? 1 : 0) : undefined;
+    });
+  }, [activeTab, driverNums, telemetryByDriver]);
 
   const lapDeltaData = useMemo(() => {
+    if (activeTab !== 'telemetry') return [];
     return lapOptions.map((lap) => {
       const durations = driverNums
         .map((driverNumber) => ({
@@ -167,7 +192,7 @@ export function useDashboardViewModel({
       });
       return point;
     });
-  }, [allLaps, driverNums, lapOptions]);
+  }, [activeTab, allLaps, driverNums, lapOptions]);
 
   const lapSummaries = useMemo<DriverLapSummary[]>(() => {
     const rows = driverNums.map((driverNumber) => {
@@ -177,6 +202,12 @@ export function useDashboardViewModel({
       const topSpeed = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.speed)) : (lap?.st_speed || lap?.i2_speed || lap?.i1_speed || null);
       const avgSpeed = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.speed, 0) / telemetry.length : null;
       const avgThrottle = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.throttle, 0) / telemetry.length : null;
+      const avgBrake = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.brake, 0) / telemetry.length : null;
+      const peakRpm = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.rpm)) : null;
+      const peakGear = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.n_gear)) : null;
+      const drsOpenPct = telemetry.length > 0
+        ? Math.round((telemetry.filter((entry) => entry.drs >= 10).length / telemetry.length) * 100)
+        : null;
       return {
         driverNumber,
         name: driver?.name_acronym || `#${driverNumber}`,
@@ -186,6 +217,10 @@ export function useDashboardViewModel({
         topSpeed,
         avgSpeed,
         avgThrottle,
+        avgBrake,
+        peakRpm,
+        peakGear,
+        drsOpenPct,
       };
     });
 
@@ -214,6 +249,7 @@ export function useDashboardViewModel({
     ];
   }, [latestWeather]);
   const weatherTrend = useMemo<WeatherTrendPoint[]>(() => {
+    if (activeTab !== 'weather') return [];
     if (!weather?.length) return [];
     const step = Math.max(1, Math.floor(weather.length / 24));
     return weather
@@ -225,7 +261,7 @@ export function useDashboardViewModel({
         humidity: entry.humidity,
         wind: entry.wind_speed,
       }));
-  }, [weather]);
+  }, [activeTab, weather]);
 
   const driverColor = useCallback((driverNumber: number) => `#${driverMap[driverNumber]?.team_colour || '888'}`, [driverMap]);
 
@@ -233,6 +269,7 @@ export function useDashboardViewModel({
     speedData,
     comparisonSpeedData,
     comparisonControlData,
+    comparisonEnergyData,
     lapTimeData,
     lapDeltaData,
     lapSummaries,

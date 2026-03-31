@@ -6,7 +6,7 @@ import { cn } from './utils';
 const TABS: { key: Tab; label: string; mobileLabel: string; icon: ReactNode }[] = [
   { key: 'telemetry', label: 'Telemetry', mobileLabel: 'Trace', icon: <Activity size={14} /> },
   { key: 'tires', label: 'Tyres & Strategy', mobileLabel: 'Tyres', icon: <CircleDot size={14} /> },
-  { key: 'energy', label: 'DRS & Gears', mobileLabel: 'DRS', icon: <Zap size={14} /> },
+  { key: 'energy', label: 'DRS, Gears & RPM', mobileLabel: 'Energy', icon: <Zap size={14} /> },
   { key: 'radio', label: 'Team Radio', mobileLabel: 'Radio', icon: <Radio size={14} /> },
   { key: 'incidents', label: 'Race Control', mobileLabel: 'Race', icon: <Flag size={14} /> },
   { key: 'weather', label: 'Weather', mobileLabel: 'WX', icon: <Sun size={14} /> },

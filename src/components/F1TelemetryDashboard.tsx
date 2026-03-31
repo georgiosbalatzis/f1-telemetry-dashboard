@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboardFilters } from '../hooks/useDashboardFilters';
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import { useDashboardSelectionData } from '../hooks/useDashboardSelectionData';
@@ -20,12 +20,7 @@ import { DashboardHeader } from './dashboard/DashboardHeader';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
-import { EnergyTab } from './dashboard/EnergyTab';
-import { IncidentsTab } from './dashboard/IncidentsTab';
-import { RadioTab } from './dashboard/RadioTab';
 import { TelemetryTab } from './dashboard/TelemetryTab';
-import { StrategyTab } from './dashboard/StrategyTab';
-import { WeatherTab } from './dashboard/WeatherTab';
 import { Err } from './dashboard/shared';
 
 type ThemeMode = 'dark' | 'light';
@@ -43,11 +38,25 @@ const THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
 const TAB_LABELS = {
   telemetry: 'Telemetry',
   tires: 'Tyres & Strategy',
-  energy: 'DRS & Gears',
+  energy: 'DRS, Gears & RPM',
   radio: 'Team Radio',
   incidents: 'Race Control',
   weather: 'Weather',
 } as const;
+
+const StrategyTab = lazy(() => import('./dashboard/StrategyTab').then((module) => ({ default: module.StrategyTab })));
+const EnergyTab = lazy(() => import('./dashboard/EnergyTab').then((module) => ({ default: module.EnergyTab })));
+const RadioTab = lazy(() => import('./dashboard/RadioTab').then((module) => ({ default: module.RadioTab })));
+const IncidentsTab = lazy(() => import('./dashboard/IncidentsTab').then((module) => ({ default: module.IncidentsTab })));
+const WeatherTab = lazy(() => import('./dashboard/WeatherTab').then((module) => ({ default: module.WeatherTab })));
+
+function TabLoadingPlaceholder({ label }: { label: string }) {
+  return (
+    <div className="dashboard-panel rounded-[16px] p-6 text-sm text-[color:var(--text-muted)] sm:rounded-[18px] sm:p-8">
+      {label}
+    </div>
+  );
+}
 
 function readInitialSplitMode() {
   if (typeof window === 'undefined') return false;
@@ -134,6 +143,11 @@ function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolea
 export default function F1TelemetryDashboard() {
   const filters = useDashboardFilters();
   const setLapNum = filters.setLapNum;
+  const needsTelemetryData = filters.tab === 'telemetry' || filters.tab === 'energy';
+  const needsStrategyData = filters.tab === 'tires';
+  const needsRadioData = filters.tab === 'radio';
+  const needsIncidentsData = filters.tab === 'incidents';
+  const needsWeatherData = filters.tab === 'weather';
   const [splitMode, setSplitMode] = useState(readInitialSplitMode);
   const [embedMode] = useState(readInitialEmbedMode);
   const [themeMode, setThemeMode] = useState<ThemeMode>(readInitialThemeMode);
@@ -153,11 +167,11 @@ export default function F1TelemetryDashboard() {
     useLaps(filters.sessionKey, filters.driverNums[3]),
   ];
 
-  const stints = useStints(filters.sessionKey);
-  const pits = usePits(filters.sessionKey);
-  const weather = useWeather(filters.sessionKey);
-  const raceControl = useRaceControl(filters.sessionKey);
-  const teamRadio = useTeamRadio(filters.sessionKey);
+  const stints = useStints(needsStrategyData ? filters.sessionKey : null);
+  const pits = usePits(needsStrategyData ? filters.sessionKey : null);
+  const weather = useWeather(needsWeatherData ? filters.sessionKey : null);
+  const raceControl = useRaceControl(needsIncidentsData ? filters.sessionKey : null);
+  const teamRadio = useTeamRadio(needsRadioData ? filters.sessionKey : null);
 
   const selectionData = useDashboardSelectionData({
     meetings: meetings.data,
@@ -182,26 +196,26 @@ export default function F1TelemetryDashboard() {
     useLapTelemetry(
       filters.sessionKey,
       filters.driverNums[0],
-      selectionData.telemetryWindows[0]?.lapStart || null,
-      selectionData.telemetryWindows[0]?.nextLapStart || null,
+      needsTelemetryData ? selectionData.telemetryWindows[0]?.lapStart || null : null,
+      needsTelemetryData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null,
     ),
     useLapTelemetry(
       filters.sessionKey,
       filters.driverNums[1],
-      selectionData.telemetryWindows[1]?.lapStart || null,
-      selectionData.telemetryWindows[1]?.nextLapStart || null,
+      needsTelemetryData ? selectionData.telemetryWindows[1]?.lapStart || null : null,
+      needsTelemetryData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null,
     ),
     useLapTelemetry(
       filters.sessionKey,
       filters.driverNums[2],
-      selectionData.telemetryWindows[2]?.lapStart || null,
-      selectionData.telemetryWindows[2]?.nextLapStart || null,
+      needsTelemetryData ? selectionData.telemetryWindows[2]?.lapStart || null : null,
+      needsTelemetryData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null,
     ),
     useLapTelemetry(
       filters.sessionKey,
       filters.driverNums[3],
-      selectionData.telemetryWindows[3]?.lapStart || null,
-      selectionData.telemetryWindows[3]?.nextLapStart || null,
+      needsTelemetryData ? selectionData.telemetryWindows[3]?.lapStart || null : null,
+      needsTelemetryData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null,
     ),
   ];
   const primaryTelemetry = telemetryStates[0];
@@ -210,6 +224,7 @@ export default function F1TelemetryDashboard() {
   ) as Record<number, ReturnType<typeof useLapTelemetry>['data']>;
 
   const viewModel = useDashboardViewModel({
+    activeTab: filters.tab,
     allLaps: selectionData.allLaps,
     driverMap: selectionData.driverMap,
     driverNums: filters.driverNums,
@@ -225,7 +240,7 @@ export default function F1TelemetryDashboard() {
 
   const anyLoading = meetings.loading || sessions.loading || drivers.loading || sessionResults.loading;
   const lapsLoading = lapStates.some((state) => state.loading);
-  const telemetryLoading = telemetryStates.some((state) => state.loading);
+  const telemetryLoading = needsTelemetryData && telemetryStates.some((state) => state.loading);
   const totalLaps = selectionData.lapOptions.length > 0 ? selectionData.lapOptions[selectionData.lapOptions.length - 1] : null;
   const currentLapIndex = selectionData.lapOptions.indexOf(filters.lapNum);
   const canStepBackward = currentLapIndex > 0;
@@ -251,13 +266,18 @@ export default function F1TelemetryDashboard() {
   }, [viewModel.lapSummaries]);
   const quickChips = useMemo(() => {
     const leader = viewModel.lapSummaries[0];
+    const pitLabel = needsStrategyData
+      ? pits.loading
+        ? 'Pits …'
+        : `Pits ${viewModel.filteredPits.length}`
+      : 'Pits —';
     return [
       { label: leader?.lapTime ? `Fastest ${leader.name} ${leader.lapTime.toFixed(3)}s` : `Focus L${filters.lapNum}`, tone: 'purple' as const },
-      { label: `Pits ${viewModel.filteredPits.length}`, tone: 'amber' as const },
+      { label: pitLabel, tone: 'amber' as const },
       { label: `Drivers ${filters.driverNums.length}`, tone: 'blue' as const },
       { label: `Laps ${selectionData.lapOptions.length}`, tone: 'neutral' as const },
     ];
-  }, [filters.driverNums.length, filters.lapNum, selectionData.lapOptions.length, viewModel.filteredPits.length, viewModel.lapSummaries]);
+  }, [filters.driverNums.length, filters.lapNum, needsStrategyData, pits.loading, selectionData.lapOptions.length, viewModel.filteredPits.length, viewModel.lapSummaries]);
   const defaultPresetName = useMemo(() => {
     const gp = filters.circuit || 'session';
     return `${gp.toLowerCase().replace(/\s+/g, '-')}-lap-${filters.lapNum}`;
@@ -527,53 +547,66 @@ export default function F1TelemetryDashboard() {
           )}
 
           {filters.tab === 'tires' && (
-            <StrategyTab
-              lapNum={filters.lapNum}
-              driverNums={filters.driverNums}
-              driverMap={selectionData.driverMap}
-              stintsLoading={stints.loading}
-              stintsByDriver={viewModel.stintsByDriver}
-              pitsLoading={pits.loading}
-              filteredPits={viewModel.filteredPits}
-            />
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading strategy view..." />}>
+              <StrategyTab
+                lapNum={filters.lapNum}
+                driverNums={filters.driverNums}
+                driverMap={selectionData.driverMap}
+                stintsLoading={stints.loading}
+                stintsByDriver={viewModel.stintsByDriver}
+                pitsLoading={pits.loading}
+                filteredPits={viewModel.filteredPits}
+              />
+            </Suspense>
           )}
 
           {filters.tab === 'energy' && (
-            <EnergyTab
-              lapNum={filters.lapNum}
-              driverNums={filters.driverNums}
-              driverMap={selectionData.driverMap}
-              speedData={viewModel.speedData}
-              telemetryLoading={telemetryLoading}
-            />
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading energy view..." />}>
+              <EnergyTab
+                lapNum={filters.lapNum}
+                driverNums={filters.driverNums}
+                driverMap={selectionData.driverMap}
+                speedData={viewModel.speedData}
+                comparisonEnergyData={viewModel.comparisonEnergyData}
+                lapSummaries={viewModel.lapSummaries}
+                driverColor={viewModel.driverColor}
+                telemetryLoading={telemetryLoading}
+              />
+            </Suspense>
           )}
 
           {filters.tab === 'radio' && (
-            <RadioTab
-              loading={teamRadio.loading}
-              error={teamRadio.error}
-              messages={viewModel.filteredRadio}
-              driverMap={selectionData.driverMap}
-            />
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading radio view..." />}>
+              <RadioTab
+                loading={teamRadio.loading}
+                error={teamRadio.error}
+                messages={viewModel.filteredRadio}
+                driverMap={selectionData.driverMap}
+              />
+            </Suspense>
           )}
 
           {filters.tab === 'incidents' && (
-            <IncidentsTab
-              loading={raceControl.loading}
-              error={raceControl.error}
-              messages={viewModel.raceControlMessages}
-            />
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading race control view..." />}>
+              <IncidentsTab
+                loading={raceControl.loading}
+                error={raceControl.error}
+                messages={viewModel.raceControlMessages}
+              />
+            </Suspense>
           )}
 
           {filters.tab === 'weather' && (
-            <WeatherTab
-              loading={weather.loading}
-              error={weather.error}
-              latestWeather={viewModel.latestWeather}
-              sampleCount={weather.data?.length || 0}
-              weatherRadar={viewModel.weatherRadar}
-              weatherTrend={viewModel.weatherTrend}
-            />
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading weather view..." />}>
+              <WeatherTab
+                loading={weather.loading}
+                error={weather.error}
+                latestWeather={viewModel.latestWeather}
+                sampleCount={weather.data?.length || 0}
+                weatherRadar={viewModel.weatherRadar}
+                weatherTrend={viewModel.weatherTrend}
+              />
+            </Suspense>
           )}
         </div>
       </div>

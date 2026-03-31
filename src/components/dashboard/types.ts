@@ -46,6 +46,10 @@ export type DriverLapSummary = {
   topSpeed: number | null;
   avgSpeed: number | null;
   avgThrottle: number | null;
+  avgBrake: number | null;
+  peakRpm: number | null;
+  peakGear: number | null;
+  drsOpenPct: number | null;
 };
 
 export type WeatherTrendPoint = {
