@@ -232,27 +232,31 @@ export function TelemetryTab({
         legend={speedTraceLegend}
       >
         {telemetryLoading ? <Spinner label="Fetching car telemetry..." /> : telemetryError ? <NoData msg={telemetryError} /> : comparisonSpeedData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={comparisonSpeedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-              <YAxis domain={[0, 370]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', fill: chartAxisSoft, fontSize: 10 }} />
-              <Tooltip content={<ChartTip />} />
-              {driverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="monotone" dataKey={`speed_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[200px] sm:h-[260px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={comparisonSpeedData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
+                <YAxis domain={[0, 370]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', fill: chartAxisSoft, fontSize: 10 }} />
+                <Tooltip content={<ChartTip />} />
+                {driverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="monotone" dataKey={`speed_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : speedData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={speedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <YAxis domain={[0, 370]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', fill: chartAxisSoft, fontSize: 10 }} />
-              <Tooltip content={<ChartTip />} />
-              <Line type="monotone" dataKey="speed" stroke={driverColor(driverNums[0])} strokeWidth={1.8} dot={false} name="Speed (km/h)" />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[200px] sm:h-[260px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={speedData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <YAxis domain={[0, 370]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', fill: chartAxisSoft, fontSize: 10 }} />
+                <Tooltip content={<ChartTip />} />
+                <Line type="monotone" dataKey="speed" stroke={driverColor(driverNums[0])} strokeWidth={1.8} dot={false} isAnimationActive={false} name="Speed (km/h)" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="No telemetry data. The API may not have car data for this session/lap. Try a race session." />}
       </ChartPanel>
 
@@ -265,17 +269,19 @@ export function TelemetryTab({
         legend={driverLegend}
       >
         {comparisonSpeedData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={speedDeltaData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-              <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${value.toFixed(0)} km/h`} />
-              <Tooltip content={<ChartTip />} />
-              {driverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="monotone" dataKey={`delta_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[160px] sm:h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={speedDeltaData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
+                <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${value.toFixed(0)} km/h`} />
+                <Tooltip content={<ChartTip />} />
+                {driverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="monotone" dataKey={`delta_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="Speed delta becomes available when at least two selected drivers have telemetry for the chosen lap." />}
       </ChartPanel>
 
@@ -288,66 +294,74 @@ export function TelemetryTab({
           legend={controlLegend}
         >
           {comparisonControlData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={comparisonControlData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-                <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
-                <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
-                <Tooltip content={<ChartTip />} />
-                {driverNums.map((driverNumber) => (
-                  <Line key={`throttle-${driverNumber}`} type="monotone" dataKey={`throttle_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Throttle`} />
-                ))}
-                {driverNums.map((driverNumber) => (
-                  <Line key={`brake-${driverNumber}`} type="monotone" dataKey={`brake_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.6} strokeDasharray="6 5" dot={false} connectNulls name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Brake`} />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="h-[160px] sm:h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={comparisonControlData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                  <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
+                  <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
+                  <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
+                  <Tooltip content={<ChartTip />} />
+                  {driverNums.map((driverNumber) => (
+                    <Line key={`throttle-${driverNumber}`} type="monotone" dataKey={`throttle_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Throttle`} />
+                  ))}
+                  {driverNums.map((driverNumber) => (
+                    <Line key={`brake-${driverNumber}`} type="monotone" dataKey={`brake_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.6} strokeDasharray="6 5" dot={false} connectNulls isAnimationActive={false} name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Brake`} />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <ComposedChart data={speedData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-                <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-                <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
-                <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
-                <Tooltip content={<ChartTip />} />
-                <Area type="monotone" dataKey="throttle" stroke="#22C55E" fill="#22C55E" fillOpacity={0.08} strokeWidth={1.5} name="Throttle %" />
-                <Area type="monotone" dataKey="brake" stroke="#EF4444" fill="#EF4444" fillOpacity={0.08} strokeWidth={1.5} name="Brake" />
-              </ComposedChart>
-            </ResponsiveContainer>
+            <div className="h-[140px] sm:h-[180px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={speedData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                  <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                  <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
+                  <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
+                  <Tooltip content={<ChartTip />} />
+                  <Area type="monotone" dataKey="throttle" stroke="#22C55E" fill="#22C55E" fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Throttle %" />
+                  <Area type="monotone" dataKey="brake" stroke="#EF4444" fill="#EF4444" fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Brake" />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
           )}
         </ChartPanel>
       )}
 
       <ChartPanel title="Lap Times Comparison" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={lapsLoading ? 'Loading lap data...' : `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — excludes pit out-laps`} className="overflow-hidden" exportName="lap-times-comparison" legend={driverLegend}>
         {lapsLoading ? <Spinner /> : lapTimeData.some((point) => Object.keys(point).length > 1) ? (
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={lapTimeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="lap" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(lapTimeData.length / 15))} />
-              <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              {driverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="monotone" dataKey={`t_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.5} dot={{ r: 1.5 }} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[180px] sm:h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lapTimeData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="lap" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(lapTimeData.length / 15))} />
+                <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                {driverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="monotone" dataKey={`t_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.5} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="No lap time data yet. Select drivers above." />}
       </ChartPanel>
 
       <ChartPanel title="Gap To Best Lap" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Per-lap delta to the fastest selected driver on that same lap" className="overflow-hidden" exportName="gap-to-best-lap" legend={driverLegend}>
         {lapsLoading ? <Spinner /> : lapDeltaData.some((point) => Object.keys(point).length > 1) ? (
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={lapDeltaData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="lap" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(lapDeltaData.length / 15))} />
-              <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${value.toFixed(0)}ms`} />
-              <Tooltip content={<ChartTip />} />
-              {driverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="monotone" dataKey={`d_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.5} dot={false} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[160px] sm:h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lapDeltaData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="lap" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(lapDeltaData.length / 15))} />
+                <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${value.toFixed(0)}ms`} />
+                <Tooltip content={<ChartTip />} />
+                {driverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="monotone" dataKey={`d_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.5} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="Gap trend needs comparable lap times from at least two selected drivers." />}
       </ChartPanel>
     </>

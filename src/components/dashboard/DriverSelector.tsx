@@ -13,9 +13,9 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle, embedMode =
 
   if (embedMode) {
     return (
-      <div className="mb-3">
-        <div className="dashboard-card rounded-[18px] p-3">
-          <div className="mb-2.5 flex flex-wrap items-start justify-between gap-2">
+      <div className="mb-4">
+        <div className="dashboard-card rounded-[14px] p-4">
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
             <div>
               <label className="block text-[9px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">
                 Comparison Drivers
@@ -24,12 +24,12 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle, embedMode =
                 Select up to four drivers for the active comparison set.
               </p>
             </div>
-            <span className="dashboard-embed-chip rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
+            <span className="dashboard-embed-chip rounded-full px-2.5 py-1.5 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
               {selectedDrivers.length}/4 active
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {drivers.map((driver) => (
               <DriverChip
                 key={driver.driver_number}
@@ -47,18 +47,18 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle, embedMode =
   }
 
   return (
-    <div className="mb-4">
+    <div className="mb-5">
       <div className="sm:hidden">
-        <div className="dashboard-card rounded-[16px] p-3">
-          <div className="mb-2.5 flex items-center justify-between gap-2">
+        <div className="dashboard-card rounded-[16px] p-4">
+          <div className="mb-3 flex items-center justify-between gap-2">
             <label className="block text-[9px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">
               Comparison Drivers
             </label>
-            <span className="dashboard-embed-chip rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
+            <span className="dashboard-embed-chip rounded-full px-2.5 py-1.5 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
               {selectedDrivers.length}/4 active
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-3 gap-2">
             {drivers.map((driver) => (
               <DriverChip
                 key={driver.driver_number}

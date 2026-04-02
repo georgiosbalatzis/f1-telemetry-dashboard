@@ -22,7 +22,7 @@ export function DashboardTabs({
   embedMode?: boolean;
 }) {
   return (
-    <div className={embedMode ? 'mb-3' : 'mb-4 sm:mb-5'}>
+    <div className={embedMode ? 'mb-4' : 'mb-5'}>
       <div className={`dashboard-tabs-rail scrollbar-hide ${embedMode ? 'dashboard-tabs-rail-compact' : ''}`}>
         {TABS.map((tab) => (
           <button
@@ -30,8 +30,8 @@ export function DashboardTabs({
             onClick={() => onChange(tab.key)}
             className={cn(
               embedMode
-                ? 'flex min-h-[36px] items-center justify-center gap-1.5 rounded-[10px] border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] transition-all duration-200'
-                : 'flex min-h-[34px] items-center gap-1.5 whitespace-nowrap rounded-[9px] border px-2 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] transition-all duration-200 sm:min-h-[38px] sm:rounded-[10px] sm:px-3 sm:py-2 sm:text-[10px] sm:tracking-[0.12em]',
+                ? 'flex min-h-[42px] items-center justify-center gap-2 rounded-[8px] border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] transition-all duration-200'
+                : 'flex min-h-[42px] items-center gap-2 whitespace-nowrap rounded-[7px] border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] transition-all duration-200 sm:min-h-[40px] sm:rounded-[8px] sm:px-3.5 sm:py-2',
               activeTab === tab.key
                 ? 'border-[color:var(--accent-border)] bg-[color:var(--tabs-active)] text-[color:var(--accent)] shadow-[var(--tabs-active-shadow)]'
                 : 'border-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',

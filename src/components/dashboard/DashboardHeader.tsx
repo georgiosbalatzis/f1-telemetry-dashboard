@@ -111,7 +111,7 @@ export function DashboardHeader({
   }
 
   return (
-    <header className={embedMode ? 'pb-4 pt-4 sm:pt-5' : 'pb-4 pt-4 sm:pb-5 sm:pt-6'}>
+    <header className={embedMode ? 'pb-5 pt-5 sm:pt-6' : 'pb-5 pt-5 sm:pb-6 sm:pt-7'}>
       <div className="mb-4 flex flex-col gap-3 sm:gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0">
           <div className="mb-2 hidden text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--accent)] sm:block">

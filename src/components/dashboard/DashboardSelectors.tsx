@@ -160,12 +160,12 @@ export function DashboardSelectors({
 
   if (embedMode) {
     return (
-      <div className="mb-3">
-        <div className="dashboard-card rounded-[18px] p-3">
-          <div className="flex flex-col gap-3 xl:flex-row xl:items-stretch">
-            <div className="dashboard-embed-focus shrink-0 rounded-[16px] px-3 py-3 xl:w-[184px]">
+      <div className="mb-4">
+        <div className="dashboard-card rounded-[14px] p-4">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-stretch">
+            <div className="dashboard-embed-focus shrink-0 rounded-[12px] px-4 py-4 xl:w-[184px]">
               <div className="text-[9px] uppercase tracking-[0.16em] text-[color:var(--accent)]">Focus Lap</div>
-              <div className="mt-3 flex items-center justify-between gap-2">
+              <div className="mt-4 flex items-center justify-between gap-2">
                 <button onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button">
                   <ChevronLeft size={14} />
                 </button>
@@ -177,12 +177,12 @@ export function DashboardSelectors({
                   <ChevronRight size={14} />
                 </button>
               </div>
-              <div className="mt-3">
+              <div className="mt-4">
                 {lapField}
               </div>
             </div>
 
-            <div className="grid flex-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {seasonField}
               {circuitField}
               {sessionField}
@@ -190,9 +190,9 @@ export function DashboardSelectors({
           </div>
 
           {(summaryRow || quickChips.length > 0) && (
-            <div className="mt-3 border-t border-[color:var(--line)] pt-3">
+            <div className="mt-4 border-t border-[color:var(--line)] pt-4">
               {summaryRow}
-              <div className={summaryRow ? 'mt-2' : ''}>
+              <div className={summaryRow ? 'mt-3' : ''}>
                 {quickRow}
               </div>
             </div>
@@ -203,35 +203,34 @@ export function DashboardSelectors({
   }
 
   return (
-    <div className="mb-4 sm:mb-5">
+    <div className="mb-5 sm:mb-6">
       <div className="sm:hidden">
-        <div className="dashboard-card rounded-[16px] p-3">
+        <div className="dashboard-card rounded-[16px] p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-[9px] uppercase tracking-[0.16em] text-[color:var(--accent)]">Lap Focus</div>
-              <div className="mt-1.5 flex items-end gap-1.5">
+              <div className="mt-2 flex items-end gap-1.5">
                 <span className="text-3xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</span>
                 <span className="mb-1 text-[11px] font-medium text-[color:var(--text-muted)]">/ {totalLaps ?? '—'}</span>
               </div>
             </div>
-            <div className="dashboard-pill rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-muted)]">
+            <div className="dashboard-pill rounded-full px-3 py-1.5 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-muted)]">
               current lap
             </div>
           </div>
 
-          <div className="mt-3">{lapField}</div>
+          <div className="mt-4">{lapField}</div>
 
-          <div className="mt-2 grid grid-cols-2 gap-2">
+          <div className="mt-4 grid gap-3">
             {seasonField}
+            {circuitField}
             {sessionField}
           </div>
 
-          <div className="mt-2">{circuitField}</div>
-
           {(summaryRow || quickChips.length > 0) && (
-            <div className="mt-3 border-t border-[color:var(--line)] pt-3">
+            <div className="mt-4 border-t border-[color:var(--line)] pt-4">
               {summaryRow}
-              <div className={summaryRow ? 'mt-2' : ''}>
+              <div className={summaryRow ? 'mt-3' : ''}>
                 {quickRow}
               </div>
             </div>
@@ -240,7 +239,7 @@ export function DashboardSelectors({
       </div>
 
       <div className="hidden sm:block">
-        <div className="dashboard-card rounded-[20px] p-3.5 sm:p-4">
+        <div className="dashboard-card rounded-[16px] p-4 sm:p-5">
           <div className="grid gap-4 xl:grid-cols-[164px_minmax(0,1fr)]">
             <div className="dashboard-embed-focus relative overflow-hidden rounded-[16px] p-3.5">
               <div className="absolute inset-x-0 top-0 h-px bg-white/25 opacity-30" />

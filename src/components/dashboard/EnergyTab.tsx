@@ -95,27 +95,31 @@ export function EnergyTab({
         legend={comparisonMode ? energyLegend : [{ label: 'DRS', color: 'var(--accent)', variant: 'area' }]}
       >
         {telemetryLoading ? <Spinner /> : comparisonMode ? (
-          <ResponsiveContainer width="100%" height={160}>
-            <LineChart data={comparisonEnergyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-              <YAxis domain={[0, 1.1]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              {comparisonDriverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="stepAfter" dataKey={`drs_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[120px] sm:h-[160px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={comparisonEnergyData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
+                <YAxis domain={[0, 1.1]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                {comparisonDriverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="stepAfter" dataKey={`drs_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : speedData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={140}>
-            <AreaChart data={speedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <YAxis domain={[0, 1.2]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              <Area type="stepAfter" dataKey="drs" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.14} strokeWidth={2} name="DRS" />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="h-[110px] sm:h-[140px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={speedData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <YAxis domain={[0, 1.2]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                <Area type="stepAfter" dataKey="drs" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.14} strokeWidth={2} isAnimationActive={false} name="DRS" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="No car data for this lap. Try a race session lap." />}
       </ChartPanel>
 
@@ -129,27 +133,31 @@ export function EnergyTab({
         legend={comparisonMode ? energyLegend : [{ label: 'Gear', color: 'var(--accent-strong)' }]}
       >
         {telemetryLoading ? <Spinner /> : comparisonMode ? (
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={comparisonEnergyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-              <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              {comparisonDriverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="stepAfter" dataKey={`gear_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[140px] sm:h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={comparisonEnergyData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
+                <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                {comparisonDriverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="stepAfter" dataKey={`gear_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : speedData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={speedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              <Line type="stepAfter" dataKey="gear" stroke="var(--accent-strong)" strokeWidth={2} dot={false} name="Gear" />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[140px] sm:h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={speedData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                <Line type="stepAfter" dataKey="gear" stroke="var(--accent-strong)" strokeWidth={2} dot={false} isAnimationActive={false} name="Gear" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="No data." />}
       </ChartPanel>
 
@@ -163,27 +171,31 @@ export function EnergyTab({
         legend={comparisonMode ? energyLegend : [{ label: 'RPM', color: chartRpm }]}
       >
         {telemetryLoading ? <Spinner /> : comparisonMode ? (
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={comparisonEnergyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-              <YAxis domain={[0, 15000]} tick={{ fill: chartAxis, fontSize: 9 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              {comparisonDriverNums.map((driverNumber) => (
-                <Line key={driverNumber} type="monotone" dataKey={`rpm_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.8} dot={false} connectNulls name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[140px] sm:h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={comparisonEnergyData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
+                <YAxis domain={[0, 15000]} tick={{ fill: chartAxis, fontSize: 9 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                {comparisonDriverNums.map((driverNumber) => (
+                  <Line key={driverNumber} type="monotone" dataKey={`rpm_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.8} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : speedData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={speedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <YAxis domain={[0, 15000]} tick={{ fill: chartAxis, fontSize: 9 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              <Line type="monotone" dataKey="rpm" stroke={chartRpm} strokeWidth={1.2} dot={false} name="RPM" />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[140px] sm:h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={speedData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <YAxis domain={[0, 15000]} tick={{ fill: chartAxis, fontSize: 9 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                <Line type="monotone" dataKey="rpm" stroke={chartRpm} strokeWidth={1.2} dot={false} isAnimationActive={false} name="RPM" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="No data." />}
       </ChartPanel>
     </>

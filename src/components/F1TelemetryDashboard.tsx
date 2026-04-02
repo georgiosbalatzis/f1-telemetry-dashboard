@@ -311,11 +311,11 @@ export default function F1TelemetryDashboard() {
     [filters.snapshot, splitMode, themeMode],
   );
   const contentLayoutClass = splitMode
-    ? `grid ${embedMode ? 'gap-3 pb-8' : 'gap-3 pb-10 sm:gap-4 sm:pb-14'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
-    : `${embedMode ? 'space-y-3 pb-8' : 'space-y-3 pb-10 sm:space-y-4 sm:pb-14'}`;
+    ? `grid ${embedMode ? 'gap-4 pb-10' : 'gap-4 pb-12 sm:gap-5 sm:pb-16'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
+    : `${embedMode ? 'space-y-4 pb-10' : 'space-y-4 pb-12 sm:space-y-5 sm:pb-16'}`;
   const pageShellClass = embedMode
-    ? 'relative mx-auto max-w-[1440px] px-2 py-2 sm:px-3'
-    : 'relative mx-auto max-w-[1440px] px-3 py-1.5 sm:px-6 sm:py-2';
+    ? 'relative mx-auto max-w-[1440px] px-4 py-4 sm:px-5'
+    : 'relative mx-auto max-w-[1440px] px-4 py-3 sm:px-6 sm:py-4';
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -454,16 +454,6 @@ export default function F1TelemetryDashboard() {
 
   return (
     <div className={`dashboard-app min-h-screen ${themeMode === 'light' ? 'theme-light' : 'theme-dark'} ${embedMode ? 'embed-mode' : ''}`}>
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.035] sm:opacity-[0.08]"
-          style={{
-            backgroundImage: 'linear-gradient(var(--app-grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--app-grid-line) 1px, transparent 1px)',
-            backgroundSize: '96px 96px',
-          }}
-        />
-      </div>
-
       <div className={pageShellClass}>
         <DashboardHeader
           loading={anyLoading}

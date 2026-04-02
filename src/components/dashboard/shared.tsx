@@ -78,10 +78,10 @@ export function DriverChip({
       <button
         onClick={onClick}
         className={cn(
-          'group relative flex min-h-[88px] flex-col items-start rounded-[14px] border px-2.5 py-2.5 text-left transition-all duration-200 sm:min-h-[98px]',
+          'group relative flex min-h-[88px] flex-col items-start rounded-[14px] border px-2.5 py-2.5 text-left transition-colors duration-150 sm:min-h-[98px]',
           selected
             ? 'text-[color:var(--text-strong)] shadow-[0_8px_18px_-16px_rgba(0,0,0,0.28)]'
-            : 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-soft)] hover:-translate-y-0.5 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]',
+            : 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-soft)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]',
         )}
         style={selected ? { borderColor: `${color}88`, background: `linear-gradient(180deg, ${color}20, transparent 78%), var(--surface-card)` } : {}}
       >
@@ -89,7 +89,7 @@ export function DriverChip({
         <div className="flex w-full items-start justify-between gap-2">
           <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--surface-avatar)] font-black text-[10px] text-[color:var(--text-soft)]">
             {driver.headshot_url ? (
-              <img src={driver.headshot_url} alt={driver.full_name} className="h-full w-full object-cover" />
+              <img src={driver.headshot_url} alt={driver.full_name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             ) : (
               initials
             )}
@@ -126,8 +126,8 @@ export function DriverChip({
       onClick={onClick}
       className={cn(
         compact
-          ? 'flex w-full min-w-0 items-center justify-start gap-2 rounded-[10px] border px-2.5 py-1.5 text-[10px] font-semibold transition-all duration-200'
-          : 'flex min-w-[138px] items-center gap-2 rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold transition-all duration-200 sm:min-w-0 sm:px-3',
+          ? 'flex w-full min-w-0 items-center justify-start gap-2 rounded-[10px] border px-2.5 py-1.5 text-[10px] font-semibold transition-colors duration-150'
+          : 'flex min-w-[138px] items-center gap-2 rounded-[12px] border px-2.5 py-2 text-[10px] font-semibold transition-colors duration-150 sm:min-w-0 sm:px-3',
         selected
           ? 'border-current bg-[color:var(--surface-soft)] text-[color:var(--text-strong)] shadow-[0_0_0_1px_currentColor_inset]'
           : 'border-[color:var(--line)] text-[color:var(--text-muted)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
@@ -179,7 +179,7 @@ export function ToolbarButton({
       disabled={disabled}
       style={activeStyle}
       className={cn(
-        'inline-flex h-8 min-w-8 items-center justify-center gap-1.5 rounded-[9px] border px-2 text-[10px] uppercase tracking-[0.08em] transition-all duration-200 sm:rounded-[10px] sm:px-2.5',
+        'inline-flex h-8 min-w-8 items-center justify-center gap-1.5 rounded-[9px] border px-2 text-[10px] uppercase tracking-[0.08em] transition-colors duration-150 sm:rounded-[10px] sm:px-2.5',
         active
           ? 'text-[color:var(--accent)] shadow-[var(--tabs-active-shadow)]'
           : 'border-transparent bg-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
@@ -240,7 +240,7 @@ type ChartTipPayload = {
 export function ChartTip({ active, payload, label }: { active?: boolean; payload?: ChartTipPayload[]; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="dashboard-card rounded-[12px] px-3 py-2 text-xs backdrop-blur-xl">
+    <div className="dashboard-card rounded-[12px] px-3 py-2 text-xs">
       <div className="mb-1 text-[color:var(--text-muted)]">{label}</div>
       {payload.map((item, index) => (
         <div key={index} className="flex items-center gap-2">

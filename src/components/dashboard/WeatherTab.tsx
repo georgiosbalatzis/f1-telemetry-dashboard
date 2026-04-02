@@ -37,29 +37,33 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         <Stat label="Weather Samples" value={sampleCount} />
       </div>
       <ChartPanel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes" exportName="conditions-radar" legend={[{ label: 'Conditions', color: 'var(--accent)', variant: 'area' }]}>
-        <ResponsiveContainer width="100%" height={280}>
-          <RadarChart data={weatherRadar} outerRadius="70%">
-            <PolarGrid stroke={chartGrid} />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: chartAxis, fontSize: 10 }} />
-            <Radar name="Conditions" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.12} strokeWidth={2} />
-          </RadarChart>
-        </ResponsiveContainer>
+        <div className="h-[220px] sm:h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={weatherRadar} outerRadius="70%">
+              <PolarGrid stroke={chartGrid} />
+              <PolarAngleAxis dataKey="subject" tick={{ fill: chartAxis, fontSize: 10 }} />
+              <Radar name="Conditions" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.12} strokeWidth={2} isAnimationActive={false} />
+            </RadarChart>
+          </ResponsiveContainer>
+        </div>
       </ChartPanel>
       <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={[{ label: 'Air °C', color: '#EF4444' }, { label: 'Track °C', color: '#F97316' }, { label: 'Humidity %', color: '#3B82F6' }, { label: 'Wind m/s', color: '#06B6D4' }]}>
         {weatherTrend.length > 1 ? (
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={weatherTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
-              <XAxis dataKey="time" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
-              <YAxis yAxisId="temp" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-              <YAxis yAxisId="aux" orientation="right" tick={{ fill: chartAxisSoft, fontSize: 9 }} stroke={chartGrid} />
-              <Tooltip content={<ChartTip />} />
-              <Line yAxisId="temp" type="monotone" dataKey="air" stroke="#EF4444" strokeWidth={2} dot={false} name="Air °C" />
-              <Line yAxisId="temp" type="monotone" dataKey="track" stroke="#F97316" strokeWidth={2} dot={false} name="Track °C" />
-              <Line yAxisId="aux" type="monotone" dataKey="humidity" stroke="#3B82F6" strokeWidth={1.6} dot={false} name="Humidity %" />
-              <Line yAxisId="aux" type="monotone" dataKey="wind" stroke="#06B6D4" strokeWidth={1.6} dot={false} name="Wind m/s" />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[180px] sm:h-[260px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={weatherTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <XAxis dataKey="time" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
+                <YAxis yAxisId="temp" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <YAxis yAxisId="aux" orientation="right" tick={{ fill: chartAxisSoft, fontSize: 9 }} stroke={chartGrid} />
+                <Tooltip content={<ChartTip />} />
+                <Line yAxisId="temp" type="monotone" dataKey="air" stroke="#EF4444" strokeWidth={2} dot={false} isAnimationActive={false} name="Air °C" />
+                <Line yAxisId="temp" type="monotone" dataKey="track" stroke="#F97316" strokeWidth={2} dot={false} isAnimationActive={false} name="Track °C" />
+                <Line yAxisId="aux" type="monotone" dataKey="humidity" stroke="#3B82F6" strokeWidth={1.6} dot={false} isAnimationActive={false} name="Humidity %" />
+                <Line yAxisId="aux" type="monotone" dataKey="wind" stroke="#06B6D4" strokeWidth={1.6} dot={false} isAnimationActive={false} name="Wind m/s" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : <NoData msg="More weather samples are needed to draw a session trend." />}
       </ChartPanel>
     </>
