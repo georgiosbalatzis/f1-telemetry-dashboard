@@ -53,46 +53,40 @@ export function DashboardHeader({
 }: Props) {
   if (embedMode) {
     return (
-      <header className="pb-3 pt-2.5">
-        <div className="dashboard-embed-shell rounded-[18px] px-3.5 py-3 sm:px-4">
-          <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex min-w-0 items-start gap-3">
-              <img
-                src={f1StoriesLogo}
-                alt="f1stories.gr"
-                className="h-10 w-10 shrink-0 rounded-[10px] object-cover shadow-[0_8px_18px_-16px_rgba(15,23,42,0.3)]"
-              />
-              <div className="min-w-0">
-                <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[color:var(--accent)]">
-                  f1stories.gr embedded telemetry
+      <header className="pb-4 pt-3">
+        <div className="dashboard-embed-shell rounded-[20px] px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <div className="flex flex-col gap-3.5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-start gap-3">
+                <img
+                  src={f1StoriesLogo}
+                  alt="f1stories.gr"
+                  className="h-9 w-9 shrink-0 rounded-[10px] object-cover shadow-[0_8px_18px_-16px_rgba(15,23,42,0.3)]"
+                />
+                <div className="min-w-0">
+                  <div className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[color:var(--accent)]">
+                    f1stories.gr telemetry embed
+                  </div>
+                  <h1 className="mt-1.5 truncate text-[17px] font-black tracking-[-0.025em] text-[color:var(--text-strong)] sm:text-[19px]" style={{ fontFamily: "'Orbitron', system-ui" }}>
+                    {embedTitle}
+                  </h1>
+                  <p className="mt-1 max-w-2xl text-[11px] leading-[1.45] text-[color:var(--text-muted)]">
+                    {embedSubtitle}
+                  </p>
                 </div>
-                <div className="mt-1 truncate text-base font-black tracking-[-0.02em] text-[color:var(--text-strong)]" style={{ fontFamily: "'Orbitron', system-ui" }}>
-                  {embedTitle}
-                </div>
-                <div className="mt-1 text-[11px] leading-[1.45] text-[color:var(--text-muted)]">
-                  {embedSubtitle}
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {embedContext.map((chip) => (
-                    <span key={`${chip.label}-${chip.value}`} className="dashboard-embed-chip rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.12em]">
-                      <span className="text-[color:var(--text-dim)]">{chip.label}</span>{' '}
-                      <span className="text-[color:var(--text-soft)]">{chip.value}</span>
-                    </span>
-                  ))}
-                </div>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] uppercase tracking-[0.14em]">
+                {embedContext.map((chip) => (
+                  <span key={`${chip.label}-${chip.value}`} className="inline-flex items-center gap-1.5 text-[color:var(--text-muted)]">
+                    <span className="text-[color:var(--text-dim)]">{chip.label}</span>
+                    <span className="text-[color:var(--text-soft)]">{chip.value}</span>
+                  </span>
+                ))}
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-              <a
-                href={openDashboardUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-8 items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface-soft-2)] px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--text-soft)] transition-all duration-200 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]"
-              >
-                Open Full
-                <ExternalLink size={12} />
-              </a>
               {loading ? (
                 <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--accent-border)] bg-[color:var(--accent-muted)] px-3 py-1 text-[10px] uppercase tracking-[0.16em] text-[color:var(--accent)]">
                   <Loader2 size={12} className="animate-spin" />
@@ -103,6 +97,16 @@ export function DashboardHeader({
                   {feedback}
                 </span>
               ) : null}
+
+              <a
+                href={openDashboardUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-8 items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--surface-soft-2)] px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--text-soft)] transition-all duration-200 hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]"
+              >
+                Open Full
+                <ExternalLink size={12} />
+              </a>
             </div>
           </div>
         </div>

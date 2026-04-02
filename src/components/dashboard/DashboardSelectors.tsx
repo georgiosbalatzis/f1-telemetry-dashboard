@@ -66,6 +66,7 @@ export function DashboardSelectors({
   const labelClass = embedMode
     ? 'mb-1.5 block text-[9px] uppercase tracking-[0.22em] text-[color:var(--text-dim)]'
     : 'mb-1.5 block text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]';
+  const displayQuickChips = embedMode ? quickChips.slice(0, 3) : quickChips;
   const summaryToneStyles = {
     blue: { color: 'var(--accent)' },
     purple: { color: 'var(--accent-strong)' },
@@ -112,6 +113,16 @@ export function DashboardSelectors({
     </div>
   );
 
+  const lapSelectControl = (
+    <div className="relative flex-1">
+      <select value={lapNum} onChange={(event) => onLapChange(+event.target.value)} disabled={!lapOptions.length} className="dashboard-select">
+        {lapOptions.length === 0 && <option>Select drivers first</option>}
+        {lapOptions.map((option) => <option key={option} value={option}>Lap {option}</option>)}
+      </select>
+      <ChevronDown size={14} className="dashboard-select-icon" />
+    </div>
+  );
+
   const lapField = (
     <div>
       <label className={labelClass}>
@@ -121,17 +132,20 @@ export function DashboardSelectors({
         <button onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button">
           <ChevronLeft size={14} />
         </button>
-        <div className="relative flex-1">
-          <select value={lapNum} onChange={(event) => onLapChange(+event.target.value)} disabled={!lapOptions.length} className="dashboard-select">
-            {lapOptions.length === 0 && <option>Select drivers first</option>}
-            {lapOptions.map((option) => <option key={option} value={option}>Lap {option}</option>)}
-          </select>
-          <ChevronDown size={14} className="dashboard-select-icon" />
-        </div>
+        {lapSelectControl}
         <button onClick={() => onStepLap(1)} disabled={!canStepForward} className="dashboard-nav-button">
           <ChevronRight size={14} />
         </button>
       </div>
+    </div>
+  );
+
+  const lapSelectField = (
+    <div>
+      <label className={labelClass}>
+        Jump To Lap {lapsLoading && <Loader2 size={10} className="ml-1 inline animate-spin" />}
+      </label>
+      {lapSelectControl}
     </div>
   );
 
@@ -140,7 +154,7 @@ export function DashboardSelectors({
       {summaryPills.map((pill) => (
         <div
           key={`${pill.label}-${pill.driver}`}
-          className={`dashboard-pill shrink-0 rounded-[999px] ${embedMode ? 'px-3 py-1.5 text-[9px] tracking-[0.16em]' : 'px-3.5 py-2 text-[10px] tracking-[0.18em]'} uppercase text-[color:var(--text-muted)]`}
+          className={`dashboard-pill shrink-0 rounded-[999px] ${embedMode ? 'px-2.5 py-1 text-[8px] tracking-[0.14em]' : 'px-3.5 py-2 text-[10px] tracking-[0.18em]'} uppercase text-[color:var(--text-muted)]`}
         >
           <span style={summaryToneStyles[pill.tone]}>{pill.label}</span>{' '}
           <span className="text-[color:var(--text-strong)]">{pill.driver}</span>{' '}
@@ -152,7 +166,7 @@ export function DashboardSelectors({
 
   const quickRow = (
     <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
-      {quickChips.map((chip) => (
+      {displayQuickChips.map((chip) => (
         <AccentChip key={chip.label} label={chip.label} tone={chip.tone} />
       ))}
     </div>
@@ -160,43 +174,48 @@ export function DashboardSelectors({
 
   if (embedMode) {
     return (
-      <div className="mb-4">
-        <div className="dashboard-card rounded-[14px] p-4">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-stretch">
-            <div className="dashboard-embed-focus shrink-0 rounded-[12px] px-4 py-4 xl:w-[184px]">
-              <div className="text-[9px] uppercase tracking-[0.16em] text-[color:var(--accent)]">Focus Lap</div>
-              <div className="mt-4 flex items-center justify-between gap-2">
+      <div className="mb-5">
+        <div className="dashboard-card rounded-[18px] p-4 sm:p-5">
+          <div className="flex flex-col gap-4">
+            <div className="dashboard-embed-focus flex flex-col gap-3 rounded-[18px] px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+              <div className="min-w-0">
+                <div className="text-[9px] uppercase tracking-[0.18em] text-[color:var(--accent)]">Session Focus</div>
+                <div className="mt-1.5 flex items-end gap-2">
+                  <span className="text-4xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</span>
+                  <span className="mb-1 text-[11px] font-medium text-[color:var(--text-muted)]">/ {totalLaps ?? '—'} laps</span>
+                </div>
+                <div className="mt-1 text-[11px] leading-[1.45] text-[color:var(--text-muted)]">
+                  Step through the active lap without resetting the comparison.
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
                 <button onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button">
                   <ChevronLeft size={14} />
                 </button>
-                <div className="min-w-[82px] text-center">
-                  <div className="text-3xl font-black tracking-tight text-[color:var(--text-strong)]">{lapNum}</div>
-                  <div className="text-[10px] uppercase tracking-[0.12em] text-[color:var(--text-muted)]">of {totalLaps ?? '—'}</div>
+                <div className="dashboard-pill rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.14em] text-[color:var(--text-soft)]">
+                  Lap {lapNum}
                 </div>
                 <button onClick={() => onStepLap(1)} disabled={!canStepForward} className="dashboard-nav-button">
                   <ChevronRight size={14} />
                 </button>
               </div>
-              <div className="mt-4">
-                {lapField}
-              </div>
             </div>
 
-            <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {(summaryRow || displayQuickChips.length > 0) && (
+              <div className="space-y-2">
+                {summaryRow}
+                <div>{quickRow}</div>
+              </div>
+            )}
+
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {seasonField}
               {circuitField}
               {sessionField}
+              {lapSelectField}
             </div>
           </div>
-
-          {(summaryRow || quickChips.length > 0) && (
-            <div className="mt-4 border-t border-[color:var(--line)] pt-4">
-              {summaryRow}
-              <div className={summaryRow ? 'mt-3' : ''}>
-                {quickRow}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     );

@@ -25,7 +25,17 @@ export function DashboardTabs({
   embedMode?: boolean;
 }) {
   return (
-    <div className={embedMode ? 'mb-4' : 'mb-5'}>
+    <div className="mb-5">
+      {embedMode && (
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <div className="text-[9px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">
+            Views
+          </div>
+          <div className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--text-faint)]">
+            Swipe to switch
+          </div>
+        </div>
+      )}
       <div className={`dashboard-tabs-rail scrollbar-hide ${embedMode ? 'dashboard-tabs-rail-compact' : ''}`}>
         {TABS.map((tab) => (
           <button
@@ -33,11 +43,13 @@ export function DashboardTabs({
             onClick={() => onChange(tab.key)}
             className={cn(
               embedMode
-                ? 'flex min-h-[42px] items-center justify-center gap-2 rounded-[8px] border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.1em] transition-all duration-200'
+                ? 'flex min-h-[38px] items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] transition-all duration-200'
                 : 'flex min-h-[42px] items-center gap-2 whitespace-nowrap rounded-[7px] border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] transition-all duration-200 sm:min-h-[40px] sm:rounded-[8px] sm:px-3.5 sm:py-2',
               activeTab === tab.key
                 ? 'border-[color:var(--accent-border)] bg-[color:var(--tabs-active)] text-[color:var(--accent)] shadow-[var(--tabs-active-shadow)]'
-                : 'border-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
+                : embedMode
+                  ? 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-muted)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]'
+                  : 'border-transparent text-[color:var(--text-muted)] hover:border-[color:var(--line)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
             )}
           >
             {tab.icon}

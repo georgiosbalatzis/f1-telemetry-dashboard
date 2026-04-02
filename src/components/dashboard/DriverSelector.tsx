@@ -10,33 +10,45 @@ type Props = {
 
 export function DriverSelector({ drivers, selectedDrivers, onToggle, embedMode = false }: Props) {
   if (drivers.length === 0) return null;
+  const selectedDriverSet = new Set(selectedDrivers);
+  const embedDrivers = [...drivers].sort((left, right) => {
+    const leftRank = selectedDriverSet.has(left.driver_number) ? 0 : 1;
+    const rightRank = selectedDriverSet.has(right.driver_number) ? 0 : 1;
+
+    if (leftRank !== rightRank) return leftRank - rightRank;
+    return left.driver_number - right.driver_number;
+  });
 
   if (embedMode) {
     return (
-      <div className="mb-4">
-        <div className="dashboard-card rounded-[14px] p-4">
-          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+      <div className="mb-5">
+        <div className="dashboard-card rounded-[18px] p-4 sm:p-5">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <label className="block text-[9px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">
                 Comparison Drivers
               </label>
               <p className="mt-1 text-[11px] leading-[1.45] text-[color:var(--text-muted)]">
-                Select up to four drivers for the active comparison set.
+                Active picks stay pinned first. Select up to four drivers.
               </p>
             </div>
-            <span className="dashboard-embed-chip rounded-full px-2.5 py-1.5 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
-              {selectedDrivers.length}/4 active
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="dashboard-pill rounded-full px-3 py-1 text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-soft)]">
+                {selectedDrivers.length}/4 active
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-dim)]">
+                Tap to compare
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {drivers.map((driver) => (
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {embedDrivers.map((driver) => (
               <DriverChip
                 key={driver.driver_number}
                 driver={driver}
-                selected={selectedDrivers.includes(driver.driver_number)}
+                selected={selectedDriverSet.has(driver.driver_number)}
                 compact
-                stacked
                 onClick={() => onToggle(driver.driver_number)}
               />
             ))}
@@ -63,7 +75,7 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle, embedMode =
               <DriverChip
                 key={driver.driver_number}
                 driver={driver}
-                selected={selectedDrivers.includes(driver.driver_number)}
+                selected={selectedDriverSet.has(driver.driver_number)}
                 compact
                 onClick={() => onToggle(driver.driver_number)}
               />
@@ -81,7 +93,7 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle, embedMode =
             <DriverChip
               key={driver.driver_number}
               driver={driver}
-              selected={selectedDrivers.includes(driver.driver_number)}
+              selected={selectedDriverSet.has(driver.driver_number)}
               onClick={() => onToggle(driver.driver_number)}
             />
           ))}

@@ -336,10 +336,10 @@ export default function F1TelemetryDashboard() {
     [filters.snapshot, splitMode, themeMode],
   );
   const contentLayoutClass = splitMode
-    ? `grid ${embedMode ? 'gap-4 pb-10' : 'gap-4 pb-12 sm:gap-5 sm:pb-16'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
-    : `${embedMode ? 'space-y-4 pb-10' : 'space-y-4 pb-12 sm:space-y-5 sm:pb-16'}`;
+    ? `grid ${embedMode ? 'gap-5 pb-8' : 'gap-4 pb-12 sm:gap-5 sm:pb-16'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
+    : `${embedMode ? 'space-y-5 pb-8' : 'space-y-4 pb-12 sm:space-y-5 sm:pb-16'}`;
   const pageShellClass = embedMode
-    ? 'relative mx-auto max-w-[1440px] px-4 py-4 sm:px-5'
+    ? 'relative mx-auto max-w-[1320px] px-3 py-3 sm:px-4 sm:py-4'
     : 'relative mx-auto max-w-[1440px] px-4 py-3 sm:px-6 sm:py-4';
 
   useEffect(() => {
@@ -478,7 +478,7 @@ export default function F1TelemetryDashboard() {
   }, []);
 
   return (
-    <div className={`dashboard-app min-h-screen ${themeMode === 'light' ? 'theme-light' : 'theme-dark'} ${embedMode ? 'embed-mode' : ''}`}>
+    <div className={`dashboard-app ${embedMode ? '' : 'min-h-screen'} ${themeMode === 'light' ? 'theme-light' : 'theme-dark'} ${embedMode ? 'embed-mode' : ''}`}>
       <div className={pageShellClass}>
         <DashboardHeader
           loading={anyLoading}
