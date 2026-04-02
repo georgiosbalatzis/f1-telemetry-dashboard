@@ -12,9 +12,11 @@ type Props = {
   sampleCount: number;
   weatherRadar: WeatherRadarPoint[];
   weatherTrend: WeatherTrendPoint[];
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
-export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherRadar, weatherTrend }: Props) {
+export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherRadar, weatherTrend, embedMode = false, onEmbedPanel }: Props) {
   if (loading) return <Spinner />;
   if (error) return <Err msg={error} />;
   if (!latestWeather) return <NoData msg="No weather data for this session." />;
@@ -36,7 +38,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         <Stat label="Wind Direction" value={latestWeather.wind_direction.toFixed(0)} unit="°" />
         <Stat label="Weather Samples" value={sampleCount} />
       </div>
-      <ChartPanel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes" exportName="conditions-radar" legend={[{ label: 'Conditions', color: 'var(--accent)', variant: 'area' }]}>
+      <ChartPanel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes" exportName="conditions-radar" legend={[{ label: 'Conditions', color: 'var(--accent)', variant: 'area' }]} panelId="weather-radar" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         <div className="h-[220px] sm:h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart data={weatherRadar} outerRadius="70%">
@@ -47,7 +49,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
           </ResponsiveContainer>
         </div>
       </ChartPanel>
-      <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={[{ label: 'Air °C', color: '#EF4444' }, { label: 'Track °C', color: '#F97316' }, { label: 'Humidity %', color: '#3B82F6' }, { label: 'Wind m/s', color: '#06B6D4' }]}>
+      <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={[{ label: 'Air °C', color: '#EF4444' }, { label: 'Track °C', color: '#F97316' }, { label: 'Humidity %', color: '#3B82F6' }, { label: 'Wind m/s', color: '#06B6D4' }]} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         {weatherTrend.length > 1 ? (
           <div className="h-[180px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">

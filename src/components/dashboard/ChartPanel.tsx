@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, Expand, Shrink } from 'lucide-react';
-import { Panel, ToolbarButton } from './shared';
+import { EmbedPanelButton, Panel, ToolbarButton } from './shared';
 import { cn } from './utils';
 
 export type ChartLegendItem = {
@@ -19,6 +19,9 @@ type Props = {
   headerRight?: ReactNode;
   exportName: string;
   legend?: ChartLegendItem[];
+  panelId?: string;
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
 function getChartDimensions(svg: SVGSVGElement, fallbackWidth: number, fallbackHeight: number) {
@@ -157,6 +160,9 @@ export function ChartPanel({
   headerRight,
   exportName,
   legend = [],
+  panelId,
+  embedMode = false,
+  onEmbedPanel,
 }: Props) {
   const frameRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<HTMLDivElement | null>(null);
@@ -195,6 +201,9 @@ export function ChartPanel({
   const actions = (
     <div className="dashboard-chart-actions">
       {headerRight}
+      {embedMode && panelId && onEmbedPanel && (
+        <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />
+      )}
       <ToolbarButton icon={<Download size={12} />} label="Download" onClick={handleDownload} />
       <ToolbarButton
         icon={isFullscreen ? <Shrink size={12} /> : <Expand size={12} />}
@@ -207,7 +216,7 @@ export function ChartPanel({
 
   return (
     <div ref={frameRef} className="dashboard-chart-frame">
-      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions}>
+      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId}>
         <div className="space-y-3">
           <div ref={chartRef} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
             {children}

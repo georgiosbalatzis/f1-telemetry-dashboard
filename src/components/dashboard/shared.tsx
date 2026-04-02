@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Code2, Loader2 } from 'lucide-react';
 import type { OpenF1Driver } from '../../api/openf1';
 import { cn } from './utils';
 
@@ -35,6 +35,7 @@ export function Panel({
   sub,
   className,
   headerRight,
+  panelId,
 }: {
   title: string;
   icon?: ReactNode;
@@ -42,9 +43,10 @@ export function Panel({
   sub?: string;
   className?: string;
   headerRight?: ReactNode;
+  panelId?: string;
 }) {
   return (
-    <div className={cn('dashboard-panel rounded-[16px] p-3 sm:rounded-[18px] sm:p-4', className)}>
+    <div id={panelId} className={cn('dashboard-panel rounded-[16px] p-3 sm:rounded-[18px] sm:p-4', className)}>
       <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <div>
           <h3 className="mb-1 flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.22em] text-[color:var(--text-muted)] sm:text-[10px] sm:tracking-[0.24em]">{icon}{title}</h3>
@@ -192,6 +194,10 @@ export function ToolbarButton({
       <span className="hidden sm:inline">{label}</span>
     </button>
   );
+}
+
+export function EmbedPanelButton({ onClick, label = 'Embed' }: { onClick: () => void; label?: string }) {
+  return <ToolbarButton icon={<Code2 size={12} />} label={label} onClick={onClick} />;
 }
 
 export function AccentChip({

@@ -3,7 +3,7 @@ import { Activity, Gauge, Timer, Trophy, Waves } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver } from '../../api/openf1';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
-import { ChartTip, NoData, Panel, Spinner } from './shared';
+import { ChartTip, EmbedPanelButton, NoData, Panel, Spinner } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 import { fmtLap } from './utils';
 
@@ -23,6 +23,8 @@ type Props = {
   driverNums: number[];
   driverMap: Record<number, OpenF1Driver>;
   driverColor: (driverNumber: number) => string;
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
 export function TelemetryTab({
@@ -41,6 +43,8 @@ export function TelemetryTab({
   driverNums,
   driverMap,
   driverColor,
+  embedMode = false,
+  onEmbedPanel,
 }: Props) {
   const leader = lapSummaries[0];
   const bestS1 = Math.min(...sectorRows.map((row) => row.s1 ?? Number.POSITIVE_INFINITY));
@@ -154,7 +158,13 @@ export function TelemetryTab({
         </div>
       </div>
 
-      <Panel title="Sector Comparison" icon={<Activity size={14} style={{ color: 'var(--accent)' }} />} sub="Share of lap time by sector for the selected lap">
+      <Panel
+        title="Sector Comparison"
+        icon={<Activity size={14} style={{ color: 'var(--accent)' }} />}
+        sub="Share of lap time by sector for the selected lap"
+        panelId="telemetry-sector-comparison"
+        headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('telemetry-sector-comparison')} /> : undefined}
+      >
         {sectorRows.some((row) => row.total) ? (
           <div className="space-y-4">
             {sectorRows.map((row) => {
@@ -230,6 +240,9 @@ export function TelemetryTab({
         className="overflow-hidden"
         exportName={`speed-trace-lap-${lapNum}`}
         legend={speedTraceLegend}
+        panelId="telemetry-speed-trace"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {telemetryLoading ? <Spinner label="Fetching car telemetry..." /> : telemetryError ? <NoData msg={telemetryError} /> : comparisonSpeedData.length > 0 ? (
           <div className="h-[200px] sm:h-[260px]">
@@ -267,6 +280,9 @@ export function TelemetryTab({
         className="overflow-hidden"
         exportName={`speed-delta-lap-${lapNum}`}
         legend={driverLegend}
+        panelId="telemetry-speed-delta"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {comparisonSpeedData.length > 0 ? (
           <div className="h-[160px] sm:h-[220px]">
@@ -292,6 +308,9 @@ export function TelemetryTab({
           className="overflow-hidden"
           exportName={`throttle-brake-lap-${lapNum}`}
           legend={controlLegend}
+          panelId="telemetry-throttle-brake"
+          embedMode={embedMode}
+          onEmbedPanel={onEmbedPanel}
         >
           {comparisonControlData.length > 0 ? (
             <div className="h-[160px] sm:h-[200px]">
@@ -329,7 +348,7 @@ export function TelemetryTab({
         </ChartPanel>
       )}
 
-      <ChartPanel title="Lap Times Comparison" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={lapsLoading ? 'Loading lap data...' : `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — excludes pit out-laps`} className="overflow-hidden" exportName="lap-times-comparison" legend={driverLegend}>
+      <ChartPanel title="Lap Times Comparison" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={lapsLoading ? 'Loading lap data...' : `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — excludes pit out-laps`} className="overflow-hidden" exportName="lap-times-comparison" legend={driverLegend} panelId="telemetry-lap-times" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         {lapsLoading ? <Spinner /> : lapTimeData.some((point) => Object.keys(point).length > 1) ? (
           <div className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -347,7 +366,7 @@ export function TelemetryTab({
         ) : <NoData msg="No lap time data yet. Select drivers above." />}
       </ChartPanel>
 
-      <ChartPanel title="Gap To Best Lap" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Per-lap delta to the fastest selected driver on that same lap" className="overflow-hidden" exportName="gap-to-best-lap" legend={driverLegend}>
+      <ChartPanel title="Gap To Best Lap" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Per-lap delta to the fastest selected driver on that same lap" className="overflow-hidden" exportName="gap-to-best-lap" legend={driverLegend} panelId="telemetry-gap-best" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         {lapsLoading ? <Spinner /> : lapDeltaData.some((point) => Object.keys(point).length > 1) ? (
           <div className="h-[160px] sm:h-[200px]">
             <ResponsiveContainer width="100%" height="100%">

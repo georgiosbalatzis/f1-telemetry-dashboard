@@ -1,6 +1,6 @@
 import { CircleDot, Timer } from 'lucide-react';
 import type { OpenF1Driver, OpenF1Pit, OpenF1Stint } from '../../api/openf1';
-import { NoData, Panel, Spinner } from './shared';
+import { EmbedPanelButton, NoData, Panel, Spinner } from './shared';
 
 const COMPOUND_COLORS: Record<string, string> = {
   SOFT: '#FF3333',
@@ -23,12 +23,20 @@ type Props = {
   stintsByDriver: Record<number, OpenF1Stint[]>;
   pitsLoading: boolean;
   filteredPits: OpenF1Pit[];
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
-export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stintsByDriver, pitsLoading, filteredPits }: Props) {
+export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stintsByDriver, pitsLoading, filteredPits, embedMode = false, onEmbedPanel }: Props) {
   return (
     <>
-      <Panel title="Tyre Strategy" icon={<CircleDot size={14} style={{ color: 'var(--accent)' }} />} sub={`Stint map through lap ${lapNum}`}>
+      <Panel
+        title="Tyre Strategy"
+        icon={<CircleDot size={14} style={{ color: 'var(--accent)' }} />}
+        sub={`Stint map through lap ${lapNum}`}
+        panelId="strategy-tyre-strategy"
+        headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('strategy-tyre-strategy')} /> : undefined}
+      >
         {stintsLoading ? <Spinner label="Loading stint data…" /> : Object.keys(stintsByDriver).length > 0 ? (
           <div className="space-y-3">
             {(driverNums.length > 0 ? driverNums : Object.keys(stintsByDriver).map(Number).slice(0, 6)).map((driverNumber) => {

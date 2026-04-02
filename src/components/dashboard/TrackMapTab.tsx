@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Map } from 'lucide-react';
 import type { OpenF1Driver, OpenF1Location } from '../../api/openf1';
-import { NoData, Panel, Spinner } from './shared';
+import { EmbedPanelButton, NoData, Panel, Spinner } from './shared';
 
 type Props = {
   lapNum: number;
@@ -10,6 +10,8 @@ type Props = {
   locationByDriver: Record<number, OpenF1Location[] | null>;
   locationLoading: boolean;
   driverColor: (driverNumber: number) => string;
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
 const MAP_W = 600;
@@ -45,7 +47,7 @@ function toPolyline(pts: { nx: number; ny: number }[]) {
   return pts.map((p) => `${p.nx.toFixed(1)},${p.ny.toFixed(1)}`).join(' ');
 }
 
-export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, locationLoading, driverColor }: Props) {
+export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, locationLoading, driverColor, embedMode = false, onEmbedPanel }: Props) {
   const { trackPolyline, driverPaths, startPt } = useMemo((): {
     trackPolyline: string;
     driverPaths: Partial<Record<number, string>>;
@@ -97,6 +99,8 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
         sub={activeDrivers.length >= 2
           ? `GPS paths for ${activeDrivers.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} overlaid on circuit layout`
           : `Circuit layout from GPS · ${(locationByDriver[driverNums[0]] ?? []).length} samples`}
+        panelId="trackmap-lap-map"
+        headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('trackmap-lap-map')} /> : undefined}
       >
         <div className="overflow-x-auto">
           <svg

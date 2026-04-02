@@ -12,13 +12,15 @@ type Props = {
   intervals: OpenF1Interval[] | null;
   intervalsLoading: boolean;
   driverColor: (driverNumber: number) => string;
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
 const DRS_THRESHOLD = 1.0;
 const MAX_CHART_POINTS = 120;
 const MAX_GAP_DISPLAY = 60; // cap gaps at 60s to avoid outliers from safety cars crushing the chart
 
-export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoading, driverColor }: Props) {
+export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoading, driverColor, embedMode = false, onEmbedPanel }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
 
@@ -162,6 +164,9 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — gaps capped at ${MAX_GAP_DISPLAY}s`}
         exportName="gap-to-leader"
         legend={legend}
+        panelId="intervals-gap-to-leader"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {chartData.length > 0 ? (
           <div className="h-[200px] sm:h-[280px]">
@@ -198,6 +203,9 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
         sub="Time to the next car — below the 1s line means DRS is available"
         exportName="interval-to-ahead"
         legend={legend}
+        panelId="intervals-gap-to-ahead"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {chartData.length > 0 ? (
           <div className="h-[180px] sm:h-[240px]">

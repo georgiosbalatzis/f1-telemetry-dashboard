@@ -13,11 +13,13 @@ type Props = {
   positionsLoading: boolean;
   lapNum: number;
   driverColor: (driverNumber: number) => string;
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
 const MAX_CHART_POINTS = 100;
 
-export function PositionsTab({ driverNums, driverMap, positions, positionsLoading, lapNum, driverColor }: Props) {
+export function PositionsTab({ driverNums, driverMap, positions, positionsLoading, lapNum, driverColor, embedMode = false, onEmbedPanel }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
 
@@ -138,6 +140,9 @@ export function PositionsTab({ driverNums, driverMap, positions, positionsLoadin
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — position over the session`}
         exportName="position-history"
         legend={legend}
+        panelId="positions-history"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {chartData.length > 0 ? (
           <div className="h-[200px] sm:h-[280px]">

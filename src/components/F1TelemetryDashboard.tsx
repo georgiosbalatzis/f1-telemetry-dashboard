@@ -117,6 +117,7 @@ function buildDashboardUrl(
   splitMode: boolean,
   embedMode = false,
   themeMode: ThemeMode = 'dark',
+  anchorId?: string,
 ) {
   if (typeof window === 'undefined') return '';
 
@@ -132,18 +133,25 @@ function buildDashboardUrl(
   if (themeMode === 'light') params.set('theme', 'light');
 
   const query = params.toString();
-  return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+  const hash = anchorId ? `#${anchorId}` : window.location.hash;
+  return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${hash}`;
 }
 
-function buildIframeSnippet(snapshot: DashboardFilterSnapshot, splitMode: boolean, themeMode: ThemeMode) {
-  const src = buildDashboardUrl(snapshot, splitMode, true, themeMode);
+function buildIframeSnippet(
+  snapshot: DashboardFilterSnapshot,
+  splitMode: boolean,
+  themeMode: ThemeMode,
+  anchorId?: string,
+  iframeHeight = 920,
+) {
+  const src = buildDashboardUrl(snapshot, splitMode, true, themeMode, anchorId);
   const background = themeMode === 'light' ? '#ffffff' : '#111113';
   return [
     `<iframe`,
     `  src="${src}"`,
     `  title="f1stories.gr F1 Telemetry Dashboard"`,
     `  width="100%"`,
-    `  height="920"`,
+    `  height="${iframeHeight}"`,
     `  loading="lazy"`,
     `  style="border:0; width:100%; max-width:100%; background:${background};"`,
     `></iframe>`,
@@ -352,6 +360,31 @@ export default function F1TelemetryDashboard() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    const hash = window.location.hash.replace(/^#/, '');
+    if (!hash) return;
+
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      const target = window.document.getElementById(hash);
+      attempts += 1;
+
+      if (target) {
+        target.scrollIntoView({ block: 'start' });
+        window.clearInterval(timer);
+        return;
+      }
+
+      if (attempts >= 12) {
+        window.clearInterval(timer);
+      }
+    }, 120);
+
+    return () => window.clearInterval(timer);
+  }, [filters.tab]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
     try {
       window.localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(savedPresets));
     } catch {
@@ -470,6 +503,23 @@ export default function F1TelemetryDashboard() {
     await embedSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} embed`);
   }, [embedSnapshot, filters.snapshot]);
 
+  const handleEmbedPanel = useCallback(async (panelId: string) => {
+    const snippet = buildIframeSnippet(filters.snapshot, false, themeMode, panelId, 720);
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(snippet);
+        setFeedback('Panel embed copied');
+        return;
+      }
+    } catch {
+      // Fall back to prompt when clipboard access is unavailable.
+    }
+
+    window.prompt('Copy this iframe snippet', snippet);
+    setFeedback('Panel embed ready');
+  }, [filters.snapshot, themeMode]);
+
   const handlePrint = useCallback(() => {
     setFeedback('Opening print dialog');
     window.print();
@@ -548,12 +598,14 @@ export default function F1TelemetryDashboard() {
         {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} />}
         {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} />}
 
-        <DriverSelector
-          drivers={selectionData.driverList}
-          selectedDrivers={filters.driverNums}
-          embedMode={embedMode}
-          onToggle={filters.toggleDriver}
-        />
+        {!embedMode && (
+          <DriverSelector
+            drivers={selectionData.driverList}
+            selectedDrivers={filters.driverNums}
+            embedMode={embedMode}
+            onToggle={filters.toggleDriver}
+          />
+        )}
 
         <DashboardTabs
           activeTab={filters.tab}
@@ -581,6 +633,8 @@ export default function F1TelemetryDashboard() {
               driverNums={filters.driverNums}
               driverMap={selectionData.driverMap}
               driverColor={viewModel.driverColor}
+              embedMode={embedMode}
+              onEmbedPanel={handleEmbedPanel}
             />
           )}
 
@@ -590,12 +644,14 @@ export default function F1TelemetryDashboard() {
                 lapNum={filters.lapNum}
                 driverNums={filters.driverNums}
                 driverMap={selectionData.driverMap}
-                stintsLoading={stints.loading}
-                stintsByDriver={viewModel.stintsByDriver}
-                pitsLoading={pits.loading}
-                filteredPits={viewModel.filteredPits}
-              />
-            </Suspense>
+              stintsLoading={stints.loading}
+              stintsByDriver={viewModel.stintsByDriver}
+              pitsLoading={pits.loading}
+              filteredPits={viewModel.filteredPits}
+              embedMode={embedMode}
+              onEmbedPanel={handleEmbedPanel}
+            />
+          </Suspense>
           )}
 
           {filters.tab === 'energy' && (
@@ -609,6 +665,8 @@ export default function F1TelemetryDashboard() {
                 lapSummaries={viewModel.lapSummaries}
                 driverColor={viewModel.driverColor}
                 telemetryLoading={telemetryLoading}
+                embedMode={embedMode}
+                onEmbedPanel={handleEmbedPanel}
               />
             </Suspense>
           )}
@@ -643,6 +701,8 @@ export default function F1TelemetryDashboard() {
                 sampleCount={weather.data?.length || 0}
                 weatherRadar={viewModel.weatherRadar}
                 weatherTrend={viewModel.weatherTrend}
+                embedMode={embedMode}
+                onEmbedPanel={handleEmbedPanel}
               />
             </Suspense>
           )}
@@ -655,6 +715,8 @@ export default function F1TelemetryDashboard() {
               locationByDriver={locationByDriver}
               locationLoading={locationLoading}
               driverColor={viewModel.driverColor}
+              embedMode={embedMode}
+              onEmbedPanel={handleEmbedPanel}
             />
           )}
 
@@ -667,6 +729,8 @@ export default function F1TelemetryDashboard() {
                 positionsLoading={positions.loading}
                 lapNum={filters.lapNum}
                 driverColor={viewModel.driverColor}
+                embedMode={embedMode}
+                onEmbedPanel={handleEmbedPanel}
               />
             </Suspense>
           )}
@@ -679,6 +743,8 @@ export default function F1TelemetryDashboard() {
                 intervals={intervals.data}
                 intervalsLoading={intervals.loading}
                 driverColor={viewModel.driverColor}
+                embedMode={embedMode}
+                onEmbedPanel={handleEmbedPanel}
               />
             </Suspense>
           )}

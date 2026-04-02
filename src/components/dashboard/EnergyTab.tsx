@@ -15,6 +15,8 @@ type Props = {
   lapSummaries: DriverLapSummary[];
   driverColor: (driverNumber: number) => string;
   telemetryLoading: boolean;
+  embedMode?: boolean;
+  onEmbedPanel?: (panelId: string) => void;
 };
 
 export function EnergyTab({
@@ -26,6 +28,8 @@ export function EnergyTab({
   lapSummaries,
   driverColor,
   telemetryLoading,
+  embedMode = false,
+  onEmbedPanel,
 }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
@@ -93,6 +97,9 @@ export function EnergyTab({
           : `${primaryDriverLabel} — Lap ${lapNum} · DRS values ≥ 10 = active`}
         exportName={`drs-activation-lap-${lapNum}`}
         legend={comparisonMode ? energyLegend : [{ label: 'DRS', color: 'var(--accent)', variant: 'area' }]}
+        panelId="energy-drs-activation"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {telemetryLoading ? <Spinner /> : comparisonMode ? (
           <div className="h-[120px] sm:h-[160px]">
@@ -131,6 +138,9 @@ export function EnergyTab({
           : `${primaryDriverLabel} — Lap ${lapNum}`}
         exportName={`gear-trace-lap-${lapNum}`}
         legend={comparisonMode ? energyLegend : [{ label: 'Gear', color: 'var(--accent-strong)' }]}
+        panelId="energy-gear-trace"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {telemetryLoading ? <Spinner /> : comparisonMode ? (
           <div className="h-[140px] sm:h-[180px]">
@@ -169,6 +179,9 @@ export function EnergyTab({
           : `${primaryDriverLabel} — Lap ${lapNum}`}
         exportName={`rpm-trace-lap-${lapNum}`}
         legend={comparisonMode ? energyLegend : [{ label: 'RPM', color: chartRpm }]}
+        panelId="energy-rpm-trace"
+        embedMode={embedMode}
+        onEmbedPanel={onEmbedPanel}
       >
         {telemetryLoading ? <Spinner /> : comparisonMode ? (
           <div className="h-[140px] sm:h-[180px]">
