@@ -1,4 +1,4 @@
-import { Activity, CircleDot, Flag, Radio, Sun, Zap } from 'lucide-react';
+import { Activity, CircleDot, Flag, Map, Radio, Sun, TrendingDown, TrendingUp, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Tab } from './types';
 import { cn } from './utils';
@@ -7,6 +7,9 @@ const TABS: { key: Tab; label: string; mobileLabel: string; icon: ReactNode }[] 
   { key: 'telemetry', label: 'Telemetry', mobileLabel: 'Trace', icon: <Activity size={14} /> },
   { key: 'tires', label: 'Tyres & Strategy', mobileLabel: 'Tyres', icon: <CircleDot size={14} /> },
   { key: 'energy', label: 'DRS, Gears & RPM', mobileLabel: 'Energy', icon: <Zap size={14} /> },
+  { key: 'trackmap', label: 'Track Map', mobileLabel: 'Map', icon: <Map size={14} /> },
+  { key: 'positions', label: 'Race Positions', mobileLabel: 'Pos', icon: <TrendingDown size={14} /> },
+  { key: 'intervals', label: 'Intervals', mobileLabel: 'Gap', icon: <TrendingUp size={14} /> },
   { key: 'radio', label: 'Team Radio', mobileLabel: 'Radio', icon: <Radio size={14} /> },
   { key: 'incidents', label: 'Race Control', mobileLabel: 'Race', icon: <Flag size={14} /> },
   { key: 'weather', label: 'Weather', mobileLabel: 'WX', icon: <Sun size={14} /> },

@@ -27,7 +27,7 @@ function parseDriverNumbers(value: string | null) {
 }
 
 function parseTab(value: string | null): Tab | null {
-  const tabs: Tab[] = ['telemetry', 'tires', 'energy', 'radio', 'incidents', 'weather'];
+  const tabs: Tab[] = ['telemetry', 'tires', 'energy', 'trackmap', 'positions', 'intervals', 'radio', 'incidents', 'weather'];
   return value && tabs.includes(value as Tab) ? value as Tab : null;
 }
 

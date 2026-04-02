@@ -5,10 +5,13 @@ import { useDashboardSelectionData } from '../hooks/useDashboardSelectionData';
 import { useDashboardViewModel } from '../hooks/useDashboardViewModel';
 import {
   useDrivers,
+  useIntervals,
+  useLapLocation,
   useLapTelemetry,
   useLaps,
   useMeetings,
   usePits,
+  usePositions,
   useRaceControl,
   useSessions,
   useSessionResult,
@@ -21,6 +24,7 @@ import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
 import { TelemetryTab } from './dashboard/TelemetryTab';
+import { TrackMapTab } from './dashboard/TrackMapTab';
 import { Err } from './dashboard/shared';
 
 type ThemeMode = 'dark' | 'light';
@@ -39,6 +43,9 @@ const TAB_LABELS = {
   telemetry: 'Telemetry',
   tires: 'Tyres & Strategy',
   energy: 'DRS, Gears & RPM',
+  trackmap: 'Track Map',
+  positions: 'Race Positions',
+  intervals: 'Intervals',
   radio: 'Team Radio',
   incidents: 'Race Control',
   weather: 'Weather',
@@ -49,6 +56,8 @@ const EnergyTab = lazy(() => import('./dashboard/EnergyTab').then((module) => ({
 const RadioTab = lazy(() => import('./dashboard/RadioTab').then((module) => ({ default: module.RadioTab })));
 const IncidentsTab = lazy(() => import('./dashboard/IncidentsTab').then((module) => ({ default: module.IncidentsTab })));
 const WeatherTab = lazy(() => import('./dashboard/WeatherTab').then((module) => ({ default: module.WeatherTab })));
+const PositionsTab = lazy(() => import('./dashboard/PositionsTab').then((module) => ({ default: module.PositionsTab })));
+const IntervalsTab = lazy(() => import('./dashboard/IntervalsTab').then((module) => ({ default: module.IntervalsTab })));
 
 function TabLoadingPlaceholder({ label }: { label: string }) {
   return (
@@ -148,6 +157,9 @@ export default function F1TelemetryDashboard() {
   const needsRadioData = filters.tab === 'radio';
   const needsIncidentsData = filters.tab === 'incidents';
   const needsWeatherData = filters.tab === 'weather';
+  const needsLocationData = filters.tab === 'trackmap';
+  const needsPositionsData = filters.tab === 'positions';
+  const needsIntervalsData = filters.tab === 'intervals';
   const [splitMode, setSplitMode] = useState(readInitialSplitMode);
   const [embedMode] = useState(readInitialEmbedMode);
   const [themeMode, setThemeMode] = useState<ThemeMode>(readInitialThemeMode);
@@ -172,6 +184,8 @@ export default function F1TelemetryDashboard() {
   const weather = useWeather(needsWeatherData ? filters.sessionKey : null);
   const raceControl = useRaceControl(needsIncidentsData ? filters.sessionKey : null);
   const teamRadio = useTeamRadio(needsRadioData ? filters.sessionKey : null);
+  const positions = usePositions(needsPositionsData ? filters.sessionKey : null);
+  const intervals = useIntervals(needsIntervalsData ? filters.sessionKey : null);
 
   const selectionData = useDashboardSelectionData({
     meetings: meetings.data,
@@ -218,6 +232,17 @@ export default function F1TelemetryDashboard() {
       needsTelemetryData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null,
     ),
   ];
+
+  const locationStates = [
+    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[0], needsLocationData ? selectionData.telemetryWindows[0]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[1], needsLocationData ? selectionData.telemetryWindows[1]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[2], needsLocationData ? selectionData.telemetryWindows[2]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[3], needsLocationData ? selectionData.telemetryWindows[3]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null),
+  ];
+  const locationByDriver = Object.fromEntries(
+    filters.driverNums.map((driverNum, index) => [driverNum, locationStates[index]?.data || null]),
+  ) as Record<number, ReturnType<typeof useLapLocation>['data']>;
+  const locationLoading = needsLocationData && locationStates.some((s) => s.loading);
   const primaryTelemetry = telemetryStates[0];
   const telemetryByDriver = Object.fromEntries(
     filters.driverNums.map((driverNumber, index) => [driverNumber, telemetryStates[index]?.data || null]),
@@ -595,6 +620,42 @@ export default function F1TelemetryDashboard() {
                 sampleCount={weather.data?.length || 0}
                 weatherRadar={viewModel.weatherRadar}
                 weatherTrend={viewModel.weatherTrend}
+              />
+            </Suspense>
+          )}
+
+          {filters.tab === 'trackmap' && (
+            <TrackMapTab
+              lapNum={filters.lapNum}
+              driverNums={filters.driverNums}
+              driverMap={selectionData.driverMap}
+              locationByDriver={locationByDriver}
+              locationLoading={locationLoading}
+              driverColor={viewModel.driverColor}
+            />
+          )}
+
+          {filters.tab === 'positions' && (
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading race positions..." />}>
+              <PositionsTab
+                driverNums={filters.driverNums}
+                driverMap={selectionData.driverMap}
+                positions={positions.data}
+                positionsLoading={positions.loading}
+                lapNum={filters.lapNum}
+                driverColor={viewModel.driverColor}
+              />
+            </Suspense>
+          )}
+
+          {filters.tab === 'intervals' && (
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading interval data..." />}>
+              <IntervalsTab
+                driverNums={filters.driverNums}
+                driverMap={selectionData.driverMap}
+                intervals={intervals.data}
+                intervalsLoading={intervals.loading}
+                driverColor={viewModel.driverColor}
               />
             </Suspense>
           )}

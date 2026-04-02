@@ -297,6 +297,33 @@ async function fetchJson<T>(url: string, options: RequestOptions = {}): Promise<
   }
 }
 
+export interface OpenF1Location {
+  date: string;
+  driver_number: number;
+  x: number;
+  y: number;
+  z: number;
+  session_key: number;
+  meeting_key: number;
+}
+
+export interface OpenF1Position {
+  date: string;
+  driver_number: number;
+  position: number;
+  session_key: number;
+  meeting_key: number;
+}
+
+export interface OpenF1Interval {
+  date: string;
+  driver_number: number;
+  gap_to_leader: number | null;
+  interval: number | null;
+  session_key: number;
+  meeting_key: number;
+}
+
 // ─── API functions ───────────────────────────────────────────────────────────
 
 export const getMeetings = (year: number, options?: RequestOptions) =>
@@ -328,6 +355,29 @@ export const getTeamRadio = (sessionKey: number, options?: RequestOptions) =>
 
 export const getSessionResult = (sessionKey: number, options?: RequestOptions) =>
   fetchJson<OpenF1SessionResult>(buildUrl('session_result', { session_key: sessionKey }), options);
+
+export const getPositions = (sessionKey: number, options?: RequestOptions) =>
+  fetchJson<OpenF1Position>(buildUrl('position', { session_key: sessionKey }), options);
+
+export const getIntervals = (sessionKey: number, options?: RequestOptions) =>
+  fetchJson<OpenF1Interval>(buildUrl('intervals', { session_key: sessionKey }), options);
+
+export function getLocationForLap(
+  sessionKey: number,
+  driverNumber: number,
+  lapDateStart: string,
+  nextLapDateStart?: string,
+  options?: RequestOptions,
+): Promise<OpenF1Location[]> {
+  const dateEnd = nextLapDateStart
+    || new Date(new Date(lapDateStart).getTime() + 120_000).toISOString();
+  const url = buildUrlWithDateFilters(
+    'location',
+    { session_key: sessionKey, driver_number: driverNumber },
+    { 'date>=': lapDateStart, 'date<=': dateEnd },
+  );
+  return fetchJson<OpenF1Location>(url, options);
+}
 
 /** Car telemetry for a single lap, windowed by date_start of this lap and next lap.
  *  If nextLapDateStart is missing (last lap), uses a 2-min window. */

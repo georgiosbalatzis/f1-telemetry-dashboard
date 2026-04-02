@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
-  OpenF1RaceControl, OpenF1TeamRadio, OpenF1SessionResult
+  OpenF1RaceControl, OpenF1TeamRadio, OpenF1SessionResult,
+  OpenF1Location, OpenF1Position, OpenF1Interval,
 } from '../api/openf1';
 import {
   getMeetings, getSessionsByCircuit, getDrivers, getLaps, getCarDataForLap,
-  getStints, getPits, getWeather, getRaceControl, getTeamRadio, getSessionResult
+  getStints, getPits, getWeather, getRaceControl, getTeamRadio, getSessionResult,
+  getPositions, getIntervals, getLocationForLap,
 } from '../api/openf1';
 
 // ─── Cache ───────────────────────────────────────────────────────────────────
@@ -239,5 +241,32 @@ export function useSessionResult(sessionKey: number | null) {
   return useFetch<OpenF1SessionResult[]>(
     sessionKey ? `result:${sessionKey}` : null,
     (signal) => getSessionResult(sessionKey!, { signal }),
+  );
+}
+
+export function usePositions(sessionKey: number | null) {
+  return useFetch<OpenF1Position[]>(
+    sessionKey ? `positions:${sessionKey}` : null,
+    (signal) => getPositions(sessionKey!, { signal, timeoutMs: 30_000 }),
+  );
+}
+
+export function useIntervals(sessionKey: number | null) {
+  return useFetch<OpenF1Interval[]>(
+    sessionKey ? `intervals:${sessionKey}` : null,
+    (signal) => getIntervals(sessionKey!, { signal, timeoutMs: 30_000 }),
+  );
+}
+
+export function useLapLocation(
+  sessionKey: number | null,
+  driverNumber: number | undefined,
+  lapDateStart: string | null,
+  nextLapDateStart: string | null | undefined,
+) {
+  const ok = sessionKey != null && driverNumber != null && driverNumber > 0 && !!lapDateStart;
+  return useFetch<OpenF1Location[]>(
+    ok ? `location:${sessionKey}:${driverNumber}:${lapDateStart}` : null,
+    (signal) => getLocationForLap(sessionKey!, driverNumber!, lapDateStart!, nextLapDateStart || undefined, { signal, timeoutMs: 20_000 }),
   );
 }
