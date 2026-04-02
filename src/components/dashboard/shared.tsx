@@ -177,6 +177,8 @@ export function ToolbarButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-label={label}
+      title={label}
       style={activeStyle}
       className={cn(
         'inline-flex h-8 min-w-8 items-center justify-center gap-1.5 rounded-[9px] border px-2 text-[10px] uppercase tracking-[0.08em] transition-colors duration-150 sm:rounded-[10px] sm:px-2.5',

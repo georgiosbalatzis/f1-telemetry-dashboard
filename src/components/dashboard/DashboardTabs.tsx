@@ -1,5 +1,6 @@
-import { Activity, CircleDot, Flag, Map, Radio, Sun, TrendingDown, TrendingUp, Zap } from 'lucide-react';
+import { Activity, CircleDot, Code2, Flag, Map, Radio, Share2, Sun, TrendingDown, TrendingUp, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { ToolbarButton } from './shared';
 import type { Tab } from './types';
 import { cn } from './utils';
 
@@ -19,23 +20,53 @@ export function DashboardTabs({
   activeTab,
   onChange,
   embedMode = false,
+  onShareTab,
+  onEmbedTab,
 }: {
   activeTab: Tab;
   onChange: (tab: Tab) => void;
   embedMode?: boolean;
+  onShareTab?: (tab: Tab) => void;
+  onEmbedTab?: (tab: Tab) => void;
 }) {
+  const activeTabLabel = TABS.find((tab) => tab.key === activeTab)?.label ?? 'Current View';
+
   return (
     <div className="mb-5">
-      {embedMode && (
-        <div className="mb-2 flex items-center justify-between gap-2">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="min-w-0">
           <div className="text-[9px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">
-            Views
+            Tab Views
           </div>
+          <div className="mt-0.5 truncate text-[11px] leading-[1.35] text-[color:var(--text-muted)]">
+            {activeTabLabel}
+          </div>
+        </div>
+
+        {(onShareTab || onEmbedTab) ? (
+          <div className="dashboard-toolbar-group shrink-0">
+            {onShareTab && (
+              <ToolbarButton
+                icon={<Share2 size={12} />}
+                label="Share Tab"
+                onClick={() => onShareTab(activeTab)}
+              />
+            )}
+            {onEmbedTab && (
+              <ToolbarButton
+                icon={<Code2 size={12} />}
+                label="Embed Tab"
+                onClick={() => onEmbedTab(activeTab)}
+              />
+            )}
+          </div>
+        ) : embedMode ? (
           <div className="text-[10px] uppercase tracking-[0.14em] text-[color:var(--text-faint)]">
             Swipe to switch
           </div>
-        </div>
-      )}
+        ) : null}
+      </div>
+
       <div className={`dashboard-tabs-rail scrollbar-hide ${embedMode ? 'dashboard-tabs-rail-compact' : ''}`}>
         {TABS.map((tab) => (
           <button

@@ -26,6 +26,7 @@ import { DriverSelector } from './dashboard/DriverSelector';
 import { TelemetryTab } from './dashboard/TelemetryTab';
 import { TrackMapTab } from './dashboard/TrackMapTab';
 import { Err } from './dashboard/shared';
+import type { Tab } from './dashboard/types';
 
 type ThemeMode = 'dark' | 'light';
 
@@ -410,12 +411,12 @@ export default function F1TelemetryDashboard() {
     setFeedback(`Saved preset ${name}`);
   }, [defaultPresetName, filters.snapshot, presetName, splitMode, themeMode]);
 
-  const handleShare = useCallback(async () => {
-    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, themeMode);
+  const shareSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
+    const url = buildDashboardUrl(snapshot, splitMode, embedMode, themeMode);
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
-        setFeedback('Share link copied');
+        setFeedback(`${label} copied`);
         return;
       }
     } catch {
@@ -424,8 +425,8 @@ export default function F1TelemetryDashboard() {
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'f1stories.gr F1 Telemetry Dashboard', url });
-        setFeedback('Share sheet opened');
+        await navigator.share({ title: `f1stories.gr ${TAB_LABELS[snapshot.tab]} view`, url });
+        setFeedback(`${label} shared`);
         return;
       }
     } catch {
@@ -433,16 +434,16 @@ export default function F1TelemetryDashboard() {
     }
 
     window.prompt('Copy this link', url);
-    setFeedback('Share link ready');
-  }, [embedMode, filters.snapshot, splitMode, themeMode]);
+    setFeedback(`${label} ready`);
+  }, [embedMode, splitMode, themeMode]);
 
-  const handleEmbed = useCallback(async () => {
-    const snippet = buildIframeSnippet(filters.snapshot, splitMode, themeMode);
+  const embedSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
+    const snippet = buildIframeSnippet(snapshot, splitMode, themeMode);
 
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(snippet);
-        setFeedback('Embed code copied');
+        setFeedback(`${label} copied`);
         return;
       }
     } catch {
@@ -450,8 +451,24 @@ export default function F1TelemetryDashboard() {
     }
 
     window.prompt('Copy this iframe snippet', snippet);
-    setFeedback('Embed code ready');
-  }, [filters.snapshot, splitMode, themeMode]);
+    setFeedback(`${label} ready`);
+  }, [splitMode, themeMode]);
+
+  const handleShare = useCallback(async () => {
+    await shareSnapshot(filters.snapshot, 'Share link');
+  }, [filters.snapshot, shareSnapshot]);
+
+  const handleShareTab = useCallback(async (tab: Tab) => {
+    await shareSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} link`);
+  }, [filters.snapshot, shareSnapshot]);
+
+  const handleEmbed = useCallback(async () => {
+    await embedSnapshot(filters.snapshot, 'Embed code');
+  }, [embedSnapshot, filters.snapshot]);
+
+  const handleEmbedTab = useCallback(async (tab: Tab) => {
+    await embedSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} embed`);
+  }, [embedSnapshot, filters.snapshot]);
 
   const handlePrint = useCallback(() => {
     setFeedback('Opening print dialog');
@@ -538,7 +555,13 @@ export default function F1TelemetryDashboard() {
           onToggle={filters.toggleDriver}
         />
 
-        <DashboardTabs activeTab={filters.tab} onChange={filters.setTab} embedMode={embedMode} />
+        <DashboardTabs
+          activeTab={filters.tab}
+          onChange={filters.setTab}
+          embedMode={embedMode}
+          onShareTab={handleShareTab}
+          onEmbedTab={handleEmbedTab}
+        />
 
         <div className={contentLayoutClass}>
           {filters.tab === 'telemetry' && (
