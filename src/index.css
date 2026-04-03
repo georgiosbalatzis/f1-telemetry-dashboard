@@ -464,3 +464,553 @@ select {
 .recharts-cartesian-grid-vertical line {
   opacity: 0.5;
 }
+
+/* ── Broadcast Tab ─────────────────────────────────────────────────────────── */
+
+/* Timing Tower */
+.bc-tower {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.bc-tower-header {
+  display: grid;
+  grid-template-columns: 3px 32px 1fr 110px 96px 100px;
+  align-items: center;
+  gap: 0;
+  padding: 0 12px 0 0;
+  background: var(--surface-soft-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.bc-tower-row {
+  display: grid;
+  grid-template-columns: 3px 32px 1fr 110px 96px 100px;
+  align-items: center;
+  gap: 0;
+  padding: 0 12px 0 0;
+  border-bottom: 1px solid var(--line);
+  transition: background 100ms ease;
+}
+
+.bc-tower-row:last-child {
+  border-bottom: none;
+}
+
+.bc-tower-row:hover {
+  background: var(--surface-soft);
+}
+
+.bc-tower-col-bar {
+  width: 3px;
+  align-self: stretch;
+  padding: 0;
+}
+
+.bc-tower-bar {
+  width: 3px;
+  height: 100%;
+  min-height: 44px;
+}
+
+.bc-tower-col-pos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.bc-tower-pos {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.bc-tower-pos--leader {
+  font-size: 14px;
+  color: var(--text-strong);
+}
+
+.bc-tower-col-driver {
+  padding: 8px 10px 8px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bc-tower-driver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+
+.bc-tower-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-avatar);
+  flex-shrink: 0;
+}
+
+.bc-tower-acronym {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.bc-tower-team {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.bc-tower-col-time {
+  padding: 10px 8px;
+  text-align: right;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bc-tower-laptime {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--text-strong);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+}
+
+.bc-tower-col-gap {
+  padding: 10px 8px;
+  text-align: right;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bc-tower-gap {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+}
+
+.bc-tower-col-speed {
+  padding: 10px 0 10px 8px;
+  text-align: right;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bc-tower-speed {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  justify-content: flex-end;
+}
+
+.bc-tower-speed-val {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-soft);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+}
+
+.bc-tower-speed-unit {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Leader badge */
+.bc-badge-leader {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(229, 57, 53, 0.18);
+  color: #e53935;
+  border: 1px solid rgba(229, 57, 53, 0.3);
+  white-space: nowrap;
+}
+
+/* Sector Analysis Table */
+.bc-sector-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.bc-sector-head {
+  background: var(--surface-soft-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.bc-sector-th {
+  padding: 8px 12px;
+  text-align: right;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.bc-sector-th--driver {
+  text-align: left;
+  min-width: 80px;
+}
+
+.bc-sector-th--right {
+  text-align: right;
+}
+
+.bc-sector-row {
+  border-bottom: 1px solid var(--line);
+  transition: background 100ms ease;
+}
+
+.bc-sector-row:last-child {
+  border-bottom: none;
+}
+
+.bc-sector-row:hover {
+  background: var(--surface-soft);
+}
+
+.bc-sector-driver-cell {
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.bc-sector-driver-bar {
+  display: inline-block;
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.bc-sector-driver-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bc-sector-cell {
+  padding: 9px 12px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.bc-sector-laptime {
+  padding: 9px 12px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  white-space: nowrap;
+}
+
+.bc-sector-gap {
+  padding: 9px 12px;
+  text-align: right;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  white-space: nowrap;
+}
+
+.bc-speed-cell {
+  padding: 9px 12px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-soft);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Sector legend */
+.bc-sector-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+  margin-top: 10px;
+  padding: 8px 0 2px;
+  border-top: 1px solid var(--line);
+}
+
+.bc-sector-legend-item {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Driver Cards */
+.bc-driver-card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 150ms ease, border-color 150ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.bc-driver-card:hover {
+  border-color: var(--line-strong);
+}
+
+.bc-driver-card-bar {
+  height: 3px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.bc-driver-card-inner {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.bc-driver-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bc-driver-card-pos {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  min-width: 30px;
+}
+
+.bc-driver-card-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.bc-driver-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-avatar);
+  flex-shrink: 0;
+}
+
+.bc-driver-card-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.bc-driver-card-team {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.bc-driver-card-laptime {
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--text-strong);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  line-height: 1;
+}
+
+.bc-driver-card-gap {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  letter-spacing: 0.02em;
+}
+
+.bc-driver-card-badge {
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: -2px;
+}
+
+/* Sector mini-display inside driver cards */
+.bc-driver-card-sectors {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+.bc-driver-card-sector {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.bc-driver-card-sector-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bc-driver-card-sector-time {
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+  line-height: 1;
+}
+
+.bc-driver-card-sector-indicator {
+  height: 2px;
+  width: 100%;
+  border-radius: 1px;
+}
+
+/* Stats row inside driver cards */
+.bc-driver-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+.bc-driver-card-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+}
+
+.bc-driver-card-stat-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.bc-driver-card-stat-val {
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-soft);
+  font-family: 'JetBrains Mono', 'Menlo', 'Monaco', monospace;
+}
+
+.bc-driver-card-stat-val span {
+  font-size: 9px;
+  color: var(--text-dim);
+  font-family: inherit;
+}
+
+/* Responsive timing tower */
+@media (max-width: 639px) {
+  .bc-tower-header,
+  .bc-tower-row {
+    grid-template-columns: 3px 28px 1fr 90px 72px;
+  }
+
+  .bc-tower-col-speed {
+    display: none;
+  }
+
+  .bc-tower-avatar {
+    display: none;
+  }
+
+  .bc-tower-team {
+    display: none;
+  }
+}

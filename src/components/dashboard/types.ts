@@ -1,4 +1,4 @@
-export type Tab = 'telemetry' | 'tires' | 'energy' | 'radio' | 'incidents' | 'weather' | 'trackmap' | 'positions' | 'intervals';
+export type Tab = 'telemetry' | 'tires' | 'energy' | 'radio' | 'incidents' | 'weather' | 'trackmap' | 'positions' | 'intervals' | 'broadcast';
 
 export type SelectOption<T extends string | number> = {
   v: T;

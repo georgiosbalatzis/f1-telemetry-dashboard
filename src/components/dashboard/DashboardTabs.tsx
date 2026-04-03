@@ -1,4 +1,4 @@
-import { Activity, CircleDot, Code2, Flag, Map, Radio, Share2, Sun, TrendingDown, TrendingUp, Zap } from 'lucide-react';
+import { Activity, CircleDot, Code2, Flag, Map, Radio, Share2, Sun, TrendingDown, TrendingUp, Tv2, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { ToolbarButton } from './shared';
 import type { Tab } from './types';
@@ -14,6 +14,7 @@ const TABS: { key: Tab; label: string; mobileLabel: string; icon: ReactNode }[] 
   { key: 'radio', label: 'Team Radio', mobileLabel: 'Radio', icon: <Radio size={14} /> },
   { key: 'incidents', label: 'Race Control', mobileLabel: 'Race', icon: <Flag size={14} /> },
   { key: 'weather', label: 'Weather', mobileLabel: 'WX', icon: <Sun size={14} /> },
+  { key: 'broadcast', label: 'Broadcast', mobileLabel: 'TV', icon: <Tv2 size={14} /> },
 ];
 
 export function DashboardTabs({
