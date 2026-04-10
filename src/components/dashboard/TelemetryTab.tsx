@@ -27,6 +27,13 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
+function getBestSector(rows: SectorRow[], key: 's1' | 's2' | 's3') {
+  const values = rows
+    .map((row) => row[key])
+    .filter((value): value is number => value != null);
+  return values.length > 0 ? Math.min(...values) : null;
+}
+
 export function TelemetryTab({
   lapNum,
   lapsLoading,
@@ -47,9 +54,9 @@ export function TelemetryTab({
   onEmbedPanel,
 }: Props) {
   const leader = lapSummaries[0];
-  const bestS1 = Math.min(...sectorRows.map((row) => row.s1 ?? Number.POSITIVE_INFINITY));
-  const bestS2 = Math.min(...sectorRows.map((row) => row.s2 ?? Number.POSITIVE_INFINITY));
-  const bestS3 = Math.min(...sectorRows.map((row) => row.s3 ?? Number.POSITIVE_INFINITY));
+  const bestS1 = getBestSector(sectorRows, 's1');
+  const bestS2 = getBestSector(sectorRows, 's2');
+  const bestS3 = getBestSector(sectorRows, 's3');
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
   const chartAxisSoft = 'var(--chart-axis-soft)';
@@ -212,13 +219,13 @@ export function TelemetryTab({
                   <tr key={row.name} className="border-b border-[color:var(--line)]">
                     <td className="py-2 text-xs font-bold" style={{ color: row.color }}>{row.name}</td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span style={row.s1 != null && row.s1 <= bestS1 ? { color: 'var(--accent)' } : undefined}>{row.s1?.toFixed(3) ?? '—'}</span>
+                      <span style={bestS1 != null && row.s1 != null && row.s1 <= bestS1 ? { color: 'var(--accent)' } : undefined}>{row.s1?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span style={row.s2 != null && row.s2 <= bestS2 ? { color: 'var(--accent-strong)' } : undefined}>{row.s2?.toFixed(3) ?? '—'}</span>
+                      <span style={bestS2 != null && row.s2 != null && row.s2 <= bestS2 ? { color: 'var(--accent-strong)' } : undefined}>{row.s2?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span style={row.s3 != null && row.s3 <= bestS3 ? { color: '#1AA34A' } : undefined}>{row.s3?.toFixed(3) ?? '—'}</span>
+                      <span style={bestS3 != null && row.s3 != null && row.s3 <= bestS3 ? { color: '#1AA34A' } : undefined}>{row.s3?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right text-xs font-bold font-mono text-[color:var(--text-strong)]">{fmtLap(row.total ?? null)}</td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--accent-strong)]">{summary?.gapToLeader != null ? `+${summary.gapToLeader.toFixed(3)}` : '—'}</td>

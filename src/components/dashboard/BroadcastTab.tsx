@@ -67,9 +67,7 @@ type Props = {
   lapsLoading: boolean;
   sectorRows: SectorRow[];
   lapSummaries: DriverLapSummary[];
-  driverNums: number[];
   driverMap: Record<number, OpenF1Driver>;
-  driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
@@ -81,9 +79,7 @@ export function BroadcastTab({
   lapsLoading,
   sectorRows,
   lapSummaries,
-  driverNums,
   driverMap,
-  driverColor,
   embedMode = false,
   onEmbedPanel,
 }: Props) {

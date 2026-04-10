@@ -363,26 +363,25 @@ export default function F1TelemetryDashboard() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const hash = window.location.hash.replace(/^#/, '');
-    if (!hash) return;
+    const targetId = window.location.hash.replace(/^#/, '');
+    if (!targetId) return;
 
     let attempts = 0;
-    const timer = window.setInterval(() => {
-      const target = window.document.getElementById(hash);
-      attempts += 1;
-
+    const timerId = window.setInterval(() => {
+      const target = window.document.getElementById(targetId);
       if (target) {
-        target.scrollIntoView({ block: 'start' });
-        window.clearInterval(timer);
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.clearInterval(timerId);
         return;
       }
 
+      attempts += 1;
       if (attempts >= 12) {
-        window.clearInterval(timer);
+        window.clearInterval(timerId);
       }
     }, 120);
 
-    return () => window.clearInterval(timer);
+    return () => window.clearInterval(timerId);
   }, [filters.tab]);
 
   useEffect(() => {
@@ -758,9 +757,7 @@ export default function F1TelemetryDashboard() {
                 lapsLoading={lapsLoading}
                 sectorRows={viewModel.sectorRows}
                 lapSummaries={viewModel.lapSummaries}
-                driverNums={filters.driverNums}
                 driverMap={selectionData.driverMap}
-                driverColor={viewModel.driverColor}
                 embedMode={embedMode}
                 onEmbedPanel={handleEmbedPanel}
               />
