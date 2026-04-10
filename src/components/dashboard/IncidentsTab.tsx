@@ -44,7 +44,9 @@ export function IncidentsTab({ loading, error, messages }: Props) {
           <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative min-w-0 flex-1 xl:max-w-sm">
               <Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--text-dim)]" />
+              <label htmlFor="incidents-search" className="sr-only">Search incidents</label>
               <input
+                id="incidents-search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search race control"

@@ -469,9 +469,10 @@ select {
 
 /* Timing Tower */
 .bc-tower {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -547,6 +548,7 @@ select {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
+  text-align: left;
   text-transform: uppercase;
   color: var(--text-dim);
 }

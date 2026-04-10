@@ -230,6 +230,8 @@ export function ChartPanel({
                       'dashboard-chart-legend-swatch',
                       item.variant === 'bar' ? 'rounded-[3px]' : 'rounded-full',
                     )}
+                    aria-label={`${item.label} colour indicator`}
+                    role="img"
                     style={{
                       background: item.variant === 'bar' ? item.color : undefined,
                       borderBottomStyle: item.dashed ? 'dashed' : 'solid',

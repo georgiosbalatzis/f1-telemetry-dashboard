@@ -109,6 +109,12 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
 
     return { trackPolyline: outline, driverPaths: paths, driverMarkers: markers, startPt: first, activeDrivers: active };
   }, [driverMap, driverNums, locationByDriver]);
+  const svgLabel = useMemo(() => {
+    const describedDrivers = (activeDrivers.length > 0 ? activeDrivers : driverNums)
+      .map((driverNumber) => driverMap[driverNumber]?.full_name ?? `#${driverNumber}`)
+      .join(', ');
+    return `Track map for lap ${lapNum}. Drivers: ${describedDrivers}. Lines show each driver's GPS path around the circuit.`;
+  }, [activeDrivers, driverMap, driverNums, lapNum]);
 
   if (locationLoading) return <Spinner label="Fetching GPS location data…" />;
   if (!trackPolyline) {
@@ -135,8 +141,10 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
             viewBox={`0 0 ${MAP_W} ${MAP_H}`}
             width="100%"
             style={{ maxWidth: MAP_W, display: 'block', margin: '0 auto' }}
-            aria-label={`Track map lap ${lapNum}`}
+            aria-label={svgLabel}
+            role="img"
           >
+            <title>{svgLabel}</title>
             {/* Track base */}
             <polyline points={trackPolyline} fill="none" stroke="var(--surface-track)" strokeWidth={16} strokeLinecap="round" strokeLinejoin="round" />
             {/* Centre dashes */}
