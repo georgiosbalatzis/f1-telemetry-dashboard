@@ -553,6 +553,15 @@ export default function F1TelemetryDashboard() {
   return (
     <div className={`dashboard-app ${embedMode ? '' : 'min-h-screen'} ${themeMode === 'light' ? 'theme-light' : 'theme-dark'} ${embedMode ? 'embed-mode' : ''}`}>
       <div className={pageShellClass}>
+        {!embedMode && (
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 z-50 rounded bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg"
+          >
+            Skip to content
+          </a>
+        )}
+
         <DashboardHeader
           loading={anyLoading}
           presetName={presetName}
@@ -575,200 +584,202 @@ export default function F1TelemetryDashboard() {
           onBack={handleBack}
         />
 
-        <DashboardSelectors
-          year={filters.year}
-          circuit={filters.circuit}
-          sessionKey={filters.sessionKey}
-          lapNum={filters.lapNum}
-          totalLaps={totalLaps}
-          yearOptions={YEAR_OPTIONS}
-          circuitOptions={selectionData.circuitOptions}
-          sessionOptions={selectionData.sessionOptions}
-          lapOptions={selectionData.lapOptions}
-          meetingsLoading={meetings.loading}
-          sessionsLoading={sessions.loading}
-          lapsLoading={lapsLoading}
-          summaryPills={summaryPills}
-          quickChips={quickChips}
-          canStepBackward={canStepBackward}
-          canStepForward={canStepForward}
-          embedMode={embedMode}
-          onYearChange={filters.handleYearChange}
-          onCircuitChange={filters.handleCircuitChange}
-          onSessionChange={filters.handleSessionChange}
-          onLapChange={setLapNum}
-          onStepLap={stepLap}
-        />
-
-        {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} />}
-        {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} />}
-        {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} />}
-
-        {!embedMode && (
-          <DriverSelector
-            drivers={selectionData.driverList}
-            selectedDrivers={filters.driverNums}
+        <main id="main-content" tabIndex={-1}>
+          <DashboardSelectors
+            year={filters.year}
+            circuit={filters.circuit}
+            sessionKey={filters.sessionKey}
+            lapNum={filters.lapNum}
+            totalLaps={totalLaps}
+            yearOptions={YEAR_OPTIONS}
+            circuitOptions={selectionData.circuitOptions}
+            sessionOptions={selectionData.sessionOptions}
+            lapOptions={selectionData.lapOptions}
+            meetingsLoading={meetings.loading}
+            sessionsLoading={sessions.loading}
+            lapsLoading={lapsLoading}
+            summaryPills={summaryPills}
+            quickChips={quickChips}
+            canStepBackward={canStepBackward}
+            canStepForward={canStepForward}
             embedMode={embedMode}
-            onToggle={filters.toggleDriver}
+            onYearChange={filters.handleYearChange}
+            onCircuitChange={filters.handleCircuitChange}
+            onSessionChange={filters.handleSessionChange}
+            onLapChange={setLapNum}
+            onStepLap={stepLap}
           />
-        )}
 
-        <DashboardTabs
-          activeTab={filters.tab}
-          onChange={filters.setTab}
-          embedMode={embedMode}
-          onShareTab={handleShareTab}
-          onEmbedTab={handleEmbedTab}
-        />
+          {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} />}
+          {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} />}
+          {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} />}
 
-        <div className={contentLayoutClass}>
-          {filters.tab === 'telemetry' && (
-            <TelemetryTab
-              lapNum={filters.lapNum}
-              lapsLoading={lapsLoading}
-              sectorRows={viewModel.sectorRows}
-              telemetryLoading={telemetryLoading}
-              telemetryError={primaryTelemetry?.error || null}
-              telemetryPoints={primaryTelemetry?.data?.length || 0}
-              speedData={viewModel.speedData}
-              comparisonSpeedData={viewModel.comparisonSpeedData}
-              comparisonControlData={viewModel.comparisonControlData}
-              lapTimeData={viewModel.lapTimeData}
-              lapDeltaData={viewModel.lapDeltaData}
-              lapSummaries={viewModel.lapSummaries}
-              driverNums={filters.driverNums}
-              driverMap={selectionData.driverMap}
-              driverColor={viewModel.driverColor}
+          {!embedMode && (
+            <DriverSelector
+              drivers={selectionData.driverList}
+              selectedDrivers={filters.driverNums}
               embedMode={embedMode}
-              onEmbedPanel={handleEmbedPanel}
+              onToggle={filters.toggleDriver}
             />
           )}
 
-          {filters.tab === 'tires' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading strategy view..." />}>
-              <StrategyTab
-                lapNum={filters.lapNum}
-                driverNums={filters.driverNums}
-                driverMap={selectionData.driverMap}
-              stintsLoading={stints.loading}
-              stintsByDriver={viewModel.stintsByDriver}
-              pitsLoading={pits.loading}
-              filteredPits={viewModel.filteredPits}
-              embedMode={embedMode}
-              onEmbedPanel={handleEmbedPanel}
-            />
-          </Suspense>
-          )}
+          <DashboardTabs
+            activeTab={filters.tab}
+            onChange={filters.setTab}
+            embedMode={embedMode}
+            onShareTab={handleShareTab}
+            onEmbedTab={handleEmbedTab}
+          />
 
-          {filters.tab === 'energy' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading energy view..." />}>
-              <EnergyTab
-                lapNum={filters.lapNum}
-                driverNums={filters.driverNums}
-                driverMap={selectionData.driverMap}
-                speedData={viewModel.speedData}
-                comparisonEnergyData={viewModel.comparisonEnergyData}
-                lapSummaries={viewModel.lapSummaries}
-                driverColor={viewModel.driverColor}
-                telemetryLoading={telemetryLoading}
-                embedMode={embedMode}
-                onEmbedPanel={handleEmbedPanel}
-              />
-            </Suspense>
-          )}
-
-          {filters.tab === 'radio' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading radio view..." />}>
-              <RadioTab
-                loading={teamRadio.loading}
-                error={teamRadio.error}
-                messages={viewModel.filteredRadio}
-                driverMap={selectionData.driverMap}
-              />
-            </Suspense>
-          )}
-
-          {filters.tab === 'incidents' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading race control view..." />}>
-              <IncidentsTab
-                loading={raceControl.loading}
-                error={raceControl.error}
-                messages={viewModel.raceControlMessages}
-              />
-            </Suspense>
-          )}
-
-          {filters.tab === 'weather' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading weather view..." />}>
-              <WeatherTab
-                loading={weather.loading}
-                error={weather.error}
-                latestWeather={viewModel.latestWeather}
-                sampleCount={weather.data?.length || 0}
-                weatherRadar={viewModel.weatherRadar}
-                weatherTrend={viewModel.weatherTrend}
-                embedMode={embedMode}
-                onEmbedPanel={handleEmbedPanel}
-              />
-            </Suspense>
-          )}
-
-          {filters.tab === 'trackmap' && (
-            <TrackMapTab
-              lapNum={filters.lapNum}
-              driverNums={filters.driverNums}
-              driverMap={selectionData.driverMap}
-              locationByDriver={locationByDriver}
-              locationLoading={locationLoading}
-              driverColor={viewModel.driverColor}
-              embedMode={embedMode}
-              onEmbedPanel={handleEmbedPanel}
-            />
-          )}
-
-          {filters.tab === 'positions' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading race positions..." />}>
-              <PositionsTab
-                driverNums={filters.driverNums}
-                driverMap={selectionData.driverMap}
-                positions={positions.data}
-                positionsLoading={positions.loading}
-                lapNum={filters.lapNum}
-                driverColor={viewModel.driverColor}
-                embedMode={embedMode}
-                onEmbedPanel={handleEmbedPanel}
-              />
-            </Suspense>
-          )}
-
-          {filters.tab === 'intervals' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading interval data..." />}>
-              <IntervalsTab
-                driverNums={filters.driverNums}
-                driverMap={selectionData.driverMap}
-                intervals={intervals.data}
-                intervalsLoading={intervals.loading}
-                driverColor={viewModel.driverColor}
-                embedMode={embedMode}
-                onEmbedPanel={handleEmbedPanel}
-              />
-            </Suspense>
-          )}
-
-          {filters.tab === 'broadcast' && (
-            <Suspense fallback={<TabLoadingPlaceholder label="Loading broadcast view..." />}>
-              <BroadcastTab
+          <div className={contentLayoutClass}>
+            {filters.tab === 'telemetry' && (
+              <TelemetryTab
                 lapNum={filters.lapNum}
                 lapsLoading={lapsLoading}
                 sectorRows={viewModel.sectorRows}
+                telemetryLoading={telemetryLoading}
+                telemetryError={primaryTelemetry?.error || null}
+                telemetryPoints={primaryTelemetry?.data?.length || 0}
+                speedData={viewModel.speedData}
+                comparisonSpeedData={viewModel.comparisonSpeedData}
+                comparisonControlData={viewModel.comparisonControlData}
+                lapTimeData={viewModel.lapTimeData}
+                lapDeltaData={viewModel.lapDeltaData}
                 lapSummaries={viewModel.lapSummaries}
+                driverNums={filters.driverNums}
                 driverMap={selectionData.driverMap}
+                driverColor={viewModel.driverColor}
                 embedMode={embedMode}
                 onEmbedPanel={handleEmbedPanel}
               />
-            </Suspense>
-          )}
-        </div>
+            )}
+
+            {filters.tab === 'tires' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading strategy view..." />}>
+                <StrategyTab
+                  lapNum={filters.lapNum}
+                  driverNums={filters.driverNums}
+                  driverMap={selectionData.driverMap}
+                  stintsLoading={stints.loading}
+                  stintsByDriver={viewModel.stintsByDriver}
+                  pitsLoading={pits.loading}
+                  filteredPits={viewModel.filteredPits}
+                  embedMode={embedMode}
+                  onEmbedPanel={handleEmbedPanel}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'energy' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading energy view..." />}>
+                <EnergyTab
+                  lapNum={filters.lapNum}
+                  driverNums={filters.driverNums}
+                  driverMap={selectionData.driverMap}
+                  speedData={viewModel.speedData}
+                  comparisonEnergyData={viewModel.comparisonEnergyData}
+                  lapSummaries={viewModel.lapSummaries}
+                  driverColor={viewModel.driverColor}
+                  telemetryLoading={telemetryLoading}
+                  embedMode={embedMode}
+                  onEmbedPanel={handleEmbedPanel}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'radio' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading radio view..." />}>
+                <RadioTab
+                  loading={teamRadio.loading}
+                  error={teamRadio.error}
+                  messages={viewModel.filteredRadio}
+                  driverMap={selectionData.driverMap}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'incidents' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading race control view..." />}>
+                <IncidentsTab
+                  loading={raceControl.loading}
+                  error={raceControl.error}
+                  messages={viewModel.raceControlMessages}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'weather' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading weather view..." />}>
+                <WeatherTab
+                  loading={weather.loading}
+                  error={weather.error}
+                  latestWeather={viewModel.latestWeather}
+                  sampleCount={weather.data?.length || 0}
+                  weatherRadar={viewModel.weatherRadar}
+                  weatherTrend={viewModel.weatherTrend}
+                  embedMode={embedMode}
+                  onEmbedPanel={handleEmbedPanel}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'trackmap' && (
+              <TrackMapTab
+                lapNum={filters.lapNum}
+                driverNums={filters.driverNums}
+                driverMap={selectionData.driverMap}
+                locationByDriver={locationByDriver}
+                locationLoading={locationLoading}
+                driverColor={viewModel.driverColor}
+                embedMode={embedMode}
+                onEmbedPanel={handleEmbedPanel}
+              />
+            )}
+
+            {filters.tab === 'positions' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading race positions..." />}>
+                <PositionsTab
+                  driverNums={filters.driverNums}
+                  driverMap={selectionData.driverMap}
+                  positions={positions.data}
+                  positionsLoading={positions.loading}
+                  lapNum={filters.lapNum}
+                  driverColor={viewModel.driverColor}
+                  embedMode={embedMode}
+                  onEmbedPanel={handleEmbedPanel}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'intervals' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading interval data..." />}>
+                <IntervalsTab
+                  driverNums={filters.driverNums}
+                  driverMap={selectionData.driverMap}
+                  intervals={intervals.data}
+                  intervalsLoading={intervals.loading}
+                  driverColor={viewModel.driverColor}
+                  embedMode={embedMode}
+                  onEmbedPanel={handleEmbedPanel}
+                />
+              </Suspense>
+            )}
+
+            {filters.tab === 'broadcast' && (
+              <Suspense fallback={<TabLoadingPlaceholder label="Loading broadcast view..." />}>
+                <BroadcastTab
+                  lapNum={filters.lapNum}
+                  lapsLoading={lapsLoading}
+                  sectorRows={viewModel.sectorRows}
+                  lapSummaries={viewModel.lapSummaries}
+                  driverMap={selectionData.driverMap}
+                  embedMode={embedMode}
+                  onEmbedPanel={handleEmbedPanel}
+                />
+              </Suspense>
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );
