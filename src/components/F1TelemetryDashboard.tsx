@@ -40,6 +40,11 @@ type SavedPreset = {
 
 const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
 const THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
+const MAX_DRIVER_SLOTS = 4;
+const YEAR_OPTIONS = Array.from(
+  { length: new Date().getFullYear() - 2022 },
+  (_, index) => 2023 + index,
+);
 const TAB_LABELS = {
   telemetry: 'Telemetry',
   tires: 'Tyres & Strategy',
@@ -182,12 +187,16 @@ export default function F1TelemetryDashboard() {
   const sessions = useSessions(filters.year, filters.circuit);
   const drivers = useDrivers(filters.sessionKey);
   const sessionResults = useSessionResult(filters.sessionKey);
+  const driverSlots = useMemo(
+    () => Array.from({ length: MAX_DRIVER_SLOTS }, (_, index) => filters.driverNums[index] ?? null),
+    [filters.driverNums],
+  );
 
   const lapStates = [
-    useLaps(filters.sessionKey, filters.driverNums[0]),
-    useLaps(filters.sessionKey, filters.driverNums[1]),
-    useLaps(filters.sessionKey, filters.driverNums[2]),
-    useLaps(filters.sessionKey, filters.driverNums[3]),
+    useLaps(filters.sessionKey, driverSlots[0]),
+    useLaps(filters.sessionKey, driverSlots[1]),
+    useLaps(filters.sessionKey, driverSlots[2]),
+    useLaps(filters.sessionKey, driverSlots[3]),
   ];
 
   const stints = useStints(needsStrategyData ? filters.sessionKey : null);
@@ -220,35 +229,35 @@ export default function F1TelemetryDashboard() {
   const telemetryStates = [
     useLapTelemetry(
       filters.sessionKey,
-      filters.driverNums[0],
+      driverSlots[0],
       needsTelemetryData ? selectionData.telemetryWindows[0]?.lapStart || null : null,
       needsTelemetryData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null,
     ),
     useLapTelemetry(
       filters.sessionKey,
-      filters.driverNums[1],
+      driverSlots[1],
       needsTelemetryData ? selectionData.telemetryWindows[1]?.lapStart || null : null,
       needsTelemetryData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null,
     ),
     useLapTelemetry(
       filters.sessionKey,
-      filters.driverNums[2],
+      driverSlots[2],
       needsTelemetryData ? selectionData.telemetryWindows[2]?.lapStart || null : null,
       needsTelemetryData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null,
     ),
     useLapTelemetry(
       filters.sessionKey,
-      filters.driverNums[3],
+      driverSlots[3],
       needsTelemetryData ? selectionData.telemetryWindows[3]?.lapStart || null : null,
       needsTelemetryData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null,
     ),
   ];
 
   const locationStates = [
-    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[0], needsLocationData ? selectionData.telemetryWindows[0]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[1], needsLocationData ? selectionData.telemetryWindows[1]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[2], needsLocationData ? selectionData.telemetryWindows[2]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, filters.driverNums[3], needsLocationData ? selectionData.telemetryWindows[3]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[0], needsLocationData ? selectionData.telemetryWindows[0]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[1], needsLocationData ? selectionData.telemetryWindows[1]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[2], needsLocationData ? selectionData.telemetryWindows[2]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null),
+    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[3], needsLocationData ? selectionData.telemetryWindows[3]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null),
   ];
   const locationByDriver = Object.fromEntries(
     filters.driverNums.map((driverNum, index) => [driverNum, locationStates[index]?.data || null]),
@@ -288,10 +297,6 @@ export default function F1TelemetryDashboard() {
       setLapNum(nextLap);
     }
   }, [currentLapIndex, selectionData.lapOptions, setLapNum]);
-  const yearOptions = useMemo(
-    () => Array.from({ length: new Date().getFullYear() - 2022 }, (_, index) => 2023 + index),
-    [],
-  );
   const summaryPills = useMemo(() => {
     return viewModel.lapSummaries.slice(0, 2).map((summary, index) => ({
       label: `P${index + 1}`,
@@ -337,7 +342,7 @@ export default function F1TelemetryDashboard() {
   const embedContext = useMemo(
     () => [
       { label: 'Lap', value: `L${filters.lapNum}` },
-      { label: 'Drivers', value: `${filters.driverNums.length}/4` },
+      { label: 'Drivers', value: `${filters.driverNums.length}/${MAX_DRIVER_SLOTS}` },
       { label: 'View', value: TAB_LABELS[filters.tab] },
     ],
     [filters.driverNums.length, filters.lapNum, filters.tab],
@@ -576,7 +581,7 @@ export default function F1TelemetryDashboard() {
           sessionKey={filters.sessionKey}
           lapNum={filters.lapNum}
           totalLaps={totalLaps}
-          yearOptions={yearOptions}
+          yearOptions={YEAR_OPTIONS}
           circuitOptions={selectionData.circuitOptions}
           sessionOptions={selectionData.sessionOptions}
           lapOptions={selectionData.lapOptions}

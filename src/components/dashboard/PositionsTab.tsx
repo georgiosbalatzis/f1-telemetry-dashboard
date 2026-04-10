@@ -18,6 +18,10 @@ type Props = {
 };
 
 const MAX_CHART_POINTS = 100;
+type PositionSample = {
+  position: number;
+  timestamp: number;
+};
 
 export function PositionsTab({ driverNums, driverMap, positions, positionsLoading, lapNum, driverColor, embedMode = false, onEmbedPanel }: Props) {
   const chartGrid = 'var(--chart-grid)';
@@ -26,43 +30,62 @@ export function PositionsTab({ driverNums, driverMap, positions, positionsLoadin
   const { chartData, totalLaps, driverCount } = useMemo(() => {
     if (!positions || positions.length === 0) return { chartData: [], totalLaps: 0, driverCount: 0 };
 
-    // Group by lap-level buckets using date ordering.
-    // Position endpoint gives a snapshot every ~few seconds — we sample by time bucket.
-    const byDriver: Record<number, OpenF1Position[]> = {};
-    for (const p of positions) {
-      (byDriver[p.driver_number] ||= []).push(p);
-    }
+    const byDriver = new Map<number, PositionSample[]>();
+    let tMin = Number.POSITIVE_INFINITY;
+    let tMax = Number.NEGATIVE_INFINITY;
 
-    // Find all unique drivers present
-    const allDrivers = Object.keys(byDriver).map(Number);
+    positions.forEach((entry) => {
+      const timestamp = Date.parse(entry.date);
+      if (!Number.isFinite(timestamp)) return;
 
-    // Determine time range
-    const allDates = positions.map((p) => new Date(p.date).getTime());
-    const tMin = Math.min(...allDates);
-    const tMax = Math.max(...allDates);
-    const duration = tMax - tMin || 1;
+      tMin = Math.min(tMin, timestamp);
+      tMax = Math.max(tMax, timestamp);
 
-    // Build N evenly-spaced time buckets
-    const N = MAX_CHART_POINTS;
-    const buckets = Array.from({ length: N }, (_, i) => {
-      const t = tMin + (i / (N - 1)) * duration;
-      const point: Record<string, number | string> = { t: i + 1 };
-      for (const dNum of allDrivers) {
-        const samples = byDriver[dNum];
-        // find closest sample to time t
-        let best: OpenF1Position | null = null;
-        let bestDiff = Infinity;
-        for (const s of samples) {
-          const diff = Math.abs(new Date(s.date).getTime() - t);
-          if (diff < bestDiff) { bestDiff = diff; best = s; }
-        }
-        if (best) point[`p_${dNum}`] = best.position;
+      const samples = byDriver.get(entry.driver_number);
+      const sample = { position: entry.position, timestamp };
+      if (samples) {
+        samples.push(sample);
+      } else {
+        byDriver.set(entry.driver_number, [sample]);
       }
-      return point;
     });
 
-    // Estimate total laps from max position samples count / 20 (rough heuristic)
-    const totalSamples = Math.max(...allDrivers.map((d) => byDriver[d].length));
+    const allDrivers = [...byDriver.keys()];
+    if (allDrivers.length === 0 || !Number.isFinite(tMin) || !Number.isFinite(tMax)) {
+      return { chartData: [], totalLaps: 0, driverCount: 0 };
+    }
+
+    byDriver.forEach((samples) => {
+      samples.sort((left, right) => left.timestamp - right.timestamp);
+    });
+
+    const duration = tMax - tMin || 1;
+
+    const bucketTimes = Array.from({ length: MAX_CHART_POINTS }, (_, index) => (
+      tMin + (index / (MAX_CHART_POINTS - 1)) * duration
+    ));
+    const buckets = bucketTimes.map((_, index) => ({ t: index + 1 } as Record<string, number | string>));
+
+    allDrivers.forEach((driverNumber) => {
+      const samples = byDriver.get(driverNumber);
+      if (!samples?.length) return;
+
+      let pointer = 0;
+      bucketTimes.forEach((bucketTime, bucketIndex) => {
+        while (pointer + 1 < samples.length && samples[pointer + 1].timestamp <= bucketTime) {
+          pointer += 1;
+        }
+
+        const current = samples[pointer];
+        const next = samples[pointer + 1];
+        const best = next && Math.abs(next.timestamp - bucketTime) < Math.abs(current.timestamp - bucketTime)
+          ? next
+          : current;
+        buckets[bucketIndex][`p_${driverNumber}`] = best.position;
+      });
+    });
+
+    const totalSamples = Math.max(0, ...allDrivers.map((driverNumber) => byDriver.get(driverNumber)?.length ?? 0));
     const estLaps = Math.round(totalSamples / 20);
 
     return { chartData: buckets, totalLaps: estLaps, driverCount: allDrivers.length };

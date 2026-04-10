@@ -17,6 +17,11 @@ type Props = {
 const MAP_W = 600;
 const MAP_H = 380;
 const PADDING = 36;
+type DriverMarker = {
+  nx: number;
+  ny: number;
+  label: string;
+};
 
 function subsample<T>(arr: T[], max: number): T[] {
   if (arr.length <= max) return arr;
@@ -48,10 +53,12 @@ function toPolyline(pts: { nx: number; ny: number }[]) {
 }
 
 export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, locationLoading, driverColor, embedMode = false, onEmbedPanel }: Props) {
-  const { trackPolyline, driverPaths, startPt } = useMemo((): {
+  const { trackPolyline, driverPaths, driverMarkers, startPt, activeDrivers } = useMemo((): {
     trackPolyline: string;
     driverPaths: Partial<Record<number, string>>;
+    driverMarkers: Partial<Record<number, DriverMarker>>;
     startPt: { nx: number; ny: number } | null;
+    activeDrivers: number[];
   } => {
     // Use all drivers' data combined to get the best track outline
     const allRaw = driverNums
@@ -59,7 +66,15 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
       .map((p) => ({ x: p.x, y: p.y }));
 
     const transform = buildTransform(allRaw);
-    if (!transform) return { trackPolyline: '', driverPaths: {} as Partial<Record<number, string>>, startPt: null };
+    if (!transform) {
+      return {
+        trackPolyline: '',
+        driverPaths: {} as Partial<Record<number, string>>,
+        driverMarkers: {} as Partial<Record<number, DriverMarker>>,
+        startPt: null,
+        activeDrivers: [],
+      };
+    }
 
     // Track outline from the driver with the most data
     const refDriver = [...driverNums].sort(
@@ -72,15 +87,28 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
 
     // Per-driver paths
     const paths: Partial<Record<number, string>> = {};
+    const markers: Partial<Record<number, DriverMarker>> = {};
+    const active: number[] = [];
     for (const n of driverNums) {
       const pts = subsample(locationByDriver[n] ?? [], 400).map((p) => transform({ x: p.x, y: p.y }));
-      if (pts.length > 1) paths[n] = toPolyline(pts);
+      if (pts.length > 1) {
+        paths[n] = toPolyline(pts);
+        active.push(n);
+      }
+
+      const rawPoints = locationByDriver[n] ?? [];
+      const last = rawPoints[rawPoints.length - 1];
+      if (last) {
+        const marker = transform({ x: last.x, y: last.y });
+        markers[n] = {
+          ...marker,
+          label: driverMap[n]?.name_acronym?.slice(0, 3) ?? '?',
+        };
+      }
     }
 
-    return { trackPolyline: outline, driverPaths: paths, startPt: first };
-  }, [driverNums, locationByDriver]);
-
-  const activeDrivers = driverNums.filter((n) => driverPaths[n] != null);
+    return { trackPolyline: outline, driverPaths: paths, driverMarkers: markers, startPt: first, activeDrivers: active };
+  }, [driverMap, driverNums, locationByDriver]);
 
   if (locationLoading) return <Spinner label="Fetching GPS location data…" />;
   if (!trackPolyline) {
@@ -135,19 +163,13 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
 
             {/* Driver end-position markers */}
             {activeDrivers.map((n) => {
-              const pts = locationByDriver[n] ?? [];
-              if (pts.length === 0) return null;
-              const last = pts[pts.length - 1];
-              // Quick re-transform for last point
-              const allRaw = driverNums.flatMap((d) => subsample(locationByDriver[d] ?? [], 300)).map((p) => ({ x: p.x, y: p.y }));
-              const t = buildTransform(allRaw);
-              if (!t) return null;
-              const { nx, ny } = t({ x: last.x, y: last.y });
+              const marker = driverMarkers[n];
+              if (!marker) return null;
               return (
                 <g key={`marker-${n}`}>
-                  <circle cx={nx} cy={ny} r={8} fill={driverColor(n)} stroke="var(--bg)" strokeWidth={2.5} />
-                  <text x={nx} y={ny + 4} textAnchor="middle" fontSize={6.5} fontWeight="bold" fill="white">
-                    {driverMap[n]?.name_acronym?.slice(0, 3) ?? '?'}
+                  <circle cx={marker.nx} cy={marker.ny} r={8} fill={driverColor(n)} stroke="var(--bg)" strokeWidth={2.5} />
+                  <text x={marker.nx} y={marker.ny + 4} textAnchor="middle" fontSize={6.5} fontWeight="bold" fill="white">
+                    {marker.label}
                   </text>
                 </g>
               );

@@ -180,7 +180,7 @@ export function useDrivers(sessionKey: number | null) {
 }
 
 /** Only fetches if both sessionKey and driverNumber are valid positive numbers */
-export function useLaps(sessionKey: number | null, driverNumber: number | undefined) {
+export function useLaps(sessionKey: number | null, driverNumber: number | null | undefined) {
   const ok = sessionKey != null && driverNumber != null && driverNumber > 0;
   return useFetch<OpenF1Lap[]>(
     ok ? `laps:${sessionKey}:${driverNumber}` : null,
@@ -191,7 +191,7 @@ export function useLaps(sessionKey: number | null, driverNumber: number | undefi
 /** Telemetry for a specific lap, scoped by date window */
 export function useLapTelemetry(
   sessionKey: number | null,
-  driverNumber: number | undefined,
+  driverNumber: number | null | undefined,
   lapDateStart: string | null,
   nextLapDateStart: string | null | undefined,
 ) {
@@ -260,7 +260,7 @@ export function useIntervals(sessionKey: number | null) {
 
 export function useLapLocation(
   sessionKey: number | null,
-  driverNumber: number | undefined,
+  driverNumber: number | null | undefined,
   lapDateStart: string | null,
   nextLapDateStart: string | null | undefined,
 ) {
