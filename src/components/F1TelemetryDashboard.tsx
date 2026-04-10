@@ -50,6 +50,7 @@ const TAB_LABELS = {
   radio: 'Team Radio',
   incidents: 'Race Control',
   weather: 'Weather',
+  broadcast: 'Broadcast',
 } as const;
 
 const StrategyTab = lazy(() => import('./dashboard/StrategyTab').then((module) => ({ default: module.StrategyTab })));
@@ -59,6 +60,7 @@ const IncidentsTab = lazy(() => import('./dashboard/IncidentsTab').then((module)
 const WeatherTab = lazy(() => import('./dashboard/WeatherTab').then((module) => ({ default: module.WeatherTab })));
 const PositionsTab = lazy(() => import('./dashboard/PositionsTab').then((module) => ({ default: module.PositionsTab })));
 const IntervalsTab = lazy(() => import('./dashboard/IntervalsTab').then((module) => ({ default: module.IntervalsTab })));
+const BroadcastTab = lazy(() => import('./dashboard/BroadcastTab').then((module) => ({ default: module.BroadcastTab })));
 
 function TabLoadingPlaceholder({ label }: { label: string }) {
   return (
@@ -361,26 +363,25 @@ export default function F1TelemetryDashboard() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const hash = window.location.hash.replace(/^#/, '');
-    if (!hash) return;
+    const targetId = window.location.hash.replace(/^#/, '');
+    if (!targetId) return;
 
     let attempts = 0;
-    const timer = window.setInterval(() => {
-      const target = window.document.getElementById(hash);
-      attempts += 1;
-
+    const timerId = window.setInterval(() => {
+      const target = window.document.getElementById(targetId);
       if (target) {
-        target.scrollIntoView({ block: 'start' });
-        window.clearInterval(timer);
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.clearInterval(timerId);
         return;
       }
 
+      attempts += 1;
       if (attempts >= 12) {
-        window.clearInterval(timer);
+        window.clearInterval(timerId);
       }
     }, 120);
 
-    return () => window.clearInterval(timer);
+    return () => window.clearInterval(timerId);
   }, [filters.tab]);
 
   useEffect(() => {
@@ -743,6 +744,20 @@ export default function F1TelemetryDashboard() {
                 intervals={intervals.data}
                 intervalsLoading={intervals.loading}
                 driverColor={viewModel.driverColor}
+                embedMode={embedMode}
+                onEmbedPanel={handleEmbedPanel}
+              />
+            </Suspense>
+          )}
+
+          {filters.tab === 'broadcast' && (
+            <Suspense fallback={<TabLoadingPlaceholder label="Loading broadcast view..." />}>
+              <BroadcastTab
+                lapNum={filters.lapNum}
+                lapsLoading={lapsLoading}
+                sectorRows={viewModel.sectorRows}
+                lapSummaries={viewModel.lapSummaries}
+                driverMap={selectionData.driverMap}
                 embedMode={embedMode}
                 onEmbedPanel={handleEmbedPanel}
               />

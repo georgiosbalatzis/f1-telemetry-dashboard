@@ -202,16 +202,16 @@ function sleep(ms: number, signal?: AbortSignal) {
     }, ms);
 
     function onAbort() {
+      signal?.removeEventListener('abort', onAbort);
       window.clearTimeout(timeoutId);
       reject(signal?.reason instanceof Error ? signal.reason : new DOMException('Request aborted', 'AbortError'));
     }
 
     if (signal) {
+      signal.addEventListener('abort', onAbort, { once: true });
       if (signal.aborted) {
         onAbort();
-        return;
       }
-      signal.addEventListener('abort', onAbort, { once: true });
     }
   });
 }
@@ -241,19 +241,23 @@ function combineSignals(signal?: AbortSignal, timeoutMs = DEFAULT_TIMEOUT_MS) {
     }
   };
 
-  const onSourceAbort = () => abort(signal.reason);
-  const onTimeoutAbort = () => abort(timeout.signal.reason);
-
-  if (signal.aborted) {
+  const onSourceAbort = () => {
+    signal.removeEventListener('abort', onSourceAbort);
     abort(signal.reason);
-  } else {
-    signal.addEventListener('abort', onSourceAbort, { once: true });
+  };
+  const onTimeoutAbort = () => {
+    timeout.signal.removeEventListener('abort', onTimeoutAbort);
+    abort(timeout.signal.reason);
+  };
+
+  signal.addEventListener('abort', onSourceAbort, { once: true });
+  if (signal.aborted) {
+    onSourceAbort();
   }
 
+  timeout.signal.addEventListener('abort', onTimeoutAbort, { once: true });
   if (timeout.signal.aborted) {
-    abort(timeout.signal.reason);
-  } else {
-    timeout.signal.addEventListener('abort', onTimeoutAbort, { once: true });
+    onTimeoutAbort();
   }
 
   return {
