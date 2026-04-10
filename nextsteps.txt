@@ -1,0 +1,903 @@
+# F1 Telemetry Dashboard — Codex Improvement Prompt
+# Generated: 2026-04-10
+# Branch strategy: main <- develop <- feature/* or bugfix/*
+# Every phase = one branch, one PR to develop, then develop -> main when stable.
+
+================================================================================
+CONTEXT
+================================================================================
+
+This is a React 19 + TypeScript 5.7 SPA built with Vite 6.3 and Tailwind CSS 4.1.
+It visualises Formula 1 session data consumed from the public OpenF1 REST API.
+Charting is handled by Recharts 2.15. Routing is hash-based (no React Router).
+Deployment target: GitHub Pages at /f1-telemetry-dashboard/.
+
+Key files:
+  src/api/openf1.ts                       — OpenF1 API client with caching & abort
+  src/hooks/useOpenF1.ts                  — Generic data-fetching hook (cache TTL 5 min)
+  src/hooks/useDashboardFilters.ts        — URL-hash state (year/circuit/session/drivers)
+  src/hooks/useDashboardSelectionData.ts  — Derives available options from API data
+  src/hooks/useDashboardViewModel.ts      — Transforms raw API data into chart models
+  src/components/F1TelemetryDashboard.tsx — Root orchestrator component (~610 lines)
+  src/components/dashboard/              — One file per tab + shared primitives
+
+Branching convention:
+  git checkout develop
+  git checkout -b bugfix/<slug>    # for bug fixes
+  git checkout -b feature/<slug>   # for features / perf / visual changes
+  # After work: open PR to develop; after review merge develop -> main
+
+================================================================================
+PHASE 1 — CRITICAL BUG FIXES
+Branch: bugfix/critical-fixes
+PR title: "fix: hash scroll race condition, abort signal race, Math.min empty array"
+================================================================================
+
+## 1.1 Hash scroll timer not cleaned up on unmount
+File: src/components/F1TelemetryDashboard.tsx  ~line 370
+
+PROBLEM:
+  The hash-scroll effect creates an interval with `window.setInterval` but does
+  not capture the timer ID for cleanup. If the component unmounts while the
+  interval is running the callback will still fire, causing a setState on an
+  unmounted component (React 19 gives an error for this) and potentially
+  scrolling to a stale element.
+
+  Additionally the `attempts` counter is declared inside the callback closure
+  via an outer let, which means if the hash changes and the effect re-runs, the
+  previous interval is not cancelled and two intervals race.
+
+FIX:
+  1. Capture the timer ID returned by setInterval.
+  2. Return a cleanup function from useEffect that calls clearInterval(timerId).
+  3. Check signal.aborted before adding a listener:
+
+  ```typescript
+  useEffect(() => {
+    if (!window.location.hash) return;
+    const target = window.location.hash.slice(1);
+    let attempts = 0;
+    const timerId = window.setInterval(() => {
+      const el = document.getElementById(target);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.clearInterval(timerId);
+        return;
+      }
+      attempts += 1;
+      if (attempts >= 12) window.clearInterval(timerId);
+    }, 120);
+    return () => window.clearInterval(timerId);
+  }, []);
+  ```
+
+## 1.2 Abort signal race condition in openf1.ts
+File: src/api/openf1.ts  ~line 195-217
+
+PROBLEM:
+  `onAbort()` is registered with `signal.addEventListener('abort', onAbort)` but
+  the signal may already be in the aborted state before the listener is attached
+  (e.g. if abort() was called synchronously before the fetch resolves). This
+  means the cleanup function is never called and the in-flight map leaks.
+
+FIX:
+  After registering the listener, immediately check `signal.aborted` and invoke
+  cleanup if true:
+
+  ```typescript
+  signal.addEventListener('abort', onAbort, { once: true });
+  if (signal.aborted) onAbort();
+  ```
+
+## 1.3 Math.min on empty array causes Infinity in TelemetryTab
+File: src/components/dashboard/TelemetryTab.tsx  ~line 49-52
+
+PROBLEM:
+  ```typescript
+  const bestS1 = Math.min(...sectorRows.map((row) => row.s1 ?? Number.POSITIVE_INFINITY));
+  ```
+  If `sectorRows` is empty, `Math.min()` with no arguments returns `Infinity`.
+  This value propagates into the chart's Y-axis domain, producing undefined
+  visual behaviour (blank charts or Recharts throwing warnings).
+
+FIX:
+  Guard with a length check and provide a sensible fallback:
+
+  ```typescript
+  const bestS1 = sectorRows.length
+    ? Math.min(...sectorRows.map((r) => r.s1 ?? Number.POSITIVE_INFINITY))
+    : null;
+  ```
+  Then gate chart rendering on `bestS1 !== null`.
+
+## 1.4 Preferred lap selection falls through to invalid index
+File: src/hooks/useDashboardSelectionData.ts  ~line 123-131
+
+PROBLEM:
+  When computing the preferred lap for display, the code picks lap 2 as a
+  fallback (`lapOptions[1]`) without checking whether `lapOptions` has at least
+  two entries. If only one lap exists, this returns `undefined`, which is then
+  used as a lap number and causes downstream API calls with `lap_number=undefined`.
+
+FIX:
+  ```typescript
+  const preferred = lapOptions.includes(lapNum)
+    ? lapNum
+    : lapOptions[1] ?? lapOptions[0] ?? null;
+  ```
+  And propagate `null` cleanly rather than `undefined`.
+
+## 1.5 driverList accessed before population in useDashboardSelectionData
+File: src/hooks/useDashboardSelectionData.ts  ~line 176-178
+
+PROBLEM:
+  `driverList.slice(0, 2).map(...)` is called without an existence check. During
+  the initial render cycle `driverList` can be undefined because the API call
+  has not yet resolved, causing a runtime TypeError.
+
+FIX:
+  ```typescript
+  const defaultDrivers = (driverList ?? []).slice(0, 2).map((d) => d.driver_number);
+  ```
+
+================================================================================
+PHASE 2 — PERFORMANCE OPTIMIZATIONS
+Branch: feature/performance-optimizations
+PR title: "perf: dynamic driver hooks, memoization, O(n) position bucketing"
+================================================================================
+
+## 2.1 Hardcoded 4-driver hooks prevent dynamic selection
+File: src/components/F1TelemetryDashboard.tsx  ~line 186-245
+
+PROBLEM:
+  The component unconditionally calls `useLaps` and `useTelemetry` four times,
+  one per driver slot, regardless of how many drivers are actually selected.
+  React hooks cannot be called inside loops (Rules of Hooks), but they CAN be
+  refactored by creating a fixed-length array of hooks:
+
+  ```typescript
+  // Current — fetches for driver[2] and driver[3] even if only 1 driver selected
+  const laps0 = useLaps(sessionKey, driverNums[0]);
+  const laps1 = useLaps(sessionKey, driverNums[1]);
+  const laps2 = useLaps(sessionKey, driverNums[2]);
+  const laps3 = useLaps(sessionKey, driverNums[3]);
+  ```
+
+FIX:
+  Keep the same number of hook calls (required by Rules of Hooks) but pass
+  `null` as the driver number when there is no driver in that slot, and make
+  `useLaps`/`useTelemetry` skip the fetch when the driver is null:
+
+  ```typescript
+  // In useOpenF1.ts: skip fetch when driverNumber === null
+  const MAX_DRIVERS = 4;
+  const slots = Array.from({ length: MAX_DRIVERS }, (_, i) => driverNums[i] ?? null);
+  const laps0 = useLaps(sessionKey, slots[0]);
+  const laps1 = useLaps(sessionKey, slots[1]);
+  const laps2 = useLaps(sessionKey, slots[2]);
+  const laps3 = useLaps(sessionKey, slots[3]);
+  ```
+  This avoids unnecessary network requests while respecting Rules of Hooks.
+
+## 2.2 Year options array recalculated every render
+File: src/components/F1TelemetryDashboard.tsx  ~line 292
+
+PROBLEM:
+  ```typescript
+  const yearOptions = Array.from({ length: new Date().getFullYear() - 2022 }, ...)
+  ```
+  This runs on every render. `new Date().getFullYear()` is not reactive — the
+  year will not change during a session.
+
+FIX:
+  Move outside the component or wrap in `useMemo` with empty deps:
+  ```typescript
+  const YEAR_OPTIONS = Array.from(
+    { length: new Date().getFullYear() - 2022 + 1 },
+    (_, i) => 2023 + i,
+  );
+  ```
+
+## 2.3 O(n²) position bucketing in PositionsTab
+File: src/components/dashboard/PositionsTab.tsx  ~line 26-69
+
+PROBLEM:
+  For each time bucket, the code searches through all position samples for each
+  driver. Complexity is O(buckets × drivers × samples per driver). With a full
+  race (~100 minutes × 20 drivers × many position updates) this is expensive.
+
+FIX:
+  Pre-index position samples by driver_number into a Map, then walk each
+  driver's samples once in sorted order to fill buckets with a pointer
+  per driver:
+
+  ```typescript
+  // O(n log n) for sort + O(n) for bucketing with pointer
+  const byDriver = new Map<number, PositionSample[]>();
+  allSamples.forEach((s) => {
+    if (!byDriver.has(s.driver_number)) byDriver.set(s.driver_number, []);
+    byDriver.get(s.driver_number)!.push(s);
+  });
+  // Sort once per driver, then advance pointers through buckets
+  ```
+
+## 2.4 Multiple passes over sector data in BroadcastTab
+File: src/components/dashboard/BroadcastTab.tsx  ~line 104-120
+
+PROBLEM:
+  `classifySectors()` is called three times (s1, s2, s3) and each call performs
+  a `.filter()` and `.sort()` over the full sectors dataset.
+
+FIX:
+  Perform a single pass, accumulate s1/s2/s3 into three separate arrays, then
+  sort each once:
+  ```typescript
+  const [s1, s2, s3] = [[], [], []]; // typed arrays
+  sectors.forEach((s) => {
+    if (s.sector === 1) s1.push(s);
+    else if (s.sector === 2) s2.push(s);
+    else s3.push(s);
+  });
+  [s1, s2, s3].forEach((arr) => arr.sort(compareFn));
+  ```
+
+## 2.5 Missing useMemo in multiple tab components
+
+PROBLEM:
+  The following computations run on every render even when their inputs have not
+  changed (no memoization):
+  - EnergyTab.tsx:37-44  — `comparisonDriverNums`
+  - StrategyTab.tsx:42-71 — formatted stint data
+  - RadioTab.tsx:17-38   — formatted radio messages
+  - useDashboardViewModel.ts:82-92 — step size calculation
+
+FIX:
+  Wrap each with `useMemo` and specify correct dependency arrays.
+  Example for step size:
+  ```typescript
+  const step = useMemo(
+    () => Math.max(1, Math.floor(telemetry.length / NORMALIZED_TELEMETRY_POINTS)),
+    [telemetry.length],
+  );
+  ```
+
+## 2.6 TrackMapTab unnecessary per-marker transform recalculation
+File: src/components/dashboard/TrackMapTab.tsx  ~line 142-144
+
+PROBLEM:
+  The coordinate transform (`toSvg`) is recalculated for each driver marker
+  inside the render loop instead of being applied once to the backing data.
+
+FIX:
+  Pre-transform coordinates in a `useMemo` that depends on `locationData`:
+  ```typescript
+  const transformedMarkers = useMemo(
+    () => driverNums.map((num) => ({ num, ...toSvg(locationData[num]) })),
+    [driverNums, locationData],
+  );
+  ```
+
+================================================================================
+PHASE 3 — ACCESSIBILITY
+Branch: feature/accessibility
+PR title: "a11y: ARIA labels, semantic table markup, keyboard nav, color contrast"
+================================================================================
+
+## 3.1 BroadcastTab timing tower lacks semantic table markup
+File: src/components/dashboard/BroadcastTab.tsx  ~line 147-230
+
+PROBLEM:
+  The timing tower is rendered with plain `<div>` elements. Screen readers
+  cannot identify rows, columns, or headers. Users relying on assistive
+  technology get no structured information.
+
+FIX:
+  Replace outermost container with `<table>` and inner divs with
+  `<thead>/<tbody>/<tr>/<th>/<td>`. Apply existing Tailwind classes to maintain
+  current visual appearance:
+  ```tsx
+  <table role="table" aria-label="Timing tower">
+    <thead>
+      <tr>
+        <th scope="col">Pos</th>
+        <th scope="col">Driver</th>
+        <th scope="col">Gap</th>
+        ...
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr key={row.driverNumber}>
+          <td>{row.position}</td>
+          ...
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  ```
+
+## 3.2 Search input in IncidentsTab missing label
+File: src/components/dashboard/IncidentsTab.tsx  ~line 48-52
+
+PROBLEM:
+  The search `<input>` relies on `placeholder` text as its only label. Placeholders
+  disappear on focus and are not reliably read by all screen readers.
+
+FIX:
+  Add a visually hidden `<label>`:
+  ```tsx
+  <label htmlFor="incidents-search" className="sr-only">Search incidents</label>
+  <input id="incidents-search" placeholder="Search…" … />
+  ```
+
+## 3.3 Legend colour squares are invisible to screen readers
+File: src/components/dashboard/shared.tsx  ~line 227
+
+PROBLEM:
+  Coloured squares used as chart legends are rendered as empty `<span>` elements.
+  Blind users cannot determine which colour corresponds to which driver.
+
+FIX:
+  Add `aria-label` describing the mapping:
+  ```tsx
+  <span
+    className="inline-block w-3 h-3 rounded-sm"
+    style={{ background: color }}
+    aria-label={`${driverName} colour indicator`}
+    role="img"
+  />
+  ```
+
+## 3.4 TrackMap SVG title too generic
+File: src/components/dashboard/TrackMapTab.tsx  ~line 110
+
+PROBLEM:
+  SVG `aria-label` is "Track map lap {lapNum}". This does not tell assistive
+  technology users what drivers are shown or what the paths represent.
+
+FIX:
+  Build a descriptive label from the rendered drivers:
+  ```tsx
+  const svgLabel = `Track map for lap ${lapNum}. Drivers: ${
+    driverNums.map((n) => driverMap[n]?.full_name ?? `#${n}`).join(', ')
+  }`;
+  <svg aria-label={svgLabel} role="img" …>
+    <title>{svgLabel}</title>
+    …
+  </svg>
+  ```
+
+## 3.5 Add skip-to-content link for keyboard users
+File: src/components/F1TelemetryDashboard.tsx  (top of JSX return)
+
+PROBLEM:
+  Keyboard users must tab through the entire header and nav to reach the main
+  content on every page load.
+
+FIX:
+  Add a skip link as the very first focusable element:
+  ```tsx
+  <a
+    href="#main-content"
+    className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 z-50 bg-white text-black px-4 py-2 rounded"
+  >
+    Skip to content
+  </a>
+  <main id="main-content" …>
+    …
+  </main>
+  ```
+
+## 3.6 Toolbar buttons missing accessible names
+File: src/components/dashboard/shared.tsx  ~line 199-200
+
+PROBLEM:
+  `ToolbarButton` wraps an icon-only button. If `aria-label` is not passed by
+  every call-site the button has no accessible name.
+
+FIX:
+  Make `aria-label` a required prop in the TypeScript interface and add a
+  PropTypes-like compile-time check:
+  ```typescript
+  interface ToolbarButtonProps {
+    'aria-label': string;  // required
+    onClick: () => void;
+    children: React.ReactNode;
+  }
+  ```
+
+================================================================================
+PHASE 4 — VISUAL / UI IMPROVEMENTS
+Branch: feature/visual-improvements
+PR title: "ui: design tokens for colors, mobile-responsive selectors, font loading"
+================================================================================
+
+## 4.1 Hardcoded hex colours scattered across components
+Files: Multiple (TelemetryTab, EnergyTab, StrategyTab, shared.tsx, etc.)
+
+PROBLEM:
+  Raw hex values (#EF4444, #3B82F6, #bf00ff, etc.) are sprinkled through JSX
+  `style` props and Recharts `stroke`/`fill` attributes. This makes theming
+  and consistent dark/light mode impossible.
+
+FIX:
+  1. Declare all semantic colour tokens in index.css under :root and
+     :root[data-theme="light"] selectors.
+  2. Create a src/constants/colors.ts that exports CSS-var references:
+     ```typescript
+     export const COLORS = {
+       danger: 'var(--color-danger)',
+       accent: 'var(--color-accent)',
+       // driver colours indexed 0-3
+       driver: ['var(--color-driver-0)', ...],
+     } as const;
+     ```
+  3. Replace all raw hex values in JSX with COLORS.* references.
+  4. Recharts accepts CSS var strings in stroke/fill — use them directly.
+
+## 4.2 Orbitron font not loaded
+File: src/index.css or index.html
+
+PROBLEM:
+  DashboardHeader.tsx uses `fontFamily: 'Orbitron'` in an inline style but
+  neither index.html nor index.css imports this font. Browsers fall back to
+  system-ui, breaking the intended F1-themed aesthetic.
+
+FIX:
+  Add to index.html `<head>`:
+  ```html
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
+    rel="stylesheet"
+  >
+  ```
+  Or embed the @font-face rule in index.css with a locally bundled font file
+  for offline support (better for GitHub Pages).
+
+## 4.3 Mobile-responsive selectors and dropdowns
+File: src/components/dashboard/DashboardSelectors.tsx  ~line 66-99
+
+PROBLEM:
+  The Year/Circuit/Session dropdowns have a fixed height and their text can
+  overflow or be clipped on small screens (< 375px width). In portrait mode the
+  selectors line up horizontally and break below 400px.
+
+FIX:
+  1. Add `flex-wrap: wrap` to the selector row container.
+  2. Set `min-width: 0` and `flex: 1 1 120px` on each select so they reflow.
+  3. Ensure `<select>` height is at least 44px (WCAG touch target minimum).
+
+## 4.4 IncidentsTab filter row clips on mobile
+File: src/components/dashboard/IncidentsTab.tsx  ~line 54-70
+
+PROBLEM:
+  The horizontal flag-filter row uses `overflow-x: auto` with `scrollbar-hide`,
+  meaning users on mobile cannot see that the row is scrollable — there is no
+  scroll indicator, shadow, or fade.
+
+FIX:
+  Replace `scrollbar-hide` with a fade-out gradient on the right edge:
+  ```css
+  .filter-scroll-container {
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
+  ```
+  This signals to users that content is scrollable without cluttering the UI.
+
+## 4.5 TrackMapTab SVG aspect ratio squishing
+File: src/components/dashboard/TrackMapTab.tsx  ~line 113-115
+
+PROBLEM:
+  The SVG lacks `preserveAspectRatio`, so on widescreen or narrow viewports the
+  track path is distorted.
+
+FIX:
+  ```tsx
+  <svg
+    viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+    preserveAspectRatio="xMidYMid meet"
+    width="100%"
+    height="100%"
+    …
+  >
+  ```
+
+## 4.6 ChartPanel getComputedStyle fallback
+File: src/components/dashboard/ChartPanel.tsx  ~line 117
+
+PROBLEM:
+  `getComputedStyle(document.documentElement).getPropertyValue('--text-strong')`
+  returns an empty string if CSS custom properties haven't loaded yet (during
+  first paint or SSR pre-render). This causes the exported SVG to have invisible
+  text.
+
+FIX:
+  ```typescript
+  const textColor =
+    getComputedStyle(document.documentElement)
+      .getPropertyValue('--text-strong')
+      .trim() || '#ffffff';
+  ```
+
+## 4.7 Add loading skeleton states to heavy tabs
+
+PROBLEM:
+  When data is loading, tabs display blank space or a spinner without any
+  structure. This causes layout shifts when data arrives.
+
+FIX:
+  Add skeleton components that match the final layout structure:
+  - For chart tabs: grey rounded bars where chart lines will appear
+  - For table tabs: grey rounded rows
+  Use CSS animation `animate-pulse` (Tailwind built-in) on these skeletons.
+
+================================================================================
+PHASE 5 — ERROR HANDLING & RESILIENCE
+Branch: feature/error-handling
+PR title: "feat: error boundaries, retry UI, input validation guards"
+================================================================================
+
+## 5.1 Add Error Boundaries around each tab
+File: src/components/F1TelemetryDashboard.tsx + new src/components/ErrorBoundary.tsx
+
+PROBLEM:
+  If any tab component throws a runtime error (e.g. due to unexpected API shape)
+  the entire dashboard crashes. React 19 requires class-based or the new
+  `use(errorBoundary)` hook pattern.
+
+FIX:
+  Create `src/components/ErrorBoundary.tsx`:
+  ```typescript
+  class ErrorBoundary extends React.Component<
+    { children: ReactNode; label: string },
+    { error: Error | null }
+  > {
+    state = { error: null };
+    static getDerivedStateFromError(error: Error) { return { error }; }
+    render() {
+      if (this.state.error) {
+        return (
+          <div className="flex flex-col items-center justify-center p-8 gap-4">
+            <p className="text-red-400">Failed to render {this.props.label}</p>
+            <button onClick={() => this.setState({ error: null })}>Retry</button>
+          </div>
+        );
+      }
+      return this.props.children;
+    }
+  }
+  ```
+  Wrap each `<*Tab … />` with `<ErrorBoundary label="Telemetry">`.
+
+## 5.2 Add retry buttons to failed API states
+File: src/components/F1TelemetryDashboard.tsx  ~line 599-601
+
+PROBLEM:
+  "Failed to load calendar" and similar error states are terminal — there is no
+  way for the user to retry without a full page reload.
+
+FIX:
+  The `useOpenF1` hook should expose a `refetch()` function. Pass it through the
+  component tree and render a "Try again" button beside every error message:
+  ```tsx
+  {calendarError && (
+    <div>
+      <p>Failed to load calendar: {calendarError.message}</p>
+      <button onClick={refetchCalendar}>Try again</button>
+    </div>
+  )}
+  ```
+
+## 5.3 Input validation in useDashboardFilters
+File: src/hooks/useDashboardFilters.ts  ~line 13-17
+
+PROBLEM:
+  URL parameters are parsed with minimal validation. A crafted URL like
+  `?year=99999&session=../../etc` could produce nonsensical API requests or
+  expose edge case bugs.
+
+FIX:
+  Add range guards:
+  ```typescript
+  const VALID_YEAR_RANGE = [2023, new Date().getFullYear()] as const;
+  function parseYear(raw: string | null): number | null {
+    const n = raw ? parseInt(raw, 10) : null;
+    if (!n || n < VALID_YEAR_RANGE[0] || n > VALID_YEAR_RANGE[1]) return null;
+    return n;
+  }
+  ```
+  Similarly guard driver numbers (1-99), session key format, and lap numbers.
+
+## 5.4 Distinguish clipboard errors in shareSnapshot
+File: src/components/F1TelemetryDashboard.tsx  ~line 449-473
+
+PROBLEM:
+  All clipboard failures are caught and silently discarded. The user receives no
+  feedback if the copy failed.
+
+FIX:
+  ```typescript
+  async function shareSnapshot() {
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Link copied!');
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'NotAllowedError') {
+        showToast('Clipboard access denied — copy manually: ' + url);
+      } else {
+        showToast('Could not copy link');
+      }
+    }
+  }
+  ```
+
+## 5.5 Cache invalidation on session change
+File: src/hooks/useDashboardSelectionData.ts
+
+PROBLEM:
+  When the user selects a different year or circuit, stale driver suggestions
+  from the previous selection can persist because the cache TTL has not expired.
+  This shows drivers who did not participate in the selected session.
+
+FIX:
+  When `sessionKey` changes, call `cache.delete(key)` for all keys derived from
+  the previous session. Alternatively, namespace cache keys with the sessionKey
+  so old entries never collide with new ones (they will expire naturally via TTL).
+
+================================================================================
+PHASE 6 — CODE QUALITY & HOUSEKEEPING
+Branch: feature/code-quality
+PR title: "refactor: extract constants, remove dead code, add JSDoc, uniform patterns"
+================================================================================
+
+## 6.1 Extract magic numbers into named constants
+Files: Multiple
+
+Replace all magic numbers with self-documenting constants:
+  - `120` (timer attempts × 120ms = 1.44s timeout) → `HASH_SCROLL_MAX_ATTEMPTS = 12`, `HASH_SCROLL_INTERVAL_MS = 120`
+  - `120` (normalised telemetry points) → `NORMALIZED_TELEMETRY_POINTS = 120` (already exists — add a comment explaining why 120)
+  - `MAP_W = 600`, `MAP_H = 380`, `PADDING = 36` → add JSDoc: `/** SVG canvas dimensions for the track map. Chosen to preserve OpenF1 GPS coordinate aspect ratio. */`
+  - `DRS_THRESHOLD = 1.0` → rename to `DRS_DETECTION_WINDOW_S = 1.0` (seconds)
+  - `labelFactor: 7` in ChartPanel → `APPROX_CHAR_WIDTH_PX = 7`
+
+## 6.2 Remove dead / unused code
+Files: src/components/F1TelemetryDashboard.tsx, useDashboardSelectionData.ts
+
+  - F1TelemetryDashboard.tsx:257-260: `primaryTelemetry` used only for error. Inline it.
+  - useDashboardSelectionData.ts:145-153: `primaryLap` / `nextPrimaryLap` are exported but
+    callers already recompute. Remove the export if unused, or document why it's there.
+  - Search for `// TODO`, `// FIXME`, `console.log` and resolve or ticket each one.
+
+## 6.3 Consolidate repeated hook call patterns
+File: src/components/F1TelemetryDashboard.tsx  ~line 186-245
+
+  The 4× driver hook pattern appears twice (useLaps + useTelemetry). Create a
+  custom hook `useDriverData(sessionKey, driverNum)` that internally calls both
+  and returns a unified object:
+  ```typescript
+  function useDriverData(sessionKey: number | null, driverNum: number | null) {
+    const laps = useLaps(sessionKey, driverNum);
+    const telemetry = useTelemetry(sessionKey, driverNum, laps.selectedLap);
+    return { laps, telemetry };
+  }
+  ```
+  Then in F1TelemetryDashboard:
+  ```typescript
+  const driver0 = useDriverData(sessionKey, slots[0]);
+  const driver1 = useDriverData(sessionKey, slots[1]);
+  const driver2 = useDriverData(sessionKey, slots[2]);
+  const driver3 = useDriverData(sessionKey, slots[3]);
+  ```
+
+## 6.4 Extract ChartPanel SVG export into utility module
+File: src/components/dashboard/ChartPanel.tsx  ~line 154-249
+
+  The SVG serialisation and canvas clone logic is 100 lines of DOM manipulation
+  inside a UI component. Extract to `src/utils/exportChart.ts`:
+  ```typescript
+  export async function exportChartAsSvg(
+    svgEl: SVGSVGElement,
+    filename: string,
+    options: { textColor: string; backgroundColor: string },
+  ): Promise<void> { … }
+  ```
+  ChartPanel then just calls `exportChartAsSvg(…)`.
+
+## 6.5 Consistent error handling pattern
+Files: All hooks and API modules
+
+  Currently some hooks use try/catch, others use .catch(), and reset state
+  differently. Standardise on:
+  ```typescript
+  try {
+    const data = await fetchSomething();
+    setData(data);
+    setError(null);
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') return;
+    setError(err instanceof Error ? err : new Error(String(err)));
+    setData(null);
+  } finally {
+    setLoading(false);
+  }
+  ```
+
+## 6.6 Add JSDoc to complex functions
+Priority targets:
+  - `openf1.ts`: `buildQueryUrl()` — document supported operator syntax
+  - `useDashboardViewModel.ts`: `buildNormalizedComparisonData()` — explain normalisation algorithm
+  - `F1TelemetryDashboard.tsx`: `buildDashboardUrl()` — document URL parameter schema
+  - `TrackMapTab.tsx`: coordinate transform pipeline
+
+## 6.7 Driver colour context provider
+Files: Many components receive driverColor, driverMap, driverNums as props
+
+  Create `src/contexts/DriverContext.tsx`:
+  ```typescript
+  const DriverContext = React.createContext<DriverContextValue | null>(null);
+  export function DriverProvider({ children, drivers, colors }) { … }
+  export function useDriverContext() { … }
+  ```
+  Wrap the tab area with `<DriverProvider>` and remove prop-drilling from all
+  tab components. This also makes it trivial to add a 5th driver in the future.
+
+================================================================================
+PHASE 7 — ARCHITECTURE REFACTOR
+Branch: feature/architecture-refactor
+PR title: "refactor: split F1TelemetryDashboard, unify state, add request deduplication"
+================================================================================
+
+## 7.1 Split F1TelemetryDashboard into Container + Presenter
+File: src/components/F1TelemetryDashboard.tsx  (610 lines)
+
+  The component currently manages:
+  (a) URL state synchronisation
+  (b) API data coordination for all drivers
+  (c) View model computation
+  (d) Full JSX tree for header + selectors + tabs
+
+  Target split:
+  ```
+  src/components/
+    DashboardContainer.tsx   — (a) + (b): state & fetching only, returns viewModel
+    DashboardShell.tsx       — (c) + (d): pure UI, receives viewModel as props
+    F1TelemetryDashboard.tsx — thin entry point wiring the two together
+  ```
+  This enables unit testing the UI layer without a live API or complex state.
+
+## 7.2 Unified state layer
+Files: useDashboardFilters.ts + useDashboardSelectionData.ts + useDashboardViewModel.ts
+
+  The three hooks depend on each other in a chain (filters → selectionData → viewModel)
+  but are split into three files making the data flow hard to follow.
+
+  Consolidate into `useDashboard()` which internally composes the three:
+  ```typescript
+  export function useDashboard() {
+    const filters = useDashboardFilters();
+    const selection = useDashboardSelectionData(filters);
+    const viewModel = useDashboardViewModel(filters, selection);
+    return { filters, selection, viewModel };
+  }
+  ```
+  Keep each sub-hook private (not exported) to enforce the single entry point.
+
+## 7.3 Request deduplication in openf1.ts
+File: src/api/openf1.ts
+
+  The `inflight` map deduplicates in-flight requests keyed by URL. However if
+  two components unmount and abort concurrently, the second abort could cancel
+  the cache entry before the first consumer receives it.
+
+  FIX:
+  Use a reference-counted abort controller: only abort the underlying fetch when
+  the last subscriber cancels. This prevents one tab's unmount from cancelling
+  data another tab still needs.
+
+## 7.4 BroadcastTab sub-component extraction
+File: src/components/dashboard/BroadcastTab.tsx
+
+  BroadcastTab currently renders: timing tower, sector analysis, speed traps,
+  and driver highlight cards — all in one 400+ line file.
+
+  Extract into:
+  ```
+  src/components/dashboard/broadcast/
+    TimingTower.tsx         — real-time position & gap table
+    SectorAnalysis.tsx      — best sectors per driver
+    SpeedTrap.tsx           — speed trap measurements
+    BroadcastTab.tsx        — composes the above (< 50 lines)
+  ```
+
+================================================================================
+PHASE 8 — TESTING
+Branch: feature/test-suite
+PR title: "test: unit tests for hooks, utils, and critical UI interactions"
+================================================================================
+
+## 8.1 Set up Vitest + React Testing Library
+
+Install:
+  ```bash
+  pnpm add -D vitest @vitest/ui @testing-library/react @testing-library/user-event
+  pnpm add -D @testing-library/jest-dom jsdom
+  ```
+  Configure in vite.config.ts:
+  ```typescript
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    globals: true,
+  }
+  ```
+
+## 8.2 Critical unit tests to write
+
+  1. `openf1.ts` — buildQueryUrl() with all operator types
+  2. `useDashboardFilters.ts` — parseYear/parsePositiveInt boundary values
+  3. `useDashboardSelectionData.ts` — preferred lap selection with edge cases (empty, single-entry)
+  4. `useDashboardViewModel.ts` — buildNormalizedComparisonData with real sample data
+  5. `PositionsTab.tsx` — bucketing algorithm output
+  6. `TrackMapTab.tsx` — coordinate transform correctness
+  7. `ErrorBoundary.tsx` — renders fallback when child throws
+
+## 8.3 Integration tests
+
+  Use msw (Mock Service Worker) to stub OpenF1 API responses and test:
+  1. Full happy path: select year → circuit → session → driver → view telemetry
+  2. Error path: API returns 500, UI shows retry button
+  3. Cache hit: second request returns cached data (no network call)
+
+================================================================================
+BRANCHING & PR WORKFLOW
+================================================================================
+
+For every phase:
+
+  # 1. Branch from develop
+  git checkout develop
+  git pull origin develop
+  git checkout -b feature/<phase-slug>   # or bugfix/<phase-slug>
+
+  # 2. Implement the phase (commit atomically with conventional commits)
+  git commit -m "fix: <specific change> (closes #<issue-number>)"
+
+  # 3. Push and open PR to develop
+  git push -u origin feature/<phase-slug>
+  gh pr create --base develop --title "<PR title from phase header above>" \
+    --body "## Summary\n- …\n## Test Plan\n- [ ] …"
+
+  # 4. After review + merge to develop, run full test suite, then:
+  gh pr create --base main --head develop \
+    --title "release: merge develop -> main after Phase <N>"
+
+Commit message convention (Conventional Commits):
+  fix:      bug fixes (Phase 1)
+  perf:     performance improvements (Phase 2)
+  feat:     new features (Phases 3-5, 8)
+  refactor: code changes that don't fix bugs or add features (Phases 6-7)
+  test:     adding tests (Phase 8)
+  chore:    tooling, config, docs
+
+================================================================================
+PRIORITY ORDER
+================================================================================
+
+  P0 (do first, risk of data loss / crashes):
+    Phase 1 — Critical Bug Fixes
+
+  P1 (high impact, user-facing):
+    Phase 3 — Accessibility
+    Phase 4 — Visual / UI
+    Phase 5 — Error Handling
+
+  P2 (significant improvement, some complexity):
+    Phase 2 — Performance
+    Phase 6 — Code Quality
+
+  P3 (architectural, long-term maintainability):
+    Phase 7 — Architecture Refactor
+    Phase 8 — Testing
