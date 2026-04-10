@@ -16,21 +16,66 @@ const SECTOR_STYLE: Record<SectorClass, { text: string; bg: string }> = {
   none:   { text: 'var(--text-muted)', bg: 'transparent' },
 };
 
-function classifySectors(rows: SectorRow[], field: 's1' | 's2' | 's3'): SectorClass[] {
-  const times = rows.map((row) => row[field] ?? null);
-  const valid = times.filter((t): t is number => t != null);
-  if (valid.length === 0) return rows.map(() => 'none');
+type IndexedSectorTime = {
+  index: number;
+  time: number;
+};
 
-  const sorted = [...valid].sort((a, b) => a - b);
-  const fastest = sorted[0];
-  const second = sorted.length > 2 ? sorted[1] : null;
+type SectorAnalysis = {
+  s1Classes: SectorClass[];
+  s2Classes: SectorClass[];
+  s3Classes: SectorClass[];
+  bestI1: number | null;
+  bestI2: number | null;
+  bestSt: number | null;
+};
 
-  return times.map((t) => {
-    if (t == null) return 'none';
-    if (t === fastest) return 'purple';
-    if (second != null && t === second) return 'green';
-    return 'yellow';
+function classifySectorEntries(entries: IndexedSectorTime[], rowCount: number): SectorClass[] {
+  const classes = Array.from({ length: rowCount }, () => 'none' as SectorClass);
+  if (entries.length === 0) return classes;
+
+  const sorted = entries.slice().sort((left, right) => left.time - right.time);
+  const fastest = sorted[0]?.time ?? null;
+  const second = sorted[1]?.time ?? null;
+
+  entries.forEach((entry) => {
+    if (fastest != null && entry.time === fastest) {
+      classes[entry.index] = 'purple';
+    } else if (second != null && entry.time === second) {
+      classes[entry.index] = 'green';
+    } else {
+      classes[entry.index] = 'yellow';
+    }
   });
+
+  return classes;
+}
+
+function buildSectorAnalysis(rows: SectorRow[]): SectorAnalysis {
+  const s1: IndexedSectorTime[] = [];
+  const s2: IndexedSectorTime[] = [];
+  const s3: IndexedSectorTime[] = [];
+  let bestI1: number | null = null;
+  let bestI2: number | null = null;
+  let bestSt: number | null = null;
+
+  rows.forEach((row, index) => {
+    if (row.s1 != null) s1.push({ index, time: row.s1 });
+    if (row.s2 != null) s2.push({ index, time: row.s2 });
+    if (row.s3 != null) s3.push({ index, time: row.s3 });
+    if (row.i1 != null) bestI1 = bestI1 == null ? row.i1 : Math.max(bestI1, row.i1);
+    if (row.i2 != null) bestI2 = bestI2 == null ? row.i2 : Math.max(bestI2, row.i2);
+    if (row.st != null) bestSt = bestSt == null ? row.st : Math.max(bestSt, row.st);
+  });
+
+  return {
+    s1Classes: classifySectorEntries(s1, rows.length),
+    s2Classes: classifySectorEntries(s2, rows.length),
+    s3Classes: classifySectorEntries(s3, rows.length),
+    bestI1,
+    bestI2,
+    bestSt,
+  };
 }
 
 // ─── Sector Time Cell ──────────────────────────────────────────────────────
@@ -96,24 +141,18 @@ export function BroadcastTab({
 
   const leaderTime = sorted[0]?.lapTime ?? null;
 
-  // Sector classifications
-  const s1Classes = useMemo(() => classifySectors(sectorRows, 's1'), [sectorRows]);
-  const s2Classes = useMemo(() => classifySectors(sectorRows, 's2'), [sectorRows]);
-  const s3Classes = useMemo(() => classifySectors(sectorRows, 's3'), [sectorRows]);
-
-  // Best speed trap readings (highest speed = purple)
-  const bestI1 = useMemo(() => {
-    const vals = sectorRows.map((r) => r.i1).filter((v): v is number => v != null);
-    return vals.length > 0 ? Math.max(...vals) : null;
-  }, [sectorRows]);
-  const bestI2 = useMemo(() => {
-    const vals = sectorRows.map((r) => r.i2).filter((v): v is number => v != null);
-    return vals.length > 0 ? Math.max(...vals) : null;
-  }, [sectorRows]);
-  const bestSt = useMemo(() => {
-    const vals = sectorRows.map((r) => r.st).filter((v): v is number => v != null);
-    return vals.length > 0 ? Math.max(...vals) : null;
-  }, [sectorRows]);
+  const { s1Classes, s2Classes, s3Classes, bestI1, bestI2, bestSt } = useMemo(
+    () => buildSectorAnalysis(sectorRows),
+    [sectorRows],
+  );
+  const summaryByName = useMemo(
+    () => Object.fromEntries(lapSummaries.map((summary) => [summary.name, summary])) as Record<string, DriverLapSummary>,
+    [lapSummaries],
+  );
+  const sectorRowMetaByName = useMemo(
+    () => Object.fromEntries(sectorRows.map((row, index) => [row.name, { row, index }])) as Record<string, { row: SectorRow; index: number }>,
+    [sectorRows],
+  );
 
   const hasSectors = sectorRows.some((r) => r.total != null);
   const hasSpeedTraps = sectorRows.some((r) => r.i1 != null || r.i2 != null || r.st != null);
@@ -139,89 +178,83 @@ export function BroadcastTab({
             <NoData msg="No lap data for the selected drivers." />
           )
         ) : (
-          <div className="bc-tower">
-            {/* Header row */}
-            <div className="bc-tower-header">
-              <div className="bc-tower-col-bar" />
-              <div className="bc-tower-col-pos">P</div>
-              <div className="bc-tower-col-driver">Driver</div>
-              <div className="bc-tower-col-time">Lap Time</div>
-              <div className="bc-tower-col-gap">Gap</div>
-              <div className="bc-tower-col-speed">Top Speed</div>
-            </div>
+          <table className="bc-tower" aria-label="Timing tower">
+            <thead>
+              <tr className="bc-tower-header">
+                <th scope="col" className="bc-tower-col-bar"><span className="sr-only">Team colour</span></th>
+                <th scope="col" className="bc-tower-col-pos">P</th>
+                <th scope="col" className="bc-tower-col-driver">Driver</th>
+                <th scope="col" className="bc-tower-col-time">Lap Time</th>
+                <th scope="col" className="bc-tower-col-gap">Gap</th>
+                <th scope="col" className="bc-tower-col-speed">Top Speed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map((summary, index) => {
+                const pos = index + 1;
+                const driver = driverMap[summary.driverNumber];
+                const color = summary.color;
+                const isLeader = pos === 1;
+                const gap =
+                  !isLeader && leaderTime != null && summary.lapTime != null
+                    ? summary.lapTime - leaderTime
+                    : null;
 
-            {sorted.map((summary, index) => {
-              const pos = index + 1;
-              const driver = driverMap[summary.driverNumber];
-              const color = summary.color;
-              const isLeader = pos === 1;
-              const gap =
-                !isLeader && leaderTime != null && summary.lapTime != null
-                  ? summary.lapTime - leaderTime
-                  : null;
-
-              return (
-                <div key={summary.driverNumber} className="bc-tower-row">
-                  {/* Team color bar */}
-                  <div className="bc-tower-col-bar">
-                    <div className="bc-tower-bar" style={{ backgroundColor: color }} />
-                  </div>
-
-                  {/* Position */}
-                  <div className={`bc-tower-col-pos bc-tower-pos${isLeader ? ' bc-tower-pos--leader' : ''}`}>
-                    {pos}
-                  </div>
-
-                  {/* Driver */}
-                  <div className="bc-tower-col-driver bc-tower-driver">
-                    {driver?.headshot_url && (
-                      <img
-                        src={driver.headshot_url}
-                        alt={driver.name_acronym}
-                        className="bc-tower-avatar"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    )}
-                    <div>
-                      <div className="bc-tower-acronym" style={{ color }}>
-                        {driver?.name_acronym ?? `#${summary.driverNumber}`}
+                return (
+                  <tr key={summary.driverNumber} className="bc-tower-row">
+                    <td className="bc-tower-col-bar">
+                      <div className="bc-tower-bar" style={{ backgroundColor: color }} />
+                      <span className="sr-only">{driver?.team_name ?? driver?.name_acronym ?? `Driver ${summary.driverNumber}`} team colour</span>
+                    </td>
+                    <td className={`bc-tower-col-pos bc-tower-pos${isLeader ? ' bc-tower-pos--leader' : ''}`}>
+                      {pos}
+                    </td>
+                    <th scope="row" className="bc-tower-col-driver">
+                      <div className="bc-tower-driver">
+                        {driver?.headshot_url && (
+                          <img
+                            src={driver.headshot_url}
+                            alt={driver.name_acronym}
+                            className="bc-tower-avatar"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        )}
+                        <div>
+                          <div className="bc-tower-acronym" style={{ color }}>
+                            {driver?.name_acronym ?? `#${summary.driverNumber}`}
+                          </div>
+                          <div className="bc-tower-team">{driver?.team_name ?? ''}</div>
+                        </div>
                       </div>
-                      <div className="bc-tower-team">{driver?.team_name ?? ''}</div>
-                    </div>
-                  </div>
-
-                  {/* Lap time */}
-                  <div className="bc-tower-col-time bc-tower-laptime">
-                    {fmtLap(summary.lapTime)}
-                  </div>
-
-                  {/* Gap */}
-                  <div className="bc-tower-col-gap">
-                    {isLeader ? (
-                      <span className="bc-badge-leader">LEADER</span>
-                    ) : gap != null ? (
-                      <span className="bc-tower-gap">+{gap.toFixed(3)}</span>
-                    ) : (
-                      <span className="bc-tower-gap">—</span>
-                    )}
-                  </div>
-
-                  {/* Top speed */}
-                  <div className="bc-tower-col-speed bc-tower-speed">
-                    {summary.topSpeed != null ? (
-                      <>
-                        <span className="bc-tower-speed-val">{summary.topSpeed.toFixed(0)}</span>
-                        <span className="bc-tower-speed-unit">km/h</span>
-                      </>
-                    ) : (
-                      <span className="bc-tower-speed-val" style={{ color: 'var(--text-dim)' }}>—</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                    </th>
+                    <td className="bc-tower-col-time bc-tower-laptime">
+                      {fmtLap(summary.lapTime)}
+                    </td>
+                    <td className="bc-tower-col-gap">
+                      {isLeader ? (
+                        <span className="bc-badge-leader">LEADER</span>
+                      ) : gap != null ? (
+                        <span className="bc-tower-gap">+{gap.toFixed(3)}</span>
+                      ) : (
+                        <span className="bc-tower-gap">—</span>
+                      )}
+                    </td>
+                    <td className="bc-tower-col-speed bc-tower-speed">
+                      {summary.topSpeed != null ? (
+                        <>
+                          <span className="bc-tower-speed-val">{summary.topSpeed.toFixed(0)}</span>
+                          <span className="bc-tower-speed-unit">km/h</span>
+                        </>
+                      ) : (
+                        <span className="bc-tower-speed-val" style={{ color: 'var(--text-dim)' }}>—</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         )}
       </Panel>
 
@@ -258,7 +291,7 @@ export function BroadcastTab({
               </thead>
               <tbody>
                 {sectorRows.map((row, rowIndex) => {
-                  const summary = lapSummaries.find((s) => s.name === row.name);
+                  const summary = summaryByName[row.name];
                   return (
                     <tr key={row.name} className="bc-sector-row">
                       <td className="bc-sector-driver-cell">
@@ -358,9 +391,8 @@ export function BroadcastTab({
               const driver = driverMap[summary.driverNumber];
               const color = summary.color;
               const isLeader = pos === 1;
-
-              // Find sector data for this driver
-              const sectorRow = sectorRows.find((r) => r.name === (driver?.name_acronym ?? `#${summary.driverNumber}`));
+              const sectorMeta = sectorRowMetaByName[driver?.name_acronym ?? `#${summary.driverNumber}`];
+              const sectorRow = sectorMeta?.row;
 
               return (
                 <div key={summary.driverNumber} className="bc-driver-card">
@@ -405,12 +437,11 @@ export function BroadcastTab({
                     ) : null}
 
                     {/* Sector mini-display */}
-                    {sectorRow && (sectorRow.s1 != null || sectorRow.s2 != null || sectorRow.s3 != null) && (() => {
-                      const rowIdx = sectorRows.indexOf(sectorRow);
+                    {sectorMeta && sectorRow && (sectorRow.s1 != null || sectorRow.s2 != null || sectorRow.s3 != null) && (() => {
                       const classes = [
-                        s1Classes[rowIdx] ?? 'none',
-                        s2Classes[rowIdx] ?? 'none',
-                        s3Classes[rowIdx] ?? 'none',
+                        s1Classes[sectorMeta.index] ?? 'none',
+                        s2Classes[sectorMeta.index] ?? 'none',
+                        s3Classes[sectorMeta.index] ?? 'none',
                       ];
                       const times = [sectorRow.s1, sectorRow.s2, sectorRow.s3];
                       return (
