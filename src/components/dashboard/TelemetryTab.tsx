@@ -3,7 +3,7 @@ import { Activity, Gauge, Timer, Trophy, Waves } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver } from '../../api/openf1';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
-import { ChartTip, EmbedPanelButton, NoData, Panel, Spinner } from './shared';
+import { ChartTip, EmbedPanelButton, Err, NoData, Panel, Spinner } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 import { fmtLap } from './utils';
 
@@ -25,6 +25,7 @@ type Props = {
   driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
+  onTelemetryRetry?: () => void;
 };
 
 function getBestSector(rows: SectorRow[], key: 's1' | 's2' | 's3') {
@@ -52,6 +53,7 @@ export function TelemetryTab({
   driverColor,
   embedMode = false,
   onEmbedPanel,
+  onTelemetryRetry,
 }: Props) {
   const leader = lapSummaries[0];
   const bestS1 = getBestSector(sectorRows, 's1');
@@ -251,7 +253,7 @@ export function TelemetryTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {telemetryLoading ? <Spinner label="Fetching car telemetry..." /> : telemetryError ? <NoData msg={telemetryError} /> : comparisonSpeedData.length > 0 ? (
+        {telemetryLoading ? <Spinner label="Fetching car telemetry..." /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : comparisonSpeedData.length > 0 ? (
           <div className="h-[200px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={comparisonSpeedData}>

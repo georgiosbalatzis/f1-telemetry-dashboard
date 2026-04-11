@@ -8,8 +8,22 @@ export function Spinner({ label }: { label?: string }) {
   return <div className="flex items-center justify-center gap-2 py-10 text-sm text-[color:var(--text-muted)]"><Loader2 size={16} className="animate-spin" />{label || 'Loading…'}</div>;
 }
 
-export function Err({ msg }: { msg: string }) {
-  return <div className="rounded-[20px] border border-red-500/10 bg-red-500/[0.04] py-10 text-center text-sm text-red-300/80"><AlertTriangle size={18} className="mx-auto mb-2 opacity-60" />{msg}</div>;
+export function Err({ msg, actionLabel = 'Try again', onAction }: { msg: string; actionLabel?: string; onAction?: () => void }) {
+  return (
+    <div className="rounded-[20px] border border-red-500/10 bg-red-500/[0.04] py-10 text-center text-sm text-red-300/80">
+      <AlertTriangle size={18} className="mx-auto mb-2 opacity-60" />
+      <p>{msg}</p>
+      {onAction && (
+        <button
+          type="button"
+          onClick={onAction}
+          className="mt-4 rounded-[10px] border border-red-400/20 bg-red-400/10 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-red-200 transition-colors hover:bg-red-400/15"
+        >
+          {actionLabel}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function NoData({ msg }: { msg: string }) {

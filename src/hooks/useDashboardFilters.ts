@@ -10,25 +10,54 @@ export type DashboardFilterSnapshot = {
   tab: Tab;
 };
 
-function parsePositiveInt(value: string | null) {
+const VALID_YEAR_RANGE = [2023, new Date().getFullYear()] as const;
+const VALID_DRIVER_RANGE = [1, 99] as const;
+const VALID_LAP_RANGE = [1, 200] as const;
+const VALID_CIRCUIT_PATTERN = /^[A-Za-z0-9 ._'-]{1,80}$/;
+const VALID_TABS: Tab[] = ['telemetry', 'tires', 'energy', 'trackmap', 'positions', 'intervals', 'radio', 'incidents', 'weather', 'broadcast'];
+
+function parseBoundedInt(value: string | null, min: number, max: number) {
   if (!value) return null;
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+  const trimmed = value.trim();
+  if (!/^\d+$/.test(trimmed)) return null;
+  const parsed = Number(trimmed);
+  return Number.isSafeInteger(parsed) && parsed >= min && parsed <= max ? parsed : null;
+}
+
+function parseYear(value: string | null) {
+  return parseBoundedInt(value, VALID_YEAR_RANGE[0], VALID_YEAR_RANGE[1]);
+}
+
+function parseDriverNumber(value: string | null) {
+  return parseBoundedInt(value, VALID_DRIVER_RANGE[0], VALID_DRIVER_RANGE[1]);
+}
+
+function parseSessionKey(value: string | null) {
+  return parseBoundedInt(value, 1, Number.MAX_SAFE_INTEGER);
+}
+
+function parseLapNumber(value: string | null) {
+  return parseBoundedInt(value, VALID_LAP_RANGE[0], VALID_LAP_RANGE[1]);
+}
+
+function parseCircuit(value: string | null) {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return VALID_CIRCUIT_PATTERN.test(trimmed) ? trimmed : null;
 }
 
 function parseDriverNumbers(value: string | null) {
   if (!value) return [];
   return value
     .split(',')
-    .map((part) => parsePositiveInt(part))
+    .map((part) => parseDriverNumber(part))
     .filter((part): part is number => part != null)
     .filter((part, index, all) => all.indexOf(part) === index)
     .slice(0, 4);
 }
 
 function parseTab(value: string | null): Tab | null {
-  const tabs: Tab[] = ['telemetry', 'tires', 'energy', 'trackmap', 'positions', 'intervals', 'radio', 'incidents', 'weather'];
-  return value && tabs.includes(value as Tab) ? value as Tab : null;
+  return value && VALID_TABS.includes(value as Tab) ? value as Tab : null;
 }
 
 function readInitialSnapshot(): Partial<DashboardFilterSnapshot> {
@@ -36,11 +65,11 @@ function readInitialSnapshot(): Partial<DashboardFilterSnapshot> {
 
   const params = new URLSearchParams(window.location.search);
   return {
-    year: parsePositiveInt(params.get('year')) ?? undefined,
-    circuit: params.get('circuit') || null,
-    sessionKey: parsePositiveInt(params.get('session')),
+    year: parseYear(params.get('year')) ?? undefined,
+    circuit: parseCircuit(params.get('circuit')),
+    sessionKey: parseSessionKey(params.get('session')),
     driverNums: parseDriverNumbers(params.get('drivers')),
-    lapNum: parsePositiveInt(params.get('lap')) ?? undefined,
+    lapNum: parseLapNumber(params.get('lap')) ?? undefined,
     tab: parseTab(params.get('tab')) ?? undefined,
   };
 }

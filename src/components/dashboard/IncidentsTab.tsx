@@ -8,6 +8,7 @@ type Props = {
   loading: boolean;
   error: string | null;
   messages: OpenF1RaceControl[];
+  onRetry?: () => void;
 };
 
 function flagTone(flag: string) {
@@ -19,7 +20,7 @@ function flagTone(flag: string) {
   return 'bg-slate-500/15 text-slate-400';
 }
 
-export function IncidentsTab({ loading, error, messages }: Props) {
+export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('ALL');
 
@@ -39,7 +40,7 @@ export function IncidentsTab({ loading, error, messages }: Props) {
 
   return (
     <Panel title="Race Control" icon={<Flag size={14} className="text-yellow-500" />} sub="Official flags, penalties, safety car, and session status messages">
-      {loading ? <Spinner /> : error ? <Err msg={error} /> : messages.length > 0 ? (
+      {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : messages.length > 0 ? (
         <>
           <div className="mb-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div className="relative min-w-0 flex-1 xl:max-w-sm">
