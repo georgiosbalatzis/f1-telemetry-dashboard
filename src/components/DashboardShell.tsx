@@ -363,7 +363,6 @@ export function DashboardShell({
                     lapsLoading={lapsLoading}
                     sectorRows={viewModel.sectorRows}
                     lapSummaries={viewModel.lapSummaries}
-                    driverMap={selectionData.driverMap}
                     embedMode={embedMode}
                     onEmbedPanel={onEmbedPanel}
                   />
