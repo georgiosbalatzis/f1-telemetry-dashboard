@@ -4,6 +4,7 @@ import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import { useDashboardSelectionData } from '../hooks/useDashboardSelectionData';
 import { useDashboardViewModel } from '../hooks/useDashboardViewModel';
 import { COLORS } from '../constants/colors';
+import { DriverProvider } from '../contexts/DriverContext';
 import {
   useDrivers,
   useIntervals,
@@ -20,6 +21,7 @@ import {
   useTeamRadio,
   useWeather,
 } from '../hooks/useOpenF1';
+import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
@@ -42,6 +44,11 @@ type SavedPreset = {
 const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
 const THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
 const MAX_DRIVER_SLOTS = 4;
+const HASH_SCROLL_MAX_ATTEMPTS = 12;
+const HASH_SCROLL_INTERVAL_MS = 120;
+const FEEDBACK_CLEAR_MS = 2600;
+const DEFAULT_IFRAME_HEIGHT = 920;
+const PANEL_IFRAME_HEIGHT = 720;
 const YEAR_OPTIONS = Array.from(
   { length: new Date().getFullYear() - 2022 },
   (_, index) => 2023 + index,
@@ -120,6 +127,11 @@ function readSavedPresets() {
   }
 }
 
+/**
+ * Builds shareable dashboard URLs from the persisted filter schema.
+ * Query params are: year, circuit, session, drivers, lap, tab, optional layout,
+ * optional embed=1, optional theme=light, and an optional panel hash anchor.
+ */
 function buildDashboardUrl(
   snapshot: DashboardFilterSnapshot,
   splitMode: boolean,
@@ -150,7 +162,7 @@ function buildIframeSnippet(
   splitMode: boolean,
   themeMode: ThemeMode,
   anchorId?: string,
-  iframeHeight = 920,
+  iframeHeight = DEFAULT_IFRAME_HEIGHT,
 ) {
   const src = buildDashboardUrl(snapshot, splitMode, true, themeMode, anchorId);
   const background = themeMode === 'light' ? COLORS.fallback.iframeLight : COLORS.fallback.iframeDark;
@@ -164,6 +176,59 @@ function buildIframeSnippet(
     `  style="border:0; width:100%; max-width:100%; background:${background};"`,
     `></iframe>`,
   ].join('\n');
+}
+
+function getClipboardErrorMessage(error: unknown, label: string) {
+  const isDomException = typeof DOMException !== 'undefined' && error instanceof DOMException;
+  if (isDomException && (error.name === 'NotAllowedError' || error.name === 'SecurityError')) {
+    return `${label} clipboard denied; copy manually`;
+  }
+  return `${label} could not be copied; copy manually`;
+}
+
+function isShareCancel(error: unknown) {
+  return typeof DOMException !== 'undefined' && error instanceof DOMException && error.name === 'AbortError';
+}
+
+function useDriverLapData(sessionKey: number | null, driverNumber: number | null) {
+  return useLaps(sessionKey, driverNumber);
+}
+
+type DriverTelemetryWindow = {
+  lapStart: string | null;
+  nextLapStart: string | null;
+};
+
+function useDriverWindowData({
+  sessionKey,
+  driverNumber,
+  telemetryWindow,
+  needsTelemetryData,
+  needsLocationData,
+}: {
+  sessionKey: number | null;
+  driverNumber: number | null;
+  telemetryWindow?: DriverTelemetryWindow;
+  needsTelemetryData: boolean;
+  needsLocationData: boolean;
+}) {
+  const lapStart = telemetryWindow?.lapStart || null;
+  const nextLapStart = telemetryWindow?.nextLapStart || null;
+
+  const telemetry = useLapTelemetry(
+    sessionKey,
+    driverNumber,
+    needsTelemetryData ? lapStart : null,
+    needsTelemetryData ? nextLapStart : null,
+  );
+  const location = useLapLocation(
+    needsLocationData ? sessionKey : null,
+    driverNumber,
+    needsLocationData ? lapStart : null,
+    needsLocationData ? nextLapStart : null,
+  );
+
+  return { telemetry, location };
 }
 
 export default function F1TelemetryDashboard() {
@@ -194,10 +259,10 @@ export default function F1TelemetryDashboard() {
   );
 
   const lapStates = [
-    useLaps(filters.sessionKey, driverSlots[0]),
-    useLaps(filters.sessionKey, driverSlots[1]),
-    useLaps(filters.sessionKey, driverSlots[2]),
-    useLaps(filters.sessionKey, driverSlots[3]),
+    useDriverLapData(filters.sessionKey, driverSlots[0]),
+    useDriverLapData(filters.sessionKey, driverSlots[1]),
+    useDriverLapData(filters.sessionKey, driverSlots[2]),
+    useDriverLapData(filters.sessionKey, driverSlots[3]),
   ];
 
   const stints = useStints(needsStrategyData ? filters.sessionKey : null);
@@ -227,44 +292,52 @@ export default function F1TelemetryDashboard() {
     setLapNum: filters.setAutoLapNum,
   });
 
+  const driver0Data = useDriverWindowData({
+    sessionKey: filters.sessionKey,
+    driverNumber: driverSlots[0],
+    telemetryWindow: selectionData.telemetryWindows[0],
+    needsTelemetryData,
+    needsLocationData,
+  });
+  const driver1Data = useDriverWindowData({
+    sessionKey: filters.sessionKey,
+    driverNumber: driverSlots[1],
+    telemetryWindow: selectionData.telemetryWindows[1],
+    needsTelemetryData,
+    needsLocationData,
+  });
+  const driver2Data = useDriverWindowData({
+    sessionKey: filters.sessionKey,
+    driverNumber: driverSlots[2],
+    telemetryWindow: selectionData.telemetryWindows[2],
+    needsTelemetryData,
+    needsLocationData,
+  });
+  const driver3Data = useDriverWindowData({
+    sessionKey: filters.sessionKey,
+    driverNumber: driverSlots[3],
+    telemetryWindow: selectionData.telemetryWindows[3],
+    needsTelemetryData,
+    needsLocationData,
+  });
+
   const telemetryStates = [
-    useLapTelemetry(
-      filters.sessionKey,
-      driverSlots[0],
-      needsTelemetryData ? selectionData.telemetryWindows[0]?.lapStart || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null,
-    ),
-    useLapTelemetry(
-      filters.sessionKey,
-      driverSlots[1],
-      needsTelemetryData ? selectionData.telemetryWindows[1]?.lapStart || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null,
-    ),
-    useLapTelemetry(
-      filters.sessionKey,
-      driverSlots[2],
-      needsTelemetryData ? selectionData.telemetryWindows[2]?.lapStart || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null,
-    ),
-    useLapTelemetry(
-      filters.sessionKey,
-      driverSlots[3],
-      needsTelemetryData ? selectionData.telemetryWindows[3]?.lapStart || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null,
-    ),
+    driver0Data.telemetry,
+    driver1Data.telemetry,
+    driver2Data.telemetry,
+    driver3Data.telemetry,
   ];
 
   const locationStates = [
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[0], needsLocationData ? selectionData.telemetryWindows[0]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[1], needsLocationData ? selectionData.telemetryWindows[1]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[2], needsLocationData ? selectionData.telemetryWindows[2]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[3], needsLocationData ? selectionData.telemetryWindows[3]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null),
+    driver0Data.location,
+    driver1Data.location,
+    driver2Data.location,
+    driver3Data.location,
   ];
   const locationByDriver = Object.fromEntries(
     filters.driverNums.map((driverNum, index) => [driverNum, locationStates[index]?.data || null]),
   ) as Record<number, ReturnType<typeof useLapLocation>['data']>;
   const locationLoading = needsLocationData && locationStates.some((s) => s.loading);
-  const primaryTelemetry = telemetryStates[0];
   const telemetryByDriver = Object.fromEntries(
     filters.driverNums.map((driverNumber, index) => [driverNumber, telemetryStates[index]?.data || null]),
   ) as Record<number, ReturnType<typeof useLapTelemetry>['data']>;
@@ -283,6 +356,14 @@ export default function F1TelemetryDashboard() {
     teamRadio: teamRadio.data,
     telemetryByDriver,
   });
+  const driverContextValue = useMemo(
+    () => ({
+      driverNums: filters.driverNums,
+      driverMap: selectionData.driverMap,
+      driverColor: viewModel.driverColor,
+    }),
+    [filters.driverNums, selectionData.driverMap, viewModel.driverColor],
+  );
 
   const anyLoading = meetings.loading || sessions.loading || drivers.loading || sessionResults.loading;
   const lapsLoading = lapStates.some((state) => state.loading);
@@ -358,6 +439,7 @@ export default function F1TelemetryDashboard() {
   const pageShellClass = embedMode
     ? 'relative mx-auto max-w-[1320px] px-3 py-3 sm:px-4 sm:py-4'
     : 'relative mx-auto max-w-[1440px] px-4 py-3 sm:px-6 sm:py-4';
+  const tabBoundaryResetKey = `${filters.tab}:${filters.sessionKey ?? 'none'}:${filters.lapNum}:${filters.driverNums.join(',')}`;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -382,10 +464,10 @@ export default function F1TelemetryDashboard() {
       }
 
       attempts += 1;
-      if (attempts >= 12) {
+      if (attempts >= HASH_SCROLL_MAX_ATTEMPTS) {
         window.clearInterval(timerId);
       }
-    }, 120);
+    }, HASH_SCROLL_INTERVAL_MS);
 
     return () => window.clearInterval(timerId);
   }, [filters.tab]);
@@ -402,7 +484,7 @@ export default function F1TelemetryDashboard() {
   useEffect(() => {
     if (!feedback || typeof window === 'undefined') return;
 
-    const timeoutId = window.setTimeout(() => setFeedback(null), 2600);
+    const timeoutId = window.setTimeout(() => setFeedback(null), FEEDBACK_CLEAR_MS);
     return () => window.clearTimeout(timeoutId);
   }, [feedback]);
 
@@ -453,14 +535,15 @@ export default function F1TelemetryDashboard() {
 
   const shareSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
     const url = buildDashboardUrl(snapshot, splitMode, embedMode, themeMode);
+    let clipboardErrorMessage: string | null = null;
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
         setFeedback(`${label} copied`);
         return;
       }
-    } catch {
-      // Fall back to navigator.share or prompt flow below.
+    } catch (error) {
+      clipboardErrorMessage = getClipboardErrorMessage(error, label);
     }
 
     try {
@@ -469,16 +552,19 @@ export default function F1TelemetryDashboard() {
         setFeedback(`${label} shared`);
         return;
       }
-    } catch {
-      // Ignore canceled shares and use the prompt fallback.
+    } catch (error) {
+      if (!isShareCancel(error)) {
+        clipboardErrorMessage = clipboardErrorMessage ?? `${label} could not be shared; copy manually`;
+      }
     }
 
     window.prompt('Copy this link', url);
-    setFeedback(`${label} ready`);
+    setFeedback(clipboardErrorMessage ?? `${label} ready`);
   }, [embedMode, splitMode, themeMode]);
 
   const embedSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
     const snippet = buildIframeSnippet(snapshot, splitMode, themeMode);
+    let clipboardErrorMessage: string | null = null;
 
     try {
       if (navigator.clipboard?.writeText) {
@@ -486,12 +572,12 @@ export default function F1TelemetryDashboard() {
         setFeedback(`${label} copied`);
         return;
       }
-    } catch {
-      // Fall back to a prompt when clipboard access is unavailable.
+    } catch (error) {
+      clipboardErrorMessage = getClipboardErrorMessage(error, label);
     }
 
     window.prompt('Copy this iframe snippet', snippet);
-    setFeedback(`${label} ready`);
+    setFeedback(clipboardErrorMessage ?? `${label} ready`);
   }, [splitMode, themeMode]);
 
   const handleShare = useCallback(async () => {
@@ -511,7 +597,8 @@ export default function F1TelemetryDashboard() {
   }, [embedSnapshot, filters.snapshot]);
 
   const handleEmbedPanel = useCallback(async (panelId: string) => {
-    const snippet = buildIframeSnippet(filters.snapshot, false, themeMode, panelId, 720);
+    const snippet = buildIframeSnippet(filters.snapshot, false, themeMode, panelId, PANEL_IFRAME_HEIGHT);
+    let clipboardErrorMessage: string | null = null;
 
     try {
       if (navigator.clipboard?.writeText) {
@@ -519,12 +606,12 @@ export default function F1TelemetryDashboard() {
         setFeedback('Panel embed copied');
         return;
       }
-    } catch {
-      // Fall back to prompt when clipboard access is unavailable.
+    } catch (error) {
+      clipboardErrorMessage = getClipboardErrorMessage(error, 'Panel embed');
     }
 
     window.prompt('Copy this iframe snippet', snippet);
-    setFeedback('Panel embed ready');
+    setFeedback(clipboardErrorMessage ?? 'Panel embed ready');
   }, [filters.snapshot, themeMode]);
 
   const handlePrint = useCallback(() => {
@@ -611,9 +698,9 @@ export default function F1TelemetryDashboard() {
             onStepLap={stepLap}
           />
 
-          {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} />}
-          {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} />}
-          {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} />}
+          {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} onAction={meetings.refetch} />}
+          {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} onAction={sessions.refetch} />}
+          {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} onAction={drivers.refetch} />}
 
           {!embedMode && (
             <DriverSelector
@@ -632,154 +719,143 @@ export default function F1TelemetryDashboard() {
             onEmbedTab={handleEmbedTab}
           />
 
-          <div className={contentLayoutClass}>
-            {filters.tab === 'telemetry' && (
-              <TelemetryTab
-                lapNum={filters.lapNum}
-                lapsLoading={lapsLoading}
-                sectorRows={viewModel.sectorRows}
-                telemetryLoading={telemetryLoading}
-                telemetryError={primaryTelemetry?.error || null}
-                telemetryPoints={primaryTelemetry?.data?.length || 0}
-                speedData={viewModel.speedData}
-                comparisonSpeedData={viewModel.comparisonSpeedData}
-                comparisonControlData={viewModel.comparisonControlData}
-                lapTimeData={viewModel.lapTimeData}
-                lapDeltaData={viewModel.lapDeltaData}
-                lapSummaries={viewModel.lapSummaries}
-                driverNums={filters.driverNums}
-                driverMap={selectionData.driverMap}
-                driverColor={viewModel.driverColor}
-                embedMode={embedMode}
-                onEmbedPanel={handleEmbedPanel}
-              />
-            )}
+          <DriverProvider {...driverContextValue}>
+            <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
+              <div className={contentLayoutClass}>
+                {filters.tab === 'telemetry' && (
+                  <TelemetryTab
+                    lapNum={filters.lapNum}
+                    lapsLoading={lapsLoading}
+                    sectorRows={viewModel.sectorRows}
+                    telemetryLoading={telemetryLoading}
+                    telemetryError={telemetryStates[0].error}
+                    telemetryPoints={telemetryStates[0].data?.length || 0}
+                    speedData={viewModel.speedData}
+                    comparisonSpeedData={viewModel.comparisonSpeedData}
+                    comparisonControlData={viewModel.comparisonControlData}
+                    lapTimeData={viewModel.lapTimeData}
+                    lapDeltaData={viewModel.lapDeltaData}
+                    lapSummaries={viewModel.lapSummaries}
+                    embedMode={embedMode}
+                    onEmbedPanel={handleEmbedPanel}
+                    onTelemetryRetry={telemetryStates[0].refetch}
+                  />
+                )}
 
-            {filters.tab === 'tires' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading strategy view..." />}>
-                <StrategyTab
-                  lapNum={filters.lapNum}
-                  driverNums={filters.driverNums}
-                  driverMap={selectionData.driverMap}
-                  stintsLoading={stints.loading}
-                  stintsByDriver={viewModel.stintsByDriver}
-                  pitsLoading={pits.loading}
-                  filteredPits={viewModel.filteredPits}
-                  embedMode={embedMode}
-                  onEmbedPanel={handleEmbedPanel}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'tires' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading strategy view..." />}>
+                    <StrategyTab
+                      lapNum={filters.lapNum}
+                      stintsLoading={stints.loading}
+                      stintsByDriver={viewModel.stintsByDriver}
+                      pitsLoading={pits.loading}
+                      filteredPits={viewModel.filteredPits}
+                      embedMode={embedMode}
+                      onEmbedPanel={handleEmbedPanel}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'energy' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading energy view..." />}>
-                <EnergyTab
-                  lapNum={filters.lapNum}
-                  driverNums={filters.driverNums}
-                  driverMap={selectionData.driverMap}
-                  speedData={viewModel.speedData}
-                  comparisonEnergyData={viewModel.comparisonEnergyData}
-                  lapSummaries={viewModel.lapSummaries}
-                  driverColor={viewModel.driverColor}
-                  telemetryLoading={telemetryLoading}
-                  embedMode={embedMode}
-                  onEmbedPanel={handleEmbedPanel}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'energy' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading energy view..." />}>
+                    <EnergyTab
+                      lapNum={filters.lapNum}
+                      speedData={viewModel.speedData}
+                      comparisonEnergyData={viewModel.comparisonEnergyData}
+                      lapSummaries={viewModel.lapSummaries}
+                      telemetryLoading={telemetryLoading}
+                      embedMode={embedMode}
+                      onEmbedPanel={handleEmbedPanel}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'radio' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading radio view..." />}>
-                <RadioTab
-                  loading={teamRadio.loading}
-                  error={teamRadio.error}
-                  messages={viewModel.filteredRadio}
-                  driverMap={selectionData.driverMap}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'radio' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading radio view..." />}>
+                    <RadioTab
+                      loading={teamRadio.loading}
+                      error={teamRadio.error}
+                      messages={viewModel.filteredRadio}
+                      onRetry={teamRadio.refetch}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'incidents' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading race control view..." />}>
-                <IncidentsTab
-                  loading={raceControl.loading}
-                  error={raceControl.error}
-                  messages={viewModel.raceControlMessages}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'incidents' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading race control view..." />}>
+                    <IncidentsTab
+                      loading={raceControl.loading}
+                      error={raceControl.error}
+                      messages={viewModel.raceControlMessages}
+                      onRetry={raceControl.refetch}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'weather' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading weather view..." />}>
-                <WeatherTab
-                  loading={weather.loading}
-                  error={weather.error}
-                  latestWeather={viewModel.latestWeather}
-                  sampleCount={weather.data?.length || 0}
-                  weatherRadar={viewModel.weatherRadar}
-                  weatherTrend={viewModel.weatherTrend}
-                  embedMode={embedMode}
-                  onEmbedPanel={handleEmbedPanel}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'weather' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading weather view..." />}>
+                    <WeatherTab
+                      loading={weather.loading}
+                      error={weather.error}
+                      latestWeather={viewModel.latestWeather}
+                      sampleCount={weather.data?.length || 0}
+                      weatherRadar={viewModel.weatherRadar}
+                      weatherTrend={viewModel.weatherTrend}
+                      embedMode={embedMode}
+                      onEmbedPanel={handleEmbedPanel}
+                      onRetry={weather.refetch}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'trackmap' && (
-              <TrackMapTab
-                lapNum={filters.lapNum}
-                driverNums={filters.driverNums}
-                driverMap={selectionData.driverMap}
-                locationByDriver={locationByDriver}
-                locationLoading={locationLoading}
-                driverColor={viewModel.driverColor}
-                embedMode={embedMode}
-                onEmbedPanel={handleEmbedPanel}
-              />
-            )}
+                {filters.tab === 'trackmap' && (
+                  <TrackMapTab
+                    lapNum={filters.lapNum}
+                    locationByDriver={locationByDriver}
+                    locationLoading={locationLoading}
+                    embedMode={embedMode}
+                    onEmbedPanel={handleEmbedPanel}
+                  />
+                )}
 
-            {filters.tab === 'positions' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading race positions..." />}>
-                <PositionsTab
-                  driverNums={filters.driverNums}
-                  driverMap={selectionData.driverMap}
-                  positions={positions.data}
-                  positionsLoading={positions.loading}
-                  lapNum={filters.lapNum}
-                  driverColor={viewModel.driverColor}
-                  embedMode={embedMode}
-                  onEmbedPanel={handleEmbedPanel}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'positions' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading race positions..." />}>
+                    <PositionsTab
+                      positions={positions.data}
+                      positionsLoading={positions.loading}
+                      lapNum={filters.lapNum}
+                      embedMode={embedMode}
+                      onEmbedPanel={handleEmbedPanel}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'intervals' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading interval data..." />}>
-                <IntervalsTab
-                  driverNums={filters.driverNums}
-                  driverMap={selectionData.driverMap}
-                  intervals={intervals.data}
-                  intervalsLoading={intervals.loading}
-                  driverColor={viewModel.driverColor}
-                  embedMode={embedMode}
-                  onEmbedPanel={handleEmbedPanel}
-                />
-              </Suspense>
-            )}
+                {filters.tab === 'intervals' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading interval data..." />}>
+                    <IntervalsTab
+                      intervals={intervals.data}
+                      intervalsLoading={intervals.loading}
+                      embedMode={embedMode}
+                      onEmbedPanel={handleEmbedPanel}
+                    />
+                  </Suspense>
+                )}
 
-            {filters.tab === 'broadcast' && (
-              <Suspense fallback={<TabLoadingPlaceholder label="Loading broadcast view..." />}>
-                <BroadcastTab
-                  lapNum={filters.lapNum}
-                  lapsLoading={lapsLoading}
-                  sectorRows={viewModel.sectorRows}
-                  lapSummaries={viewModel.lapSummaries}
-                  driverMap={selectionData.driverMap}
-                  embedMode={embedMode}
-                  onEmbedPanel={handleEmbedPanel}
-                />
-              </Suspense>
-            )}
-          </div>
+                {filters.tab === 'broadcast' && (
+                  <Suspense fallback={<TabLoadingPlaceholder label="Loading broadcast view..." />}>
+                    <BroadcastTab
+                      lapNum={filters.lapNum}
+                      lapsLoading={lapsLoading}
+                      sectorRows={viewModel.sectorRows}
+                      lapSummaries={viewModel.lapSummaries}
+                      embedMode={embedMode}
+                      onEmbedPanel={handleEmbedPanel}
+                    />
+                  </Suspense>
+                )}
+              </div>
+            </ErrorBoundary>
+          </DriverProvider>
         </main>
       </div>
     </div>

@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Activity, Gauge, Timer, Trophy, Waves } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { OpenF1Driver } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
-import { ChartSkeleton, ChartTip, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
+import { ChartSkeleton, ChartTip, EmbedPanelButton, Err, NoData, Panel, TableSkeleton } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 import { fmtLap } from './utils';
 
@@ -21,11 +21,9 @@ type Props = {
   lapTimeData: Array<Record<string, number | string>>;
   lapDeltaData: Array<Record<string, number | string>>;
   lapSummaries: DriverLapSummary[];
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
-  driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
+  onTelemetryRetry?: () => void;
 };
 
 function getBestSector(rows: SectorRow[], key: 's1' | 's2' | 's3') {
@@ -48,12 +46,11 @@ export function TelemetryTab({
   lapTimeData,
   lapDeltaData,
   lapSummaries,
-  driverNums,
-  driverMap,
-  driverColor,
   embedMode = false,
   onEmbedPanel,
+  onTelemetryRetry,
 }: Props) {
+  const { driverNums, driverMap, driverColor } = useDriverContext();
   const leader = lapSummaries[0];
   const bestS1 = getBestSector(sectorRows, 's1');
   const bestS2 = getBestSector(sectorRows, 's2');
@@ -252,7 +249,7 @@ export function TelemetryTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[200px] sm:h-[260px]" /> : telemetryError ? <NoData msg={telemetryError} /> : comparisonSpeedData.length > 0 ? (
+        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[200px] sm:h-[260px]" /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : comparisonSpeedData.length > 0 ? (
           <div className="h-[200px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={comparisonSpeedData}>

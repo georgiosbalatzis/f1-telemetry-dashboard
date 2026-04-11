@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session, OpenF1SessionResult } from '../api/openf1';
-import type { FetchState } from './useOpenF1';
+import { invalidateOpenF1SessionCache, type FetchState } from './useOpenF1';
 import type { SelectOption } from '../components/dashboard/types';
 
 type Params = {
@@ -62,6 +62,16 @@ export function useDashboardSelectionData({
   setDriverNums,
   setLapNum,
 }: Params) {
+  const previousSessionKeyRef = useRef<number | null>(sessionKey);
+
+  useEffect(() => {
+    const previousSessionKey = previousSessionKeyRef.current;
+    if (previousSessionKey != null && previousSessionKey !== sessionKey) {
+      invalidateOpenF1SessionCache(previousSessionKey);
+    }
+    previousSessionKeyRef.current = sessionKey;
+  }, [sessionKey]);
+
   const circuitOptions = useMemo<SelectOption<string>[]>(() => {
     if (!meetings?.length) return [];
     const seen = new Set<string>();
@@ -130,7 +140,6 @@ export function useDashboardSelectionData({
       ?? (lapOptions.includes(2) ? 2 : lapOptions[0] ?? null);
   }, [lapOptions, preferredWinnerLaps]);
 
-  const primaryDriverNumber = driverNums[0];
   const telemetryWindows = useMemo(() => {
     return driverNums.map((driverNumber) => {
       const laps = allLaps[driverNumber] || [];
@@ -143,14 +152,6 @@ export function useDashboardSelectionData({
       };
     });
   }, [allLaps, driverNums, lapNum]);
-  const primaryLap = useMemo(
-    () => (allLaps[primaryDriverNumber] || []).find((lap) => lap.lap_number === lapNum) || null,
-    [allLaps, lapNum, primaryDriverNumber],
-  );
-  const nextPrimaryLap = useMemo(
-    () => (allLaps[primaryDriverNumber] || []).find((lap) => lap.lap_number === lapNum + 1) || null,
-    [allLaps, lapNum, primaryDriverNumber],
-  );
 
   useEffect(() => {
     if (circuitOptions.length > 0 && !circuit) {
@@ -200,8 +201,5 @@ export function useDashboardSelectionData({
     allLaps,
     lapOptions,
     telemetryWindows,
-    primaryDriverNumber,
-    primaryLapStart: primaryLap?.date_start || null,
-    nextPrimaryLapStart: nextPrimaryLap?.date_start || null,
   };
 }
