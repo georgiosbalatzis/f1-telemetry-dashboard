@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { TrendingDown } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver, OpenF1Position } from '../../api/openf1';
-import { ChartTip, NoData, Panel, Spinner } from './shared';
+import { teamColor, withAlpha } from '../../constants/colors';
+import { CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 
@@ -113,7 +114,31 @@ export function PositionsTab({ driverNums, driverMap, positions, positionsLoadin
       .slice(0, 20);
   }, [positions]);
 
-  if (positionsLoading) return <Spinner label="Loading race positions…" />;
+  if (positionsLoading) {
+    return (
+      <>
+        <Panel
+          title="Current Standings"
+          icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
+          sub="Loading latest recorded positions"
+        >
+          <CardGridSkeleton count={10} label="Loading race positions..." />
+        </Panel>
+        <ChartPanel
+          title="Position History"
+          icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
+          sub="Loading position history"
+          exportName="position-history"
+          legend={legend}
+          panelId="positions-history"
+          embedMode={embedMode}
+          onEmbedPanel={onEmbedPanel}
+        >
+          <ChartSkeleton label="Loading position history..." className="h-[200px] sm:h-[280px]" />
+        </ChartPanel>
+      </>
+    );
+  }
   if (!positions || positions.length === 0) {
     return (
       <Panel title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
@@ -133,13 +158,13 @@ export function PositionsTab({ driverNums, driverMap, positions, positionsLoadin
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-5">
           {positionTable.map((entry) => {
             const driver = driverMap[entry.driver_number];
-            const color = driver ? `#${driver.team_colour}` : '#888';
+            const color = teamColor(driver?.team_colour);
             const isSelected = driverNums.includes(entry.driver_number);
             return (
               <div
                 key={entry.driver_number}
                 className="dashboard-card rounded-[12px] p-3"
-                style={isSelected ? { borderColor: `${color}55` } : undefined}
+                style={isSelected ? { borderColor: withAlpha(color, 33) } : undefined}
               >
                 <div className="mb-1 text-2xl font-black text-[color:var(--text-strong)]">
                   P{entry.position}

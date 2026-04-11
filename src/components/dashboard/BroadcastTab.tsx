@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { Gauge, LayoutGrid, Timer, Tv2 } from 'lucide-react';
 import type { OpenF1Driver } from '../../api/openf1';
+import { COLORS } from '../../constants/colors';
 import type { DriverLapSummary, SectorRow } from './types';
-import { EmbedPanelButton, NoData, Panel, Spinner } from './shared';
+import { EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 import { fmtLap } from './utils';
 
 // ─── Sector Classification ─────────────────────────────────────────────────
@@ -10,9 +11,9 @@ import { fmtLap } from './utils';
 type SectorClass = 'purple' | 'green' | 'yellow' | 'none';
 
 const SECTOR_STYLE: Record<SectorClass, { text: string; bg: string }> = {
-  purple: { text: '#bf00ff', bg: 'rgba(191,0,255,0.18)' },
-  green:  { text: '#00c800', bg: 'rgba(0,200,0,0.16)' },
-  yellow: { text: '#ffc906', bg: 'rgba(255,201,6,0.16)' },
+  purple: { text: COLORS.sector.fastest, bg: COLORS.sector.fastestBg },
+  green:  { text: COLORS.sector.second, bg: COLORS.sector.secondBg },
+  yellow: { text: COLORS.sector.slower, bg: COLORS.sector.slowerBg },
   none:   { text: 'var(--text-muted)', bg: 'transparent' },
 };
 
@@ -98,7 +99,7 @@ function SpeedCell({ speed, isBest }: { speed: number | null | undefined; isBest
   return (
     <td
       className="bc-speed-cell"
-      style={isBest && speed != null ? { color: '#bf00ff', background: 'rgba(191,0,255,0.12)' } : undefined}
+      style={isBest && speed != null ? { color: COLORS.sector.fastest, background: COLORS.sector.fastestBgSoft } : undefined}
     >
       {speed != null ? `${speed.toFixed(0)} km/h` : '—'}
     </td>
@@ -173,7 +174,7 @@ export function BroadcastTab({
       >
         {lapSummaries.length === 0 ? (
           lapsLoading ? (
-            <Spinner label="Loading timing data…" />
+            <TableSkeleton rows={6} label="Loading timing data…" />
           ) : (
             <NoData msg="No lap data for the selected drivers." />
           )
@@ -272,7 +273,7 @@ export function BroadcastTab({
       >
         {!hasSectors ? (
           lapsLoading ? (
-            <Spinner label="Loading sector data…" />
+            <TableSkeleton rows={6} label="Loading sector data…" />
           ) : (
             <NoData msg="No sector data available for this lap." />
           )
@@ -321,9 +322,9 @@ export function BroadcastTab({
 
             {/* Sector color legend */}
             <div className="bc-sector-legend">
-              <span className="bc-sector-legend-item" style={{ color: '#bf00ff' }}>■ FASTEST</span>
-              <span className="bc-sector-legend-item" style={{ color: '#00c800' }}>■ 2ND FASTEST</span>
-              <span className="bc-sector-legend-item" style={{ color: '#ffc906' }}>■ SLOWER</span>
+              <span className="bc-sector-legend-item" style={{ color: COLORS.sector.fastest }}>■ FASTEST</span>
+              <span className="bc-sector-legend-item" style={{ color: COLORS.sector.second }}>■ 2ND FASTEST</span>
+              <span className="bc-sector-legend-item" style={{ color: COLORS.sector.slower }}>■ SLOWER</span>
             </div>
           </div>
         )}
