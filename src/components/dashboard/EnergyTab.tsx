@@ -3,7 +3,7 @@ import { Gauge, Zap } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver } from '../../api/openf1';
 import type { ComparisonPoint, DriverLapSummary, SpeedPoint } from './types';
-import { ChartTip, NoData, Spinner } from './shared';
+import { ChartSkeleton, ChartTip, NoData } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 
 type Props = {
@@ -101,7 +101,7 @@ export function EnergyTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {telemetryLoading ? <Spinner /> : comparisonMode ? (
+        {telemetryLoading ? <ChartSkeleton label="Loading DRS data..." className="h-[120px] sm:h-[160px]" /> : comparisonMode ? (
           <div className="h-[120px] sm:h-[160px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={comparisonEnergyData}>
@@ -142,7 +142,7 @@ export function EnergyTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {telemetryLoading ? <Spinner /> : comparisonMode ? (
+        {telemetryLoading ? <ChartSkeleton label="Loading gear trace..." className="h-[140px] sm:h-[180px]" /> : comparisonMode ? (
           <div className="h-[140px] sm:h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={comparisonEnergyData}>
@@ -183,7 +183,7 @@ export function EnergyTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {telemetryLoading ? <Spinner /> : comparisonMode ? (
+        {telemetryLoading ? <ChartSkeleton label="Loading RPM trace..." className="h-[140px] sm:h-[180px]" /> : comparisonMode ? (
           <div className="h-[140px] sm:h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={comparisonEnergyData}>

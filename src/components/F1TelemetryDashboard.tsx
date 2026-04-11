@@ -3,6 +3,7 @@ import { useDashboardFilters } from '../hooks/useDashboardFilters';
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import { useDashboardSelectionData } from '../hooks/useDashboardSelectionData';
 import { useDashboardViewModel } from '../hooks/useDashboardViewModel';
+import { COLORS } from '../constants/colors';
 import {
   useDrivers,
   useIntervals,
@@ -26,7 +27,7 @@ import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
 import { TelemetryTab } from './dashboard/TelemetryTab';
 import { TrackMapTab } from './dashboard/TrackMapTab';
-import { Err } from './dashboard/shared';
+import { ChartSkeleton, Err } from './dashboard/shared';
 import type { Tab } from './dashboard/types';
 
 type ThemeMode = 'dark' | 'light';
@@ -71,7 +72,7 @@ const BroadcastTab = lazy(() => import('./dashboard/BroadcastTab').then((module)
 function TabLoadingPlaceholder({ label }: { label: string }) {
   return (
     <div className="dashboard-panel rounded-[16px] p-6 text-sm text-[color:var(--text-muted)] sm:rounded-[18px] sm:p-8">
-      {label}
+      <ChartSkeleton label={label} className="h-32" />
     </div>
   );
 }
@@ -153,7 +154,7 @@ function buildIframeSnippet(
   iframeHeight = 920,
 ) {
   const src = buildDashboardUrl(snapshot, splitMode, true, themeMode, anchorId);
-  const background = themeMode === 'light' ? '#ffffff' : '#111113';
+  const background = themeMode === 'light' ? COLORS.fallback.iframeLight : COLORS.fallback.iframeDark;
   return [
     `<iframe`,
     `  src="${src}"`,
@@ -426,7 +427,7 @@ export default function F1TelemetryDashboard() {
     root.classList.toggle('theme-light', themeMode === 'light');
     root.classList.toggle('theme-dark', themeMode === 'dark');
 
-    const themeColor = themeMode === 'light' ? '#ffffff' : '#111113';
+    const themeColor = themeMode === 'light' ? COLORS.fallback.iframeLight : COLORS.fallback.iframeDark;
     window.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
 
     try {

@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { Activity, Gauge, Timer, Trophy, Waves } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver } from '../../api/openf1';
+import { COLORS } from '../../constants/colors';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
-import { ChartTip, EmbedPanelButton, Err, NoData, Panel, Spinner } from './shared';
+import { ChartSkeleton, ChartTip, EmbedPanelButton, Err, NoData, Panel, TableSkeleton } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 import { fmtLap } from './utils';
 
@@ -85,8 +86,8 @@ export function TelemetryTab({
       ];
     })
     : [
-      { label: 'Throttle', color: '#22C55E', variant: 'area' as const },
-      { label: 'Brake', color: '#EF4444', variant: 'area' as const },
+      { label: 'Throttle', color: COLORS.success, variant: 'area' as const },
+      { label: 'Brake', color: COLORS.danger, variant: 'area' as const },
     ];
   const speedDeltaData = useMemo(() => {
     if (comparisonSpeedData.length === 0) return [];
@@ -191,7 +192,7 @@ export function TelemetryTab({
                     <div className="flex h-6">
                       <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s1Width}%`, backgroundColor: 'var(--accent)' }}>{row.s1?.toFixed(3) ?? '—'}</div>
                       <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s2Width}%`, backgroundColor: 'var(--accent-strong)' }}>{row.s2?.toFixed(3) ?? '—'}</div>
-                      <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s3Width}%`, backgroundColor: '#1AA34A' }}>{row.s3?.toFixed(3) ?? '—'}</div>
+                      <div className="flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${s3Width}%`, backgroundColor: COLORS.sector.three }}>{row.s3?.toFixed(3) ?? '—'}</div>
                     </div>
                   </div>
                   <div className="hidden text-right text-sm font-black font-mono text-[color:var(--text-soft)] md:block">{fmtLap(row.total ?? null)}</div>
@@ -199,7 +200,7 @@ export function TelemetryTab({
               );
             })}
           </div>
-        ) : lapsLoading ? <Spinner label="Building sector split..." /> : <NoData msg="No sector comparison available for this lap." />}
+        ) : lapsLoading ? <TableSkeleton rows={4} label="Building sector split..." /> : <NoData msg="No sector comparison available for this lap." />}
       </Panel>
 
       <Panel title="Sector Times" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={`Lap ${lapNum} — sector benchmark against selected drivers`}>
@@ -227,7 +228,7 @@ export function TelemetryTab({
                       <span style={bestS2 != null && row.s2 != null && row.s2 <= bestS2 ? { color: 'var(--accent-strong)' } : undefined}>{row.s2?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
-                      <span style={bestS3 != null && row.s3 != null && row.s3 <= bestS3 ? { color: '#1AA34A' } : undefined}>{row.s3?.toFixed(3) ?? '—'}</span>
+                      <span style={bestS3 != null && row.s3 != null && row.s3 <= bestS3 ? { color: COLORS.sector.three } : undefined}>{row.s3?.toFixed(3) ?? '—'}</span>
                     </td>
                     <td className="py-2 text-right text-xs font-bold font-mono text-[color:var(--text-strong)]">{fmtLap(row.total ?? null)}</td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--accent-strong)]">{summary?.gapToLeader != null ? `+${summary.gapToLeader.toFixed(3)}` : '—'}</td>
@@ -237,7 +238,7 @@ export function TelemetryTab({
               })}</tbody>
             </table>
           </div>
-        ) : lapsLoading ? <Spinner label="Loading lap data..." /> : <NoData msg="No sector times for this lap. Try a different lap number." />}
+        ) : lapsLoading ? <TableSkeleton rows={6} label="Loading lap data..." /> : <NoData msg="No sector times for this lap. Try a different lap number." />}
       </Panel>
 
       <ChartPanel
@@ -253,7 +254,7 @@ export function TelemetryTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {telemetryLoading ? <Spinner label="Fetching car telemetry..." /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : comparisonSpeedData.length > 0 ? (
+        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[200px] sm:h-[260px]" /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : comparisonSpeedData.length > 0 ? (
           <div className="h-[200px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={comparisonSpeedData}>
@@ -348,8 +349,8 @@ export function TelemetryTab({
                   <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
                   <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
                   <Tooltip content={<ChartTip />} />
-                  <Area type="monotone" dataKey="throttle" stroke="#22C55E" fill="#22C55E" fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Throttle %" />
-                  <Area type="monotone" dataKey="brake" stroke="#EF4444" fill="#EF4444" fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Brake" />
+                  <Area type="monotone" dataKey="throttle" stroke={COLORS.success} fill={COLORS.success} fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Throttle %" />
+                  <Area type="monotone" dataKey="brake" stroke={COLORS.danger} fill={COLORS.danger} fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Brake" />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -358,7 +359,7 @@ export function TelemetryTab({
       )}
 
       <ChartPanel title="Lap Times Comparison" icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />} sub={lapsLoading ? 'Loading lap data...' : `${driverNums.map((num) => driverMap[num]?.name_acronym).filter(Boolean).join(' vs ')} — excludes pit out-laps`} className="overflow-hidden" exportName="lap-times-comparison" legend={driverLegend} panelId="telemetry-lap-times" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
-        {lapsLoading ? <Spinner /> : lapTimeData.some((point) => Object.keys(point).length > 1) ? (
+        {lapsLoading ? <ChartSkeleton label="Loading lap time data..." className="h-[180px] sm:h-[220px]" /> : lapTimeData.some((point) => Object.keys(point).length > 1) ? (
           <div className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lapTimeData}>
@@ -376,7 +377,7 @@ export function TelemetryTab({
       </ChartPanel>
 
       <ChartPanel title="Gap To Best Lap" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Per-lap delta to the fastest selected driver on that same lap" className="overflow-hidden" exportName="gap-to-best-lap" legend={driverLegend} panelId="telemetry-gap-best" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
-        {lapsLoading ? <Spinner /> : lapDeltaData.some((point) => Object.keys(point).length > 1) ? (
+        {lapsLoading ? <ChartSkeleton label="Loading gap trend data..." className="h-[160px] sm:h-[200px]" /> : lapDeltaData.some((point) => Object.keys(point).length > 1) ? (
           <div className="h-[160px] sm:h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lapDeltaData}>

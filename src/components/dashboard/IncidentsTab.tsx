@@ -54,7 +54,7 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
                 className="dashboard-input w-full py-2 pl-9 pr-3 text-sm"
               />
             </div>
-            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide xl:mx-0 xl:flex-wrap xl:overflow-visible xl:px-0 xl:pb-0">
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 filter-scroll-fade xl:mx-0 xl:flex-wrap xl:overflow-visible xl:px-0 xl:pb-0">
               {filters.map((filter) => (
                 <button
                   key={filter}
