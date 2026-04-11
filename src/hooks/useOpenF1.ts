@@ -183,11 +183,15 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
       entry = createInflightEntry(key, fetcherRef.current);
       inflight.set(key, entry as InflightEntry<unknown>);
     }
-    entry.consumers += 1;
+    // Capture the entry reference now so the cleanup operates on the exact
+    // same entry this effect subscribed to — not a newer one that may have
+    // replaced it in the map after the fetch resolved or was retried.
+    const capturedEntry = entry;
+    capturedEntry.consumers += 1;
 
     void (async () => {
       try {
-        const data = await entry.promise;
+        const data = await capturedEntry.promise;
         if (seqRef.current !== seq) return; // stale
         setState({ data, loading: false, error: null });
       } catch (err: unknown) {
@@ -200,12 +204,14 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
     })();
 
     return () => {
-      const active = inflight.get(key) as InflightEntry<T> | undefined;
-      if (!active) return;
-      active.consumers -= 1;
-      if (active.consumers <= 0) {
-        active.controller.abort();
-        inflight.delete(key);
+      capturedEntry.consumers -= 1;
+      if (capturedEntry.consumers <= 0) {
+        capturedEntry.controller.abort();
+        // Only remove from the map when it is still the same entry — a
+        // newer fetch may have already replaced it while we were mounted.
+        if (inflight.get(key) === (capturedEntry as InflightEntry<unknown>)) {
+          inflight.delete(key);
+        }
       }
     };
   }, [key, refetchToken]); // key/refetchToken drive fetches — fetcher is accessed via ref
