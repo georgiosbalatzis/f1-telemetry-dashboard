@@ -41,8 +41,9 @@ const NORMALIZED_TELEMETRY_POINTS = 120;
  * Samples each selected driver's telemetry at evenly spaced lap-progress percentages.
  * OpenF1 car-data arrays can have different sample counts per driver/lap, so each
  * progress bucket maps to the nearest index in that driver's own telemetry series.
+ * @internal exported for unit tests only
  */
-function buildNormalizedComparisonData(
+export function buildNormalizedComparisonData(
   driverNums: number[],
   telemetryByDriver: Record<number, OpenF1CarData[] | null>,
   assignSample: (point: ComparisonPoint, driverNumber: number, sample: OpenF1CarData | undefined) => void,
