@@ -59,6 +59,32 @@
   --chart-axis-soft: #515157;
   --chart-rpm: rgba(255, 255, 255, 0.16);
   --chart-reference: rgba(255, 255, 255, 0.12);
+  --color-driver-fallback: #888888;
+  --color-muted-dot: #4b5563;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f97316;
+  --color-weather-air: #ef4444;
+  --color-weather-track: #f97316;
+  --color-weather-humidity: #3b82f6;
+  --color-weather-wind: #06b6d4;
+  --color-sector-fastest: #bf00ff;
+  --color-sector-fastest-bg: rgba(191, 0, 255, 0.18);
+  --color-sector-fastest-bg-soft: rgba(191, 0, 255, 0.12);
+  --color-sector-second: #00c800;
+  --color-sector-second-bg: rgba(0, 200, 0, 0.16);
+  --color-sector-slower: #ffc906;
+  --color-sector-slower-bg: rgba(255, 201, 6, 0.16);
+  --color-sector-three: #1aa34a;
+  --color-compound-soft: #ff3333;
+  --color-compound-medium: #ffc300;
+  --color-compound-hard: #eeeeee;
+  --color-compound-intermediate: #43b02a;
+  --color-compound-wet: #0067ad;
+  --color-compound-unknown: #888888;
+  --color-compound-hypersoft: #ff69b4;
+  --color-compound-ultrasoft: #c800ff;
+  --color-compound-supersoft: #ff3333;
 }
 
 .theme-light {
@@ -120,6 +146,8 @@
   --chart-axis-soft: #a1a1a6;
   --chart-rpm: rgba(17, 17, 19, 0.16);
   --chart-reference: rgba(29, 29, 31, 0.14);
+  --color-driver-fallback: #6e6e73;
+  --color-muted-dot: #86868b;
 }
 
 .theme-dark {
@@ -243,6 +271,7 @@ code, .font-mono {
 
 .dashboard-select {
   width: 100%;
+  min-height: 44px;
   cursor: pointer;
   appearance: none;
   border-radius: 6px;
@@ -253,6 +282,11 @@ code, .font-mono {
   color: var(--text-soft);
   outline: none;
   transition: border-color 120ms ease, color 120ms ease;
+}
+
+.filter-scroll-fade {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
 }
 
 .dashboard-select:hover,
@@ -363,6 +397,11 @@ select {
   .dashboard-toolbar {
     justify-content: flex-end;
     align-self: flex-end;
+  }
+
+  .filter-scroll-fade {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 

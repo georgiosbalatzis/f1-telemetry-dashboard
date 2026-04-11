@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Map } from 'lucide-react';
 import type { OpenF1Driver, OpenF1Location } from '../../api/openf1';
-import { EmbedPanelButton, NoData, Panel, Spinner } from './shared';
+import { ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
 
 type Props = {
   lapNum: number;
@@ -116,7 +116,13 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
     return `Track map for lap ${lapNum}. Drivers: ${describedDrivers}. Lines show each driver's GPS path around the circuit.`;
   }, [activeDrivers, driverMap, driverNums, lapNum]);
 
-  if (locationLoading) return <Spinner label="Fetching GPS location data…" />;
+  if (locationLoading) {
+    return (
+      <Panel title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />} sub="Fetching GPS location data">
+        <ChartSkeleton label="Fetching GPS location data..." className="h-[260px] sm:h-[360px]" />
+      </Panel>
+    );
+  }
   if (!trackPolyline) {
     return (
       <Panel title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />}>
@@ -136,10 +142,12 @@ export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, l
         panelId="trackmap-lap-map"
         headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('trackmap-lap-map')} /> : undefined}
       >
-        <div className="overflow-x-auto">
+        <div className="h-[260px] overflow-x-auto sm:h-[380px]">
           <svg
             viewBox={`0 0 ${MAP_W} ${MAP_H}`}
             width="100%"
+            height="100%"
+            preserveAspectRatio="xMidYMid meet"
             style={{ maxWidth: MAP_W, display: 'block', margin: '0 auto' }}
             aria-label={svgLabel}
             role="img"

@@ -1,19 +1,11 @@
 import { useMemo } from 'react';
 import { CircleDot, Timer } from 'lucide-react';
 import type { OpenF1Driver, OpenF1Pit, OpenF1Stint } from '../../api/openf1';
-import { EmbedPanelButton, NoData, Panel, Spinner } from './shared';
+import { COLORS, teamColor, withAlpha } from '../../constants/colors';
+import { CardGridSkeleton, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 
 const COMPOUND_COLORS: Record<string, string> = {
-  SOFT: '#FF3333',
-  MEDIUM: '#FFC300',
-  HARD: '#EEEEEE',
-  INTERMEDIATE: '#43B02A',
-  WET: '#0067AD',
-  UNKNOWN: '#888',
-  HYPERSOFT: '#FF69B4',
-  ULTRASOFT: '#C800FF',
-  SUPERSOFT: '#FF3333',
-  TEST_UNKNOWN: '#888',
+  ...COLORS.compound,
 };
 
 type Props = {
@@ -84,7 +76,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
         return {
           driverNumber,
           acronym: driver.name_acronym,
-          teamColor: `#${driver.team_colour}`,
+          teamColor: teamColor(driver.team_colour),
           stintCount: driverStints.length,
           segments: driverStints.map((stint, index) => {
             const compound = (stint.compound || 'UNKNOWN').toUpperCase();
@@ -114,7 +106,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
         return {
           driverNumber,
           acronym: driver.name_acronym,
-          teamColor: `#${driver.team_colour}`,
+          teamColor: teamColor(driver.team_colour),
           compound,
           compoundColor: COMPOUND_COLORS[compound] || COMPOUND_COLORS.UNKNOWN,
           remaining: Math.max(0, activeStint.lap_end - lapNum),
@@ -128,11 +120,11 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
   const pitStopCards = useMemo<PitStopCard[]>(
     () => filteredPits.map((pit, index) => {
       const driver = driverMap[pit.driver_number];
-      const teamColor = `#${driver?.team_colour || '888'}`;
+      const pitTeamColor = teamColor(driver?.team_colour);
       return {
         key: `${pit.driver_number}-${pit.lap_number}-${pit.date}-${index}`,
         acronym: driver?.name_acronym || `#${pit.driver_number}`,
-        teamColor,
+        teamColor: pitTeamColor,
         stopDuration: pit.stop_duration?.toFixed(1) || '—',
         pitLaneDuration: pit.pit_duration?.toFixed(1) || '—',
         lapNumber: pit.lap_number,
@@ -150,7 +142,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
         panelId="strategy-tyre-strategy"
         headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('strategy-tyre-strategy')} /> : undefined}
       >
-        {stintsLoading ? <Spinner label="Loading stint data…" /> : strategyRows.length > 0 ? (
+        {stintsLoading ? <TableSkeleton rows={6} label="Loading stint data…" /> : strategyRows.length > 0 ? (
           <div className="space-y-3">
             {strategyRows.map((row) => (
               <div key={row.driverNumber} className="grid gap-2 sm:grid-cols-[64px_1fr_56px] sm:items-center sm:gap-4">
@@ -160,7 +152,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
                     <div
                       key={segment.key}
                       className="flex h-full min-w-[24px] items-center justify-center border-r border-[color:var(--line-strong)] text-[10px] font-bold"
-                      style={{ width: `${segment.width}%`, backgroundColor: `${segment.color}18`, color: segment.color }}
+                      style={{ width: `${segment.width}%`, backgroundColor: withAlpha(segment.color, 9), color: segment.color }}
                       title={segment.title}
                     >
                       {segment.compound.charAt(0)}
@@ -176,13 +168,13 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
       </Panel>
 
       <Panel title="Tyre Life Projection" icon={<CircleDot size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Current stint context at the focused lap">
-        {tyreLifeCards.length > 0 ? (
+        {stintsLoading ? <CardGridSkeleton count={4} label="Loading tyre life projections..." /> : tyreLifeCards.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-2">
             {tyreLifeCards.map((card) => (
               <div key={card.driverNumber} className="dashboard-card rounded-[16px] p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-xs font-black tracking-[0.2em]" style={{ color: card.teamColor }}>{card.acronym}</span>
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: `${card.compoundColor}1c`, color: card.compoundColor }}>{card.compound}</span>
+                  <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: withAlpha(card.compoundColor, 11), color: card.compoundColor }}>{card.compound}</span>
                 </div>
                 <div className="mb-3 text-3xl font-black text-emerald-300">{card.remaining}</div>
                 <div className="grid grid-cols-3 gap-3 text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
@@ -206,7 +198,7 @@ export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stin
       </Panel>
 
       <Panel title="Pit Stops" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Ordered by stationary time">
-        {pitsLoading ? <Spinner /> : pitStopCards.length > 0 ? (
+        {pitsLoading ? <CardGridSkeleton count={4} label="Loading pit stops..." /> : pitStopCards.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {pitStopCards.map((card) => (
               <div key={card.key} className="dashboard-card rounded-[16px] p-3">

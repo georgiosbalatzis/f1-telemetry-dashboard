@@ -66,6 +66,7 @@ export function DashboardSelectors({
   const labelClass = embedMode
     ? 'mb-1.5 block text-[9px] uppercase tracking-[0.22em] text-[color:var(--text-dim)]'
     : 'mb-1.5 block text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]';
+  const fieldClass = 'min-w-0 flex-[1_1_120px]';
   const displayQuickChips = embedMode ? quickChips.slice(0, 3) : quickChips;
   const summaryToneStyles = {
     blue: { color: 'var(--accent)' },
@@ -74,7 +75,7 @@ export function DashboardSelectors({
   } as const;
 
   const seasonField = (
-    <div>
+    <div className={fieldClass}>
       <label className={labelClass}>Season</label>
       <div className="relative">
         <select value={year} onChange={(event) => onYearChange(+event.target.value)} className="dashboard-select">
@@ -86,7 +87,7 @@ export function DashboardSelectors({
   );
 
   const circuitField = (
-    <div>
+    <div className={fieldClass}>
       <label className={labelClass}>Grand Prix</label>
       <div className="relative">
         <select value={circuit || ''} onChange={(event) => onCircuitChange(event.target.value)} disabled={!circuitOptions.length} className="dashboard-select">
@@ -100,7 +101,7 @@ export function DashboardSelectors({
   );
 
   const sessionField = (
-    <div>
+    <div className={fieldClass}>
       <label className={labelClass}>Session</label>
       <div className="relative">
         <select value={sessionKey || ''} onChange={(event) => onSessionChange(+event.target.value)} disabled={!sessionOptions.length} className="dashboard-select">
@@ -114,7 +115,7 @@ export function DashboardSelectors({
   );
 
   const lapSelectControl = (
-    <div className="relative flex-1">
+    <div className="relative min-w-0 flex-1">
       <select value={lapNum} onChange={(event) => onLapChange(+event.target.value)} disabled={!lapOptions.length} className="dashboard-select">
         {lapOptions.length === 0 && <option>Select drivers first</option>}
         {lapOptions.map((option) => <option key={option} value={option}>Lap {option}</option>)}
@@ -124,7 +125,7 @@ export function DashboardSelectors({
   );
 
   const lapField = (
-    <div>
+    <div className={fieldClass}>
       <label className={labelClass}>
         Lap {lapsLoading && <Loader2 size={10} className="ml-1 inline animate-spin" />}
       </label>
@@ -141,7 +142,7 @@ export function DashboardSelectors({
   );
 
   const lapSelectField = (
-    <div>
+    <div className={fieldClass}>
       <label className={labelClass}>
         Jump To Lap {lapsLoading && <Loader2 size={10} className="ml-1 inline animate-spin" />}
       </label>
@@ -209,7 +210,7 @@ export function DashboardSelectors({
               </div>
             )}
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="flex flex-wrap gap-3">
               {seasonField}
               {circuitField}
               {sessionField}
@@ -240,7 +241,7 @@ export function DashboardSelectors({
 
           <div className="mt-4">{lapField}</div>
 
-          <div className="mt-4 grid gap-3">
+          <div className="mt-4 flex flex-wrap gap-3">
             {seasonField}
             {circuitField}
             {sessionField}
@@ -280,7 +281,7 @@ export function DashboardSelectors({
                     Change season, session, and lap focus without losing comparison state.
                   </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="flex flex-wrap gap-3">
                   {seasonField}
                   {circuitField}
                   {sessionField}
