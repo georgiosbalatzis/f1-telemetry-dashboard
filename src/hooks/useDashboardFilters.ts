@@ -16,7 +16,8 @@ const VALID_LAP_RANGE = [1, 200] as const;
 const VALID_CIRCUIT_PATTERN = /^[A-Za-z0-9 ._'-]{1,80}$/;
 const VALID_TABS: Tab[] = ['telemetry', 'tires', 'energy', 'trackmap', 'positions', 'intervals', 'radio', 'incidents', 'weather', 'broadcast'];
 
-function parseBoundedInt(value: string | null, min: number, max: number) {
+/** @internal exported for unit tests only */
+export function parseBoundedInt(value: string | null, min: number, max: number) {
   if (!value) return null;
   const trimmed = value.trim();
   if (!/^\d+$/.test(trimmed)) return null;

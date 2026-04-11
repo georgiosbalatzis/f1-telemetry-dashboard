@@ -169,8 +169,9 @@ function sortEntries(params: Record<string, QueryValue>) {
  * Builds OpenF1 query URLs while preserving operator syntax in parameter names.
  * Supported keys include plain filters (`session_key`) and OpenF1 operator keys
  * such as `date>=`, `date<=`, `speed>=`; keys are not encoded, values are.
+ * @internal exported for unit tests only
  */
-function buildUrl(endpoint: string, params: Record<string, QueryValue>): string {
+export function buildUrl(endpoint: string, params: Record<string, QueryValue>): string {
   const parts = sortEntries(params)
     .filter(([, v]) => v !== undefined && v !== null && v !== '')
     .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`);

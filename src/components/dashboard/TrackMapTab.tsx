@@ -3,6 +3,7 @@ import { Map } from 'lucide-react';
 import type { OpenF1Location } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
+import { MAP_W, MAP_H, buildTransform, subsample, toPolyline } from './trackMapUtils';
 
 type Props = {
   lapNum: number;
@@ -12,49 +13,11 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
-/** SVG canvas dimensions for the track map. Chosen to preserve OpenF1 GPS coordinate aspect ratio. */
-const MAP_W = 600;
-const MAP_H = 380;
-const PADDING = 36;
 type DriverMarker = {
   nx: number;
   ny: number;
   label: string;
 };
-
-function subsample<T>(arr: T[], max: number): T[] {
-  if (arr.length <= max) return arr;
-  const step = Math.ceil(arr.length / max);
-  return arr.filter((_, i) => i % step === 0);
-}
-
-/**
- * Builds a GPS-to-SVG projection for the selected lap paths: it bounds all raw
- * OpenF1 x/y samples, scales them into the padded SVG viewport, centers the
- * fitted track, and flips the Y axis so the circuit renders in screen space.
- */
-function buildTransform(rawPoints: { x: number; y: number }[]) {
-  if (rawPoints.length === 0) return null;
-  const xs = rawPoints.map((p) => p.x);
-  const ys = rawPoints.map((p) => p.y);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
-  const rangeX = maxX - minX || 1;
-  const rangeY = maxY - minY || 1;
-  const scale = Math.min((MAP_W - PADDING * 2) / rangeX, (MAP_H - PADDING * 2) / rangeY);
-  const offsetX = PADDING + ((MAP_W - PADDING * 2) - rangeX * scale) / 2;
-  const offsetY = PADDING + ((MAP_H - PADDING * 2) - rangeY * scale) / 2;
-  return (p: { x: number; y: number }) => ({
-    nx: offsetX + (p.x - minX) * scale,
-    ny: MAP_H - (offsetY + (p.y - minY) * scale), // flip Y axis
-  });
-}
-
-function toPolyline(pts: { nx: number; ny: number }[]) {
-  return pts.map((p) => `${p.nx.toFixed(1)},${p.ny.toFixed(1)}`).join(' ');
-}
 
 export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverColor } = useDriverContext();

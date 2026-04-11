@@ -1,9 +1,15 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    globals: true,
+    css: false,
+  },
   plugins: [tailwindcss(), react()],
   // CRITICAL for GitHub Pages: assets must be loaded relative to /f1-telemetry-dashboard/
   base: '/f1-telemetry-dashboard/',
