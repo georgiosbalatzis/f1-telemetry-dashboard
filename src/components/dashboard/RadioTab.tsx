@@ -1,17 +1,18 @@
 import { useMemo } from 'react';
 import { Headphones } from 'lucide-react';
-import type { OpenF1Driver, OpenF1TeamRadio } from '../../api/openf1';
+import type { OpenF1TeamRadio } from '../../api/openf1';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import { Err, NoData, Panel, Spinner } from './shared';
 
 type Props = {
   loading: boolean;
   error: string | null;
   messages: OpenF1TeamRadio[];
-  driverMap: Record<number, OpenF1Driver>;
   onRetry?: () => void;
 };
 
-export function RadioTab({ loading, error, messages, driverMap, onRetry }: Props) {
+export function RadioTab({ loading, error, messages, onRetry }: Props) {
+  const { driverMap } = useDriverContext();
   const radioMessages = useMemo(
     () => messages.map((message, index) => {
       const driver = driverMap[message.driver_number];

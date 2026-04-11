@@ -1,19 +1,18 @@
 import { useMemo } from 'react';
 import { Map } from 'lucide-react';
-import type { OpenF1Driver, OpenF1Location } from '../../api/openf1';
+import type { OpenF1Location } from '../../api/openf1';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import { ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
 
 type Props = {
   lapNum: number;
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
   locationByDriver: Record<number, OpenF1Location[] | null>;
   locationLoading: boolean;
-  driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
 
+/** SVG canvas dimensions for the track map. Chosen to preserve OpenF1 GPS coordinate aspect ratio. */
 const MAP_W = 600;
 const MAP_H = 380;
 const PADDING = 36;
@@ -29,6 +28,11 @@ function subsample<T>(arr: T[], max: number): T[] {
   return arr.filter((_, i) => i % step === 0);
 }
 
+/**
+ * Builds a GPS-to-SVG projection for the selected lap paths: it bounds all raw
+ * OpenF1 x/y samples, scales them into the padded SVG viewport, centers the
+ * fitted track, and flips the Y axis so the circuit renders in screen space.
+ */
 function buildTransform(rawPoints: { x: number; y: number }[]) {
   if (rawPoints.length === 0) return null;
   const xs = rawPoints.map((p) => p.x);
@@ -52,7 +56,8 @@ function toPolyline(pts: { nx: number; ny: number }[]) {
   return pts.map((p) => `${p.nx.toFixed(1)},${p.ny.toFixed(1)}`).join(' ');
 }
 
-export function TrackMapTab({ lapNum, driverNums, driverMap, locationByDriver, locationLoading, driverColor, embedMode = false, onEmbedPanel }: Props) {
+export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
+  const { driverNums, driverMap, driverColor } = useDriverContext();
   const { trackPolyline, driverPaths, driverMarkers, startPt, activeDrivers } = useMemo((): {
     trackPolyline: string;
     driverPaths: Partial<Record<number, string>>;

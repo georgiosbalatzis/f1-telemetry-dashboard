@@ -34,8 +34,14 @@ type Params = {
   telemetryByDriver: Record<number, OpenF1CarData[] | null>;
 };
 
+// 120 samples gives sub-1% lap-progress resolution while keeping Recharts payloads small.
 const NORMALIZED_TELEMETRY_POINTS = 120;
 
+/**
+ * Samples each selected driver's telemetry at evenly spaced lap-progress percentages.
+ * OpenF1 car-data arrays can have different sample counts per driver/lap, so each
+ * progress bucket maps to the nearest index in that driver's own telemetry series.
+ */
 function buildNormalizedComparisonData(
   driverNums: number[],
   telemetryByDriver: Record<number, OpenF1CarData[] | null>,

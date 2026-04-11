@@ -1,27 +1,26 @@
 import { useMemo } from 'react';
 import { Gauge } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { OpenF1Driver, OpenF1Interval } from '../../api/openf1';
+import type { OpenF1Interval } from '../../api/openf1';
 import { withAlpha } from '../../constants/colors';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import { CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 
 type Props = {
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
   intervals: OpenF1Interval[] | null;
   intervalsLoading: boolean;
-  driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
 
-const DRS_THRESHOLD = 1.0;
+const DRS_DETECTION_WINDOW_S = 1.0;
 const MAX_CHART_POINTS = 120;
 const MAX_GAP_DISPLAY = 60; // cap gaps at 60s to avoid outliers from safety cars crushing the chart
 
-export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoading, driverColor, embedMode = false, onEmbedPanel }: Props) {
+export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, onEmbedPanel }: Props) {
+  const { driverNums, driverMap, driverColor } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
 
@@ -76,7 +75,7 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
     const windows = activeDrvs.map((n) => {
       const samples = byDriver[n] ?? [];
       const drsCount = samples.filter(
-        (s) => s.interval != null && s.interval <= DRS_THRESHOLD && s.interval >= 0,
+        (s) => s.interval != null && s.interval <= DRS_DETECTION_WINDOW_S && s.interval >= 0,
       ).length;
       const pct = samples.length > 0 ? Math.round((drsCount / samples.length) * 100) : 0;
       return { driverNum: n, drsCount, pct };
@@ -150,9 +149,9 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
                 {interval != null && interval >= 0 && (
                   <div
                     className="mt-1 text-[10px] font-mono"
-                    style={{ color: interval <= DRS_THRESHOLD ? 'var(--accent)' : 'var(--text-dim)' }}
+                    style={{ color: interval <= DRS_DETECTION_WINDOW_S ? 'var(--accent)' : 'var(--text-dim)' }}
                   >
-                    {interval <= DRS_THRESHOLD ? '● DRS ' : ''}+{interval.toFixed(3)}s ahead
+                    {interval <= DRS_DETECTION_WINDOW_S ? '● DRS ' : ''}+{interval.toFixed(3)}s ahead
                   </div>
                 )}
               </div>
@@ -166,7 +165,7 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
         <Panel
           title="DRS Window Time"
           icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
-          sub={`Proportion of session where each driver was within ${DRS_THRESHOLD}s of the car ahead`}
+          sub={`Proportion of session where each driver was within ${DRS_DETECTION_WINDOW_S}s of the car ahead`}
         >
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {drsWindows.map(({ driverNum, drsCount, pct }) => (
@@ -201,7 +200,7 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
                 <XAxis dataKey="t" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
                 <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(v: number) => `+${v.toFixed(0)}s`} />
                 <Tooltip content={<ChartTip />} />
-                <ReferenceLine y={DRS_THRESHOLD} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS 1s', fill: 'var(--accent)', fontSize: 9, position: 'right' }} />
+                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS 1s', fill: 'var(--accent)', fontSize: 9, position: 'right' }} />
                 {driverNums.map((n) => (
                   <Line
                     key={n}
@@ -240,7 +239,7 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
                 <XAxis dataKey="t" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
                 <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} domain={[0, 5]} tickFormatter={(v: number) => `${v.toFixed(1)}s`} />
                 <Tooltip content={<ChartTip />} />
-                <ReferenceLine y={DRS_THRESHOLD} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS', fill: 'var(--accent)', fontSize: 9, position: 'right' }} />
+                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS', fill: 'var(--accent)', fontSize: 9, position: 'right' }} />
                 {driverNums.map((n) => (
                   <Line
                     key={n}

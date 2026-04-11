@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { CircleDot, Timer } from 'lucide-react';
-import type { OpenF1Driver, OpenF1Pit, OpenF1Stint } from '../../api/openf1';
+import type { OpenF1Pit, OpenF1Stint } from '../../api/openf1';
 import { COLORS, teamColor, withAlpha } from '../../constants/colors';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import { CardGridSkeleton, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 
 const COMPOUND_COLORS: Record<string, string> = {
@@ -10,8 +11,6 @@ const COMPOUND_COLORS: Record<string, string> = {
 
 type Props = {
   lapNum: number;
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
   stintsLoading: boolean;
   stintsByDriver: Record<number, OpenF1Stint[]>;
   pitsLoading: boolean;
@@ -55,7 +54,8 @@ type PitStopCard = {
   lapNumber: number;
 };
 
-export function StrategyTab({ lapNum, driverNums, driverMap, stintsLoading, stintsByDriver, pitsLoading, filteredPits, embedMode = false, onEmbedPanel }: Props) {
+export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading, filteredPits, embedMode = false, onEmbedPanel }: Props) {
+  const { driverNums, driverMap } = useDriverContext();
   const fallbackDriverNums = useMemo(() => Object.keys(stintsByDriver).map(Number), [stintsByDriver]);
   const strategyDriverNums = useMemo(
     () => (driverNums.length > 0 ? driverNums : fallbackDriverNums.slice(0, 6)),

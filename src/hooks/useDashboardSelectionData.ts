@@ -140,7 +140,6 @@ export function useDashboardSelectionData({
       ?? (lapOptions.includes(2) ? 2 : lapOptions[0] ?? null);
   }, [lapOptions, preferredWinnerLaps]);
 
-  const primaryDriverNumber = driverNums[0];
   const telemetryWindows = useMemo(() => {
     return driverNums.map((driverNumber) => {
       const laps = allLaps[driverNumber] || [];
@@ -153,14 +152,6 @@ export function useDashboardSelectionData({
       };
     });
   }, [allLaps, driverNums, lapNum]);
-  const primaryLap = useMemo(
-    () => (allLaps[primaryDriverNumber] || []).find((lap) => lap.lap_number === lapNum) || null,
-    [allLaps, lapNum, primaryDriverNumber],
-  );
-  const nextPrimaryLap = useMemo(
-    () => (allLaps[primaryDriverNumber] || []).find((lap) => lap.lap_number === lapNum + 1) || null,
-    [allLaps, lapNum, primaryDriverNumber],
-  );
 
   useEffect(() => {
     if (circuitOptions.length > 0 && !circuit) {
@@ -210,8 +201,5 @@ export function useDashboardSelectionData({
     allLaps,
     lapOptions,
     telemetryWindows,
-    primaryDriverNumber,
-    primaryLapStart: primaryLap?.date_start || null,
-    nextPrimaryLapStart: nextPrimaryLap?.date_start || null,
   };
 }

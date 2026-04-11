@@ -1,19 +1,16 @@
 import { useMemo } from 'react';
 import { Gauge, Zap } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { OpenF1Driver } from '../../api/openf1';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SpeedPoint } from './types';
 import { ChartSkeleton, ChartTip, NoData } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 
 type Props = {
   lapNum: number;
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
   speedData: SpeedPoint[];
   comparisonEnergyData: ComparisonPoint[];
   lapSummaries: DriverLapSummary[];
-  driverColor: (driverNumber: number) => string;
   telemetryLoading: boolean;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
@@ -21,16 +18,14 @@ type Props = {
 
 export function EnergyTab({
   lapNum,
-  driverNums,
-  driverMap,
   speedData,
   comparisonEnergyData,
   lapSummaries,
-  driverColor,
   telemetryLoading,
   embedMode = false,
   onEmbedPanel,
 }: Props) {
+  const { driverNums, driverMap, driverColor } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
   const chartRpm = 'var(--chart-rpm)';

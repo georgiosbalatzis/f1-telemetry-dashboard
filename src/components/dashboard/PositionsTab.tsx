@@ -1,19 +1,17 @@
 import { useMemo } from 'react';
 import { TrendingDown } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { OpenF1Driver, OpenF1Position } from '../../api/openf1';
+import type { OpenF1Position } from '../../api/openf1';
 import { teamColor, withAlpha } from '../../constants/colors';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import { CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 
 type Props = {
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
   positions: OpenF1Position[] | null;
   positionsLoading: boolean;
   lapNum: number;
-  driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
@@ -24,7 +22,8 @@ type PositionSample = {
   timestamp: number;
 };
 
-export function PositionsTab({ driverNums, driverMap, positions, positionsLoading, lapNum, driverColor, embedMode = false, onEmbedPanel }: Props) {
+export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = false, onEmbedPanel }: Props) {
+  const { driverNums, driverMap, driverColor } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
 

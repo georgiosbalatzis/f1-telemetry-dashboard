@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Activity, Gauge, Timer, Trophy, Waves } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { OpenF1Driver } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
 import { ChartSkeleton, ChartTip, EmbedPanelButton, Err, NoData, Panel, TableSkeleton } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
@@ -21,9 +21,6 @@ type Props = {
   lapTimeData: Array<Record<string, number | string>>;
   lapDeltaData: Array<Record<string, number | string>>;
   lapSummaries: DriverLapSummary[];
-  driverNums: number[];
-  driverMap: Record<number, OpenF1Driver>;
-  driverColor: (driverNumber: number) => string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
   onTelemetryRetry?: () => void;
@@ -49,13 +46,11 @@ export function TelemetryTab({
   lapTimeData,
   lapDeltaData,
   lapSummaries,
-  driverNums,
-  driverMap,
-  driverColor,
   embedMode = false,
   onEmbedPanel,
   onTelemetryRetry,
 }: Props) {
+  const { driverNums, driverMap, driverColor } = useDriverContext();
   const leader = lapSummaries[0];
   const bestS1 = getBestSector(sectorRows, 's1');
   const bestS2 = getBestSector(sectorRows, 's2');

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Gauge, LayoutGrid, Timer, Tv2 } from 'lucide-react';
-import type { OpenF1Driver } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
+import { useDriverContext } from '../../contexts/useDriverContext';
 import type { DriverLapSummary, SectorRow } from './types';
 import { EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 import { fmtLap } from './utils';
@@ -113,7 +113,6 @@ type Props = {
   lapsLoading: boolean;
   sectorRows: SectorRow[];
   lapSummaries: DriverLapSummary[];
-  driverMap: Record<number, OpenF1Driver>;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
@@ -125,10 +124,10 @@ export function BroadcastTab({
   lapsLoading,
   sectorRows,
   lapSummaries,
-  driverMap,
   embedMode = false,
   onEmbedPanel,
 }: Props) {
+  const { driverMap } = useDriverContext();
   // Sort by lap time for timing tower ordering
   const sorted = useMemo(
     () =>

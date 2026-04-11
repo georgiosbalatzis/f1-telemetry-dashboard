@@ -9,6 +9,7 @@
 const BASE = 'https://api.openf1.org/v1';
 const DEFAULT_TIMEOUT_MS = 12_000;
 const DEFAULT_RETRIES = 2;
+const FALLBACK_LAP_WINDOW_MS = 120_000;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -152,9 +153,6 @@ export interface OpenF1SessionResult {
 }
 
 // ─── URL builder ─────────────────────────────────────────────────────────────
-// OpenF1 requires literal operators in param names: date>=VALUE, speed<=VALUE
-// We must NOT percent-encode the keys, but we DO encode values (except dates
-// where the API accepts ISO strings with colons).
 
 type QueryValue = string | number | boolean | null | undefined;
 type RequestOptions = {
@@ -167,6 +165,11 @@ function sortEntries(params: Record<string, QueryValue>) {
   return Object.entries(params).sort(([left], [right]) => left.localeCompare(right));
 }
 
+/**
+ * Builds OpenF1 query URLs while preserving operator syntax in parameter names.
+ * Supported keys include plain filters (`session_key`) and OpenF1 operator keys
+ * such as `date>=`, `date<=`, `speed>=`; keys are not encoded, values are.
+ */
 function buildUrl(endpoint: string, params: Record<string, QueryValue>): string {
   const parts = sortEntries(params)
     .filter(([, v]) => v !== undefined && v !== null && v !== '')
@@ -174,7 +177,11 @@ function buildUrl(endpoint: string, params: Record<string, QueryValue>): string 
   return `${BASE}/${endpoint}${parts.length ? '?' + parts.join('&') : ''}`;
 }
 
-// For date range filters: key already includes the operator, value is an ISO date
+/**
+ * Builds URLs for date-windowed endpoints. `dateFilters` keys must include the
+ * OpenF1 operator (`date>=`, `date<=`) and values are appended as ISO strings
+ * without escaping colons, matching the API's expected filter format.
+ */
 function buildUrlWithDateFilters(
   endpoint: string,
   params: Record<string, QueryValue>,
@@ -185,9 +192,8 @@ function buildUrlWithDateFilters(
     if (v === undefined || v === null || v === '') continue;
     parts.push(`${k}=${encodeURIComponent(String(v))}`);
   }
-  // Date filters: key is like "date>=" and value is ISO — don't encode colons in dates
   for (const [k, v] of sortEntries(dateFilters)) {
-    parts.push(`${k}${v}`);  // e.g. "date>=2024-03-01T12:00:00.000+00:00"
+    parts.push(`${k}${v}`);
   }
   return `${BASE}/${endpoint}?${parts.join('&')}`;
 }
@@ -374,7 +380,7 @@ export function getLocationForLap(
   options?: RequestOptions,
 ): Promise<OpenF1Location[]> {
   const dateEnd = nextLapDateStart
-    || new Date(new Date(lapDateStart).getTime() + 120_000).toISOString();
+    || new Date(new Date(lapDateStart).getTime() + FALLBACK_LAP_WINDOW_MS).toISOString();
   const url = buildUrlWithDateFilters(
     'location',
     { session_key: sessionKey, driver_number: driverNumber },
@@ -393,7 +399,7 @@ export function getCarDataForLap(
   options?: RequestOptions,
 ): Promise<OpenF1CarData[]> {
   const dateEnd = nextLapDateStart
-    || new Date(new Date(lapDateStart).getTime() + 120_000).toISOString();
+    || new Date(new Date(lapDateStart).getTime() + FALLBACK_LAP_WINDOW_MS).toISOString();
 
   const url = buildUrlWithDateFilters(
     'car_data',
