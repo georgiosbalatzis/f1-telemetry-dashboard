@@ -14,7 +14,8 @@ import { useDashboard } from '../hooks/useDashboard';
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import { COLORS } from '../constants/colors';
 import { DriverProvider } from '../contexts/DriverContext';
-import { DashboardShell, TAB_LABELS } from './DashboardShell';
+import { DashboardShell } from './DashboardShell';
+import { TAB_LABELS } from './dashboard/tabLabels';
 import type { QuickChip, SummaryPill } from './DashboardShell';
 import type { Tab } from './dashboard/types';
 

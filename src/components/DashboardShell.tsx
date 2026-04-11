@@ -7,9 +7,9 @@
  */
 
 import { Suspense, lazy } from 'react';
-import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import type { DashboardData } from '../hooks/useDashboard';
 import type { Tab } from './dashboard/types';
+import { TAB_LABELS } from './dashboard/tabLabels';
 import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
@@ -37,21 +37,6 @@ function TabLoadingPlaceholder({ label }: { label: string }) {
     </div>
   );
 }
-
-// ─── Tab label map (needed for share/embed labels) ────────────────────────────
-
-export const TAB_LABELS: Record<Tab, string> = {
-  telemetry: 'Telemetry',
-  tires:     'Tyres & Strategy',
-  energy:    'DRS, Gears & RPM',
-  trackmap:  'Track Map',
-  positions: 'Race Positions',
-  intervals: 'Intervals',
-  radio:     'Team Radio',
-  incidents: 'Race Control',
-  weather:   'Weather',
-  broadcast: 'Broadcast',
-};
 
 // ─── Chip/pill types ──────────────────────────────────────────────────────────
 
