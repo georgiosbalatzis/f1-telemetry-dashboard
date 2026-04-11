@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session, OpenF1SessionResult } from '../api/openf1';
-import type { FetchState } from './useOpenF1';
+import { invalidateOpenF1SessionCache, type FetchState } from './useOpenF1';
 import type { SelectOption } from '../components/dashboard/types';
 
 type Params = {
@@ -62,6 +62,16 @@ export function useDashboardSelectionData({
   setDriverNums,
   setLapNum,
 }: Params) {
+  const previousSessionKeyRef = useRef<number | null>(sessionKey);
+
+  useEffect(() => {
+    const previousSessionKey = previousSessionKeyRef.current;
+    if (previousSessionKey != null && previousSessionKey !== sessionKey) {
+      invalidateOpenF1SessionCache(previousSessionKey);
+    }
+    previousSessionKeyRef.current = sessionKey;
+  }, [sessionKey]);
+
   const circuitOptions = useMemo<SelectOption<string>[]>(() => {
     if (!meetings?.length) return [];
     const seen = new Set<string>();

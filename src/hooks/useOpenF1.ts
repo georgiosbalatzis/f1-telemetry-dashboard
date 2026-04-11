@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
@@ -62,13 +62,50 @@ function clearExpiredCacheEntries() {
   }
 }
 
+function isSessionScopedCacheKey(key: string, sessionKey: number) {
+  return (
+    key === `drivers:${sessionKey}`
+    || key === `stints:${sessionKey}`
+    || key === `pits:${sessionKey}`
+    || key === `weather:${sessionKey}`
+    || key === `rc:${sessionKey}`
+    || key === `radio:${sessionKey}`
+    || key === `result:${sessionKey}`
+    || key === `positions:${sessionKey}`
+    || key === `intervals:${sessionKey}`
+    || key.startsWith(`laps:${sessionKey}:`)
+    || key.startsWith(`telem:${sessionKey}:`)
+    || key.startsWith(`location:${sessionKey}:`)
+  );
+}
+
+export function invalidateOpenF1SessionCache(sessionKey: number | null | undefined) {
+  if (sessionKey == null) return;
+
+  for (const key of cache.keys()) {
+    if (isSessionScopedCacheKey(key, sessionKey)) {
+      cache.delete(key);
+    }
+  }
+
+  for (const [key, entry] of inflight.entries()) {
+    if (isSessionScopedCacheKey(key, sessionKey)) {
+      entry.controller.abort();
+      inflight.delete(key);
+    }
+  }
+}
+
 // ─── Generic hook ────────────────────────────────────────────────────────────
 
 export interface FetchState<T> {
   data: T | null;
   loading: boolean;
   error: string | null;
+  refetch: () => void;
 }
+
+type FetchDataState<T> = Omit<FetchState<T>, 'refetch'>;
 
 /**
  * Core data-fetching hook.
@@ -79,12 +116,25 @@ export interface FetchState<T> {
  * so the closure always captures the latest params.
  */
 function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promise<T>): FetchState<T> {
-  const [state, setState] = useState<FetchState<T>>({ data: null, loading: false, error: null });
+  const [state, setState] = useState<FetchDataState<T>>({ data: null, loading: false, error: null });
+  const [refetchToken, setRefetchToken] = useState(0);
   const fetcherRef = useRef(fetcher);
   const seqRef = useRef(0);
 
   // Always keep fetcherRef current
   fetcherRef.current = fetcher;
+
+  const refetch = useCallback(() => {
+    if (!key) return;
+
+    cache.delete(key);
+    const active = inflight.get(key);
+    if (active) {
+      active.controller.abort();
+      inflight.delete(key);
+    }
+    setRefetchToken((token) => token + 1);
+  }, [key]);
 
   useEffect(() => {
     if (!key) {
@@ -151,9 +201,9 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
         inflight.delete(key);
       }
     };
-  }, [key]); // ONLY key — fetcher is accessed via ref
+  }, [key, refetchToken]); // key/refetchToken drive fetches — fetcher is accessed via ref
 
-  return state;
+  return { ...state, refetch };
 }
 
 // ─── Typed hooks ─────────────────────────────────────────────────────────────

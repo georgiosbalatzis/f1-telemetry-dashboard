@@ -15,9 +15,10 @@ type Props = {
   weatherTrend: WeatherTrendPoint[];
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
+  onRetry?: () => void;
 };
 
-export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherRadar, weatherTrend, embedMode = false, onEmbedPanel }: Props) {
+export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherRadar, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
   const chartAxisSoft = 'var(--chart-axis-soft)';
@@ -39,7 +40,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
       </>
     );
   }
-  if (error) return <Err msg={error} />;
+  if (error) return <Err msg={error} onAction={onRetry} />;
   if (!latestWeather) return <NoData msg="No weather data for this session." />;
 
   return (

@@ -20,6 +20,7 @@ import {
   useTeamRadio,
   useWeather,
 } from '../hooks/useOpenF1';
+import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
@@ -164,6 +165,18 @@ function buildIframeSnippet(
     `  style="border:0; width:100%; max-width:100%; background:${background};"`,
     `></iframe>`,
   ].join('\n');
+}
+
+function getClipboardErrorMessage(error: unknown, label: string) {
+  const isDomException = typeof DOMException !== 'undefined' && error instanceof DOMException;
+  if (isDomException && (error.name === 'NotAllowedError' || error.name === 'SecurityError')) {
+    return `${label} clipboard denied; copy manually`;
+  }
+  return `${label} could not be copied; copy manually`;
+}
+
+function isShareCancel(error: unknown) {
+  return typeof DOMException !== 'undefined' && error instanceof DOMException && error.name === 'AbortError';
 }
 
 export default function F1TelemetryDashboard() {
@@ -358,6 +371,7 @@ export default function F1TelemetryDashboard() {
   const pageShellClass = embedMode
     ? 'relative mx-auto max-w-[1320px] px-3 py-3 sm:px-4 sm:py-4'
     : 'relative mx-auto max-w-[1440px] px-4 py-3 sm:px-6 sm:py-4';
+  const tabBoundaryResetKey = `${filters.tab}:${filters.sessionKey ?? 'none'}:${filters.lapNum}:${filters.driverNums.join(',')}`;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -453,14 +467,15 @@ export default function F1TelemetryDashboard() {
 
   const shareSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
     const url = buildDashboardUrl(snapshot, splitMode, embedMode, themeMode);
+    let clipboardErrorMessage: string | null = null;
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
         setFeedback(`${label} copied`);
         return;
       }
-    } catch {
-      // Fall back to navigator.share or prompt flow below.
+    } catch (error) {
+      clipboardErrorMessage = getClipboardErrorMessage(error, label);
     }
 
     try {
@@ -469,16 +484,19 @@ export default function F1TelemetryDashboard() {
         setFeedback(`${label} shared`);
         return;
       }
-    } catch {
-      // Ignore canceled shares and use the prompt fallback.
+    } catch (error) {
+      if (!isShareCancel(error)) {
+        clipboardErrorMessage = clipboardErrorMessage ?? `${label} could not be shared; copy manually`;
+      }
     }
 
     window.prompt('Copy this link', url);
-    setFeedback(`${label} ready`);
+    setFeedback(clipboardErrorMessage ?? `${label} ready`);
   }, [embedMode, splitMode, themeMode]);
 
   const embedSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
     const snippet = buildIframeSnippet(snapshot, splitMode, themeMode);
+    let clipboardErrorMessage: string | null = null;
 
     try {
       if (navigator.clipboard?.writeText) {
@@ -486,12 +504,12 @@ export default function F1TelemetryDashboard() {
         setFeedback(`${label} copied`);
         return;
       }
-    } catch {
-      // Fall back to a prompt when clipboard access is unavailable.
+    } catch (error) {
+      clipboardErrorMessage = getClipboardErrorMessage(error, label);
     }
 
     window.prompt('Copy this iframe snippet', snippet);
-    setFeedback(`${label} ready`);
+    setFeedback(clipboardErrorMessage ?? `${label} ready`);
   }, [splitMode, themeMode]);
 
   const handleShare = useCallback(async () => {
@@ -512,6 +530,7 @@ export default function F1TelemetryDashboard() {
 
   const handleEmbedPanel = useCallback(async (panelId: string) => {
     const snippet = buildIframeSnippet(filters.snapshot, false, themeMode, panelId, 720);
+    let clipboardErrorMessage: string | null = null;
 
     try {
       if (navigator.clipboard?.writeText) {
@@ -519,12 +538,12 @@ export default function F1TelemetryDashboard() {
         setFeedback('Panel embed copied');
         return;
       }
-    } catch {
-      // Fall back to prompt when clipboard access is unavailable.
+    } catch (error) {
+      clipboardErrorMessage = getClipboardErrorMessage(error, 'Panel embed');
     }
 
     window.prompt('Copy this iframe snippet', snippet);
-    setFeedback('Panel embed ready');
+    setFeedback(clipboardErrorMessage ?? 'Panel embed ready');
   }, [filters.snapshot, themeMode]);
 
   const handlePrint = useCallback(() => {
@@ -611,9 +630,9 @@ export default function F1TelemetryDashboard() {
             onStepLap={stepLap}
           />
 
-          {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} />}
-          {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} />}
-          {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} />}
+          {meetings.error && <Err msg={`Failed to load calendar: ${meetings.error}`} onAction={meetings.refetch} />}
+          {sessions.error && <Err msg={`Failed to load sessions: ${sessions.error}`} onAction={sessions.refetch} />}
+          {drivers.error && <Err msg={`Failed to load drivers: ${drivers.error}`} onAction={drivers.refetch} />}
 
           {!embedMode && (
             <DriverSelector
@@ -632,6 +651,7 @@ export default function F1TelemetryDashboard() {
             onEmbedTab={handleEmbedTab}
           />
 
+          <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
           <div className={contentLayoutClass}>
             {filters.tab === 'telemetry' && (
               <TelemetryTab
@@ -652,6 +672,7 @@ export default function F1TelemetryDashboard() {
                 driverColor={viewModel.driverColor}
                 embedMode={embedMode}
                 onEmbedPanel={handleEmbedPanel}
+                onTelemetryRetry={primaryTelemetry?.refetch}
               />
             )}
 
@@ -695,6 +716,7 @@ export default function F1TelemetryDashboard() {
                   error={teamRadio.error}
                   messages={viewModel.filteredRadio}
                   driverMap={selectionData.driverMap}
+                  onRetry={teamRadio.refetch}
                 />
               </Suspense>
             )}
@@ -705,6 +727,7 @@ export default function F1TelemetryDashboard() {
                   loading={raceControl.loading}
                   error={raceControl.error}
                   messages={viewModel.raceControlMessages}
+                  onRetry={raceControl.refetch}
                 />
               </Suspense>
             )}
@@ -720,6 +743,7 @@ export default function F1TelemetryDashboard() {
                   weatherTrend={viewModel.weatherTrend}
                   embedMode={embedMode}
                   onEmbedPanel={handleEmbedPanel}
+                  onRetry={weather.refetch}
                 />
               </Suspense>
             )}
@@ -780,6 +804,7 @@ export default function F1TelemetryDashboard() {
               </Suspense>
             )}
           </div>
+          </ErrorBoundary>
         </main>
       </div>
     </div>

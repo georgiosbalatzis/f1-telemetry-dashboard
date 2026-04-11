@@ -8,9 +8,10 @@ type Props = {
   error: string | null;
   messages: OpenF1TeamRadio[];
   driverMap: Record<number, OpenF1Driver>;
+  onRetry?: () => void;
 };
 
-export function RadioTab({ loading, error, messages, driverMap }: Props) {
+export function RadioTab({ loading, error, messages, driverMap, onRetry }: Props) {
   const radioMessages = useMemo(
     () => messages.map((message, index) => {
       const driver = driverMap[message.driver_number];
@@ -28,7 +29,7 @@ export function RadioTab({ loading, error, messages, driverMap }: Props) {
 
   return (
     <Panel title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub="Click to listen to actual team radio recordings from the session">
-      {loading ? <Spinner /> : error ? <Err msg={error} /> : radioMessages.length > 0 ? (
+      {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : radioMessages.length > 0 ? (
         <div className="max-h-[500px] space-y-3 overflow-y-auto pr-2">
           {radioMessages.map((message) => (
             <div key={message.key} className="dashboard-card flex gap-3 rounded-[14px] p-3">
