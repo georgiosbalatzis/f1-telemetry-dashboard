@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { Gauge } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Driver, OpenF1Interval } from '../../api/openf1';
-import { ChartTip, NoData, Panel, Spinner, Stat } from './shared';
+import { withAlpha } from '../../constants/colors';
+import { CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 
@@ -91,7 +92,31 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
     [chartData, driverNums, driverMap, driverColor],
   );
 
-  if (intervalsLoading) return <Spinner label="Loading interval data…" />;
+  if (intervalsLoading) {
+    return (
+      <>
+        <Panel
+          title="Current Gaps"
+          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
+          sub="Loading latest interval samples"
+        >
+          <CardGridSkeleton count={8} label="Loading interval data..." />
+        </Panel>
+        <ChartPanel
+          title="Gap to Leader"
+          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
+          sub="Loading gap history"
+          exportName="gap-to-leader"
+          legend={legend}
+          panelId="intervals-gap-to-leader"
+          embedMode={embedMode}
+          onEmbedPanel={onEmbedPanel}
+        >
+          <ChartSkeleton label="Loading interval chart..." className="h-[200px] sm:h-[280px]" />
+        </ChartPanel>
+      </>
+    );
+  }
   if (!intervals || intervals.length === 0) {
     return (
       <Panel title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
@@ -114,7 +139,7 @@ export function IntervalsTab({ driverNums, driverMap, intervals, intervalsLoadin
               <div
                 key={entry.driver_number}
                 className="dashboard-card rounded-[12px] p-3"
-                style={isSelected ? { borderColor: `${color}55` } : undefined}
+                style={isSelected ? { borderColor: withAlpha(color, 33) } : undefined}
               >
                 <div className="mb-1 text-[10px] uppercase tracking-[0.18em]" style={{ color }}>
                   {driverMap[entry.driver_number]?.name_acronym ?? `#${entry.driver_number}`}

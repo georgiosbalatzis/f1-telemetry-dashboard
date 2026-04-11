@@ -2,10 +2,68 @@ import type { ReactNode } from 'react';
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { AlertTriangle, Code2, Loader2 } from 'lucide-react';
 import type { OpenF1Driver } from '../../api/openf1';
+import { COLORS, teamColor, withAlpha } from '../../constants/colors';
 import { cn } from './utils';
 
 export function Spinner({ label }: { label?: string }) {
   return <div className="flex items-center justify-center gap-2 py-10 text-sm text-[color:var(--text-muted)]"><Loader2 size={16} className="animate-spin" />{label || 'Loading…'}</div>;
+}
+
+export function SkeletonBlock({ className }: { className?: string }) {
+  return <div className={cn('animate-pulse rounded-[12px] bg-[color:var(--surface-soft)]', className)} />;
+}
+
+export function ChartSkeleton({ label = 'Loading chart…', className }: { label?: string; className?: string }) {
+  const bars = [34, 62, 46, 78, 55, 88, 50, 70];
+  return (
+    <div
+      role="status"
+      aria-label={label}
+      className={cn('rounded-[14px] border border-[color:var(--line)] bg-[color:var(--surface-soft-2)] p-4', className)}
+    >
+      <div className="flex h-full min-h-[120px] items-end gap-2">
+        {bars.map((height, index) => (
+          <div
+            key={index}
+            className="flex-1 animate-pulse rounded-t-[8px] bg-[color:var(--surface-soft)]"
+            style={{ height: `${height}%`, animationDelay: `${index * 70}ms` }}
+          />
+        ))}
+      </div>
+      <span className="sr-only">{label}</span>
+    </div>
+  );
+}
+
+export function CardGridSkeleton({ count = 4, label = 'Loading cards…' }: { count?: number; label?: string }) {
+  return (
+    <div role="status" aria-label={label} className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {Array.from({ length: count }, (_, index) => (
+        <div key={index} className="dashboard-card rounded-[14px] p-3">
+          <SkeletonBlock className="mb-3 h-3 w-16" />
+          <SkeletonBlock className="mb-2 h-7 w-20" />
+          <SkeletonBlock className="h-2.5 w-full" />
+        </div>
+      ))}
+      <span className="sr-only">{label}</span>
+    </div>
+  );
+}
+
+export function TableSkeleton({ rows = 5, label = 'Loading rows…' }: { rows?: number; label?: string }) {
+  return (
+    <div role="status" aria-label={label} className="space-y-2">
+      <SkeletonBlock className="h-4 w-36" />
+      {Array.from({ length: rows }, (_, index) => (
+        <div key={index} className="grid grid-cols-[54px_minmax(0,1fr)_72px] items-center gap-3">
+          <SkeletonBlock className="h-4 w-full" />
+          <SkeletonBlock className="h-6 w-full" />
+          <SkeletonBlock className="h-4 w-full" />
+        </div>
+      ))}
+      <span className="sr-only">{label}</span>
+    </div>
+  );
 }
 
 export function Err({ msg }: { msg: string }) {
@@ -72,7 +130,7 @@ export function DriverChip({
   compact?: boolean;
   stacked?: boolean;
 }) {
-  const color = `#${driver.team_colour || '888'}`;
+  const color = teamColor(driver.team_colour);
   const initials = driver.name_acronym.slice(0, 3);
 
   if (stacked) {
@@ -85,7 +143,7 @@ export function DriverChip({
             ? 'text-[color:var(--text-strong)] shadow-[0_8px_18px_-16px_rgba(0,0,0,0.28)]'
             : 'border-[color:var(--line)] bg-[color:var(--surface-soft-2)] text-[color:var(--text-soft)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)]',
         )}
-        style={selected ? { borderColor: `${color}88`, background: `linear-gradient(180deg, ${color}20, transparent 78%), var(--surface-card)` } : {}}
+        style={selected ? { borderColor: withAlpha(color, 53), background: `linear-gradient(180deg, ${withAlpha(color, 12)}, transparent 78%), var(--surface-card)` } : {}}
       >
         <span className="absolute inset-x-0 top-0 h-px rounded-t-[14px]" style={{ backgroundColor: color, opacity: selected ? 0.9 : 0.55 }} />
         <div className="flex w-full items-start justify-between gap-2">
@@ -103,7 +161,7 @@ export function DriverChip({
                 ? 'bg-white/10'
                 : 'border-[color:var(--line)] bg-[color:var(--surface-soft)] text-[color:var(--text-dim)] group-hover:border-[color:var(--line-strong)] group-hover:text-[color:var(--text-muted)]',
             )}
-            style={selected ? { borderColor: `${color}88`, color } : undefined}
+            style={selected ? { borderColor: withAlpha(color, 53), color } : undefined}
           >
             #{driver.driver_number}
           </span>
@@ -134,7 +192,7 @@ export function DriverChip({
           ? 'border-current bg-[color:var(--surface-soft)] text-[color:var(--text-strong)] shadow-[0_0_0_1px_currentColor_inset]'
           : 'border-[color:var(--line)] text-[color:var(--text-muted)] hover:border-[color:var(--line-strong)] hover:bg-[color:var(--surface-soft)] hover:text-[color:var(--text-soft)]',
       )}
-      style={selected ? { color, borderColor: `${color}99`, background: `${color}10` } : {}}
+      style={selected ? { color, borderColor: withAlpha(color, 60), background: withAlpha(color, 6) } : {}}
     >
       <span className={cn(
         'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-[color:var(--line-strong)] bg-[color:var(--surface-avatar)] font-black text-[color:var(--text-soft)]',
@@ -146,7 +204,7 @@ export function DriverChip({
           initials
         )}
       </span>
-      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: selected ? color : '#4b5563' }} />
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: selected ? color : COLORS.mutedDot }} />
       <span className={cn(compact ? 'tracking-[0.12em]' : 'tracking-[0.14em]')}>{driver.name_acronym}</span>
       <span className={cn('font-normal opacity-50', compact ? 'text-[9px]' : 'text-[10px]')}>#{driver.driver_number}</span>
     </button>

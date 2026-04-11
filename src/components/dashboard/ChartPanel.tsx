@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, Expand, Shrink } from 'lucide-react';
+import { COLORS } from '../../constants/colors';
 import { EmbedPanelButton, Panel, ToolbarButton } from './shared';
 import { cn } from './utils';
 
@@ -114,7 +115,7 @@ function buildExportMarkup(svg: SVGSVGElement, legend: ChartLegendItem[], backgr
   exportSvg.setAttribute('height', String(totalHeight));
   exportSvg.setAttribute('viewBox', `0 0 ${width} ${totalHeight}`);
   exportSvg.setAttribute('fill', 'none');
-  exportSvg.setAttribute('color', getComputedStyle(document.documentElement).getPropertyValue('--text-strong').trim() || '#111113');
+  exportSvg.setAttribute('color', getComputedStyle(document.documentElement).getPropertyValue('--text-strong').trim() || COLORS.fallback.exportText);
 
   const backgroundRect = document.createElementNS(ns, 'rect');
   backgroundRect.setAttribute('x', '0');
@@ -193,7 +194,7 @@ export function ChartPanel({
     const chartSvg = chartRef.current?.querySelector('svg');
     if (!(chartSvg instanceof SVGSVGElement)) return;
 
-    const background = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#111113';
+    const background = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || COLORS.fallback.exportBackground;
     const markup = buildExportMarkup(chartSvg, legend, background);
     downloadSvg(`${sanitizeFilename(exportName)}.svg`, markup);
   };
