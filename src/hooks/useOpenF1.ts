@@ -53,6 +53,26 @@ function setCacheEntry<T>(key: string, data: T) {
   }
 }
 
+function createInflightEntry<T>(
+  key: string,
+  fetcher: (signal: AbortSignal) => Promise<T>,
+): InflightEntry<T> {
+  const controller = new AbortController();
+  return {
+    controller,
+    consumers: 0,
+    promise: (async () => {
+      try {
+        const data = await fetcher(controller.signal);
+        setCacheEntry(key, data);
+        return data;
+      } finally {
+        inflight.delete(key);
+      }
+    })(),
+  };
+}
+
 function clearExpiredCacheEntries() {
   const now = Date.now();
   for (const [key, entry] of cache.entries()) {
@@ -160,37 +180,24 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
 
     let entry = inflight.get(key) as InflightEntry<T> | undefined;
     if (!entry) {
-      const controller = new AbortController();
-      entry = {
-        controller,
-        consumers: 0,
-        promise: fetcherRef.current(controller.signal)
-          .then((data) => {
-            setCacheEntry(key, data);
-            inflight.delete(key);
-            return data;
-          })
-          .catch((err: unknown) => {
-            inflight.delete(key);
-            throw err;
-          }),
-      };
+      entry = createInflightEntry(key, fetcherRef.current);
       inflight.set(key, entry as InflightEntry<unknown>);
     }
     entry.consumers += 1;
 
-    entry.promise
-      .then(data => {
+    void (async () => {
+      try {
+        const data = await entry.promise;
         if (seqRef.current !== seq) return; // stale
         setState({ data, loading: false, error: null });
-      })
-      .catch((err: unknown) => {
+      } catch (err: unknown) {
         if (seqRef.current !== seq) return;
         if (isAbortError(err)) return;
         console.warn(`[OpenF1] ${key}:`, err);
         const message = err instanceof Error ? err.message : 'Unknown error';
         setState({ data: cached?.data ?? null, loading: false, error: message });
-      });
+      }
+    })();
 
     return () => {
       const active = inflight.get(key) as InflightEntry<T> | undefined;
