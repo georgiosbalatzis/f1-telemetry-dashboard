@@ -46,10 +46,10 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
   return (
     <>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Air Temperature" value={latestWeather.air_temperature.toFixed(1)} unit="°C" color={COLORS.weather.air} />
-        <Stat label="Track Temperature" value={latestWeather.track_temperature.toFixed(1)} unit="°C" color={COLORS.weather.track} />
-        <Stat label="Humidity" value={latestWeather.humidity.toFixed(0)} unit="%" color={COLORS.weather.humidity} />
-        <Stat label="Wind Speed" value={latestWeather.wind_speed.toFixed(1)} unit="m/s" color={COLORS.weather.wind} />
+        <Stat label="Air Temperature" value={latestWeather.air_temperature.toFixed(1)} unit="°C" />
+        <Stat label="Track Temperature" value={latestWeather.track_temperature.toFixed(1)} unit="°C" />
+        <Stat label="Humidity" value={latestWeather.humidity.toFixed(0)} unit="%" />
+        <Stat label="Wind Speed" value={latestWeather.wind_speed.toFixed(1)} unit="m/s" />
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Pressure" value={latestWeather.pressure.toFixed(0)} unit="mbar" />
@@ -73,7 +73,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
           <div className="h-[180px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={weatherTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke={chartGrid} />
+                <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="time" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
                 <YAxis yAxisId="temp" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
                 <YAxis yAxisId="aux" orientation="right" tick={{ fill: chartAxisSoft, fontSize: 9 }} stroke={chartGrid} />

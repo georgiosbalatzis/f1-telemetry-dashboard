@@ -38,20 +38,6 @@ function TabLoadingPlaceholder({ label }: { label: string }) {
   );
 }
 
-// ─── Chip/pill types ──────────────────────────────────────────────────────────
-
-export type SummaryPill = {
-  label: string;
-  driver: string;
-  detail: string;
-  tone: 'blue' | 'purple';
-};
-
-export type QuickChip = {
-  label: string;
-  tone: 'purple' | 'amber' | 'blue' | 'neutral';
-};
-
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 export type DashboardShellProps = {
@@ -67,8 +53,6 @@ export type DashboardShellProps = {
   feedback: string | null;
 
   // ── Computed display values ────────────────────────────────────────────
-  summaryPills: SummaryPill[];
-  quickChips: QuickChip[];
   embedTitle: string;
   embedSubtitle: string;
   embedContext: Array<{ label: string; value: string }>;
@@ -101,8 +85,6 @@ export function DashboardShell({
   presetName,
   presetNames,
   feedback,
-  summaryPills,
-  quickChips,
   embedTitle,
   embedSubtitle,
   embedContext,
@@ -202,8 +184,6 @@ export function DashboardShell({
             meetingsLoading={meetings.loading}
             sessionsLoading={sessions.loading}
             lapsLoading={lapsLoading}
-            summaryPills={summaryPills}
-            quickChips={quickChips}
             canStepBackward={canStepBackward}
             canStepForward={canStepForward}
             embedMode={embedMode}
@@ -218,14 +198,12 @@ export function DashboardShell({
           {sessions.error   && <Err msg={`Failed to load sessions: ${sessions.error}`}   onAction={sessions.refetch} />}
           {drivers.error    && <Err msg={`Failed to load drivers: ${drivers.error}`}     onAction={drivers.refetch} />}
 
-          {!embedMode && (
-            <DriverSelector
+          <DriverSelector
               drivers={selectionData.driverList}
               selectedDrivers={filters.driverNums}
               embedMode={embedMode}
               onToggle={filters.toggleDriver}
             />
-          )}
 
           <DashboardTabs
             activeTab={filters.tab}
@@ -236,7 +214,7 @@ export function DashboardShell({
           />
 
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
-            <div className={contentLayoutClass}>
+            <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
                 <TelemetryTab
                   lapNum={filters.lapNum}
@@ -371,6 +349,7 @@ export function DashboardShell({
             </div>
           </ErrorBoundary>
         </main>
+        <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>
       </div>
     </div>
   );

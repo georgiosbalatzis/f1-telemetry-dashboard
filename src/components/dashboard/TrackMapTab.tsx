@@ -122,7 +122,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
           >
             <title>{svgLabel}</title>
             {/* Track base */}
-            <polyline points={trackPolyline} fill="none" stroke="var(--surface-track)" strokeWidth={16} strokeLinecap="round" strokeLinejoin="round" />
+            <polyline points={trackPolyline} fill="none" stroke="var(--surface-track)" strokeWidth={10} strokeLinecap="round" strokeLinejoin="round" />
             {/* Centre dashes */}
             <polyline points={trackPolyline} fill="none" stroke="var(--line-strong)" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="8 5" />
 
@@ -151,8 +151,8 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
               if (!marker) return null;
               return (
                 <g key={`marker-${n}`}>
-                  <circle cx={marker.nx} cy={marker.ny} r={8} fill={driverColor(n)} stroke="var(--bg)" strokeWidth={2.5} />
-                  <text x={marker.nx} y={marker.ny + 4} textAnchor="middle" fontSize={6.5} fontWeight="bold" fill="white">
+                  <circle cx={marker.nx} cy={marker.ny} r={5} fill={driverColor(n)} stroke="var(--bg)" strokeWidth={2.5} />
+                  <text x={marker.nx + 10} y={marker.ny + 4} textAnchor="start" fontSize={12} fontWeight="500" fill="var(--text-strong)">
                     {marker.label}
                   </text>
                 </g>
@@ -175,8 +175,8 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
         </div>
       </Panel>
 
-      <div className="dashboard-card rounded-[12px] p-4">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-dim)]">Data note</div>
+      <div className="data-note">
+        <div className="text-[10px] uppercase tracking-[0.06em] text-[color:var(--text-dim)]">Data note</div>
         <p className="mt-1 text-[12px] leading-[1.55] text-[color:var(--text-muted)]">
           GPS from OpenF1 <code className="font-mono text-[color:var(--text-soft)]">/location</code> at ~3.7 Hz.
           Coloured lines show each driver's path for lap {lapNum}. Dot markers show the final recorded position.

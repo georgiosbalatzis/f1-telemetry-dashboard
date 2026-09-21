@@ -12,12 +12,12 @@ type Props = {
 };
 
 function flagTone(flag: string) {
-  if (flag.includes('RED')) return 'bg-red-500/15 text-red-400';
-  if (flag.includes('YELLOW')) return 'bg-yellow-500/15 text-yellow-400';
-  if (flag.includes('GREEN')) return 'bg-emerald-500/15 text-emerald-400';
-  if (flag.includes('BLUE')) return 'bg-blue-500/15 text-blue-400';
-  if (flag === 'CHEQUERED') return 'bg-[color:var(--surface-soft)] text-[color:var(--text-strong)]';
-  return 'bg-slate-500/15 text-slate-400';
+  if (flag.includes('RED')) return 'flag-danger';
+  if (flag.includes('YELLOW')) return 'flag-warning';
+  if (flag.includes('GREEN')) return 'flag-success';
+  if (flag.includes('BLUE')) return 'flag-blue';
+  if (flag === 'CHEQUERED') return 'text-[color:var(--text-strong)]';
+  return 'text-[color:var(--text-muted)]';
 }
 
 export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
@@ -54,13 +54,14 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
                 className="dashboard-input w-full py-2 pl-9 pr-3 text-sm"
               />
             </div>
-            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 filter-scroll-fade xl:mx-0 xl:flex-wrap xl:overflow-visible xl:px-0 xl:pb-0">
+            <div className="flex flex-wrap gap-2">
               {filters.map((filter) => (
                 <button
                   key={filter}
+                  aria-pressed={activeFilter === filter}
                   onClick={() => setActiveFilter(filter)}
                   className={cn(
-                    'shrink-0 rounded-[8px] border px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] transition-colors',
+                    'shrink-0 rounded-[2px] border px-2.5 py-1 text-[10px] uppercase tracking-[0.06em] transition-colors',
                     activeFilter === filter
                       ? 'border-[color:var(--line-strong)] bg-[color:var(--surface-soft)] text-[color:var(--text-soft)]'
                       : 'border-[color:var(--line)] bg-[color:var(--surface-soft)] text-[color:var(--text-muted)] hover:text-[color:var(--text-soft)]',
@@ -72,17 +73,17 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
             </div>
           </div>
 
-          <div className="max-h-[620px] space-y-1 overflow-y-auto pr-2">
+          <div className="race-event-list">
             {filteredMessages.map((message, index) => (
-              <div key={index} className="grid gap-4 rounded-[12px] border-b border-[color:var(--line)] px-2 py-3 md:grid-cols-[90px_1fr]">
+              <div key={index} className="race-event">
                 <div className="text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-dim)]">
                   {message.lap_number != null && <div className="mb-1 text-[color:var(--text-muted)]">L{message.lap_number}</div>}
                   <div className="font-mono">{new Date(message.date).toLocaleTimeString()}</div>
                 </div>
                 <div>
                   <div className="mb-1 flex flex-wrap items-center gap-2">
-                    {message.flag && <span className={cn('rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em]', flagTone(message.flag))}>{message.flag}</span>}
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-muted)]">{message.category}</span>
+                    {message.flag && <span className={cn('flag-label', flagTone(message.flag))}>{message.flag}</span>}
+                    <span className="text-[10px] uppercase tracking-[0.06em] text-[color:var(--text-muted)]">{message.category}</span>
                   </div>
                   <p className="text-sm text-[color:var(--text-soft)]">{message.message}</p>
                 </div>
