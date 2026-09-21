@@ -1,9 +1,9 @@
 export const COLORS = {
   fallback: {
-    exportText: '#ffffff',
-    exportBackground: '#111113',
-    iframeLight: '#ffffff',
-    iframeDark: '#111113',
+    exportText: '#f2eee4',
+    exportBackground: '#181a1c',
+    iframeLight: '#f2eee4',
+    iframeDark: '#181a1c',
   },
   driverFallback: 'var(--color-driver-fallback)',
   mutedDot: 'var(--color-muted-dot)',

@@ -31,15 +31,15 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.error) return this.props.children;
 
     return (
-      <div className="dashboard-panel flex flex-col items-center justify-center gap-4 rounded-[16px] p-8 text-center sm:rounded-[18px]">
+      <div className="dashboard-panel flex flex-col items-center justify-center gap-4 rounded-[2px] p-8 text-center sm:rounded-[2px]">
         <div>
-          <p className="text-sm font-semibold text-red-300">Failed to render {this.props.label}.</p>
+          <p className="text-sm font-semibold text-[color:var(--color-danger)]">Failed to render {this.props.label}.</p>
           <p className="mt-1 text-xs text-[color:var(--text-muted)]">{this.state.error.message || 'Unexpected render error'}</p>
         </div>
         <button
           type="button"
           onClick={() => this.setState({ error: null })}
-          className="rounded-[10px] border border-[color:var(--accent-border)] bg-[color:var(--accent-muted)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--accent)] transition-colors hover:text-[color:var(--accent-hover)]"
+          className="rounded-[2px] border border-[color:var(--accent-border)] bg-[color:var(--accent-muted)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--accent)] transition-colors hover:text-[color:var(--accent-hover)]"
         >
           Retry
         </button>

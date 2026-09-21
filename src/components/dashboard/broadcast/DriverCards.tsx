@@ -30,9 +30,9 @@ export function DriverCards({
 
   return (
     <Panel
-      title="Driver Cards"
+      title="Driver Detail"
       icon={<LayoutGrid size={14} style={{ color: 'var(--accent)' }} />}
-      sub="Broadcast-style driver overview — ranked by lap time"
+      sub="Selected lap measurements, ranked by lap time"
       panelId="broadcast-driver-cards"
       headerRight={
         embedMode && onEmbedPanel ? (

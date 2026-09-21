@@ -146,8 +146,8 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
           <div className="space-y-3">
             {strategyRows.map((row) => (
               <div key={row.driverNumber} className="grid gap-2 sm:grid-cols-[64px_1fr_56px] sm:items-center sm:gap-4">
-                <div className="flex items-center justify-between sm:block sm:text-right"><span className="text-xs font-bold tracking-[0.2em]" style={{ color: row.teamColor }}>{row.acronym}</span></div>
-                <div className="dashboard-card flex h-9 flex-1 overflow-hidden rounded-[12px]">
+                <div className="flex items-center justify-between sm:block sm:text-right"><span className="text-xs font-bold tracking-[0.04em]" style={{ color: row.teamColor }}>{row.acronym}</span></div>
+                <div className="stint-map">
                   {row.segments.map((segment) => (
                     <div
                       key={segment.key}
@@ -167,30 +167,16 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
         ) : <NoData msg="No stint data for this session. Stint data is typically available for race and sprint sessions." />}
       </Panel>
 
-      <Panel title="Tyre Life Projection" icon={<CircleDot size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Current stint context at the focused lap">
-        {stintsLoading ? <CardGridSkeleton count={4} label="Loading tyre life projections..." /> : tyreLifeCards.length > 0 ? (
-          <div className="grid gap-3 lg:grid-cols-2">
+      <Panel title="Stint Context" icon={<CircleDot size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Current stint context at the focused lap">
+        {stintsLoading ? <CardGridSkeleton count={4} label="Loading stint context..." /> : tyreLifeCards.length > 0 ? (
+          <div className="strategy-rows">
             {tyreLifeCards.map((card) => (
-              <div key={card.driverNumber} className="dashboard-card rounded-[16px] p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="text-xs font-black tracking-[0.2em]" style={{ color: card.teamColor }}>{card.acronym}</span>
-                  <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ backgroundColor: withAlpha(card.compoundColor, 11), color: card.compoundColor }}>{card.compound}</span>
-                </div>
-                <div className="mb-3 text-3xl font-black text-emerald-300">{card.remaining}</div>
-                <div className="grid grid-cols-3 gap-3 text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
-                  <div>
-                    <div className="mb-1 text-[color:var(--text-dim)]">Laps Left</div>
-                    <div className="font-mono text-[color:var(--text-soft)]">{card.remaining}</div>
-                  </div>
-                  <div>
-                    <div className="mb-1 text-[color:var(--text-dim)]">Stint Age</div>
-                    <div className="font-mono text-[color:var(--text-soft)]">{card.stintAge}</div>
-                  </div>
-                  <div>
-                    <div className="mb-1 text-[color:var(--text-dim)]">Stop Est.</div>
-                    <div className="font-mono text-[color:var(--text-soft)]">L{card.stopEstimate}</div>
-                  </div>
-                </div>
+              <div key={card.driverNumber} className="strategy-row">
+                <strong className="standing-driver"><i className="driver-marker" style={{ background: card.teamColor }} />{card.acronym}</strong>
+                <span style={{ color: card.compoundColor }}>{card.compound}<small>Compound</small></span>
+                <span>{card.stintAge}<small>Stint age · laps</small></span>
+                <span>{card.remaining}<small>Laps to stint end</small></span>
+                <span>L{card.stopEstimate}<small>Recorded stint end</small></span>
               </div>
             ))}
           </div>
@@ -199,15 +185,13 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
 
       <Panel title="Pit Stops" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Ordered by stationary time">
         {pitsLoading ? <CardGridSkeleton count={4} label="Loading pit stops..." /> : pitStopCards.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="strategy-rows">
             {pitStopCards.map((card) => (
-              <div key={card.key} className="dashboard-card rounded-[16px] p-3">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: card.teamColor }} />
-                  <span className="text-xs font-bold tracking-[0.2em]" style={{ color: card.teamColor }}>{card.acronym}</span>
-                </div>
-                <div className="text-xl font-black font-mono text-[color:var(--text-strong)]">{card.stopDuration}<span className="text-sm text-[color:var(--text-muted)]">s</span></div>
-                <div className="text-[10px] uppercase tracking-[0.15em] text-[color:var(--text-muted)]">Lap {card.lapNumber} · Pit lane: {card.pitLaneDuration}s</div>
+              <div key={card.key} className="strategy-row">
+                <strong className="standing-driver"><i className="driver-marker" style={{ background: card.teamColor }} />{card.acronym}</strong>
+                <span>L{card.lapNumber}<small>Lap</small></span>
+                <span>{card.stopDuration}s<small>Stationary</small></span>
+                <span>{card.pitLaneDuration}s<small>Pit lane</small></span>
               </div>
             ))}
           </div>

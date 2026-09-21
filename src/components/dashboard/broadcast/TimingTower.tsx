@@ -25,7 +25,7 @@ export function TimingTower({
   const { driverMap } = useDriverContext();
   return (
     <Panel
-      title="Timing Tower"
+      title="Lap Classification"
       icon={<Tv2 size={14} style={{ color: 'var(--accent)' }} />}
       sub={`Lap ${lapNum} — selected drivers ranked by lap time`}
       panelId="broadcast-timing-tower"

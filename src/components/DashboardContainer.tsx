@@ -16,7 +16,6 @@ import { COLORS } from '../constants/colors';
 import { DriverProvider } from '../contexts/DriverContext';
 import { DashboardShell } from './DashboardShell';
 import { TAB_LABELS } from './dashboard/tabLabels';
-import type { QuickChip, SummaryPill } from './DashboardShell';
 import type { Tab } from './dashboard/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -136,7 +135,7 @@ function isShareCancel(error: unknown) {
 
 export function DashboardContainer() {
   const data = useDashboard();
-  const { filters, viewModel, selectionData, pits } = data;
+  const { filters, selectionData } = data;
 
   // ── Local UI state ─────────────────────────────────────────────────────
   const [splitMode,    setSplitMode]    = useState(readInitialSplitMode);
@@ -147,43 +146,14 @@ export function DashboardContainer() {
   const [savedPresets, setSavedPresets] = useState<Record<string, SavedPreset>>(readSavedPresets);
 
   // ── Derived layout classes ─────────────────────────────────────────────
-  const contentLayoutClass = splitMode
-    ? `grid ${embedMode ? 'gap-5 pb-8' : 'gap-4 pb-12 sm:gap-5 sm:pb-16'} xl:grid-cols-2 xl:[&>*:first-child]:col-span-2`
-    : `${embedMode ? 'space-y-5 pb-8' : 'space-y-4 pb-12 sm:space-y-5 sm:pb-16'}`;
+  const contentLayoutClass = splitMode ? 'analysis-content analysis-split' : 'analysis-content';
 
   const pageShellClass = embedMode
-    ? 'relative mx-auto max-w-[1320px] px-3 py-3 sm:px-4 sm:py-4'
-    : 'relative mx-auto max-w-[1440px] px-4 py-3 sm:px-6 sm:py-4';
+    ? 'page-shell page-shell-embed'
+    : 'page-shell';
 
   // ── Computed display values ────────────────────────────────────────────
   const tabBoundaryResetKey = `${filters.tab}:${filters.sessionKey ?? 'none'}:${filters.lapNum}:${filters.driverNums.join(',')}`;
-
-  const summaryPills = useMemo<SummaryPill[]>(() => {
-    return viewModel.lapSummaries.slice(0, 2).map((summary, index) => ({
-      label:  `P${index + 1}`,
-      driver: summary.name,
-      detail:
-        summary.gapToLeader != null && summary.gapToLeader > 0
-          ? `+${summary.gapToLeader.toFixed(3)}s`
-          : summary.lapTime != null
-          ? `${summary.lapTime.toFixed(3)}s`
-          : '—',
-      tone: index === 0 ? 'blue' as const : 'purple' as const,
-    }));
-  }, [viewModel.lapSummaries]);
-
-  const quickChips = useMemo<QuickChip[]>(() => {
-    const leader   = viewModel.lapSummaries[0];
-    const pitLabel = filters.tab === 'tires'
-      ? pits.loading ? 'Pits …' : `Pits ${viewModel.filteredPits.length}`
-      : 'Pits —';
-    return [
-      { label: leader?.lapTime ? `Fastest ${leader.name} ${leader.lapTime.toFixed(3)}s` : `Focus L${filters.lapNum}`, tone: 'purple' as const },
-      { label: pitLabel,                                  tone: 'amber'   as const },
-      { label: `Drivers ${filters.driverNums.length}`,   tone: 'blue'    as const },
-      { label: `Laps ${selectionData.lapOptions.length}`, tone: 'neutral' as const },
-    ];
-  }, [filters.driverNums.length, filters.lapNum, filters.tab, pits.loading, selectionData.lapOptions.length, viewModel.filteredPits.length, viewModel.lapSummaries]);
 
   const sessionLabel = useMemo(
     () =>
@@ -250,7 +220,7 @@ export function DashboardContainer() {
     const timerId = window.setInterval(() => {
       const target = window.document.getElementById(targetId);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
         window.clearInterval(timerId);
         return;
       }
@@ -397,8 +367,6 @@ export function DashboardContainer() {
       presetName={presetName}
       presetNames={presetNames}
       feedback={feedback}
-      summaryPills={summaryPills}
-      quickChips={quickChips}
       embedTitle={embedTitle}
       embedSubtitle={embedSubtitle}
       embedContext={embedContext}
