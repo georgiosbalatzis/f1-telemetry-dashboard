@@ -40,7 +40,7 @@ export function DriverCards({
         ) : undefined
       }
     >
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className={`grid gap-3 sm:grid-cols-2 ${sorted.length === 3 ? 'xl:grid-cols-3' : sorted.length > 3 ? 'xl:grid-cols-4' : ''}`}>
         {sorted.map((summary, index) => {
           const pos        = index + 1;
           const driver     = driverMap[summary.driverNumber];

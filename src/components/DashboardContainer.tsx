@@ -342,7 +342,7 @@ export function DashboardContainer() {
 
   const handlePrint       = useCallback(() => { setFeedback('Opening print dialog'); window.print(); }, []);
   const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled'); }, [splitMode]);
-  const handleToggleTheme = useCallback(() => { const next = themeMode === 'light' ? 'dark' : 'light'; setThemeMode(next); setFeedback(next === 'light' ? 'Light mode enabled' : 'Dark mode enabled'); }, [themeMode]);
+  const handleToggleTheme = useCallback(() => setThemeMode((mode) => (mode === 'light' ? 'dark' : 'light')), []);
   const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback('No previous page in history'); } }, []);
 
   // ── Driver context value (shared with all tab components via DriverProvider) ─

@@ -199,6 +199,8 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .utility-button[aria-pressed="true"] { color: var(--accent); background: var(--accent-muted); }
 .dashboard-chart-actions .utility-button > span { display: none; }
 .dashboard-chart-actions .utility-button { min-width: 44px; }
+/* 44px targets centred on the 21px heading's first line (line-height 26px). */
+.panel-heading > .dashboard-chart-actions, .panel-heading > .utility-button { margin-top: -9px; }
 .dashboard-chart-frame:fullscreen { padding: 24px; background: var(--bg); overflow: auto; }
 .dashboard-chart-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; padding-top: 8px; }
 .dashboard-chart-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); }
@@ -251,6 +253,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .radio-entry strong { display: flex; align-items: center; gap: 8px; font-size: 15px; }
 .radio-entry time { display: block; margin-top: 5px; color: var(--text-muted); font-size: 12px; }
 .radio-entry a { font-size: 12px; min-height: 44px; display: flex; align-items: center; }
+.clock-time { display: block; font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: normal; text-transform: none; white-space: nowrap; }
 .race-event { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .flag-label { font-size: 10px; font-weight: 600; padding-left: 7px; border-left: 3px solid currentColor; }
 .flag-danger { color: var(--color-danger); }
@@ -271,6 +274,8 @@ option, optgroup { background: var(--surface); color: var(--text); }
   .driver-surname { display: inline; }
   .driver-options { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .lap-comparison { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lap-comparison:has(> :last-child:nth-child(-n+2)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lap-comparison:has(> :last-child:nth-child(3)) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .strategy-row { grid-template-columns: 1.2fr repeat(4, 1fr); align-items: end; }
   .strategy-row > :first-child { grid-column: auto; }
 }

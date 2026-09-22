@@ -66,10 +66,10 @@
     "semantic_hash": "0e74ac1fc3f9643a92dcd3f5c8826d13"
   },
   "src/components/DashboardContainer.tsx": {
-    "mtime": 1790065025.7029142,
-    "seen": 1790065548.9736261,
-    "ast_hash": "b919a290a6819f9ee9f9fdbf4937799a",
-    "semantic_hash": ""
+    "mtime": 1790060014.2508473,
+    "seen": 1790060867.2071521,
+    "ast_hash": "d4936f6cff1fa282bd3ec49a3d51d2b8",
+    "semantic_hash": "d4936f6cff1fa282bd3ec49a3d51d2b8"
   },
   "src/components/DashboardShell.tsx": {
     "mtime": 1790058151.671883,
@@ -102,9 +102,9 @@
     "semantic_hash": "9bc4ecea6c2ef6bbfe32d21115d3fff1"
   },
   "src/components/__tests__/P2Polish.test.tsx": {
-    "mtime": 1790064479.7741573,
-    "seen": 1790065548.97363,
-    "ast_hash": "69ee3923f319e8555e43ea45a7613b94",
+    "mtime": 1790061947.5558314,
+    "seen": 1790064303.233684,
+    "ast_hash": "8f599c7c4fc9041210deb2c74bda9b89",
     "semantic_hash": ""
   },
   "src/components/__tests__/PositionsField.test.tsx": {
@@ -114,10 +114,10 @@
     "semantic_hash": "f2e77e3feb349a3895f2ed61f7d35bda"
   },
   "src/components/__tests__/VisualWorkflow.test.tsx": {
-    "mtime": 1790065096.85089,
-    "seen": 1790065548.973633,
-    "ast_hash": "209eccc1f9e81cc8dadd2d6f261fea92",
-    "semantic_hash": ""
+    "mtime": 1790058151.6722834,
+    "seen": 1790060867.207155,
+    "ast_hash": "905d91387fc04c7d7456aef891ed8776",
+    "semantic_hash": "905d91387fc04c7d7456aef891ed8776"
   },
   "src/components/dashboard/BroadcastTab.tsx": {
     "mtime": 1790058151.67267,
@@ -126,16 +126,16 @@
     "semantic_hash": "8ce657c9c7ce17b4bee7212b9a99bb9b"
   },
   "src/components/dashboard/ChartPanel.tsx": {
-    "mtime": 1790065134.8159447,
-    "seen": 1790065548.973634,
-    "ast_hash": "f2c938a4b814930b795868cff60a561f",
-    "semantic_hash": ""
+    "mtime": 1790058151.6729188,
+    "seen": 1790060867.207156,
+    "ast_hash": "8c62801f162d53bc8965f14121884b58",
+    "semantic_hash": "8c62801f162d53bc8965f14121884b58"
   },
   "src/components/dashboard/DashboardHeader.tsx": {
-    "mtime": 1790065025.7032452,
-    "seen": 1790065548.973634,
-    "ast_hash": "f52ab0a54d323ec82774056e6787f243",
-    "semantic_hash": ""
+    "mtime": 1790058151.6731083,
+    "seen": 1790060867.207157,
+    "ast_hash": "9f35a207a8d6ca61824c4600e24c5c23",
+    "semantic_hash": "9f35a207a8d6ca61824c4600e24c5c23"
   },
   "src/components/dashboard/DashboardSelectors.tsx": {
     "mtime": 1789992324.6874564,
@@ -156,10 +156,10 @@
     "semantic_hash": "6d85e1e9987e0e2489baad05516fd3dd"
   },
   "src/components/dashboard/EnergyTab.tsx": {
-    "mtime": 1790065088.2999651,
-    "seen": 1790065548.9736362,
-    "ast_hash": "a99130ae20dcdefed6c73399f16757cc",
-    "semantic_hash": ""
+    "mtime": 1790059417.3081331,
+    "seen": 1790060867.207158,
+    "ast_hash": "bfa6241d3b71d0d625d899a22670edb4",
+    "semantic_hash": "bfa6241d3b71d0d625d899a22670edb4"
   },
   "src/components/dashboard/IncidentsTab.tsx": {
     "mtime": 1790063730.7555802,
@@ -192,10 +192,10 @@
     "semantic_hash": "c240becc065506d3d0429f11c867fbf7"
   },
   "src/components/dashboard/TelemetryTab.tsx": {
-    "mtime": 1790065088.299712,
-    "seen": 1790065548.97364,
-    "ast_hash": "e00545b792b067951d9b2a42ea106d48",
-    "semantic_hash": ""
+    "mtime": 1790059638.457549,
+    "seen": 1790060867.20716,
+    "ast_hash": "82aa30bea14fee739d2fd569371b576d",
+    "semantic_hash": "82aa30bea14fee739d2fd569371b576d"
   },
   "src/components/dashboard/TrackMapTab.tsx": {
     "mtime": 1790063262.9396386,
@@ -258,10 +258,10 @@
     "semantic_hash": "eec2bd91adde0f7d6de18d6361a5c0b5"
   },
   "src/components/dashboard/chartAxis.ts": {
-    "mtime": 1790065088.2995236,
-    "seen": 1790065548.9736462,
-    "ast_hash": "1a70b88553ecd156f04b10a5672d4aa8",
-    "semantic_hash": ""
+    "mtime": 1790059359.358047,
+    "seen": 1790060867.2071638,
+    "ast_hash": "767881850a011e90a36e09cd32e7217d",
+    "semantic_hash": "767881850a011e90a36e09cd32e7217d"
   },
   "src/components/dashboard/positionsUtils.ts": {
     "mtime": 1775893336.133282,
@@ -270,10 +270,10 @@
     "semantic_hash": "ac15a852c0302875fd69b997925500e0"
   },
   "src/components/dashboard/shared.tsx": {
-    "mtime": 1790065525.1483707,
-    "seen": 1790065548.973647,
-    "ast_hash": "cf155cd925c366689f43ac365514ec4f",
-    "semantic_hash": ""
+    "mtime": 1790058976.2287865,
+    "seen": 1790060867.207165,
+    "ast_hash": "8c3e1c49a3d7e43016207fd6e92fd266",
+    "semantic_hash": "8c3e1c49a3d7e43016207fd6e92fd266"
   },
   "src/components/dashboard/tabLabels.ts": {
     "mtime": 1775892589.1937704,
@@ -390,10 +390,10 @@
     "semantic_hash": "00e47f7b9836e8f731101981fa2bb2de"
   },
   "src/utils/exportChart.ts": {
-    "mtime": 1790064396.0424016,
-    "seen": 1790065548.9736571,
-    "ast_hash": "6191179306c313712e2f5383e3e53cb2",
-    "semantic_hash": ""
+    "mtime": 1790058151.677104,
+    "seen": 1790060867.2071722,
+    "ast_hash": "fad6e43b2335bb24bd9b3ac7842e48e5",
+    "semantic_hash": "fad6e43b2335bb24bd9b3ac7842e48e5"
   },
   "src/vite-env.d.ts": {
     "mtime": 1774958466.1114838,
@@ -660,15 +660,9 @@
     "semantic_hash": ""
   },
   "TASKS.md": {
-    "mtime": 1790065441.4688148,
-    "seen": 1790065548.973674,
-    "ast_hash": "93836968b6eb40114a2e7e7a8a2be61f",
-    "semantic_hash": ""
-  },
-  "src/components/__tests__/P3Polish.test.tsx": {
-    "mtime": 1790065525.1485395,
-    "seen": 1790065548.973631,
-    "ast_hash": "fd59112416da8f7dbc809b6fb12ff61e",
+    "mtime": 1790064272.1385834,
+    "seen": 1790064303.233727,
+    "ast_hash": "7796bfec766f418e2ba8c2b298a27f04",
     "semantic_hash": ""
   }
 }

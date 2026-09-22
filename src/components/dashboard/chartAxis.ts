@@ -48,3 +48,8 @@ export function formatLapAxis(seconds: number) {
 export function formatPedalAxis(value: number) {
   return `${Math.abs(value)}%`;
 }
+
+/** DRS is plotted as 0/1; axis and tooltip both read it as a state. */
+export function formatDrsState(value: number) {
+  return value >= 1 ? 'Open' : 'Closed';
+}

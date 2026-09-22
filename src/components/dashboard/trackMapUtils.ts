@@ -1,7 +1,7 @@
 /** SVG canvas dimensions for the track map. Chosen to preserve OpenF1 GPS coordinate aspect ratio. */
 export const MAP_W = 600;
 export const MAP_H = 380;
-export const PADDING = 36;
+export const PADDING = 20;
 
 export type SvgPoint = { nx: number; ny: number };
 
@@ -37,4 +37,16 @@ export function buildTransform(rawPoints: { x: number; y: number }[]): ((p: { x:
 
 export function toPolyline(pts: SvgPoint[]): string {
   return pts.map((p) => `${p.nx.toFixed(1)},${p.ny.toFixed(1)}`).join(' ');
+}
+
+export type MapBox = { x: number; y: number; w: number; h: number };
+
+/** Crops the drawing to the projected track plus a margin, so portrait circuits are not boxed into the landscape canvas. */
+export function fitBox(pts: SvgPoint[], margin: number): MapBox {
+  if (pts.length === 0) return { x: 0, y: 0, w: MAP_W, h: MAP_H };
+  const xs = pts.map((p) => p.nx);
+  const ys = pts.map((p) => p.ny);
+  const x = Math.min(...xs) - margin;
+  const y = Math.min(...ys) - margin;
+  return { x, y, w: Math.max(...xs) + margin - x, h: Math.max(...ys) + margin - y };
 }

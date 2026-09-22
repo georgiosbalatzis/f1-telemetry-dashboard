@@ -5,7 +5,7 @@ import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SpeedPoint } from './types';
 import { PanelSelection, ChartSkeleton, ChartTip, NoData } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
-import { AXIS_TICK, CHART_MARGIN, PROGRESS_TICKS, evenTicks, useXTickCount } from './chartAxis';
+import { AXIS_TICK, CHART_MARGIN, PROGRESS_TICKS, evenTicks, useXTickCount, formatDrsState } from './chartAxis';
 
 type Props = {
   lapNum: number;
@@ -103,8 +103,8 @@ export function EnergyTab({
               <LineChart data={comparisonEnergyData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
-                <YAxis domain={[0, 1.1]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={AXIS_TICK} stroke={chartGrid} />
-                <Tooltip content={<ChartTip discrete labelPrefix="Lap progress · " />} />
+                <YAxis domain={[0, 1.1]} ticks={[0, 1]} tickFormatter={formatDrsState} tick={AXIS_TICK} stroke={chartGrid} />
+                <Tooltip content={<ChartTip format={formatDrsState} labelPrefix="Lap progress · " labelSuffix="%" />} />
                 {comparisonDriverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="stepAfter" dataKey={`drs_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
@@ -117,8 +117,8 @@ export function EnergyTab({
               <AreaChart data={speedData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
-                <YAxis domain={[0, 1.2]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={AXIS_TICK} stroke={chartGrid} />
-                <Tooltip content={<ChartTip discrete labelPrefix="Sample · " />} />
+                <YAxis domain={[0, 1.2]} ticks={[0, 1]} tickFormatter={formatDrsState} tick={AXIS_TICK} stroke={chartGrid} />
+                <Tooltip content={<ChartTip format={formatDrsState} labelPrefix="Sample · " />} />
                 <Area type="stepAfter" dataKey="drs" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.14} strokeWidth={2} isAnimationActive={false} name="DRS" />
               </AreaChart>
             </ResponsiveContainer>
@@ -145,7 +145,7 @@ export function EnergyTab({
                 <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
                 <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={AXIS_TICK} stroke={chartGrid} />
-                <Tooltip content={<ChartTip discrete labelPrefix="Lap progress · " />} />
+                <Tooltip content={<ChartTip discrete labelPrefix="Lap progress · " labelSuffix="%" />} />
                 {comparisonDriverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="stepAfter" dataKey={`gear_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
@@ -186,7 +186,7 @@ export function EnergyTab({
                 <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
                 <YAxis domain={[0, 15000]} ticks={[0, 5000, 10000, 15000]} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={(value: number) => `${value / 1000}k`} />
-                <Tooltip content={<ChartTip unit="rpm" discrete labelPrefix="Lap progress · " />} />
+                <Tooltip content={<ChartTip unit="rpm" discrete labelPrefix="Lap progress · " labelSuffix="%" />} />
                 {comparisonDriverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`rpm_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={1.8} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}

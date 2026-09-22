@@ -168,7 +168,7 @@ export function ToolbarButton({
 }
 
 export function EmbedPanelButton({ onClick, label = 'Embed' }: { onClick: () => void; label?: string }) {
-  return <ToolbarButton icon={<Code2 size={12} />} label={label} onClick={onClick} />;
+  return <ToolbarButton icon={<Code2 size={16} />} label={label} onClick={onClick} />;
 }
 
 type ChartTipPayload = {
@@ -178,19 +178,31 @@ type ChartTipPayload = {
   dataKey?: string | number;
 };
 
-export function ChartTip({ active, payload, label, unit = '', labelPrefix = '', absolute = false, discrete = false }: {
+/** Tooltip decimals follow each measurement's axis: whole km/h, %, rpm and ms; thousandths for lap seconds. */
+const TIP_PRECISION: Record<string, number> = { s: 3, ms: 0, 'km/h': 0, '%': 0, rpm: 0 };
+
+/** Fixed-precision value without a misleading "-0" when a small signed delta rounds to zero. */
+function fixedValue(value: number, digits: number) {
+  const text = value.toFixed(digits);
+  return Number(text) === 0 ? text.replace('-', '') : text;
+}
+
+export function ChartTip({ active, payload, label, unit = '', labelPrefix = '', labelSuffix = '', absolute = false, discrete = false, format }: {
   active?: boolean; payload?: ChartTipPayload[]; label?: string | number;
-  unit?: string; labelPrefix?: string; absolute?: boolean; discrete?: boolean;
+  unit?: string; labelPrefix?: string; labelSuffix?: string; absolute?: boolean; discrete?: boolean;
+  /** Replaces numeric formatting for coded values, e.g. DRS 0/1 → Closed/Open, matching the axis. */
+  format?: (value: number) => string;
 }) {
   if (!active || !payload?.length) return null;
+  const unitText = unit === '%' || unit === '°C' ? unit : unit && ` ${unit}`;
   return (
     <div className="chart-tooltip">
-      <div className="tooltip-label">{labelPrefix}{label}</div>
+      <div className="tooltip-label">{labelPrefix}{label}{labelSuffix}</div>
       {payload.map((item, index) => (
         <div key={index} className="tooltip-row">
           <span className="driver-marker" style={{ backgroundColor: item.color }} />
           <span>{item.name}</span>
-          <strong>{typeof item.value === 'number' ? (absolute ? Math.abs(item.value) : item.value).toFixed(discrete ? 0 : unit === 's' ? 3 : 1) : item.value}{unit && ` ${unit}`}</strong>
+          <strong>{typeof item.value !== 'number' ? item.value : format ? format(item.value) : `${fixedValue(absolute ? Math.abs(item.value) : item.value, discrete ? 0 : TIP_PRECISION[unit] ?? 1)}${unitText}`}</strong>
         </div>
       ))}
     </div>

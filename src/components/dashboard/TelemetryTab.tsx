@@ -142,7 +142,7 @@ export function TelemetryTab({
                 <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
                 <YAxis domain={[0, 370]} ticks={[0, 100, 200, 300]} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
-                <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " />} />
+                <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " labelSuffix="%" />} />
                 {driverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`speed_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
@@ -196,7 +196,7 @@ export function TelemetryTab({
                 <CartesianGrid vertical={false} stroke={chartGrid} />
                 <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
                 <YAxis allowDecimals={false} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
-                <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " />} />
+                <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " labelSuffix="%" />} />
                 {driverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`delta_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
@@ -226,7 +226,7 @@ export function TelemetryTab({
                   <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
                   <YAxis domain={[-105, 105]} ticks={PEDAL_TICKS} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={formatPedalAxis} label={<PedalHalvesLabel />} />
                   <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
-                  <Tooltip content={<ChartTip unit="%" absolute labelPrefix="Lap progress · " />} />
+                  <Tooltip content={<ChartTip unit="%" absolute labelPrefix="Lap progress · " labelSuffix="%" />} />
                   {driverNums.map((driverNumber) => (
                     <Line key={`throttle-${driverNumber}`} type="monotone" dataKey={`throttle_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Throttle`} />
                   ))}

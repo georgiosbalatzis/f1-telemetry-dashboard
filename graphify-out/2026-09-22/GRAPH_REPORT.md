@@ -1,12 +1,12 @@
 # Graph Report - f1-telemetry-dashboard  (2026-09-22)
 
 ## Corpus Check
-- 100 files · ~72,974 words
+- 99 files · ~72,422 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 11 file(s) not represented in the graph (top: (none) 4, .woff2 4, .css 2)
 
 ## Summary
-- 779 nodes · 1584 edges · 39 communities (30 shown, 9 thin omitted)
+- 774 nodes · 1563 edges · 41 communities (31 shown, 10 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 63 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
@@ -16,9 +16,9 @@
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- P2Polish.test.tsx
+- TelemetryTab.tsx
 - openf1.ts
-- F1 Stories / Telemetry Visual Rework
+- DashboardShell.tsx
 - /graphify skill
 - DESIGN.md
 - Cookies
@@ -28,8 +28,8 @@
 - compilerOptions
 - devDependencies
 - compilerOptions
-- DashboardContainer.tsx
-- positionsUtils.test.ts
+- useDashboardFilters.ts
+- ErrorBoundary
 - scripts
 - P2 — Noticeable polish issues
 - manifest.json
@@ -49,14 +49,16 @@
 - Senior AI Collaborator Operating Prompt
 - robots.txt (allow all)
 - Tracing
-- exportChart.ts
-- main.tsx
-- openf1.integration.test.ts
-- @testing-library/jest-dom
+- SKILL.md
+- Video Recording
+- Advanced Mocking with run-code
+- Attaching Screenshots and Videos to Pull Requests
+- Trace Output Files
+- element-attributes.md
 
 ## God Nodes (most connected - your core abstractions)
 1. `F1 Stories / Telemetry Visual Rework` - 31 edges
-2. `react` - 28 edges
+2. `react` - 27 edges
 3. `useDashboard()` - 22 edges
 4. `useDriverContext()` - 20 edges
 5. `useFetch()` - 19 edges
@@ -69,14 +71,14 @@
 ## Surprising Connections (you probably didn't know these)
 - `Unboxed shared Panel / chart treatment` --references--> `Panel()`  [INFERRED]
   TELEMETRY_VISUAL_REWORK.md → src/components/dashboard/shared.tsx
-- `F1 Stories / Telemetry Visual Rework` --references--> `DashboardContainer()`  [INFERRED]
-  TELEMETRY_VISUAL_REWORK.md → src/components/DashboardContainer.tsx
 - `Embed mode treatment` --references--> `DashboardShell()`  [INFERRED]
   TELEMETRY_VISUAL_REWORK.md → src/components/DashboardShell.tsx
 - `F1 Stories / Telemetry Visual Rework` --references--> `ErrorBoundary`  [INFERRED]
   TELEMETRY_VISUAL_REWORK.md → src/components/ErrorBoundary.tsx
 - `F1 STORIES. / TELEMETRY masthead with Tools disclosure` --references--> `DashboardHeader()`  [INFERRED]
   TELEMETRY_VISUAL_REWORK.md → src/components/dashboard/DashboardHeader.tsx
+- `Unified session scope controls (Season/GP/Session/Lap)` --references--> `DashboardSelectors()`  [INFERRED]
+  TELEMETRY_VISUAL_REWORK.md → src/components/dashboard/DashboardSelectors.tsx
 
 ## Import Cycles
 - None detected.
@@ -87,19 +89,19 @@
 - **graphify extraction pipeline stages** — _claude_skills_graphify_skill_structural_ast_extraction, _claude_skills_graphify_skill_semantic_subagent_extraction, _claude_skills_graphify_skill_ast_semantic_merge, _claude_skills_graphify_skill_community_labeling, _claude_skills_graphify_skill_shrink_guard, _claude_skills_graphify_skill_graph_health_check, _claude_skills_graphify_skill_manifest_stamping [EXTRACTED 1.00]
 - **Graph rebuild triggers (update, watch, hook, add)** — _claude_skills_graphify_references_update_incremental_update, _claude_skills_graphify_references_add_watch_watch_mode, _claude_skills_graphify_references_hooks_post_commit_hook, _claude_skills_graphify_references_add_watch_graphify_add, claude_graphify_update_after_changes [INFERRED 0.85]
 
-## Communities (39 total, 9 thin omitted)
+## Communities (41 total, 10 thin omitted)
 
-### Community 0 - "P2Polish.test.tsx"
-Cohesion: 0.08
-Nodes (27): react, @testing-library/react, @testing-library/user-event, vitest, OpenF1Driver, OpenF1TeamRadio, formatLapAxis(), formatPedalAxis() (+19 more)
+### Community 0 - "TelemetryTab.tsx"
+Cohesion: 0.09
+Nodes (50): react, recharts, OpenF1Weather, AXIS_FONT_SIZE, AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks() (+42 more)
 
 ### Community 1 - "openf1.ts"
-Cohesion: 0.07
-Nodes (67): buildUrl(), buildUrlWithDateFilters(), combineSignals(), createTimeoutSignal(), fetchJson(), getCarDataForLap(), getDrivers(), getIntervals() (+59 more)
+Cohesion: 0.05
+Nodes (87): Codex Improvement Prompt (8 phases), Phase 1 Critical Bug Fixes, Phase 2 Performance Optimizations, Phase 3 Accessibility, Phase 5 Error Handling & Resilience, Phase 6 Code Quality & Housekeeping, Phase 7 Architecture Refactor, Phase 8 Testing (Vitest + RTL + msw) (+79 more)
 
-### Community 2 - "F1 Stories / Telemetry Visual Rework"
-Cohesion: 0.09
-Nodes (49): Codex Improvement Prompt (8 phases), Container + Presenter split, CSS-var semantic colour tokens (COLORS), Orbitron font loading fix, Phase 1 Critical Bug Fixes, Phase 2 Performance Optimizations, Phase 3 Accessibility, Phase 4 Visual / UI Improvements (+41 more)
+### Community 2 - "DashboardShell.tsx"
+Cohesion: 0.05
+Nodes (53): Vite HTML entry (F1 Stories / Telemetry), Container + Presenter split, CSS-var semantic colour tokens (COLORS), Orbitron font loading fix, Phase 4 Visual / UI Improvements, Barlow Condensed SIL OFL 1.1 License, IBM Plex Sans SIL OFL 1.1 License, Legacy CRA public/index.html template (+45 more)
 
 ### Community 3 - "/graphify skill"
 Cohesion: 0.10
@@ -114,16 +116,16 @@ Cohesion: 0.06
 Nodes (35): Advanced: Multiple Cookies or Custom Options, Advanced: Multiple Operations, Authentication State Reuse, Clear All Cookies, Clear All localStorage, Clear sessionStorage, Common Patterns, Cookies (+27 more)
 
 ### Community 6 - "TrackMapTab.tsx"
-Cohesion: 0.23
-Nodes (13): OpenF1Location, DriverMarker, mapPosition(), Props, buildTransform(), fitBox(), MAP_H, MAP_W (+5 more)
+Cohesion: 0.24
+Nodes (14): OpenF1Location, DriverMarker, mapPosition(), Props, TrackMapTab(), buildTransform(), fitBox(), MAP_H (+6 more)
 
 ### Community 7 - "shared.tsx"
-Cohesion: 0.05
-Nodes (87): lucide-react, recharts, OpenF1Stint, IndexedSectorTime, SectorAnalysisData, SectorClass, buildSectorAnalysis(), classifySectorEntries() (+79 more)
+Cohesion: 0.06
+Nodes (66): lucide-react, OpenF1Pit, OpenF1RaceControl, OpenF1Stint, OpenF1TeamRadio, IndexedSectorTime, SectorAnalysisData, SectorClass (+58 more)
 
 ### Community 8 - "package.json"
-Cohesion: 0.12
-Nodes (18): name, packageManager, private, type, version, eslint, @eslint/js, eslint-plugin-react-hooks (+10 more)
+Cohesion: 0.11
+Nodes (19): name, packageManager, private, type, version, eslint, @eslint/js, eslint-plugin-react-hooks (+11 more)
 
 ### Community 9 - "compilerOptions"
 Cohesion: 0.10
@@ -137,13 +139,13 @@ Nodes (19): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, esli
 Cohesion: 0.11
 Nodes (17): compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleDetection, moduleResolution, noEmit (+9 more)
 
-### Community 12 - "DashboardContainer.tsx"
-Cohesion: 0.09
-Nodes (34): GROUPS, TAB_LABELS, Tab, buildDashboardUrl(), buildIframeSnippet(), DashboardContainer(), getClipboardErrorMessage(), isShareCancel() (+26 more)
+### Community 12 - "useDashboardFilters.ts"
+Cohesion: 0.21
+Nodes (15): CURRENT_YEAR, DashboardFilterSnapshot, parseBoundedInt(), parseCircuit(), parseDriverNumber(), parseDriverNumbers(), parseLapNumber(), parseSessionKey() (+7 more)
 
-### Community 13 - "positionsUtils.test.ts"
-Cohesion: 0.36
-Nodes (4): OpenF1Position, buildPositionChartData(), MAX_CHART_POINTS, PositionChartResult
+### Community 13 - "ErrorBoundary"
+Cohesion: 0.14
+Nodes (7): @testing-library/react, @testing-library/user-event, ErrorBoundary, Props, State, lap, sample
 
 ### Community 14 - "scripts"
 Cohesion: 0.20
@@ -151,7 +153,7 @@ Nodes (10): scripts, build, ci, dev, lint, preview, test, test:ui (+2 more)
 
 ### Community 15 - "P2 — Noticeable polish issues"
 Cohesion: 0.07
-Nodes (29): F1 Telemetry Dashboard — TASKS, Final verification checklist, P0 — Visually or functionally broken, P1 — Strongly damages the F1Stories identity, P2 — Noticeable polish issues, [ ] P3-03 — Legend lines look like tiny curved bowls, P3 — Micro-polish, [x] P0-01 — Broadcast contradicts the available analysis (+21 more)
+Nodes (29): F1 Telemetry Dashboard — TASKS, Final verification checklist, P0 — Visually or functionally broken, P1 — Strongly damages the F1Stories identity, P2 — Noticeable polish issues, [ ] P3-01 — Theme feedback moves the mobile page, [ ] P3-02 — Tooltip formatting remains generic, [ ] P3-03 — Legend lines look like tiny curved bowls (+21 more)
 
 ### Community 16 - "manifest.json"
 Cohesion: 0.25
@@ -190,44 +192,48 @@ Cohesion: 1.00
 Nodes (3): F1 Stories App Icon (192px), F1 Stories Brand, Red F1 Car Badge Emblem
 
 ### Community 28 - "Running Custom Playwright Code"
-Cohesion: 0.04
-Nodes (40): Examples, Inspecting Element Attributes, Debugging Playwright Tests, Running Playwright Tests, Attaching Screenshots and Videos to Pull Requests, From a local session, From CI, Limits (+32 more)
+Cohesion: 0.15
+Nodes (13): Clipboard, Complex Workflows, Error Handling, File Downloads, Frames and Iframes, Geolocation, JavaScript Execution, Media Emulation (+5 more)
 
 ### Community 34 - "Tracing"
-Cohesion: 0.12
-Nodes (16): 1. Start Tracing Before the Problem, 2. Clean Up Old Traces, Analyzing Performance, Basic Usage, Best Practices, Capturing Evidence, Debugging Failed Actions, Limitations (+8 more)
+Cohesion: 0.17
+Nodes (12): 1. Start Tracing Before the Problem, 2. Clean Up Old Traces, Analyzing Performance, Basic Usage, Best Practices, Capturing Evidence, Debugging Failed Actions, Limitations (+4 more)
 
-### Community 35 - "exportChart.ts"
-Cohesion: 0.39
-Nodes (7): appendLegend(), buildExportMarkup(), downloadSvg(), exportChartAsSvg(), ExportChartLegendItem, ExportChartOptions, getChartDimensions()
+### Community 36 - "Video Recording"
+Cohesion: 0.20
+Nodes (10): 1. Use Descriptive Filenames, 2. Record entire hero scripts., 3. Attach the recording to the pull request, Basic Recording, Best Practices, Cursor, Target Highlight and Click Point, Limitations, Overlay API Summary (+2 more)
 
-### Community 36 - "main.tsx"
-Cohesion: 0.38
-Nodes (5): Vite HTML entry (F1 Stories / Telemetry), Legacy CRA public/index.html template, react-dom, App(), src_index
+### Community 37 - "Advanced Mocking with run-code"
+Cohesion: 0.22
+Nodes (8): Advanced Mocking with run-code, CLI Route Commands, Conditional Response Based on Request, Delayed Response, Modify Real Response, Request Mocking, Simulate Network Failures, URL Patterns
 
-### Community 37 - "openf1.integration.test.ts"
+### Community 38 - "Attaching Screenshots and Videos to Pull Requests"
+Cohesion: 0.40
+Nodes (5): Attaching Screenshots and Videos to Pull Requests, From a local session, From CI, Limits, When to attach
+
+### Community 39 - "Trace Output Files"
 Cohesion: 0.50
-Nodes (3): msw, fakeMeeting, server
+Nodes (4): `resources/`, Trace Output Files, `trace-{timestamp}.network`, `trace-{timestamp}.trace`
 
 ## Knowledge Gaps
-- **351 isolated node(s):** `check.sh script`, `name`, `private`, `version`, `type` (+346 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 379 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **350 isolated node(s):** `check.sh script`, `name`, `private`, `version`, `type` (+345 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 378 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `P2Polish.test.tsx` to `openf1.ts`, `main.tsx`, `TrackMapTab.tsx`, `shared.tsx`, `package.json`, `DashboardContainer.tsx`?**
+- **Why does `react` connect `TelemetryTab.tsx` to `openf1.ts`, `DashboardShell.tsx`, `TrackMapTab.tsx`, `shared.tsx`, `package.json`, `useDashboardFilters.ts`, `ErrorBoundary`?**
   _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **Why does `devDependencies` connect `devDependencies` to `package.json`?**
   _High betweenness centrality (0.025) - this node is a cross-community bridge._
-- **Why does `lucide-react` connect `shared.tsx` to `package.json`, `P2Polish.test.tsx`, `TrackMapTab.tsx`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **Why does `lucide-react` connect `shared.tsx` to `package.json`, `TelemetryTab.tsx`, `TrackMapTab.tsx`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **Are the 20 inferred relationships involving `F1 Stories / Telemetry Visual Rework` (e.g. with `DriverCards()` and `TimingTower()`) actually correct?**
   _`F1 Stories / Telemetry Visual Rework` has 20 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `check.sh script`, `name`, `private` to the rest of the system?**
-  _351 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `P2Polish.test.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07928118393234672 - nodes in this community are weakly interconnected._
+  _350 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `TelemetryTab.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.08798076923076924 - nodes in this community are weakly interconnected._
 - **Should `openf1.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.07313738892686261 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05485148514851485 - nodes in this community are weakly interconnected._

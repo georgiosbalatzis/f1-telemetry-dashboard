@@ -3,7 +3,7 @@ import { Map } from 'lucide-react';
 import type { OpenF1Location } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
-import { MAP_W, MAP_H, buildTransform, subsample, toPolyline } from './trackMapUtils';
+import { MAP_W, buildTransform, fitBox, subsample, toPolyline, type MapBox } from './trackMapUtils';
 
 type Props = {
   lapNum: number;
@@ -13,6 +13,19 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
+/** Map units within which two end markers' labels would collide at mobile scale (~0.55px per unit). */
+const LABEL_CLEARANCE_X = 60;
+const LABEL_CLEARANCE_Y = 26;
+
+/** Map units kept around the track so the 10-unit track stroke and edge markers are not clipped. */
+const BOX_MARGIN = 12;
+/** Tallest the drawing may grow; width follows from the track's own aspect ratio. */
+const MAX_MAP_HEIGHT = 400;
+
+function mapPosition(point: { nx: number; ny: number }, box: MapBox) {
+  return { left: `${((point.nx - box.x) / box.w) * 100}%`, top: `${((point.ny - box.y) / box.h) * 100}%` };
+}
+
 type DriverMarker = {
   nx: number;
   ny: number;
@@ -21,11 +34,12 @@ type DriverMarker = {
 
 export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
-  const { trackPolyline, driverPaths, driverMarkers, startPt, activeDrivers } = useMemo((): {
+  const { trackPolyline, driverPaths, driverMarkers, startPt, activeDrivers, box } = useMemo((): {
     trackPolyline: string;
     driverPaths: Partial<Record<number, string>>;
     driverMarkers: Partial<Record<number, DriverMarker>>;
     startPt: { nx: number; ny: number } | null;
+    box: MapBox;
     activeDrivers: number[];
   } => {
     // Use all drivers' data combined to get the best track outline
@@ -40,6 +54,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
         driverPaths: {} as Partial<Record<number, string>>,
         driverMarkers: {} as Partial<Record<number, DriverMarker>>,
         startPt: null,
+        box: fitBox([], 0),
         activeDrivers: [],
       };
     }
@@ -75,7 +90,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
       }
     }
 
-    return { trackPolyline: outline, driverPaths: paths, driverMarkers: markers, startPt: first, activeDrivers: active };
+    return { trackPolyline: outline, driverPaths: paths, driverMarkers: markers, startPt: first, activeDrivers: active, box: fitBox(allRaw.map(transform), BOX_MARGIN) };
   }, [driverMap, driverNums, locationByDriver]);
   const svgLabel = useMemo(() => {
     const describedDrivers = (activeDrivers.length > 0 ? activeDrivers : driverNums)
@@ -83,6 +98,17 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
       .join(', ');
     return `Track map for lap ${lapNum}. Drivers: ${describedDrivers}. Lines show each driver's GPS path around the circuit.`;
   }, [activeDrivers, driverMap, driverNums, lapNum]);
+
+  const labelledMarkers = useMemo(() => {
+    const placed: { n: number; marker: DriverMarker; stack: number; flip: boolean }[] = [];
+    for (const n of [...activeDrivers].sort((a, b) => (driverMarkers[a]?.ny ?? 0) - (driverMarkers[b]?.ny ?? 0))) {
+      const marker = driverMarkers[n];
+      if (!marker) continue;
+      const stack = placed.filter((p) => Math.abs(p.marker.nx - marker.nx) < LABEL_CLEARANCE_X && Math.abs(p.marker.ny - marker.ny) < LABEL_CLEARANCE_Y).length;
+      placed.push({ n, marker, stack, flip: marker.nx > box.x + box.w * 0.85 });
+    }
+    return placed;
+  }, [activeDrivers, box, driverMarkers]);
 
   if (locationLoading) {
     return (
@@ -110,13 +136,12 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
         panelId="trackmap-lap-map"
         headerRight={!embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('trackmap-lap-map')} /> : undefined}
       >
-        <div className="h-[260px] overflow-x-auto sm:h-[380px]">
+        <div className="relative mx-auto" style={{ aspectRatio: `${box.w} / ${box.h}`, width: `min(100%, ${(MAX_MAP_HEIGHT * box.w) / box.h}px, ${MAP_W}px)` }}>
           <svg
-            viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+            viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
             width="100%"
             height="100%"
-            preserveAspectRatio="xMidYMid meet"
-            style={{ maxWidth: MAP_W, display: 'block', margin: '0 auto' }}
+            style={{ display: 'block' }}
             aria-label={svgLabel}
             role="img"
           >
@@ -139,26 +164,25 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
                 opacity={0.88}
               />
             ))}
-
-            {/* Start/finish dot */}
-            {startPt && (
-              <circle cx={startPt.nx} cy={startPt.ny} r={7} fill="var(--accent)" stroke="var(--bg)" strokeWidth={2.5} />
-            )}
-
-            {/* Driver end-position markers */}
-            {activeDrivers.map((n) => {
-              const marker = driverMarkers[n];
-              if (!marker) return null;
-              return (
-                <g key={`marker-${n}`}>
-                  <circle cx={marker.nx} cy={marker.ny} r={5} fill={driverColor(n)} stroke="var(--bg)" strokeWidth={2.5} />
-                  <text x={marker.nx + 10} y={marker.ny + 4} textAnchor="start" fontSize={12} fontWeight="500" fill="var(--text-strong)">
-                    {marker.label}
-                  </text>
-                </g>
-              );
-            })}
           </svg>
+
+          {/* Annotations sit outside the scaled SVG so they keep their pixel size at any map width. */}
+          <div aria-hidden="true">
+            {startPt && (
+              <span className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--bg)] bg-[color:var(--accent)]" style={mapPosition(startPt, box)} />
+            )}
+            {labelledMarkers.map(({ n, marker, stack, flip }) => (
+              <span key={n} className="absolute" style={mapPosition(marker, box)}>
+                <span className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--bg)]" style={{ background: driverColor(n) }} />
+                <span
+                  className="absolute whitespace-nowrap text-[12px] font-medium leading-none text-[color:var(--text-strong)] [text-shadow:0_0_3px_var(--bg),0_0_3px_var(--bg)]"
+                  style={{ [flip ? 'right' : 'left']: 9, top: -6 + stack * 14 }}
+                >
+                  {marker.label}
+                </span>
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-4">

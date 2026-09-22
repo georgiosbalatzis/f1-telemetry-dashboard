@@ -1,7 +1,7 @@
 {
-  "0": "P2Polish.test.tsx",
+  "0": "TelemetryTab.tsx",
   "1": "openf1.ts",
-  "2": "F1 Stories / Telemetry Visual Rework",
+  "2": "DashboardShell.tsx",
   "3": "/graphify skill",
   "4": "DESIGN.md",
   "5": "Cookies",
@@ -11,8 +11,8 @@
   "9": "compilerOptions",
   "10": "devDependencies",
   "11": "compilerOptions",
-  "12": "DashboardContainer.tsx",
-  "13": "positionsUtils.test.ts",
+  "12": "useDashboardFilters.ts",
+  "13": "ErrorBoundary",
   "14": "scripts",
   "15": "P2 — Noticeable polish issues",
   "16": "manifest.json",
@@ -34,8 +34,10 @@
   "32": "tailwind.config.js",
   "33": "vite-env.d.ts",
   "34": "Tracing",
-  "35": "exportChart.ts",
-  "36": "main.tsx",
-  "37": "openf1.integration.test.ts",
-  "38": "@testing-library/jest-dom"
+  "35": "SKILL.md",
+  "36": "Video Recording",
+  "37": "Advanced Mocking with run-code",
+  "38": "Attaching Screenshots and Videos to Pull Requests",
+  "39": "Trace Output Files",
+  "40": "element-attributes.md"
 }
