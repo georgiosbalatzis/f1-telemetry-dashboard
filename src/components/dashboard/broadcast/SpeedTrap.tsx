@@ -42,7 +42,7 @@ export function SpeedTrap({
       sub="Intermediate speed measurements and main straight trap — purple = fastest"
       panelId="broadcast-speed-traps"
       headerRight={
-        embedMode && onEmbedPanel ? (
+        !embedMode && onEmbedPanel ? (
           <EmbedPanelButton onClick={() => onEmbedPanel('broadcast-speed-traps')} />
         ) : undefined
       }

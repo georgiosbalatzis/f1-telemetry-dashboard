@@ -3,7 +3,7 @@ import { Gauge } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Interval } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
-import { CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel, Stat } from './shared';
+import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 
@@ -19,7 +19,7 @@ const MAX_CHART_POINTS = 120;
 const MAX_GAP_DISPLAY = 60; // cap gaps at 60s to avoid outliers from safety cars crushing the chart
 
 export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, onEmbedPanel }: Props) {
-  const { driverNums, driverMap, driverColor } = useDriverContext();
+  const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
 
@@ -86,13 +86,13 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   const legend = useMemo<ChartLegendItem[]>(
     () => driverNums
       .filter((n) => chartData.some((pt) => pt[`gap_${n}`] != null))
-      .map((n) => ({ label: driverMap[n]?.name_acronym || `#${n}`, color: driverColor(n) })),
-    [chartData, driverNums, driverMap, driverColor],
+      .map((n) => ({ label: driverMap[n]?.name_acronym || `#${n}`, strokeDasharray: driverDash(n), color: driverColor(n) })),
+    [chartData, driverNums, driverMap, driverColor, driverDash],
   );
 
   if (intervalsLoading) {
     return (
-      <>
+      <PanelSelection embedMode={embedMode}>
         <Panel
           title="Current Gaps"
           icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
@@ -112,7 +112,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
         >
           <ChartSkeleton label="Loading interval chart..." className="h-[200px] sm:h-[280px]" />
         </ChartPanel>
-      </>
+      </PanelSelection>
     );
   }
   if (!intervals || intervals.length === 0) {
@@ -124,7 +124,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   }
 
   return (
-    <>
+    <PanelSelection embedMode={embedMode}>
       {/* Current gaps */}
       {latestGaps.length > 0 && (
         <div className="lap-comparison">
@@ -203,7 +203,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
                     key={n}
                     type="monotone"
                     dataKey={`gap_${n}`}
-                    stroke={driverColor(n)}
+                    stroke={driverColor(n)} strokeDasharray={driverDash(n)}
                     strokeWidth={2}
                     dot={false}
                     connectNulls
@@ -242,7 +242,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
                     key={n}
                     type="monotone"
                     dataKey={`int_${n}`}
-                    stroke={driverColor(n)}
+                    stroke={driverColor(n)} strokeDasharray={driverDash(n)}
                     strokeWidth={2}
                     dot={false}
                     connectNulls
@@ -264,6 +264,6 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
           Gaps above {MAX_GAP_DISPLAY}s (e.g. safety car periods) are clamped for readability.
         </p>
       </div>
-    </>
+    </PanelSelection>
   );
 }

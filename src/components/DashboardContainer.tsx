@@ -213,7 +213,7 @@ export function DashboardContainer() {
 
   // Smooth-scroll to hash fragment on tab change
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || embedMode) return;
     const targetId = window.location.hash.replace(/^#/, '');
     if (!targetId) return;
     let attempts = 0;
@@ -228,7 +228,7 @@ export function DashboardContainer() {
       if (attempts >= 12) window.clearInterval(timerId);
     }, 120);
     return () => window.clearInterval(timerId);
-  }, [filters.tab]);
+  }, [embedMode, filters.tab]);
 
   // Persist presets to localStorage
   useEffect(() => {

@@ -30,7 +30,7 @@ export function TimingTower({
       sub={`Lap ${lapNum} — selected drivers ranked by lap time`}
       panelId="broadcast-timing-tower"
       headerRight={
-        embedMode && onEmbedPanel ? (
+        !embedMode && onEmbedPanel ? (
           <EmbedPanelButton onClick={() => onEmbedPanel('broadcast-timing-tower')} />
         ) : undefined
       }

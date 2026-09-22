@@ -51,7 +51,7 @@ export function SectorAnalysis({
       sub="Purple = fastest · Green = 2nd fastest · Yellow = slower"
       panelId="broadcast-sector-analysis"
       headerRight={
-        embedMode && onEmbedPanel ? (
+        !embedMode && onEmbedPanel ? (
           <EmbedPanelButton onClick={() => onEmbedPanel('broadcast-sector-analysis')} />
         ) : undefined
       }

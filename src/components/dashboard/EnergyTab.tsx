@@ -3,7 +3,7 @@ import { Gauge, Zap } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SpeedPoint } from './types';
-import { ChartSkeleton, ChartTip, NoData } from './shared';
+import { PanelSelection, ChartSkeleton, ChartTip, NoData } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 
 type Props = {
@@ -25,7 +25,7 @@ export function EnergyTab({
   embedMode = false,
   onEmbedPanel,
 }: Props) {
-  const { driverNums, driverMap, driverColor } = useDriverContext();
+  const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
   const chartRpm = 'var(--chart-rpm)';
@@ -41,18 +41,18 @@ export function EnergyTab({
   const energyLegend = useMemo<ChartLegendItem[]>(
     () => (comparisonMode ? comparisonDriverNums : driverNums.slice(0, 1)).map((driverNumber) => ({
       label: driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
-      color: driverColor(driverNumber),
+      strokeDasharray: driverDash(driverNumber), color: driverColor(driverNumber),
     })),
-    [comparisonDriverNums, comparisonMode, driverColor, driverMap, driverNums],
+    [comparisonDriverNums, comparisonMode, driverColor, driverDash, driverMap, driverNums],
   );
   const primaryDriverNumber = driverNums[0];
   const primaryDriverLabel = driverMap[primaryDriverNumber]?.name_acronym || '—';
 
   return (
-    <>
+    <PanelSelection embedMode={embedMode}>
       {lapSummaries.length > 0 && (
         <div className="lap-comparison">
-          {lapSummaries.map((summary) => (
+          {lapSummaries.filter((summary) => summary.lapTime != null || summary.topSpeed != null).map((summary) => (
             <div key={summary.driverNumber} className="energy-summary">
               <div className="mb-2 flex items-start justify-between gap-2">
                 <span className="text-xs font-semibold tracking-[0.04em]" style={{ color: summary.color }}>{summary.name}</span>
@@ -91,7 +91,7 @@ export function EnergyTab({
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum} · DRS values ≥ 10 = active`}
         exportName={`drs-activation-lap-${lapNum}`}
-        legend={comparisonMode ? energyLegend : [{ label: 'DRS', color: 'var(--accent)', variant: 'area' }]}
+        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'DRS', color: 'var(--accent)', variant: 'area' }] : []}
         panelId="energy-drs-activation"
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
@@ -105,7 +105,7 @@ export function EnergyTab({
                 <YAxis domain={[0, 1.1]} ticks={[0, 1]} tickFormatter={(value: number) => value >= 1 ? 'OPEN' : 'CLOSED'} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
                 <Tooltip content={<ChartTip discrete labelPrefix="Lap progress · " />} />
                 {comparisonDriverNums.map((driverNumber) => (
-                  <Line key={driverNumber} type="stepAfter" dataKey={`drs_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                  <Line key={driverNumber} type="stepAfter" dataKey={`drs_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
               </LineChart>
             </ResponsiveContainer>
@@ -132,7 +132,7 @@ export function EnergyTab({
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — shift map normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum}`}
         exportName={`gear-trace-lap-${lapNum}`}
-        legend={comparisonMode ? energyLegend : [{ label: 'Gear', color: 'var(--accent-strong)' }]}
+        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'Gear', color: 'var(--accent-strong)' }] : []}
         panelId="energy-gear-trace"
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
@@ -146,7 +146,7 @@ export function EnergyTab({
                 <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
                 <Tooltip content={<ChartTip discrete labelPrefix="Lap progress · " />} />
                 {comparisonDriverNums.map((driverNumber) => (
-                  <Line key={driverNumber} type="stepAfter" dataKey={`gear_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                  <Line key={driverNumber} type="stepAfter" dataKey={`gear_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
               </LineChart>
             </ResponsiveContainer>
@@ -173,7 +173,7 @@ export function EnergyTab({
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — engine speed normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum}`}
         exportName={`rpm-trace-lap-${lapNum}`}
-        legend={comparisonMode ? energyLegend : [{ label: 'RPM', color: chartRpm }]}
+        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'RPM', color: chartRpm }] : []}
         panelId="energy-rpm-trace"
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
@@ -187,7 +187,7 @@ export function EnergyTab({
                 <YAxis domain={[0, 15000]} tick={{ fill: chartAxis, fontSize: 9 }} stroke={chartGrid} />
                 <Tooltip content={<ChartTip unit="rpm" discrete labelPrefix="Lap progress · " />} />
                 {comparisonDriverNums.map((driverNumber) => (
-                  <Line key={driverNumber} type="monotone" dataKey={`rpm_${driverNumber}`} stroke={driverColor(driverNumber)} strokeWidth={1.8} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
+                  <Line key={driverNumber} type="monotone" dataKey={`rpm_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={1.8} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
                 ))}
               </LineChart>
             </ResponsiveContainer>
@@ -206,6 +206,6 @@ export function EnergyTab({
           </div>
         ) : <NoData msg="No data." />}
       </ChartPanel>
-    </>
+    </PanelSelection>
   );
 }

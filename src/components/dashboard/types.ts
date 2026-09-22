@@ -32,11 +32,6 @@ export type SectorRow = {
   st?: number | null;
 };
 
-export type WeatherRadarPoint = {
-  subject: string;
-  value: number;
-};
-
 export type DriverLapSummary = {
   driverNumber: number;
   name: string;

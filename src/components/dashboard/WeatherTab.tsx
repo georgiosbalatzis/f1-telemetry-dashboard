@@ -1,9 +1,9 @@
 import { Sun } from 'lucide-react';
-import { CartesianGrid, Line, LineChart, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Weather } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
-import type { WeatherRadarPoint, WeatherTrendPoint } from './types';
-import { CardGridSkeleton, ChartSkeleton, ChartTip, Err, NoData, Stat } from './shared';
+import type { WeatherTrendPoint } from './types';
+import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, Err, NoData, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
 
 type Props = {
@@ -11,14 +11,13 @@ type Props = {
   error: string | null;
   latestWeather: OpenF1Weather | null;
   sampleCount: number;
-  weatherRadar: WeatherRadarPoint[];
   weatherTrend: WeatherTrendPoint[];
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
   onRetry?: () => void;
 };
 
-export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherRadar, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
+export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
   const chartAxisSoft = 'var(--chart-axis-soft)';
@@ -31,43 +30,24 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
 
   if (loading) {
     return (
-      <>
-        <CardGridSkeleton count={4} label="Loading weather readings..." />
-        <CardGridSkeleton count={4} label="Loading weather summary..." />
+      <PanelSelection embedMode={embedMode}>
+        <CardGridSkeleton count={3} label="Loading weather readings..." />
         <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
           <ChartSkeleton label="Loading weather chart..." className="h-[180px] sm:h-[260px]" />
         </ChartPanel>
-      </>
+      </PanelSelection>
     );
   }
   if (error) return <Err msg={error} onAction={onRetry} />;
   if (!latestWeather) return <NoData msg="No weather data for this session." />;
 
   return (
-    <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Air Temperature" value={latestWeather.air_temperature.toFixed(1)} unit="°C" />
+    <PanelSelection embedMode={embedMode}>
+      <div className="weather-primary">
         <Stat label="Track Temperature" value={latestWeather.track_temperature.toFixed(1)} unit="°C" />
-        <Stat label="Humidity" value={latestWeather.humidity.toFixed(0)} unit="%" />
-        <Stat label="Wind Speed" value={latestWeather.wind_speed.toFixed(1)} unit="m/s" />
+        <Stat label="Air Temperature" value={latestWeather.air_temperature.toFixed(1)} unit="°C" />
+        <Stat label="Rainfall" value={latestWeather.rainfall ? 'Yes' : 'No'} />
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Pressure" value={latestWeather.pressure.toFixed(0)} unit="mbar" />
-        <Stat label="Rainfall" value={latestWeather.rainfall ? 'Yes' : 'No'} color={latestWeather.rainfall ? COLORS.weather.humidity : COLORS.success} />
-        <Stat label="Wind Direction" value={latestWeather.wind_direction.toFixed(0)} unit="°" />
-        <Stat label="Weather Samples" value={sampleCount} />
-      </div>
-      <ChartPanel title="Conditions Radar" icon={<Sun size={14} style={{ color: 'var(--accent)' }} />} sub="Session snapshot normalized to radar axes" exportName="conditions-radar" legend={[{ label: 'Conditions', color: 'var(--accent)', variant: 'area' }]} panelId="weather-radar" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
-        <div className="h-[220px] sm:h-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={weatherRadar} outerRadius="70%">
-              <PolarGrid stroke={chartGrid} />
-              <PolarAngleAxis dataKey="subject" tick={{ fill: chartAxis, fontSize: 10 }} />
-              <Radar name="Conditions" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.12} strokeWidth={2} isAnimationActive={false} />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-      </ChartPanel>
       <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         {weatherTrend.length > 1 ? (
           <div className="h-[180px] sm:h-[260px]">
@@ -87,6 +67,9 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
           </div>
         ) : <NoData msg="More weather samples are needed to draw a session trend." />}
       </ChartPanel>
-    </>
+      <p className="weather-metadata">
+        Humidity {latestWeather.humidity.toFixed(0)}% · Wind {latestWeather.wind_speed.toFixed(1)} m/s at {latestWeather.wind_direction.toFixed(0)}° · Pressure {latestWeather.pressure.toFixed(0)} mbar · {sampleCount} samples
+      </p>
+    </PanelSelection>
   );
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { Children, isValidElement, type ReactNode } from 'react';
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { AlertTriangle, Code2, Loader2 } from 'lucide-react';
 import type { OpenF1Driver } from '../../api/openf1';
@@ -193,4 +193,13 @@ export function ChartTip({ active, payload, label, unit = '', labelPrefix = '', 
       ))}
     </div>
   );
+}
+
+export function PanelSelection({ children, embedMode }: { children: ReactNode; embedMode: boolean }) {
+  const requested = embedMode ? window.location.hash.slice(1) : '';
+  if (!requested) return children;
+  const panels = Children.toArray(children).filter((child) =>
+    isValidElement<{ panelId?: string }>(child) && (child.props.panelId === requested || child.key === `.$${requested}`),
+  );
+  return panels.length ? panels : <NoData msg="This panel is unavailable for the selected analysis." />;
 }

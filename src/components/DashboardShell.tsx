@@ -117,6 +117,7 @@ export function DashboardShell({
     positions,
     intervals,
     primaryTelemetry,
+    comparisonDrivers,
     selectionData,
     viewModel,
     locationByDriver,
@@ -171,6 +172,7 @@ export function DashboardShell({
         />
 
         <main id="main-content" tabIndex={-1}>
+          {!embedMode && <>
           <DashboardSelectors
             year={filters.year}
             circuit={filters.circuit}
@@ -213,7 +215,21 @@ export function DashboardShell({
             onEmbedTab={onEmbedTab}
           />
 
+          </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
+            {comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
+              <section className="dashboard-panel mb-4 text-sm" aria-label="Comparison data status">
+                <p role="status">{comparisonDrivers.filter((driver) => driver.status === 'Loaded').length} of {comparisonDrivers.length} drivers loaded</p>
+                <ul className="mt-2 text-[color:var(--text-muted)]">
+                  {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
+                    <li key={driver.driverNumber} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span>{driver.name} — {driver.status}</span>
+                      {driver.retry && <button className="text-action" onClick={driver.retry}>Retry {driver.name}</button>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
                 <TelemetryTab
@@ -292,7 +308,6 @@ export function DashboardShell({
                     error={weather.error}
                     latestWeather={viewModel.latestWeather}
                     sampleCount={weather.data?.length || 0}
-                    weatherRadar={viewModel.weatherRadar}
                     weatherTrend={viewModel.weatherTrend}
                     embedMode={embedMode}
                     onEmbedPanel={onEmbedPanel}
@@ -316,7 +331,6 @@ export function DashboardShell({
                   <PositionsTab
                     positions={positions.data}
                     positionsLoading={positions.loading}
-                    lapNum={filters.lapNum}
                     embedMode={embedMode}
                     onEmbedPanel={onEmbedPanel}
                   />

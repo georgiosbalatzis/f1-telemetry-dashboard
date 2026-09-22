@@ -72,10 +72,10 @@ export function ChartPanel({
     });
   };
 
-  const actions = (
+  const actions = !embedMode && (
     <div className="dashboard-chart-actions">
       {headerRight}
-      {embedMode && panelId && onEmbedPanel && (
+      {panelId && onEmbedPanel && (
         <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />
       )}
       <ToolbarButton icon={<Download size={12} />} label="Download" onClick={handleDownload} />
@@ -99,20 +99,11 @@ export function ChartPanel({
             <div className="dashboard-chart-legend">
               {legend.map((item) => (
                 <span key={`${item.label}-${item.color}-${item.variant || 'line'}-${item.dashed ? 'dashed' : 'solid'}`} className="dashboard-chart-legend-item">
-                  <span
-                    className={cn(
-                      'dashboard-chart-legend-swatch',
-                      item.variant === 'bar' ? 'rounded-[3px]' : 'rounded-full',
-                    )}
-                    aria-label={`${item.label} colour indicator`}
-                    role="img"
-                    style={{
-                      background: item.variant === 'bar' ? item.color : undefined,
-                      borderBottomStyle: item.dashed ? 'dashed' : 'solid',
-                      borderBottomColor: item.variant === 'bar' ? 'transparent' : item.color,
-                      opacity: item.variant === 'area' ? 0.6 : 1,
-                    }}
-                  />
+                  <svg width="32" height="10" role="img" aria-label={`${item.label} ${item.strokeDasharray || item.dashed ? 'dashed' : 'solid'} colour indicator`}>
+                    {item.variant === 'bar'
+                      ? <rect width="32" height="8" fill={item.color} />
+                      : <line x1="0" y1="5" x2="32" y2="5" stroke={item.color} strokeWidth={item.variant === 'area' ? 6 : 2} strokeDasharray={item.strokeDasharray || (item.dashed ? '6 5' : undefined)} opacity={item.variant === 'area' ? 0.6 : 1} />}
+                  </svg>
                   <span>{item.label}</span>
                 </span>
               ))}
