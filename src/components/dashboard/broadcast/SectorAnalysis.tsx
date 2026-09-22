@@ -82,7 +82,7 @@ export function SectorAnalysis({
                   <tr key={row.name} className="bc-sector-row">
                     <td className="bc-sector-driver-cell">
                       <span className="bc-sector-driver-bar" style={{ backgroundColor: row.color }} />
-                      <span className="bc-sector-driver-name" style={{ color: row.color }}>
+                      <span className="bc-sector-driver-name">
                         {row.name}
                       </span>
                     </td>

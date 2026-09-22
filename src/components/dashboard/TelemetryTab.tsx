@@ -7,6 +7,7 @@ import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from '.
 import { PanelSelection, ChartSkeleton, ChartTip, EmbedPanelButton, Err, NoData, Panel, TableSkeleton } from './shared';
 import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 import { fmtLap } from './utils';
+import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, PEDAL_TICKS, PROGRESS_TICKS, evenTicks, formatLapAxis, formatPedalAxis, useXTickCount } from './chartAxis';
 
 type Props = {
   lapNum: number;
@@ -25,6 +26,20 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
   onTelemetryRetry?: () => void;
 };
+
+/** Names each half of the mirrored pedal axis: throttle above zero, brake below. */
+function PedalHalvesLabel({ viewBox }: { viewBox?: { x: number; y: number; height: number } }) {
+  if (!viewBox) return null;
+  const x = viewBox.x + AXIS_TICK_SOFT.fontSize;
+  return (
+    <g fill={AXIS_TICK_SOFT.fill} fontSize={AXIS_TICK_SOFT.fontSize} textAnchor="middle">
+      {[['Throttle', 0.25], ['Brake', 0.75]].map(([text, share]) => {
+        const y = viewBox.y + viewBox.height * (share as number);
+        return <text key={text} x={x} y={y} transform={`rotate(-90 ${x} ${y})`}>{text}</text>;
+      })}
+    </g>
+  );
+}
 
 function getBestSector(rows: SectorRow[], key: 's1' | 's2' | 's3') {
   const values = rows
@@ -55,8 +70,9 @@ export function TelemetryTab({
   const bestS2 = getBestSector(sectorRows, 's2');
   const bestS3 = getBestSector(sectorRows, 's3');
   const chartGrid = 'var(--chart-grid)';
-  const chartAxis = 'var(--chart-axis)';
-  const chartAxisSoft = 'var(--chart-axis-soft)';
+  const xTickCount = useXTickCount();
+  const sampleTicks = evenTicks(speedData.map((point) => point.idx), xTickCount);
+  const lapTicks = evenTicks(lapTimeData.map((point) => point.lap), xTickCount);
   const chartReference = 'var(--chart-reference)';
   const driverLegend = useMemo<ChartLegendItem[]>(
     () => driverNums.filter((driverNumber) => lapTimeData.some((point) => typeof point[`t_${driverNumber}`] === 'number')).map((driverNumber) => ({
@@ -122,10 +138,10 @@ export function TelemetryTab({
         {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[200px] sm:h-[260px]" /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : comparisonSpeedData.length > 0 ? (
           <div className="h-[200px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={comparisonSpeedData}>
+              <LineChart data={comparisonSpeedData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-                <YAxis domain={[0, 370]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', fill: chartAxisSoft, fontSize: 10 }} />
+                <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
+                <YAxis domain={[0, 370]} ticks={[0, 100, 200, 300]} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
                 <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " />} />
                 {driverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`speed_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
@@ -136,10 +152,10 @@ export function TelemetryTab({
         ) : speedData.length > 0 ? (
           <div className="h-[200px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={speedData}>
+              <LineChart data={speedData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-                <YAxis domain={[0, 370]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', fill: chartAxisSoft, fontSize: 10 }} />
+                <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
+                <YAxis domain={[0, 370]} ticks={[0, 100, 200, 300]} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
                 <Tooltip content={<ChartTip unit="km/h" labelPrefix="Sample · " />} />
                 <Line type="monotone" dataKey="speed" stroke={driverColor(driverNums[0])} strokeDasharray={driverDash(driverNums[0])} strokeWidth={1.8} dot={false} isAnimationActive={false} name="Speed (km/h)" />
               </LineChart>
@@ -176,10 +192,10 @@ export function TelemetryTab({
         {comparisonSpeedData.length > 0 ? (
           <div className="h-[160px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={speedDeltaData}>
+              <LineChart data={speedDeltaData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-                <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${value.toFixed(0)} km/h`} />
+                <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
+                <YAxis allowDecimals={false} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
                 <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " />} />
                 {driverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`delta_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
@@ -194,6 +210,7 @@ export function TelemetryTab({
         <ChartPanel
           title="Throttle & Brake"
           icon={<Activity size={14} style={{ color: 'var(--accent-strong)' }} />}
+          sub="Pedal application · throttle above the centre line, brake below"
           className="overflow-hidden"
           exportName={`throttle-brake-lap-${lapNum}`}
           legend={controlLegend}
@@ -204,10 +221,10 @@ export function TelemetryTab({
           {comparisonControlData.length > 0 ? (
             <div className="h-[160px] sm:h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={comparisonControlData}>
+                <LineChart data={comparisonControlData} margin={CHART_MARGIN}>
                   <CartesianGrid vertical={false} stroke={chartGrid} />
-                  <XAxis dataKey="progress" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} unit="%" />
-                  <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
+                  <XAxis dataKey="progress" type="number" domain={[0, 100]} ticks={PROGRESS_TICKS} tick={AXIS_TICK} stroke={chartGrid} unit="%" />
+                  <YAxis domain={[-105, 105]} ticks={PEDAL_TICKS} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={formatPedalAxis} label={<PedalHalvesLabel />} />
                   <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
                   <Tooltip content={<ChartTip unit="%" absolute labelPrefix="Lap progress · " />} />
                   {driverNums.map((driverNumber) => (
@@ -222,10 +239,10 @@ export function TelemetryTab({
           ) : (
             <div className="h-[140px] sm:h-[180px]">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={speedData}>
+                <ComposedChart data={speedData} margin={CHART_MARGIN}>
                   <CartesianGrid vertical={false} stroke={chartGrid} />
-                  <XAxis dataKey="idx" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-                  <YAxis domain={[-110, 110]} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${Math.abs(value)}%`} />
+                  <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
+                  <YAxis domain={[-105, 105]} ticks={PEDAL_TICKS} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={formatPedalAxis} label={<PedalHalvesLabel />} />
                   <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
                   <Tooltip content={<ChartTip unit="%" absolute labelPrefix="Sample · " />} />
                   <Area type="monotone" dataKey="throttle" stroke={COLORS.success} fill={COLORS.success} fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Throttle %" />
@@ -253,8 +270,8 @@ export function TelemetryTab({
               const s3Width = total > 0 ? ((row.s3 || 0) / total) * 100 : 0;
               return (
                 <div key={row.name} className="grid gap-2 md:grid-cols-[74px_1fr_88px] md:items-center md:gap-3">
-                  <div className="flex items-center justify-between text-xs font-semibold tracking-[0.04em] md:block" style={{ color: row.color }}>
-                    <span>{row.name}</span>
+                  <div className="flex items-center justify-between text-xs font-semibold tracking-[0.04em] md:block">
+                    <span className="standing-driver"><i className="driver-marker" style={{ background: row.color }} />{row.name}</span>
                     <span className="text-right text-sm font-semibold font-mono text-[color:var(--text-soft)] md:hidden">{fmtLap(row.total ?? null)}</span>
                   </div>
                   <div className="overflow-hidden">
@@ -289,7 +306,7 @@ export function TelemetryTab({
                 const summary = lapSummaries.find((item) => item.name === row.name);
                 return (
                   <tr key={row.name} className="border-b border-[color:var(--line)]">
-                    <td className="py-2 text-xs font-bold" style={{ color: row.color }}>{row.name}</td>
+                    <td className="py-2 text-xs font-bold"><span className="standing-driver"><i className="driver-marker" style={{ background: row.color }} />{row.name}</span></td>
                     <td className="py-2 text-right font-mono text-xs text-[color:var(--text-soft)]">
                       <span style={bestS1 != null && row.s1 != null && row.s1 <= bestS1 ? { color: 'var(--accent)' } : undefined}>{row.s1?.toFixed(3) ?? '—'}</span>
                     </td>
@@ -314,10 +331,10 @@ export function TelemetryTab({
         {lapsLoading ? <ChartSkeleton label="Loading lap time data..." className="h-[180px] sm:h-[220px]" /> : lapTimeData.some((point) => Object.keys(point).length > 1) ? (
           <div className="h-[180px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lapTimeData}>
+              <LineChart data={lapTimeData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="lap" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(lapTimeData.length / 15))} />
-                <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
+                <XAxis dataKey="lap" ticks={lapTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
+                <YAxis domain={['auto', 'auto']} allowDecimals={false} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={formatLapAxis} />
                 <Tooltip content={<ChartTip unit="s" labelPrefix="Lap " />} />
                 {driverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`t_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={1.5} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
@@ -332,10 +349,10 @@ export function TelemetryTab({
         {lapsLoading ? <ChartSkeleton label="Loading gap trend data..." className="h-[160px] sm:h-[200px]" /> : lapDeltaData.some((point) => Object.keys(point).length > 1) ? (
           <div className="h-[160px] sm:h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lapDeltaData}>
+              <LineChart data={lapDeltaData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="lap" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(lapDeltaData.length / 15))} />
-                <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(value: number) => `${value.toFixed(0)}ms`} />
+                <XAxis dataKey="lap" ticks={lapTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
+                <YAxis allowDecimals={false} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'ms', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
                 <Tooltip content={<ChartTip unit="ms" labelPrefix="Lap " />} />
                 {driverNums.map((driverNumber) => (
                   <Line key={driverNumber} type="monotone" dataKey={`d_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={1.5} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />

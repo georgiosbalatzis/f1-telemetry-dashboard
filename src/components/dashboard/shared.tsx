@@ -88,12 +88,14 @@ export function NoData({ msg }: { msg: string }) {
   return <div className="py-10 text-center text-sm text-[color:var(--text-muted)]">{msg}</div>;
 }
 
-export function Stat({ label, value, unit, color }: { label: string; value: string | number; unit?: string; color?: string }) {
+export function Stat({ label, value, unit, markerColor }: { label: string; value: string | number; unit?: string; markerColor?: string }) {
   return (
     <div className="dashboard-stat">
-      <div className="mb-1 text-[10px] font-medium text-[color:var(--text-muted)]">{label}</div>
+      <div className="mb-1 flex items-center gap-[6px] text-[10px] font-medium text-[color:var(--text-muted)]">
+        {markerColor && <i className="driver-marker" style={{ background: markerColor }} />}{label}
+      </div>
       <div className="flex items-baseline gap-1">
-        <span className="text-2xl font-medium tabular-nums" style={{ color: color || 'var(--text-strong)' }}>{value}</span>
+        <span className="text-2xl font-medium tabular-nums text-[color:var(--text-strong)]">{value}</span>
         {unit && <span className="text-[10px] text-[color:var(--text-muted)]">{unit}</span>}
       </div>
     </div>

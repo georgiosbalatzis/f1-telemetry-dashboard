@@ -58,7 +58,7 @@ export function DriverCards({
                 <div className="bc-driver-card-header">
                   <div
                     className="bc-driver-card-pos"
-                    style={{ color: isLeader ? color : 'var(--text-muted)' }}
+                    style={{ color: isLeader ? 'var(--text-strong)' : 'var(--text-muted)' }}
                   >
                     P{pos}
                   </div>
@@ -73,7 +73,7 @@ export function DriverCards({
                       />
                     )}
                     <div className="min-w-0">
-                      <div className="bc-driver-card-name" style={{ color }}>
+                      <div className="bc-driver-card-name">
                         {driver?.name_acronym ?? `#${summary.driverNumber}`}
                       </div>
                       <div className="bc-driver-card-team truncate">{driver?.team_name ?? ''}</div>

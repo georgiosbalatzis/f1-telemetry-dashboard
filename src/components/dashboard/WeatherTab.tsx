@@ -5,6 +5,7 @@ import { COLORS } from '../../constants/colors';
 import type { WeatherTrendPoint } from './types';
 import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, Err, NoData, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
+import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
 
 type Props = {
   loading: boolean;
@@ -19,8 +20,7 @@ type Props = {
 
 export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
   const chartGrid = 'var(--chart-grid)';
-  const chartAxis = 'var(--chart-axis)';
-  const chartAxisSoft = 'var(--chart-axis-soft)';
+  const timeTicks = evenTicks(weatherTrend.map((point) => point.time), useXTickCount());
   const weatherLegend = [
     { label: 'Air °C', color: COLORS.weather.air },
     { label: 'Track °C', color: COLORS.weather.track },
@@ -52,11 +52,11 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         {weatherTrend.length > 1 ? (
           <div className="h-[180px] sm:h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={weatherTrend}>
+              <LineChart data={weatherTrend} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="time" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
-                <YAxis yAxisId="temp" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-                <YAxis yAxisId="aux" orientation="right" tick={{ fill: chartAxisSoft, fontSize: 9 }} stroke={chartGrid} />
+                <XAxis dataKey="time" ticks={timeTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
+                <YAxis yAxisId="temp" width={36} allowDecimals={false} tick={AXIS_TICK} stroke={chartGrid} />
+                <YAxis yAxisId="aux" orientation="right" width={36} allowDecimals={false} tick={AXIS_TICK_SOFT} stroke={chartGrid} />
                 <Tooltip content={<ChartTip />} />
                 <Line yAxisId="temp" type="monotone" dataKey="air" stroke={COLORS.weather.air} strokeWidth={2} dot={false} isAnimationActive={false} name="Air °C" />
                 <Line yAxisId="temp" type="monotone" dataKey="track" stroke={COLORS.weather.track} strokeWidth={2} dot={false} isAnimationActive={false} name="Track °C" />

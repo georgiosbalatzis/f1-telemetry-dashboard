@@ -12,7 +12,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboard } from '../hooks/useDashboard';
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
-import { COLORS } from '../constants/colors';
+import { COLORS, chartColorForTheme } from '../constants/colors';
 import { DriverProvider } from '../contexts/DriverContext';
 import { DashboardShell } from './DashboardShell';
 import { TAB_LABELS } from './dashboard/tabLabels';
@@ -346,13 +346,15 @@ export function DashboardContainer() {
   const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback('No previous page in history'); } }, []);
 
   // ── Driver context value (shared with all tab components via DriverProvider) ─
+  // Chart traces use theme-adjusted team colours; markers elsewhere keep the raw colour.
+  const teamDriverColor = data.viewModel.driverColor;
   const driverContextValue = useMemo(
     () => ({
       driverNums:  data.filters.driverNums,
       driverMap:   data.selectionData.driverMap,
-      driverColor: data.viewModel.driverColor,
+      driverColor: (driverNumber: number) => chartColorForTheme(teamDriverColor(driverNumber), themeMode),
     }),
-    [data.filters.driverNums, data.selectionData.driverMap, data.viewModel.driverColor],
+    [data.filters.driverNums, data.selectionData.driverMap, teamDriverColor, themeMode],
   );
 
   // ── Render ─────────────────────────────────────────────────────────────

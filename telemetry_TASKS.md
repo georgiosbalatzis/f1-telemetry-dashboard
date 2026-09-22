@@ -190,7 +190,7 @@ Work in priority order: **P0 → P1 → P2 → P3**. Mark an item complete only 
 
 ## P2 — Noticeable polish issues
 
-### [ ] P2-01 — Light mode leaves driver colors insufficiently adapted
+### [x] P2-01 — Light mode leaves driver colors insufficiently adapted
 
 **Viewport:** All three sizes, particularly mobile.
 
@@ -210,7 +210,7 @@ Work in priority order: **P0 → P1 → P2 → P3**. Mark an item complete only 
 
 **Acceptance criteria:** Small driver labels meet 4.5:1 contrast in light mode, and traces remain distinguishable against the chart background.
 
-### [ ] P2-02 — Desktop navigation consumes space without gaining prominence
+### [x] P2-02 — Desktop navigation consumes space without gaining prominence
 
 **Viewport:** 1440×900.
 
@@ -230,7 +230,7 @@ Work in priority order: **P0 → P1 → P2 → P3**. Mark an item complete only 
 
 **Acceptance criteria:** All ten views remain discoverable without horizontal scrolling, within a navigation band approximately 90px high.
 
-### [ ] P2-03 — Axes still expose automatic chart-library decisions
+### [x] P2-03 — Axes still expose automatic chart-library decisions
 
 **Viewport:** Most severe at 390×844; visible on tablet and desktop.
 
@@ -250,7 +250,7 @@ Work in priority order: **P0 → P1 → P2 → P3**. Mark an item complete only 
 
 **Acceptance criteria:** At 390px, no axis labels overlap or clip; labels remain readable at 100% zoom and use consistent precision.
 
-### [ ] P2-04 — Strategy removes the lap information mobile users need
+### [x] P2-04 — Strategy removes the lap information mobile users need
 
 **Viewport:** 390×844.
 
@@ -270,7 +270,7 @@ Work in priority order: **P0 → P1 → P2 → P3**. Mark an item complete only 
 
 **Acceptance criteria:** A mobile reader can identify compound, start/end laps, and pit transition without hovering.
 
-### [ ] P2-05 — Strategy rows wrap as loose cells instead of coherent records
+### [x] P2-05 — Strategy rows wrap as loose cells instead of coherent records
 
 **Viewport:** 390×844.
 
