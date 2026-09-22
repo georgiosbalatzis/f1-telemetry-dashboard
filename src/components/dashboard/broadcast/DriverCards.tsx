@@ -35,7 +35,7 @@ export function DriverCards({
       sub="Selected lap measurements, ranked by lap time"
       panelId="broadcast-driver-cards"
       headerRight={
-        embedMode && onEmbedPanel ? (
+        !embedMode && onEmbedPanel ? (
           <EmbedPanelButton onClick={() => onEmbedPanel('broadcast-driver-cards')} />
         ) : undefined
       }

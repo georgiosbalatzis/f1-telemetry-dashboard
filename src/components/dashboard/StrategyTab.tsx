@@ -3,7 +3,7 @@ import { CircleDot, Timer } from 'lucide-react';
 import type { OpenF1Pit, OpenF1Stint } from '../../api/openf1';
 import { COLORS, teamColor, withAlpha } from '../../constants/colors';
 import { useDriverContext } from '../../contexts/useDriverContext';
-import { CardGridSkeleton, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
+import { PanelSelection, CardGridSkeleton, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 
 const COMPOUND_COLORS: Record<string, string> = {
   ...COLORS.compound,
@@ -134,13 +134,13 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
   );
 
   return (
-    <>
+    <PanelSelection embedMode={embedMode}>
       <Panel
         title="Tyre Strategy"
         icon={<CircleDot size={14} style={{ color: 'var(--accent)' }} />}
         sub={`Stint map through lap ${lapNum}`}
         panelId="strategy-tyre-strategy"
-        headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('strategy-tyre-strategy')} /> : undefined}
+        headerRight={!embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('strategy-tyre-strategy')} /> : undefined}
       >
         {stintsLoading ? <TableSkeleton rows={6} label="Loading stint data…" /> : strategyRows.length > 0 ? (
           <div className="space-y-3">
@@ -197,6 +197,6 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
           </div>
         ) : <NoData msg="No pit stop data for this session." />}
       </Panel>
-    </>
+    </PanelSelection>
   );
 }

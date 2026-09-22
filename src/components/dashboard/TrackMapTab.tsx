@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Map } from 'lucide-react';
 import type { OpenF1Location } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
-import { ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
+import { PanelSelection, ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
 import { MAP_W, MAP_H, buildTransform, subsample, toPolyline } from './trackMapUtils';
 
 type Props = {
@@ -20,7 +20,7 @@ type DriverMarker = {
 };
 
 export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
-  const { driverNums, driverMap, driverColor } = useDriverContext();
+  const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const { trackPolyline, driverPaths, driverMarkers, startPt, activeDrivers } = useMemo((): {
     trackPolyline: string;
     driverPaths: Partial<Record<number, string>>;
@@ -100,7 +100,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
   }
 
   return (
-    <>
+    <PanelSelection embedMode={embedMode}>
       <Panel
         title={`Track Map — Lap ${lapNum}`}
         icon={<Map size={14} style={{ color: 'var(--accent)' }} />}
@@ -108,7 +108,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
           ? `GPS paths for ${activeDrivers.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} overlaid on circuit layout`
           : `Circuit layout from GPS · ${(locationByDriver[driverNums[0]] ?? []).length} samples`}
         panelId="trackmap-lap-map"
-        headerRight={embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('trackmap-lap-map')} /> : undefined}
+        headerRight={!embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('trackmap-lap-map')} /> : undefined}
       >
         <div className="h-[260px] overflow-x-auto sm:h-[380px]">
           <svg
@@ -132,7 +132,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
                 key={n}
                 points={driverPaths[n]}
                 fill="none"
-                stroke={driverColor(n)}
+                stroke={driverColor(n)} strokeDasharray={driverDash(n)}
                 strokeWidth={activeDrivers.length >= 2 ? 2.5 : 3.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -168,7 +168,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
           </div>
           {activeDrivers.map((n) => (
             <div key={n} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.1em] text-[color:var(--text-muted)]">
-              <span className="inline-block h-1.5 w-8 rounded-full" style={{ backgroundColor: driverColor(n) }} />
+              <svg width="32" height="8" aria-hidden="true"><line x1="0" y1="4" x2="32" y2="4" stroke={driverColor(n)} strokeWidth="3" strokeDasharray={driverDash(n)} /></svg>
               {driverMap[n]?.name_acronym}
             </div>
           ))}
@@ -183,6 +183,6 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
           Use the Telemetry tab for speed traces along the same lap.
         </p>
       </div>
-    </>
+    </PanelSelection>
   );
 }

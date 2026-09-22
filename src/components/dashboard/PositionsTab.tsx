@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { TrendingDown } from 'lucide-react';
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Position } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
 import { useDriverContext } from '../../contexts/useDriverContext';
-import { CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel } from './shared';
+import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 import { buildPositionChartData } from './positionsUtils';
@@ -12,13 +12,12 @@ import { buildPositionChartData } from './positionsUtils';
 type Props = {
   positions: OpenF1Position[] | null;
   positionsLoading: boolean;
-  lapNum: number;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
 
-export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = false, onEmbedPanel }: Props) {
-  const { driverNums, driverMap, driverColor } = useDriverContext();
+export function PositionsTab({ positions, positionsLoading, embedMode = false, onEmbedPanel }: Props) {
+  const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
 
@@ -26,13 +25,16 @@ export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = 
     () => buildPositionChartData(positions ?? []),
     [positions],
   );
+  const lastPosition = (positions ?? []).reduce((max, entry) => Math.max(max, entry.position), Math.max(driverCount, 2));
+  const positionTicks = [1, ...Array.from({ length: Math.floor(lastPosition / 5) }, (_, index) => (index + 1) * 5)];
+  if (!positionTicks.includes(lastPosition)) positionTicks.push(lastPosition);
 
   const legend = useMemo<ChartLegendItem[]>(
     () => driverNums.map((n) => ({
       label: driverMap[n]?.name_acronym || `#${n}`,
-      color: driverColor(n),
+      strokeDasharray: driverDash(n), color: driverColor(n),
     })),
-    [driverNums, driverMap, driverColor],
+    [driverNums, driverMap, driverColor, driverDash],
   );
 
   // Current lap position table
@@ -45,13 +47,12 @@ export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = 
       }
     }
     return Object.values(latest)
-      .sort((a, b) => a.position - b.position)
-      .slice(0, 20);
+      .sort((a, b) => a.position - b.position);
   }, [positions]);
 
   if (positionsLoading) {
     return (
-      <>
+      <PanelSelection embedMode={embedMode}>
         <Panel
           title="Current Standings"
           icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
@@ -71,7 +72,7 @@ export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = 
         >
           <ChartSkeleton label="Loading position history..." className="h-[200px] sm:h-[280px]" />
         </ChartPanel>
-      </>
+      </PanelSelection>
     );
   }
   if (!positions || positions.length === 0) {
@@ -83,7 +84,7 @@ export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = 
   }
 
   return (
-    <>
+    <PanelSelection embedMode={embedMode}>
       {/* Position history chart */}
       <ChartPanel
         title="Position History"
@@ -103,20 +104,19 @@ export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = 
                 <XAxis dataKey="t" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
                 <YAxis
                   reversed
-                  domain={[1, 20]}
-                  ticks={[1, 5, 10, 15, 20]}
+                  domain={[1, lastPosition]}
+                  ticks={positionTicks}
                   tick={{ fill: chartAxis, fontSize: 10 }}
                   stroke={chartGrid}
                   label={{ value: 'Position', angle: -90, position: 'insideLeft', fill: chartAxis, fontSize: 10 }}
                 />
                 <Tooltip content={<ChartTip discrete labelPrefix="Session sample · " />} />
-                <ReferenceLine y={lapNum} stroke="var(--accent-border)" strokeDasharray="4 3" />
                 {driverNums.map((n) => (
                   <Line
                     key={n}
                     type="monotone"
                     dataKey={`p_${n}`}
-                    stroke={driverColor(n)}
+                    stroke={driverColor(n)} strokeDasharray={driverDash(n)}
                     strokeWidth={2}
                     dot={false}
                     connectNulls
@@ -163,6 +163,6 @@ export function PositionsTab({ positions, positionsLoading, lapNum, embedMode = 
           Select specific drivers above to highlight their position lines.
         </p>
       </div>
-    </>
+    </PanelSelection>
   );
 }

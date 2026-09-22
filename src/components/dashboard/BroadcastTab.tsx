@@ -1,3 +1,4 @@
+import { PanelSelection } from './shared';
 import { useMemo } from 'react';
 import type { DriverLapSummary, SectorRow } from './types';
 import { buildSectorAnalysis } from './broadcast/broadcastUtils';
@@ -25,7 +26,7 @@ export function BroadcastTab({
 }: Props) {
   const sorted = useMemo(
     () =>
-      [...lapSummaries].sort((a, b) => {
+      lapSummaries.filter((summary) => summary.lapTime != null).sort((a, b) => {
         if (a.lapTime == null) return 1;
         if (b.lapTime == null) return -1;
         return a.lapTime - b.lapTime;
@@ -58,8 +59,8 @@ export function BroadcastTab({
   const hasSpeedTraps = sectorRows.some((r) => r.i1 != null || r.i2 != null || r.st != null);
 
   return (
-    <>
-      <TimingTower
+    <PanelSelection embedMode={embedMode}>
+      <TimingTower key="broadcast-timing-tower"
         lapNum={lapNum}
         lapsLoading={lapsLoading}
         sorted={sorted}
@@ -68,7 +69,7 @@ export function BroadcastTab({
         onEmbedPanel={onEmbedPanel}
       />
 
-      <SectorAnalysis
+      <SectorAnalysis key="broadcast-sector-analysis"
         lapsLoading={lapsLoading}
         hasSectors={hasSectors}
         sectorRows={sectorRows}
@@ -81,7 +82,7 @@ export function BroadcastTab({
       />
 
       {hasSpeedTraps && (
-        <SpeedTrap
+        <SpeedTrap key="broadcast-speed-traps"
           sectorRows={sectorRows}
           bestI1={bestI1}
           bestI2={bestI2}
@@ -91,7 +92,7 @@ export function BroadcastTab({
         />
       )}
 
-      <DriverCards
+      <DriverCards key="broadcast-driver-cards"
         sorted={sorted}
         s1Classes={s1Classes}
         s2Classes={s2Classes}
@@ -100,6 +101,6 @@ export function BroadcastTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       />
-    </>
+    </PanelSelection>
   );
 }

@@ -7,7 +7,7 @@ const GROUPS: { label: string; tabs: Tab[] }[] = [
   { label: 'Context', tabs: ['radio', 'incidents', 'weather', 'broadcast'] },
 ];
 
-export function DashboardTabs({ activeTab, onChange, onShareTab, onEmbedTab }: {
+export function DashboardTabs({ activeTab, onChange }: {
   activeTab: Tab;
   onChange: (tab: Tab) => void;
   embedMode?: boolean;
@@ -27,10 +27,7 @@ export function DashboardTabs({ activeTab, onChange, onShareTab, onEmbedTab }: {
           <div>{group.tabs.map((tab) => <button key={tab} aria-current={activeTab === tab ? 'page' : undefined} aria-controls="analysis-content" onClick={() => onChange(tab)}>{TAB_LABELS[tab]}</button>)}</div>
         </div>)}
       </div>
-      <div className="view-actions">
-        {onShareTab && <button className="text-action" onClick={() => onShareTab(activeTab)}>Share view</button>}
-        {onEmbedTab && <button className="text-action" onClick={() => onEmbedTab(activeTab)}>Embed view</button>}
-      </div>
+
     </nav>
   );
 }

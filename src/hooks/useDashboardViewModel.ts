@@ -15,7 +15,6 @@ import type {
   SectorRow,
   SpeedPoint,
   Tab,
-  WeatherRadarPoint,
   WeatherTrendPoint,
 } from '../components/dashboard/types';
 
@@ -113,7 +112,7 @@ export function useDashboardViewModel({
   }, [activeTab, allLaps, driverNums, lapOptions]);
 
   const sectorRows = useMemo<SectorRow[]>(() => {
-    if (activeTab !== 'telemetry') return [];
+    if (activeTab !== 'telemetry' && activeTab !== 'broadcast') return [];
     return driverNums.map((driverNumber) => {
       const lap = allLaps[driverNumber]?.find((item) => item.lap_number === lapNum);
       const driver = driverMap[driverNumber];
@@ -206,7 +205,8 @@ export function useDashboardViewModel({
       const lap = allLaps[driverNumber]?.find((entry) => entry.lap_number === lapNum) || null;
       const telemetry = telemetryByDriver[driverNumber] || [];
       const driver = driverMap[driverNumber];
-      const topSpeed = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.speed)) : (lap?.st_speed || lap?.i2_speed || lap?.i1_speed || null);
+      // Speed-trap readings are displayed separately; they are not lap maxima.
+      const topSpeed = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.speed)) : null;
       const avgSpeed = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.speed, 0) / telemetry.length : null;
       const avgThrottle = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.throttle, 0) / telemetry.length : null;
       const avgBrake = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.brake, 0) / telemetry.length : null;
@@ -245,16 +245,6 @@ export function useDashboardViewModel({
       });
   }, [allLaps, driverMap, driverNums, lapNum, telemetryByDriver]);
 
-  const weatherRadar = useMemo<WeatherRadarPoint[]>(() => {
-    if (!latestWeather) return [];
-    return [
-      { subject: 'Air °C', value: Math.min(100, (latestWeather.air_temperature / 40) * 100) },
-      { subject: 'Track °C', value: Math.min(100, (latestWeather.track_temperature / 60) * 100) },
-      { subject: 'Humidity', value: latestWeather.humidity },
-      { subject: 'Wind', value: Math.min(100, (latestWeather.wind_speed / 15) * 100) },
-      { subject: 'Rain', value: latestWeather.rainfall ? 100 : 0 },
-    ];
-  }, [latestWeather]);
   const weatherTrend = useMemo<WeatherTrendPoint[]>(() => {
     if (activeTab !== 'weather') return [];
     if (!weather?.length) return [];
@@ -286,7 +276,6 @@ export function useDashboardViewModel({
     filteredRadio,
     raceControlMessages,
     latestWeather,
-    weatherRadar,
     weatherTrend,
     driverColor,
   };

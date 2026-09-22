@@ -38,7 +38,7 @@ export function useDashboard() {
   const filters = useDashboardFilters();
 
   // ── Tab-driven data-fetch flags ──────────────────────────────────────────
-  const needsTelemetryData = filters.tab === 'telemetry' || filters.tab === 'energy';
+  const needsTelemetryData = filters.tab === 'telemetry' || filters.tab === 'energy' || filters.tab === 'broadcast';
   const needsStrategyData  = filters.tab === 'tires';
   const needsRadioData     = filters.tab === 'radio';
   const needsIncidentsData = filters.tab === 'incidents';
@@ -148,6 +148,25 @@ export function useDashboard() {
   /** FetchState for the primary (first) driver's telemetry — used for error display. */
   const primaryTelemetry = telemetryStates[0];
 
+  const comparisonDrivers = needsTelemetryData ? filters.driverNums.map((driverNumber, index) => {
+    const laps = lapStates[index];
+    const telemetry = telemetryStates[index];
+    const lap = laps.data?.find((entry) => entry.lap_number === filters.lapNum);
+    const status = laps.loading ? 'Loading lap data…'
+      : laps.error ? 'Lap request failed'
+      : !lap ? 'No data for this lap'
+      : telemetry.loading ? 'Loading telemetry…'
+      : telemetry.error ? 'Telemetry request failed'
+      : !telemetry.data?.length ? 'No telemetry for this lap'
+      : 'Loaded';
+    return {
+      driverNumber,
+      name: selectionData.driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
+      status,
+      retry: laps.error ? laps.refetch : telemetry.error ? telemetry.refetch : null,
+    };
+  }) : [];
+
   // ── View model: tab-gated data transformations for charts ────────────────
   const viewModel = useDashboardViewModel({
     activeTab:        filters.tab,
@@ -202,6 +221,7 @@ export function useDashboard() {
     positions,
     intervals,
     primaryTelemetry,
+    comparisonDrivers,
 
     // Derived domain data
     selectionData,

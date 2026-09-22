@@ -853,3 +853,45 @@ option, optgroup { background: var(--surface); color: var(--text); }
     display: none;
   }
 }
+
+/* P1 refinement: family masthead, compact setup, article embeds. */
+.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand img { width: 24px; height: 24px; object-fit: contain; }
+.brand .brand-wordmark { color: var(--text); }
+.product-name { font: 700 16px/1 var(--font-brand); letter-spacing: .04em; }
+.masthead-actions { display: flex; align-items: center; gap: 8px; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--text-muted); }
+.utility-menu > summary { min-height: 44px; }
+.comparison-scope { position: relative; padding: 8px 116px 8px 0; min-height: 60px; }
+.comparison-context { min-height: 44px; align-items: center; gap: 10px; }
+.selected-drivers { gap: 6px 12px; }
+.driver-roster > summary { position: absolute; right: 0; top: 8px; margin: 0; }
+.driver-roster[open] { margin-right: -116px; padding-top: 8px; }
+.analysis-navigation { margin: 12px 0; }
+.mobile-analysis-selector { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; }
+.weather-primary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.weather-metadata { font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+.embed-mode .session-heading { padding: 10px 0 14px; }
+.embed-mode .session-heading .section-label { display: none; }
+.embed-mode .session-heading h1 { font-size: 18px; margin: 0 0 4px; }
+.embed-mode .session-status { display: none; }
+.embed-mode .analysis-content { display: flex; gap: 24px; padding-bottom: 16px; }
+.embed-mode .page-footer { display: none; }
+.embed-mode .dashboard-chart-actions { display: none; }
+@media (max-width: 1023px) {
+  .session-heading { padding: 14px 0; }
+  .session-heading h1 { margin: 4px 0; }
+  .session-scope { padding-block: 10px; }
+}
+@media (max-width: 639px) {
+  .masthead-row { min-height: 60px; gap: 8px; }
+  .brand { font-size: 23px; gap: 6px; }
+  .brand img { width: 22px; height: 22px; }
+  .product-name { font-size: 14px; padding-left: 8px; }
+  .masthead-actions { gap: 0; }
+  .utility-menu > summary { gap: 4px; }
+  .comparison-context > .section-label { display: none; }
+  .selected-driver { font-size: 12px; gap: 4px; }
+  .selected-drivers { gap: 6px 10px; }
+  .embed-mode .product-name { display: none; }
+}

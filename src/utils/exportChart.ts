@@ -3,6 +3,7 @@ export type ExportChartLegendItem = {
   color: string;
   variant?: 'line' | 'area' | 'bar';
   dashed?: boolean;
+  strokeDasharray?: string;
 };
 
 type ExportChartOptions = {
@@ -73,8 +74,8 @@ function appendLegend(
       if (item.variant === 'area') {
         line.setAttribute('stroke-opacity', '0.55');
       }
-      if (item.dashed) {
-        line.setAttribute('stroke-dasharray', '6 5');
+      if (item.strokeDasharray || item.dashed) {
+        line.setAttribute('stroke-dasharray', item.strokeDasharray || '6 5');
       }
       root.appendChild(line);
     }
