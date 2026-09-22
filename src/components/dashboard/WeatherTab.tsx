@@ -5,6 +5,14 @@ import { COLORS } from '../../constants/colors';
 import type { WeatherTrendPoint } from './types';
 import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, Err, NoData, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
+import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
+
+/** One shared Y-axis width keeps the three stacked plots aligned on the same time axis. */
+const WEATHER_AXIS_WIDTH = 48;
+const AUX_TRACES = [
+  { key: 'humidity', name: 'Humidity', unit: '%', tickUnit: '%', color: COLORS.weather.humidity },
+  { key: 'wind', name: 'Wind', unit: 'm/s', tickUnit: ' m/s', color: COLORS.weather.wind },
+] as const;
 
 type Props = {
   loading: boolean;
@@ -19,13 +27,10 @@ type Props = {
 
 export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
   const chartGrid = 'var(--chart-grid)';
-  const chartAxis = 'var(--chart-axis)';
-  const chartAxisSoft = 'var(--chart-axis-soft)';
+  const timeTicks = evenTicks(weatherTrend.map((point) => point.time), useXTickCount());
   const weatherLegend = [
     { label: 'Air °C', color: COLORS.weather.air },
     { label: 'Track °C', color: COLORS.weather.track },
-    { label: 'Humidity %', color: COLORS.weather.humidity },
-    { label: 'Wind m/s', color: COLORS.weather.wind },
   ];
 
   if (loading) {
@@ -50,21 +55,36 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
       </div>
       <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         {weatherTrend.length > 1 ? (
-          <div className="h-[180px] sm:h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={weatherTrend}>
-                <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="time" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} interval={Math.max(0, Math.floor(weatherTrend.length / 6))} />
-                <YAxis yAxisId="temp" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-                <YAxis yAxisId="aux" orientation="right" tick={{ fill: chartAxisSoft, fontSize: 9 }} stroke={chartGrid} />
-                <Tooltip content={<ChartTip />} />
-                <Line yAxisId="temp" type="monotone" dataKey="air" stroke={COLORS.weather.air} strokeWidth={2} dot={false} isAnimationActive={false} name="Air °C" />
-                <Line yAxisId="temp" type="monotone" dataKey="track" stroke={COLORS.weather.track} strokeWidth={2} dot={false} isAnimationActive={false} name="Track °C" />
-                <Line yAxisId="aux" type="monotone" dataKey="humidity" stroke={COLORS.weather.humidity} strokeWidth={1.6} dot={false} isAnimationActive={false} name="Humidity %" />
-                <Line yAxisId="aux" type="monotone" dataKey="wind" stroke={COLORS.weather.wind} strokeWidth={1.6} dot={false} isAnimationActive={false} name="Wind m/s" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          <>
+            <div className="h-[150px] sm:h-[220px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={weatherTrend} margin={CHART_MARGIN} syncId="weather-trend">
+                  <CartesianGrid vertical={false} stroke={chartGrid} />
+                  <XAxis dataKey="time" ticks={timeTicks} interval={0} hide />
+                  <YAxis width={WEATHER_AXIS_WIDTH} allowDecimals={false} tick={AXIS_TICK} tickFormatter={(value: number) => `${value}°C`} stroke={chartGrid} />
+                  <Tooltip content={<ChartTip unit="°C" />} />
+                  <Line type="monotone" dataKey="air" stroke={COLORS.weather.air} strokeWidth={2} dot={false} isAnimationActive={false} name="Air" />
+                  <Line type="monotone" dataKey="track" stroke={COLORS.weather.track} strokeWidth={2} dot={false} isAnimationActive={false} name="Track" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            {AUX_TRACES.map((trace, index) => (
+              <div key={trace.key} className="mt-3">
+                <div className="text-[10px] uppercase tracking-[0.06em] text-[color:var(--text-muted)]">{trace.name} <span className="normal-case">({trace.unit})</span></div>
+                <div className={index === AUX_TRACES.length - 1 ? 'h-[88px] sm:h-[104px]' : 'h-[64px] sm:h-[80px]'}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={weatherTrend} margin={CHART_MARGIN} syncId="weather-trend">
+                      <CartesianGrid vertical={false} stroke={chartGrid} />
+                      <XAxis dataKey="time" ticks={timeTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} hide={index !== AUX_TRACES.length - 1} />
+                      <YAxis width={WEATHER_AXIS_WIDTH} domain={['auto', 'auto']} tickCount={3} allowDecimals={false} tick={AXIS_TICK_SOFT} tickFormatter={(value: number) => `${value}${trace.tickUnit}`} stroke={chartGrid} />
+                      <Tooltip content={<ChartTip unit={trace.unit} />} />
+                      <Line type="monotone" dataKey={trace.key} stroke={trace.color} strokeWidth={1.6} dot={false} isAnimationActive={false} name={trace.name} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            ))}
+          </>
         ) : <NoData msg="More weather samples are needed to draw a session trend." />}
       </ChartPanel>
       <p className="weather-metadata">

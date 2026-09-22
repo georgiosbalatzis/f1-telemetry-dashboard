@@ -125,7 +125,7 @@ it('formats chart annotations with units, timing precision and unsigned brake pe
   const { rerender } = render(<ChartTip active label={2} labelPrefix="Lap " unit="s" payload={[{ name: 'VER', value: 90.123, color: '#3671C6' }]} />);
   expect(screen.getByText('90.123 s')).toBeInTheDocument();
   rerender(<ChartTip active label={50} unit="%" absolute payload={[{ name: 'Brake', value: -100 }]} />);
-  expect(screen.getByText('100.0 %')).toBeInTheDocument();
+  expect(screen.getByText('100%')).toBeInTheDocument();
 });
 
 it('exposes loading status and an accessible error retry', () => {

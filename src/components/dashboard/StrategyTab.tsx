@@ -54,6 +54,10 @@ type PitStopCard = {
   lapNumber: number;
 };
 
+function stintCountLabel(count: number) {
+  return `${count} stint${count > 1 ? 's' : ''}`;
+}
+
 export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading, filteredPits, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap } = useDriverContext();
   const fallbackDriverNums = useMemo(() => Object.keys(stintsByDriver).map(Number), [stintsByDriver]);
@@ -87,7 +91,7 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
               color,
               compound,
               title: `${compound}: Lap ${stint.lap_start}-${stint.lap_end}`,
-              rangeLabel: `${stint.lap_start}-${stint.lap_end}`,
+              rangeLabel: `${stint.lap_start}–${stint.lap_end}`,
             };
           }),
         };
@@ -146,21 +150,26 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
           <div className="space-y-3">
             {strategyRows.map((row) => (
               <div key={row.driverNumber} className="grid gap-2 sm:grid-cols-[64px_1fr_56px] sm:items-center sm:gap-4">
-                <div className="flex items-center justify-between sm:block sm:text-right"><span className="text-xs font-bold tracking-[0.04em]" style={{ color: row.teamColor }}>{row.acronym}</span></div>
+                <div className="flex items-baseline gap-3 sm:block sm:text-right">
+                  <span className="standing-driver text-xs font-bold tracking-[0.04em] sm:justify-end"><i className="driver-marker" style={{ background: row.teamColor }} />{row.acronym}</span>
+                  <span className="stint-count sm:hidden">{stintCountLabel(row.stintCount)}</span>
+                </div>
                 <div className="stint-map">
                   {row.segments.map((segment) => (
-                    <div
-                      key={segment.key}
-                      className="flex h-full min-w-[24px] items-center justify-center border-r border-[color:var(--line-strong)] text-[10px] font-bold"
-                      style={{ width: `${segment.width}%`, backgroundColor: withAlpha(segment.color, 9), color: segment.color }}
-                      title={segment.title}
-                    >
-                      {segment.compound.charAt(0)}
-                      <span className="ml-1 hidden opacity-40 sm:inline">{segment.rangeLabel}</span>
+                    <div key={segment.key} className="stint-segment" style={{ width: `${segment.width}%` }}>
+                      <div
+                        className="stint-bar"
+                        style={{ backgroundColor: withAlpha(segment.color, 9), color: segment.color }}
+                        title={segment.title}
+                      >
+                        {segment.compound.charAt(0)}
+                        <span className="ml-1 hidden opacity-40 sm:inline">{segment.rangeLabel}</span>
+                      </div>
+                      <span className="stint-range">L{segment.rangeLabel}</span>
                     </div>
                   ))}
                 </div>
-                <div className="text-right text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-muted)]">{row.stintCount} stint{row.stintCount > 1 ? 's' : ''}</div>
+                <div className="stint-count hidden text-right sm:block">{stintCountLabel(row.stintCount)}</div>
               </div>
             ))}
           </div>
@@ -173,10 +182,10 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
             {tyreLifeCards.map((card) => (
               <div key={card.driverNumber} className="strategy-row">
                 <strong className="standing-driver"><i className="driver-marker" style={{ background: card.teamColor }} />{card.acronym}</strong>
-                <span style={{ color: card.compoundColor }}>{card.compound}<small>Compound</small></span>
-                <span>{card.stintAge}<small>Stint age · laps</small></span>
-                <span>{card.remaining}<small>Laps to stint end</small></span>
-                <span>L{card.stopEstimate}<small>Recorded stint end</small></span>
+                <span style={{ color: card.compoundColor }}><small>Compound</small>{card.compound}</span>
+                <span><small>Stint age · laps</small>{card.stintAge}</span>
+                <span><small>Laps to stint end</small>{card.remaining}</span>
+                <span><small>Recorded stint end</small>L{card.stopEstimate}</span>
               </div>
             ))}
           </div>
@@ -189,9 +198,9 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
             {pitStopCards.map((card) => (
               <div key={card.key} className="strategy-row">
                 <strong className="standing-driver"><i className="driver-marker" style={{ background: card.teamColor }} />{card.acronym}</strong>
-                <span>L{card.lapNumber}<small>Lap</small></span>
-                <span>{card.stopDuration}s<small>Stationary</small></span>
-                <span>{card.pitLaneDuration}s<small>Pit lane</small></span>
+                <span><small>Lap</small>L{card.lapNumber}</span>
+                <span><small>Stationary</small>{card.stopDuration}s</span>
+                <span><small>Pit lane</small>{card.pitLaneDuration}s</span>
               </div>
             ))}
           </div>

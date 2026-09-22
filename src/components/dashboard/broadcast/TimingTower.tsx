@@ -89,7 +89,7 @@ export function TimingTower({
                         />
                       )}
                       <div>
-                        <div className="bc-tower-acronym" style={{ color }}>
+                        <div className="bc-tower-acronym">
                           {driver?.name_acronym ?? `#${summary.driverNumber}`}
                         </div>
                         <div className="bc-tower-team">{driver?.team_name ?? ''}</div>

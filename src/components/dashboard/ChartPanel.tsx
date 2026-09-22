@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, Expand, Shrink } from 'lucide-react';
 import { COLORS } from '../../constants/colors';
-import { exportChartAsSvg, sanitizeFilename, type ExportChartLegendItem } from '../../utils/exportChart';
+import { exportChartAsSvg, sanitizeFilename, stackChartSvgs, type ExportChartLegendItem } from '../../utils/exportChart';
 import { EmbedPanelButton, Panel, ToolbarButton } from './shared';
 import { cn } from './utils';
 
@@ -60,7 +60,8 @@ export function ChartPanel({
   };
 
   const handleDownload = () => {
-    const chartSvg = chartRef.current?.querySelector('svg');
+    const surfaces = [...(chartRef.current?.querySelectorAll<SVGSVGElement>('.recharts-wrapper > svg') ?? [])];
+    const chartSvg = surfaces.length > 1 ? stackChartSvgs(surfaces) : chartRef.current?.querySelector('svg');
     if (!(chartSvg instanceof SVGSVGElement)) return;
 
     const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-strong').trim() || COLORS.fallback.exportText;
@@ -78,9 +79,9 @@ export function ChartPanel({
       {panelId && onEmbedPanel && (
         <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />
       )}
-      <ToolbarButton icon={<Download size={12} />} label="Download" onClick={handleDownload} />
+      <ToolbarButton icon={<Download size={16} />} label="Download" onClick={handleDownload} />
       <ToolbarButton
-        icon={isFullscreen ? <Shrink size={12} /> : <Expand size={12} />}
+        icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
         label={isFullscreen ? 'Exit Full' : 'Full Screen'}
         onClick={handleToggleFullscreen}
         active={isFullscreen}

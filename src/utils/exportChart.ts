@@ -141,6 +141,25 @@ function downloadSvg(filename: string, markup: string) {
   URL.revokeObjectURL(objectUrl);
 }
 
+/** Combines charts stacked in one panel (e.g. Weather's shared-time traces) into one SVG, keeping their on-screen offsets. */
+export function stackChartSvgs(svgs: SVGSVGElement[]): SVGSVGElement {
+  const top = svgs[0].getBoundingClientRect().top;
+  const stacked = document.createElementNS(SVG_NS, 'svg');
+  let width = 0;
+  let height = 0;
+  for (const svg of svgs) {
+    const rect = svg.getBoundingClientRect();
+    const copy = svg.cloneNode(true) as SVGSVGElement;
+    copy.setAttribute('y', String(rect.top - top));
+    stacked.appendChild(copy);
+    width = Math.max(width, rect.width);
+    height = Math.max(height, rect.bottom - top);
+  }
+  stacked.setAttribute('width', String(width));
+  stacked.setAttribute('height', String(height));
+  return stacked;
+}
+
 export function sanitizeFilename(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
