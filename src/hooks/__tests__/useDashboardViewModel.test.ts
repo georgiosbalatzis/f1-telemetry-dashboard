@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildNormalizedComparisonData } from '../useDashboardViewModel';
+import { buildNormalizedComparisonData, summarizeTelemetry } from '../useDashboardViewModel';
 import type { OpenF1CarData } from '../../api/openf1';
 
 function makeSamples(count: number, driverNumber: number): OpenF1CarData[] {
@@ -65,5 +65,26 @@ describe('buildNormalizedComparisonData', () => {
     });
     // 120 points × 2 drivers = 240 calls
     expect(calls).toHaveLength(240);
+  });
+});
+
+describe('summarizeTelemetry', () => {
+  const sample = (speed: number, throttle: number, brake: number, rpm: number, n_gear: number, drs: number) =>
+    ({ date: '2025-01-01T00:00:00Z', driver_number: 1, speed, throttle, brake, n_gear, rpm, drs, session_key: 1, meeting_key: 1 });
+
+  it('matches the separate-pass formulas it replaced', () => {
+    const laps = [sample(300, 100, 0, 11000, 8, 12), sample(120, 10, 100, 9000, 3, 0), sample(250, 60, 0, 12500, 7, 10), sample(90, 0, 100, 8000, 2, 8)];
+    expect(summarizeTelemetry(laps)).toEqual({
+      topSpeed: Math.max(...laps.map((e) => e.speed)),
+      avgThrottle: laps.reduce((sum, e) => sum + e.throttle, 0) / laps.length,
+      avgBrake: laps.reduce((sum, e) => sum + e.brake, 0) / laps.length,
+      peakRpm: 12500,
+      peakGear: 8,
+      drsOpenPct: Math.round((laps.filter((e) => e.drs >= 10).length / laps.length) * 100),
+    });
+  });
+
+  it('is all null without samples', () => {
+    expect(summarizeTelemetry([])).toEqual({ topSpeed: null, avgThrottle: null, avgBrake: null, peakRpm: null, peakGear: null, drsOpenPct: null });
   });
 });

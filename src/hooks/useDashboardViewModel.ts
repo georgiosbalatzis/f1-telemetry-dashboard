@@ -69,6 +69,39 @@ export function buildNormalizedComparisonData(
   });
 }
 
+/**
+ * One pass over a lap's car data: fastest speed, average throttle and brake, peak rpm and gear, and the share of samples
+ * with DRS open (value >= 10). All null without samples.
+ * @internal exported for unit tests only
+ */
+export function summarizeTelemetry(telemetry: OpenF1CarData[]) {
+  if (telemetry.length === 0) {
+    return { topSpeed: null, avgThrottle: null, avgBrake: null, peakRpm: null, peakGear: null, drsOpenPct: null };
+  }
+  let topSpeed = -Infinity;
+  let peakRpm = -Infinity;
+  let peakGear = -Infinity;
+  let throttle = 0;
+  let brake = 0;
+  let drsOpen = 0;
+  for (const entry of telemetry) {
+    if (entry.speed > topSpeed) topSpeed = entry.speed;
+    if (entry.rpm > peakRpm) peakRpm = entry.rpm;
+    if (entry.n_gear > peakGear) peakGear = entry.n_gear;
+    throttle += entry.throttle;
+    brake += entry.brake;
+    if (entry.drs >= 10) drsOpen += 1;
+  }
+  return {
+    topSpeed,
+    avgThrottle: throttle / telemetry.length,
+    avgBrake: brake / telemetry.length,
+    peakRpm,
+    peakGear,
+    drsOpenPct: Math.round((drsOpen / telemetry.length) * 100),
+  };
+}
+
 export function useDashboardViewModel({
   activeTab,
   allLaps,
@@ -227,15 +260,7 @@ export function useDashboardViewModel({
       const telemetry = telemetryByDriver[driverNumber] || [];
       const driver = driverMap[driverNumber];
       // Speed-trap readings are displayed separately; they are not lap maxima.
-      const topSpeed = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.speed)) : null;
-      const avgSpeed = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.speed, 0) / telemetry.length : null;
-      const avgThrottle = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.throttle, 0) / telemetry.length : null;
-      const avgBrake = telemetry.length > 0 ? telemetry.reduce((sum, entry) => sum + entry.brake, 0) / telemetry.length : null;
-      const peakRpm = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.rpm)) : null;
-      const peakGear = telemetry.length > 0 ? Math.max(...telemetry.map((entry) => entry.n_gear)) : null;
-      const drsOpenPct = telemetry.length > 0
-        ? Math.round((telemetry.filter((entry) => entry.drs >= 10).length / telemetry.length) * 100)
-        : null;
+      const { topSpeed, avgThrottle, avgBrake, peakRpm, peakGear, drsOpenPct } = summarizeTelemetry(telemetry);
       return {
         driverNumber,
         name: driver?.name_acronym || `#${driverNumber}`,
@@ -243,7 +268,6 @@ export function useDashboardViewModel({
         lapTime: lap?.lap_duration || null,
         gapToLeader: null,
         topSpeed,
-        avgSpeed,
         avgThrottle,
         avgBrake,
         peakRpm,

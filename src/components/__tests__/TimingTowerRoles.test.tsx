@@ -7,7 +7,7 @@ import type { DriverLapSummary } from '../dashboard/types';
 afterEach(cleanup);
 
 const summary = (driverNumber: number, name: string, lapTime: number, gapToLeader = 0): DriverLapSummary => ({
-  driverNumber, name, color: '#888', lapTime, gapToLeader, topSpeed: 330, avgSpeed: null, avgThrottle: null, avgBrake: null, peakRpm: null, peakGear: null, drsOpenPct: null,
+  driverNumber, name, color: '#888', lapTime, gapToLeader, topSpeed: 330, avgThrottle: null, avgBrake: null, peakRpm: null, peakGear: null, drsOpenPct: null,
 });
 
 it('P5-04: the timing tower keeps table semantics although its rows are display:grid', () => {
