@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session, OpenF1SessionResult } from '../api/openf1';
-import { invalidateOpenF1SessionCache, type FetchState } from './useOpenF1';
+import { invalidateOpenF1SessionCache } from './useOpenF1';
 import type { SelectOption } from '../components/dashboard/types';
 
 type Params = {
@@ -9,7 +9,8 @@ type Params = {
   drivers: OpenF1Driver[] | null;
   sessionResults: OpenF1SessionResult[] | null;
   sessionResultsLoading: boolean;
-  lapStates: Array<FetchState<OpenF1Lap[]>>;
+  /** Lap data per driver slot (same order as driverNums); pass a memoized array so loading flips don't rebuild laps. */
+  lapData: Array<OpenF1Lap[] | null>;
   circuit: string | null;
   sessionKey: number | null;
   driverNums: number[];
@@ -50,7 +51,7 @@ export function useDashboardSelectionData({
   drivers,
   sessionResults,
   sessionResultsLoading,
-  lapStates,
+  lapData,
   circuit,
   sessionKey,
   driverNums,
@@ -104,13 +105,12 @@ export function useDashboardSelectionData({
 
   const allLaps = useMemo(() => {
     const map: Record<number, OpenF1Lap[]> = {};
-    const lapSources = lapStates.map((state) => state.data);
     driverNums.forEach((driverNumber, index) => {
-      const laps = lapSources[index];
+      const laps = lapData[index];
       if (laps?.length) map[driverNumber] = laps;
     });
     return map;
-  }, [driverNums, lapStates]);
+  }, [driverNums, lapData]);
 
   const lapOptions = useMemo(() => {
     const lapSet = new Set<number>();
@@ -193,13 +193,8 @@ export function useDashboardSelectionData({
     }
   }, [driverSelectionAuto, lapNum, lapOptions, lapSelectionAuto, preferredLapNum, setLapNum]);
 
-  return {
-    circuitOptions,
-    sessionOptions,
-    driverList,
-    driverMap,
-    allLaps,
-    lapOptions,
-    telemetryWindows,
-  };
+  return useMemo(
+    () => ({ circuitOptions, sessionOptions, driverList, driverMap, allLaps, lapOptions, telemetryWindows }),
+    [circuitOptions, sessionOptions, driverList, driverMap, allLaps, lapOptions, telemetryWindows],
+  );
 }

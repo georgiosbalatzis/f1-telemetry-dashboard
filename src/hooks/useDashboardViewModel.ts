@@ -283,22 +283,8 @@ export function useDashboardViewModel({
 
   const driverColor = useCallback((driverNumber: number) => `#${driverMap[driverNumber]?.team_colour || '888'}`, [driverMap]);
 
-  return {
-    speedData,
-    comparisonSpeedData,
-    comparisonControlData,
-    comparisonEnergyData,
-    lapTimeData,
-    lapDeltaData,
-    lapSummaries,
-    cornerSplits,
-    sectorRows,
-    stintsByDriver,
-    filteredPits,
-    filteredRadio,
-    raceControlMessages,
-    latestWeather,
-    weatherTrend,
-    driverColor,
-  };
+  return useMemo(
+    () => ({ speedData, comparisonSpeedData, comparisonControlData, comparisonEnergyData, lapTimeData, lapDeltaData, lapSummaries, cornerSplits, sectorRows, stintsByDriver, filteredPits, filteredRadio, raceControlMessages, latestWeather, weatherTrend, driverColor }),
+    [speedData, comparisonSpeedData, comparisonControlData, comparisonEnergyData, lapTimeData, lapDeltaData, lapSummaries, cornerSplits, sectorRows, stintsByDriver, filteredPits, filteredRadio, raceControlMessages, latestWeather, weatherTrend, driverColor],
+  );
 }
