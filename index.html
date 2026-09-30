@@ -1,21 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="el">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/f1-telemetry-dashboard/logo192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#181a1c" />
+    <meta name="theme-color" content="#f2eee4" />
     <meta
       name="description"
-      content="f1stories.gr F1 telemetry dashboard with lap-by-lap analysis, comparison charts, and embeddable race coverage."
+      content="F1 Stories Telemetry: ανάλυση γύρου με τηλεμετρία, συγκρίσεις οδηγών και ενσωματώσιμα γραφήματα αγώνων."
     />
     <title>F1 Stories / Telemetry</title>
-    <script type="module" crossorigin src="/f1-telemetry-dashboard/assets/index-CAs7BEJk.js"></script>
+    <script>
+      // Mirrors f1StoriesPage/scripts/theme-init.js so the page never flashes the wrong theme.
+      // Order: ?theme= → stored choice (site key, then the app's legacy key) → OS preference → light.
+      (function () {
+        var t = new URLSearchParams(location.search).get('theme');
+        try {
+          if (t !== 'light' && t !== 'dark') t = localStorage.getItem('f1stories-theme') || localStorage.getItem('f1-telemetry-dashboard:theme');
+        } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#181a1c' : '#f2eee4');
+      })();
+    </script>
+    <script type="module" crossorigin src="/f1-telemetry-dashboard/assets/index-CP16WOR0.js"></script>
     <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/react-vendor-B7uZFNFY.js">
-    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/icons-D1oGDnmH.js">
+    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/icons-CQM9wo1z.js">
     <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/vendor-BaPJHeyg.js">
-    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/charts-DsAc_Jvg.js">
-    <link rel="stylesheet" crossorigin href="/f1-telemetry-dashboard/assets/index-BRyDzTXm.css">
+    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/charts-B0TvwG_N.js">
+    <link rel="stylesheet" crossorigin href="/f1-telemetry-dashboard/assets/index-BBMhx0VB.css">
   </head>
   <body>
     <div id="root"></div>
