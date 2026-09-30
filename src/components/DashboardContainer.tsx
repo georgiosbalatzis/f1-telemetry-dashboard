@@ -129,6 +129,19 @@ function getClipboardErrorMessage(error: unknown, label: string) {
   return `${label} could not be copied; copy manually`;
 }
 
+/** Writes to the clipboard. `error` is the message to show if the caller falls back (null when the API is simply absent). */
+async function tryClipboard(text: string, label: string): Promise<{ copied: boolean; error: string | null }> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return { copied: true, error: null };
+    }
+  } catch (err) {
+    return { copied: false, error: getClipboardErrorMessage(err, label) };
+  }
+  return { copied: false, error: null };
+}
+
 function isShareCancel(error: unknown) {
   return typeof DOMException !== 'undefined' && error instanceof DOMException && error.name === 'AbortError';
 }
@@ -268,14 +281,9 @@ export function DashboardContainer() {
 
   const shareSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
     const url = buildDashboardUrl(snapshot, splitMode, embedMode, themeMode);
-    let clipboardError: string | null = null;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        setFeedback(`${label} copied`);
-        return;
-      }
-    } catch (err) { clipboardError = getClipboardErrorMessage(err, label); }
+    const clipboard = await tryClipboard(url, label);
+    if (clipboard.copied) { setFeedback(`${label} copied`); return; }
+    let failure = clipboard.error;
     try {
       if (navigator.share) {
         await navigator.share({ title: `f1stories.gr ${TAB_LABELS[snapshot.tab]} view`, url });
@@ -283,44 +291,32 @@ export function DashboardContainer() {
         return;
       }
     } catch (err) {
-      if (!isShareCancel(err)) {
-        clipboardError = clipboardError ?? `${label} could not be shared; copy manually`;
-      }
+      if (!isShareCancel(err)) failure = failure ?? `${label} could not be shared; copy manually`;
     }
     window.prompt('Copy this link', url);
-    setFeedback(clipboardError ?? `${label} ready`);
+    setFeedback(failure ?? `${label} ready`);
   }, [embedMode, splitMode, themeMode]);
 
-  const embedSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
-    const snippet = buildIframeSnippet(snapshot, splitMode, themeMode);
-    let clipboardError: string | null = null;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(snippet);
-        setFeedback(`${label} copied`);
-        return;
-      }
-    } catch (err) { clipboardError = getClipboardErrorMessage(err, label); }
+  /** Copies an iframe snippet, or shows it in a prompt when the clipboard is unavailable or refused. */
+  const copySnippet = useCallback(async (snippet: string, label: string) => {
+    const { copied, error } = await tryClipboard(snippet, label);
+    if (copied) { setFeedback(`${label} copied`); return; }
     window.prompt('Copy this iframe snippet', snippet);
-    setFeedback(clipboardError ?? `${label} ready`);
-  }, [splitMode, themeMode]);
+    setFeedback(error ?? `${label} ready`);
+  }, []);
+
+  const embedSnapshot = useCallback(
+    (snapshot: DashboardFilterSnapshot, label: string) => copySnippet(buildIframeSnippet(snapshot, splitMode, themeMode), label),
+    [copySnippet, splitMode, themeMode],
+  );
 
   const handleShareTab = useCallback(async (tab: Tab) => shareSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} link`), [filters.snapshot, shareSnapshot]);
   const handleEmbedTab = useCallback(async (tab: Tab) => embedSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} embed`), [embedSnapshot, filters.snapshot]);
 
-  const handleEmbedPanel = useCallback(async (panelId: string) => {
-    const snippet = buildIframeSnippet(filters.snapshot, false, themeMode, panelId, 720);
-    let clipboardError: string | null = null;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(snippet);
-        setFeedback('Panel embed copied');
-        return;
-      }
-    } catch (err) { clipboardError = getClipboardErrorMessage(err, 'Panel embed'); }
-    window.prompt('Copy this iframe snippet', snippet);
-    setFeedback(clipboardError ?? 'Panel embed ready');
-  }, [filters.snapshot, themeMode]);
+  const handleEmbedPanel = useCallback(
+    (panelId: string) => copySnippet(buildIframeSnippet(filters.snapshot, false, themeMode, panelId, 720), 'Panel embed'),
+    [copySnippet, filters.snapshot, themeMode],
+  );
 
   const handlePrint       = useCallback(() => { setFeedback('Opening print dialog'); window.print(); }, []);
   const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled'); }, [splitMode]);
