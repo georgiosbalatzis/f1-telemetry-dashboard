@@ -6,6 +6,7 @@ import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
+import { AXIS_TICK, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
 
 type Props = {
   intervals: OpenF1Interval[] | null;
@@ -83,6 +84,8 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
     return { chartData: data, latestGaps: latest, drsWindows: windows };
   }, [intervals, driverNums]);
 
+  const sessionTicks = evenTicks(chartData.map((point) => point.t), useXTickCount());
+
   const legend = useMemo<ChartLegendItem[]>(
     () => driverNums
       .filter((n) => chartData.some((pt) => pt[`gap_${n}`] != null))
@@ -137,7 +140,8 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
                 key={entry.driver_number}
                 className="interval-summary"
               >
-                <div className="mb-1 text-[10px] uppercase tracking-[0.06em]" style={{ color }}>
+                <div className="mb-1 flex items-center gap-[6px] text-[10px] uppercase tracking-[0.06em] text-[color:var(--text)]">
+                  <i className="driver-marker" style={{ background: color }} />
                   {driverMap[entry.driver_number]?.name_acronym ?? `#${entry.driver_number}`}
                 </div>
                 <div className="timing-value">
@@ -171,7 +175,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
                 label={driverMap[driverNum]?.name_acronym ?? `#${driverNum}`}
                 value={`${pct}%`}
                 unit={`${drsCount} samples`}
-                color={driverColor(driverNum)}
+                markerColor={driverColor(driverNum)}
               />
             ))}
           </div>
@@ -192,12 +196,12 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
         {chartData.length > 0 ? (
           <div className="h-[200px] sm:h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
+              <LineChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="t" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
-                <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} tickFormatter={(v: number) => `+${v.toFixed(0)}s`} />
+                <XAxis dataKey="t" ticks={sessionTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
+                <YAxis tick={AXIS_TICK} stroke={chartGrid} tickFormatter={(v: number) => `+${v.toFixed(0)}s`} />
                 <Tooltip content={<ChartTip unit="s" labelPrefix="Session sample · " />} />
-                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS 1s', fill: 'var(--accent)', fontSize: 9, position: 'right' }} />
+                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS 1s', fill: 'var(--accent)', fontSize: 11, position: 'insideTopRight' }} />
                 {driverNums.map((n) => (
                   <Line
                     key={n}
@@ -231,12 +235,12 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
         {chartData.length > 0 ? (
           <div className="h-[180px] sm:h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
+              <LineChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="t" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} />
-                <YAxis tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} domain={[0, 5]} tickFormatter={(v: number) => `${v.toFixed(1)}s`} />
+                <XAxis dataKey="t" ticks={sessionTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
+                <YAxis tick={AXIS_TICK} stroke={chartGrid} domain={[0, 5]} tickFormatter={(v: number) => `${v.toFixed(1)}s`} />
                 <Tooltip content={<ChartTip unit="s" labelPrefix="Session sample · " />} />
-                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS', fill: 'var(--accent)', fontSize: 9, position: 'right' }} />
+                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS', fill: 'var(--accent)', fontSize: 11, position: 'insideTopRight' }} />
                 {driverNums.map((n) => (
                   <Line
                     key={n}

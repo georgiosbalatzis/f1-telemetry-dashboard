@@ -199,6 +199,8 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .utility-button[aria-pressed="true"] { color: var(--accent); background: var(--accent-muted); }
 .dashboard-chart-actions .utility-button > span { display: none; }
 .dashboard-chart-actions .utility-button { min-width: 44px; }
+/* 44px targets centred on the 21px heading's first line (line-height 26px). */
+.panel-heading > .dashboard-chart-actions, .panel-heading > .utility-button { margin-top: -9px; }
 .dashboard-chart-frame:fullscreen { padding: 24px; background: var(--bg); overflow: auto; }
 .dashboard-chart-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; padding-top: 8px; }
 .dashboard-chart-legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); }
@@ -223,12 +225,24 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .sector-strip > div { display: flex; justify-content: center; align-items: center; border-right: 1px solid var(--line-strong); color: var(--text); font-size: 11px; }
 .sector-strip > div:nth-child(2) { background: var(--surface-soft); }
 .sector-strip > div:last-child { border: 0; }
-.stint-map { display: flex; height: 40px; overflow: hidden; }
-.stint-map > div { border-top: 3px solid currentColor; }
+.stint-map { display: flex; }
+.stint-segment { min-width: 24px; }
+.stint-bar { display: flex; align-items: center; justify-content: center; height: 40px; border-top: 3px solid currentColor; border-right: 1px solid var(--line-strong); font-size: 10px; font-weight: 700; }
+.stint-range { display: none; padding: 4px 4px 0 3px; border-left: 1px solid var(--line-strong); color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+.stint-segment:first-child .stint-range { border-left: 0; padding-left: 0; }
+@media (max-width: 639px) {
+  /* Mobile keeps each stint's lap range visible beneath its segment (no hover needed). */
+  .stint-range { display: block; }
+  /* A short final stint grows its label leftwards so it never spills past the map edge. */
+  .stint-segment:last-child:not(:first-child) .stint-range { display: flex; justify-content: flex-end; }
+}
+.stint-count { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--text-muted); }
 .strategy-rows { display: grid; gap: 0; }
-.strategy-row { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: baseline; gap: 8px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+.strategy-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 10px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+/* Each record: full-width driver heading, then measurements with labels above values. */
+.strategy-row > :first-child { grid-column: 1 / -1; }
 .strategy-row strong { font-weight: 500; }
-.strategy-row small { display: block; color: var(--text-muted); font-size: 11px; }
+.strategy-row small { display: block; margin-bottom: 2px; color: var(--text-muted); font-size: 11px; }
 .standings-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
 .standing-row { display: grid; grid-template-columns: 30px 1fr; gap: 2px 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .standing-row > :first-child { grid-row: span 2; font-size: 22px; font-weight: 500; }
@@ -239,6 +253,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .radio-entry strong { display: flex; align-items: center; gap: 8px; font-size: 15px; }
 .radio-entry time { display: block; margin-top: 5px; color: var(--text-muted); font-size: 12px; }
 .radio-entry a { font-size: 12px; min-height: 44px; display: flex; align-items: center; }
+.clock-time { display: block; font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: normal; text-transform: none; white-space: nowrap; }
 .race-event { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .flag-label { font-size: 10px; font-weight: 600; padding-left: 7px; border-left: 3px solid currentColor; }
 .flag-danger { color: var(--color-danger); }
@@ -259,7 +274,10 @@ option, optgroup { background: var(--surface); color: var(--text); }
   .driver-surname { display: inline; }
   .driver-options { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .lap-comparison { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .strategy-row { grid-template-columns: 1.2fr repeat(4, 1fr); }
+  .lap-comparison:has(> :last-child:nth-child(-n+2)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lap-comparison:has(> :last-child:nth-child(3)) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .strategy-row { grid-template-columns: 1.2fr repeat(4, 1fr); align-items: end; }
+  .strategy-row > :first-child { grid-column: auto; }
 }
 @media (min-width: 1024px) {
   .page-shell { padding-inline: 48px; }
@@ -878,6 +896,16 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .embed-mode .analysis-content { display: flex; gap: 24px; padding-bottom: 16px; }
 .embed-mode .page-footer { display: none; }
 .embed-mode .dashboard-chart-actions { display: none; }
+@media (min-width: 1024px) {
+  /* P2-02: compact bounded analysis row; the selected underline sits on the content boundary. */
+  .analysis-navigation { margin: 8px 0 24px; border-bottom: 1px solid var(--line); }
+  .analysis-groups { grid-template-columns: repeat(3, minmax(0, auto)); justify-content: space-between; gap: 0 24px; }
+  .analysis-group .section-label { display: block; line-height: 1.4; }
+  .analysis-group > div { gap: 0 clamp(14px, 1.4vw, 20px); }
+  .analysis-group button { margin-bottom: -1px; padding: 0; font-size: 14px; }
+  .analysis-navigation ~ #analysis-content > .dashboard-panel:first-child,
+  .analysis-navigation ~ #analysis-content > .dashboard-chart-frame:first-child > .dashboard-panel { border-top: 0; padding-top: 0; }
+}
 @media (max-width: 1023px) {
   .session-heading { padding: 14px 0; }
   .session-heading h1 { margin: 4px 0; }

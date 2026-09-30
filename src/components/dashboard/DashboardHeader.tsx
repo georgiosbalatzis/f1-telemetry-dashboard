@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Code2, Columns2, Loader2, MoonStar, Printer, Save, Share2, SunMedium, Undo2 } from 'lucide-react';
 import { ToolbarButton } from './shared';
 
@@ -33,6 +34,12 @@ export function DashboardHeader({
   embedTitle, embedSubtitle, embedContext, openDashboardUrl, onPresetNameChange,
   onSavePreset, onShare, onEmbed, onPrint, onToggleSplit, onToggleTheme, onBack,
 }: Props) {
+  // Theme is a visual preference: announce it to assistive tech without adding a visible line that moves the page.
+  const [themeAnnouncement, setThemeAnnouncement] = useState('');
+  const toggleTheme = () => {
+    setThemeAnnouncement(themeMode === 'light' ? 'Dark theme on' : 'Light theme on');
+    onToggleTheme();
+  };
   return (
     <header className="masthead">
       <div className="masthead-row">
@@ -40,7 +47,8 @@ export function DashboardHeader({
         <span className="product-name">TELEMETRY</span>
         {embedMode ? <a className="text-action masthead-tools" href={openDashboardUrl} target="_blank" rel="noreferrer">Open analysis ↗</a> : (
           <div className="masthead-tools masthead-actions">
-            <button className="theme-toggle" aria-label={themeMode === 'light' ? 'Dark theme' : 'Light theme'} onClick={onToggleTheme}>{themeMode === 'light' ? <MoonStar size={17} /> : <SunMedium size={17} />}</button>
+            <button className="theme-toggle" aria-label={themeMode === 'light' ? 'Dark theme' : 'Light theme'} onClick={toggleTheme}>{themeMode === 'light' ? <MoonStar size={17} /> : <SunMedium size={17} />}</button>
+            <span className="sr-only" role="status">{themeAnnouncement}</span>
           <details className="utility-menu">
             <summary>Tools <span aria-hidden="true">+</span></summary>
             <div className="utility-content">

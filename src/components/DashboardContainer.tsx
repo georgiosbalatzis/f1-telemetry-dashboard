@@ -12,7 +12,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboard } from '../hooks/useDashboard';
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
-import { COLORS } from '../constants/colors';
+import { COLORS, chartColorForTheme } from '../constants/colors';
 import { DriverProvider } from '../contexts/DriverContext';
 import { DashboardShell } from './DashboardShell';
 import { TAB_LABELS } from './dashboard/tabLabels';
@@ -342,17 +342,19 @@ export function DashboardContainer() {
 
   const handlePrint       = useCallback(() => { setFeedback('Opening print dialog'); window.print(); }, []);
   const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled'); }, [splitMode]);
-  const handleToggleTheme = useCallback(() => { const next = themeMode === 'light' ? 'dark' : 'light'; setThemeMode(next); setFeedback(next === 'light' ? 'Light mode enabled' : 'Dark mode enabled'); }, [themeMode]);
+  const handleToggleTheme = useCallback(() => setThemeMode((mode) => (mode === 'light' ? 'dark' : 'light')), []);
   const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback('No previous page in history'); } }, []);
 
   // ── Driver context value (shared with all tab components via DriverProvider) ─
+  // Chart traces use theme-adjusted team colours; markers elsewhere keep the raw colour.
+  const teamDriverColor = data.viewModel.driverColor;
   const driverContextValue = useMemo(
     () => ({
       driverNums:  data.filters.driverNums,
       driverMap:   data.selectionData.driverMap,
-      driverColor: data.viewModel.driverColor,
+      driverColor: (driverNumber: number) => chartColorForTheme(teamDriverColor(driverNumber), themeMode),
     }),
-    [data.filters.driverNums, data.selectionData.driverMap, data.viewModel.driverColor],
+    [data.filters.driverNums, data.selectionData.driverMap, teamDriverColor, themeMode],
   );
 
   // ── Render ─────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildTransform, MAP_W, MAP_H, PADDING, subsample } from '../trackMapUtils';
+import { buildTransform, fitBox, MAP_W, MAP_H, PADDING, subsample } from '../trackMapUtils';
 
 describe('buildTransform', () => {
   it('returns null for empty input', () => {
@@ -66,5 +66,15 @@ describe('subsample', () => {
     const result = subsample(arr, 10);
     expect(result.length).toBeLessThanOrEqual(10);
     expect(result[0]).toBe(0);
+  });
+});
+
+describe('fitBox', () => {
+  it('crops to the projected points plus margin, keeping their aspect ratio', () => {
+    expect(fitBox([{ nx: 100, ny: 20 }, { nx: 200, ny: 360 }], 10)).toEqual({ x: 90, y: 10, w: 120, h: 360 });
+  });
+
+  it('falls back to the full canvas when there are no points', () => {
+    expect(fitBox([], 10)).toEqual({ x: 0, y: 0, w: MAP_W, h: MAP_H });
   });
 });

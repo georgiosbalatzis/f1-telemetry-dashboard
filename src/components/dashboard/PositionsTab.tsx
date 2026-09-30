@@ -7,6 +7,7 @@ import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel } from './shared';
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
+import { AXIS_TICK, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
 import { buildPositionChartData } from './positionsUtils';
 
 type Props = {
@@ -25,6 +26,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
     () => buildPositionChartData(positions ?? []),
     [positions],
   );
+  const sessionTicks = evenTicks(chartData.map((point) => point.t), useXTickCount());
   const lastPosition = (positions ?? []).reduce((max, entry) => Math.max(max, entry.position), Math.max(driverCount, 2));
   const positionTicks = [1, ...Array.from({ length: Math.floor(lastPosition / 5) }, (_, index) => (index + 1) * 5)];
   if (!positionTicks.includes(lastPosition)) positionTicks.push(lastPosition);
@@ -99,14 +101,14 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
         {chartData.length > 0 ? (
           <div className="h-[200px] sm:h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
+              <LineChart data={chartData} margin={CHART_MARGIN}>
                 <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="t" tick={{ fill: chartAxis, fontSize: 10 }} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
+                <XAxis dataKey="t" ticks={sessionTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
                 <YAxis
                   reversed
                   domain={[1, lastPosition]}
                   ticks={positionTicks}
-                  tick={{ fill: chartAxis, fontSize: 10 }}
+                  tick={AXIS_TICK}
                   stroke={chartGrid}
                   label={{ value: 'Position', angle: -90, position: 'insideLeft', fill: chartAxis, fontSize: 10 }}
                 />
