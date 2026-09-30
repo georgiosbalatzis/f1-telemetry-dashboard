@@ -8,7 +8,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium, firefox, webkit } from 'playwright';
-import { OUT, TABS, VIEWPORTS, arg, dashboardUrl, freezeTime, replayOpenF1, settle, startServer } from './lib.mjs';
+import { OUT, TABS, VIEWPORTS, arg, dashboardUrl, replayOpenF1, settle, startServer } from './lib.mjs';
 
 const launchers = { chromium, firefox, webkit };
 const engines = String(arg('engines', 'chromium,webkit,firefox')).split(',');
@@ -30,7 +30,6 @@ try {
       const context = await browser.newContext({ viewport: { width: viewport.w, height: viewport.h }, reducedMotion: 'reduce', deviceScaleFactor: 1 });
       await replayOpenF1(context);
       const page = await context.newPage();
-      await freezeTime(page);
       for (const theme of themes) for (const tab of tabs) {
         await page.goto(dashboardUrl(server.url, { tab, theme }));
         await settle(page);

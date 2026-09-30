@@ -13,7 +13,6 @@ export const BASE_PATH = '/f1-telemetry-dashboard/';
 export const SCOPE = 'year=2025&circuit=Monza&session=9912&drivers=1,4&lap=52';
 export const TABS = ['telemetry', 'energy', 'trackmap', 'positions', 'intervals', 'tires', 'radio', 'incidents', 'weather', 'broadcast'];
 export const VIEWPORTS = [{ w: 390, h: 844 }, { w: 820, h: 1180 }, { w: 1440, h: 900 }];
-export const FIXED_TIME = new Date('2026-09-30T12:00:00Z');
 
 export const arg = (name, fallback) => {
   const hit = process.argv.find((a) => a === `--${name}` || a.startsWith(`--${name}=`));
@@ -66,8 +65,8 @@ export async function replayOpenF1(context) {
   });
 }
 
-/** Freezes Date.now() so the masthead countdown and "next meeting" cannot change between runs. */
-export const freezeTime = (page) => page.clock.setFixedTime(FIXED_TIME);
+// Do NOT freeze Date.now(): the request pacer in api/openf1.ts schedules with it, so a frozen clock makes queued requests
+// pile up and pages look idle while they are still loading. The fixed 2025 scope has no upcoming meeting, so nothing depends on "now".
 
 export const dashboardUrl = (base, { tab = 'telemetry', theme = 'light', scope = SCOPE } = {}) => `${base}?${scope}&tab=${tab}&theme=${theme}`;
 

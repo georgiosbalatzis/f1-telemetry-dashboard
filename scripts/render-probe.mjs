@@ -2,7 +2,7 @@
 //   node scripts/render-probe.mjs
 // Expected after Phase 1 (P1-05): 0 commits while typing in the preset box or showing/clearing a toast.
 import { chromium } from 'playwright';
-import { dashboardUrl, freezeTime, replayOpenF1, settle, startServer } from './lib.mjs';
+import { dashboardUrl, replayOpenF1, settle, startServer } from './lib.mjs';
 
 const server = await startServer({ dev: true });
 const browser = await chromium.launch();
@@ -11,7 +11,6 @@ try {
   await replayOpenF1(context);
   await context.addInitScript(() => localStorage.setItem('perfProbe', '1'));
   const page = await context.newPage();
-  await freezeTime(page);
   await page.goto(dashboardUrl(server.url));
   await settle(page);
   const commits = () => page.evaluate(() => window.__perfCommits?.TelemetryTab ?? 0);

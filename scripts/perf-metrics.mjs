@@ -5,7 +5,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { chromium } from 'playwright';
-import { BASE_PATH, OUT, ROOT, SCOPE, arg, dashboardUrl, freezeTime, replayOpenF1, settle, startServer } from './lib.mjs';
+import { BASE_PATH, OUT, ROOT, SCOPE, arg, dashboardUrl, replayOpenF1, settle, startServer } from './lib.mjs';
 
 const label = String(arg('label', 'before'));
 const replay = Boolean(arg('replay', false));
@@ -50,7 +50,6 @@ async function loadPass(browser, server, viewport) {
   const page = await context.newPage();
   await page.addInitScript(observers);
   const net = trackNetwork(page);
-  await freezeTime(page);
   const t0 = Date.now();
   await page.goto(dashboardUrl(server.url), { waitUntil: 'load' });
   await page.locator('.recharts-wrapper').first().waitFor({ timeout: 60000 }).catch(() => {});

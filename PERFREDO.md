@@ -111,7 +111,7 @@ Implemented by `scripts/lib.mjs`, `scripts/visual-baseline.mjs`, `scripts/perf-m
 | `node scripts/render-probe.mjs` | dev server + `<PerfProbe>`; counts `TelemetryTab` commits for 10 keystrokes and a toast |
 
 How it works, and what to know:
-- **Deterministic data.** OpenF1 responses are recorded on first use to `.perf-baseline/fixtures/` (paced, 429-safe) and replayed afterwards, and `Date.now()` is frozen. Delete that folder to re-record.
+- **Deterministic data.** OpenF1 responses are recorded on first use to `.perf-baseline/fixtures/` (paced, 429-safe) and replayed afterwards. Delete that folder to re-record. **Never freeze `Date.now()`** in these scripts: the request pacer (P2-01) schedules with it, so a frozen clock makes queued requests pile up and pages look idle while still loading (it produced false Broadcast-tab diffs). The 2025 scope has no upcoming meeting, so nothing depends on "now".
 - **Chromium and Firefox are strict gates** (0 diffs on a full self-compare). **WebKit headless is advisory**: identical runs differ by up to ~15 px of height or a text shift, at a different place each time (hero, map legend). Use `--strict-webkit` to gate on it; before Phase 7, eyeball any WebKit diffs against `docs/rework/final/`.
 - Full-page capture neutralizes `#root`/`.min-h-screen` min-heights (they feed back through `100vh`). Pages are always taller than the viewport, so no pixel changes. This also means **P5-03 (dvh) is invisible to the screenshot check**: verify it manually on iOS.
 - After Phase 1 changes, re-run `--compare` **before** committing each phase; re-baseline only for changes the owner approved (⚠ VISIBLE tasks).
@@ -225,6 +225,28 @@ Notes for later phases:
 
 **P2-06 · Preconnect to the API** · `index.html`
 - `<link rel="preconnect" href="https://api.openf1.org" crossorigin>` saves DNS and TLS time before the first request, which matters most on mobile networks.
+
+---
+
+### Phase 2 status: ✅ DONE (P2-01..P2-06, 2026-09-30)
+
+Measured with `scripts/perf-metrics.mjs --label=p2` (live API):
+
+| Metric | Baseline | After Phase 2 | Target |
+|---|---|---|---|
+| 429s on cold load (desktop / mobile) | 5 / 3 | **0 / 0** | 0 ✅ |
+| Cold-load requests | `laps` 5, `session_result` 2, `race_control` 2 | `laps` 2, `session_result` 1, `race_control` 1 | n/a |
+| `car_data` requests, 15 rapid lap steps | 32 | **2** (one per driver) | ≤ 4 ✅ |
+| Charts visible on cold load | ~2.4 s | ~2.4 s | not slower ✅ |
+| Screenshots, Chromium + Firefox, 80 shots | n/a | 0 diffs | 0 ✅ |
+
+What changed and what was learned:
+- **Rate limit, measured** (the docs page states none): sequential requests are never throttled; a burst of 4 concurrent requests gets one 429 and 9 get six. So about 3 concurrent / ~3 per second. `MIN_GAP_MS = 350`. There is no `Retry-After` header, so that branch (capped at 10 s) only applies if it ever appears.
+- P2-01: one global FIFO pacer in `api/openf1.ts` (`takeSlot`), applied to every attempt including retries; a request aborted while queued hands its slot back if nobody queued behind it. The 12 s request timeout also covers time spent queued.
+- P2-02: `useDebouncedValue` (200 ms) feeds only the telemetry/location windows (`windowLapNum`); the UI lap is instant, and auto-picked laps skip the delay (`lapSelectionAuto`). Known, accepted: for ≤200 ms after the last step, summaries can still show the previous lap's telemetry before the skeleton appears.
+- P2-03/04: removed the session-switch cache wipe (`invalidateOpenF1SessionCache` and helpers); TTL 30 min fresh / 2 h stale. The app only shows finished sessions well; a live session can lag by up to 30 min.
+- P2-05: hook order alone is not enough (race_control's key exists on the first render, the telemetry key only after laps arrive), so `race_control` is also gated on laps having arrived or the Incidents tab being open, and declared after the car-data hooks.
+- P2-06: `preconnect` to `api.openf1.org`.
 
 ---
 
