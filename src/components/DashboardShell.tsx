@@ -187,7 +187,7 @@ export function DashboardShell({
     <div
       className={[
         'dashboard-app',
-        embedMode ? 'embed-mode' : 'min-h-screen',
+        embedMode ? 'embed-mode' : 'min-h-dvh',
       ].filter(Boolean).join(' ')}
     >
       {!embedMode && (
