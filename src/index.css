@@ -304,12 +304,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .strategy-row > :first-child { grid-column: 1 / -1; }
 .strategy-row strong { font-weight: 500; }
 .strategy-row small { display: block; margin-bottom: 2px; color: var(--text-muted); font-size: 11px; }
-.standings-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
-.standing-row { min-height: 60px; display: grid; grid-template-columns: 30px 1fr; gap: 2px 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
-.standing-row > :first-child { grid-row: span 2; font-size: 24px; font-weight: 600; }
-.standing-row:first-child > :first-child { color: var(--accent); }
 .standing-driver { display: flex; align-items: center; gap: 7px; font-size: 13px; }
-.standing-row small { color: var(--text-muted); font-size: 11px; }
 .radio-list { display: grid; }
 .radio-entry { padding: 18px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .radio-entry strong { display: flex; align-items: center; gap: 8px; font-size: 15px; }
@@ -348,8 +343,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
   .view-actions { margin-top: 4px; }
   .analysis-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .analysis-split > :first-child { grid-column: 1 / -1; }
-  .standings-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .dashboard-chart-actions .utility-button > span { display: inline; }
+    .dashboard-chart-actions .utility-button > span { display: inline; }
 }
 @media (max-width: 639px) {
   .session-heading { display: block; }
@@ -1072,3 +1066,14 @@ option, optgroup { background: var(--surface); color: var(--text); }
 :root[data-theme="dark"] .chart-tooltip { border-top-color: var(--accent); }
 @media (min-width: 640px) { .summary-strip-title { flex: 1 1 220px; } .summary-stat { text-align: right; } }
 @media (min-width: 1024px) { .pair-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+/* ── Phase 6: track map panel, standings tables ── */
+.track-panel { --surface-track: #47494a; --line-strong: #777975; --bg: #222426; --accent: #ff826b; --text-strong: #eee7dc; --text-muted: #bcb8b0; --text-dim: #92938d; padding: 28px 24px 20px; border-bottom-right-radius: var(--cut); background: #222426; color: #eee7dc; }
+.data-table .pos { font-size: 24px; font-weight: 600; }
+.standings-tables table:first-child tbody tr:first-child .pos { color: var(--accent); }
+.data-table .muted b { color: var(--text); font-weight: 600; letter-spacing: .06em; }
+.standings-tables { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 48px; }
+@media (min-width: 1024px) { .standings-tables { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+.data-table .left, .data-table th.left { text-align: left; }
+.data-table th:last-child, .data-table td:last-child { padding-right: 8px; }

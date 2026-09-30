@@ -10,10 +10,10 @@ import { ChartPanel, type ChartLegendItem } from './ChartPanel';
 import { fmtLap } from './utils';
 import { GapCard } from './GapCard';
 import { SummaryStrip } from './SummaryStrip';
-import { cornerMarks } from './cornerMarks';
+import { useProgressAxis } from './useProgressAxis';
 import { SECTOR_STYLE, classifySectorEntries } from './broadcast/broadcastUtils';
 import type { GapCardData } from './gapCardData';
-import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, PEDAL_TICKS, PROGRESS_TICKS, evenTicks, formatLapAxis, formatPedalAxis, useXTickCount } from './chartAxis';
+import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, PEDAL_TICKS, evenTicks, formatLapAxis, formatPedalAxis, useXTickCount } from './chartAxis';
 
 type Props = {
   lapNum: number;
@@ -125,18 +125,7 @@ export function TelemetryTab({
     });
   }, [comparisonSpeedData, driverNums]);
 
-  // The progress axis names the slowest stretches of the lap (C1, C2 ...) instead of bare percentages.
-  const marks = useMemo(() => {
-    const driverNumber = driverNums.find((number) => comparisonSpeedData.every((point) => point[`speed_${number}`] != null));
-    return driverNumber != null && comparisonSpeedData.length > 0 ? cornerMarks(comparisonSpeedData, driverNumber, copy.chart.corner) : [];
-  }, [comparisonSpeedData, driverNums]);
-  const progressTicks = marks.length > 0 ? evenTicks(marks.map((mark) => mark.progress), xTickCount) : PROGRESS_TICKS;
-  const progressAxis = {
-    type: 'number' as const, domain: [0, 100] as [number, number], ticks: progressTicks, tick: AXIS_TICK, stroke: chartGrid,
-    unit: marks.length > 0 ? undefined : '%',
-    tickFormatter: marks.length > 0 ? (value: number) => marks.find((mark) => mark.progress === value)?.label ?? '' : undefined,
-  };
-  const cornerGuides = marks.map((mark) => <ReferenceLine key={mark.progress} x={mark.progress} stroke={chartGrid} strokeDasharray="2 4" />);
+  const { axis: progressAxis, guides: cornerGuides } = useProgressAxis(comparisonSpeedData, driverNums);
 
   return (
     <PanelSelection embedMode={embedMode}>

@@ -20,7 +20,7 @@ it('renders all 22 standings and a 22-position chart without a horizontal lap th
     </DriverProvider>,
   );
   expect(container.querySelectorAll('.standing-row')).toHaveLength(22);
-  expect(container.querySelector('.standing-row:last-child')).toHaveTextContent('22');
+  expect([...container.querySelectorAll('.standing-row')].slice(-1)[0]).toHaveTextContent('22');
   expect(container.querySelector('.recharts-yAxis')).toHaveTextContent('22');
   expect(container.querySelector('.recharts-reference-line')).toBeNull();
 });

@@ -180,10 +180,10 @@ Each task lists **Files**, **Change** and **Accept**. Keep diffs small. Don't in
 
 For each tab: large header (R3-02), card bar (R3-03), primary visual, then compact secondary panels. Check it in both themes at 1440, 768 and 390.
 
-- [ ] **R6-01 Τηλεμετρία**: summary strip, speed trace, then a pair row (gap card | sector table), then delta, then throttle and brake. `TelemetryTab.tsx`.
-- [ ] **R6-02 DRS & RPM**: the same frame; gear/RPM traces share the corner axis. `EnergyTab.tsx`.
-- [ ] **R6-03 Track Map**: the map sits in a charcoal panel with the `--cut` bottom-right corner (as in mockup B's cover); segments show which driver was faster per mini-sector, if available, else use the current rendering. `TrackMapTab.tsx`, `trackMapUtils.ts`.
-- [ ] **R6-04 Θέσεις**: position chart plus the full classification in the R4-03 table (keep the 22-driver fix from P0-03). `PositionsTab.tsx`.
+- [x] ✅ **R6-01 Τηλεμετρία**: summary strip, speed trace, then a pair row (gap card | sector table), then delta, then throttle and brake. `TelemetryTab.tsx`.
+- [x] ✅ **R6-02 DRS & RPM**: the same frame; gear/RPM traces share the corner axis. `EnergyTab.tsx`.
+- [x] ✅ **R6-03 Track Map**: the map sits in a charcoal panel with the `--cut` bottom-right corner (as in mockup B's cover); segments show which driver was faster per mini-sector, if available, else use the current rendering. `TrackMapTab.tsx`, `trackMapUtils.ts`.
+- [x] ✅ **R6-04 Θέσεις**: position chart plus the full classification in the R4-03 table (keep the 22-driver fix from P0-03). `PositionsTab.tsx`.
 - [ ] **R6-05 Intervals**: gap chart plus the table. `IntervalsTab.tsx`.
 - [ ] **R6-06 Ελαστικά**: stint bars as paper-2 segments with a 3px compound-colour top border and a `MEDIUM · 1–17` label (as in mockup B's `STINTS.`). `StrategyTab.tsx`.
 - [ ] **R6-07 Team Radio**: list rows with a 1px rule, driver bar, time and a play link, in the style of the homepage's "ΠΡΟΣΦΑΤΑ" list. `RadioTab.tsx`.

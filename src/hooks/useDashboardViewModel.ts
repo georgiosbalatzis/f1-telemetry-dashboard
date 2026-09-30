@@ -173,6 +173,7 @@ export function useDashboardViewModel({
   const comparisonEnergyData = useMemo<ComparisonPoint[]>(() => {
     if (activeTab !== 'energy') return [];
     return buildNormalizedComparisonData(driverNums, telemetryByDriver, (point, driverNumber, sample) => {
+      point[`speed_${driverNumber}`] = sample?.speed; // only used to find the corners for the shared axis
       point[`gear_${driverNumber}`] = sample?.n_gear;
       point[`rpm_${driverNumber}`] = sample?.rpm;
       point[`drs_${driverNumber}`] = sample ? (sample.drs >= 10 ? 1 : 0) : undefined;
