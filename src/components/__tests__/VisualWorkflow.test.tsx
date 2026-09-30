@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { DashboardContainer } from '../DashboardContainer';
 import { ChartTip, ChartSkeleton, Err } from '../dashboard/shared';
 import { TAB_LABELS } from '../dashboard/tabLabels';
@@ -22,7 +22,7 @@ vi.mock('../../hooks/useDashboard', async () => {
       selectionData: {
         circuitOptions: [{ v: 'Bahrain', l: 'Bahrain' }, { v: 'Monza', l: 'Monza' }],
         sessionOptions: [{ v: 9472, l: 'Race' }, { v: 9471, l: 'Qualifying' }],
-        lapOptions: [1, 2, 3], driverList: drivers,
+        lapOptions: [1, 2, 3], driverList: drivers, allLaps: {},
         driverMap: Object.fromEntries(drivers.map((driver) => [driver.driver_number, driver])),
       },
       viewModel: {
@@ -55,12 +55,12 @@ it('preserves scope, driver selection, both navigation controls, and URL state',
   render(<DashboardContainer />);
   expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(copy.hero.title);
   expect(screen.getByRole('heading', { level: 2, name: /Bahrain · Race/ })).toHaveTextContent(`Bahrain · Race · ${copy.hero.lap(2, 3)}`);
-  expect(screen.getByLabelText('Lap / 3')).toHaveValue('2');
-  fireEvent.click(screen.getByRole('button', { name: 'Next lap' }));
+  expect(screen.getByLabelText(copy.scope.lap(3))).toHaveValue('2');
+  fireEvent.click(screen.getByRole('button', { name: copy.scope.nextLap }));
   expect(params().get('lap')).toBe('3');
-  expect(screen.getByRole('button', { name: 'Next lap' })).toBeDisabled();
-  fireEvent.change(screen.getByLabelText('Lap / 3'), { target: { value: '1' } });
-  fireEvent.click(screen.getByText('Edit drivers'));
+  expect(screen.getByRole('button', { name: copy.scope.nextLap })).toBeDisabled();
+  fireEvent.change(screen.getByLabelText(copy.scope.lap(3)), { target: { value: '1' } });
+  fireEvent.click(screen.getByRole('button', { name: copy.scope.add }));
   fireEvent.click(screen.getByRole('button', { name: /Lewis Hamilton/ }));
   expect(params().get('drivers')).toBe('1,44');
   expect(screen.getByRole('button', { name: /Lewis Hamilton/ })).toHaveAttribute('aria-pressed', 'true');
@@ -79,11 +79,11 @@ it('preserves scope, driver selection, both navigation controls, and URL state',
   fireEvent.click(screen.getByRole('button', { name: TAB_LABELS.telemetry }));
   expect(params().get('tab')).toBe('telemetry');
   expect(screen.getByRole('button', { name: TAB_LABELS.telemetry })).toHaveAttribute('aria-current', 'page');
-  fireEvent.change(screen.getByLabelText('Session'), { target: { value: '9471' } });
+  fireEvent.change(screen.getByLabelText(copy.scope.session), { target: { value: '9471' } });
   expect(params().get('session')).toBe('9471');
   fireEvent.change(screen.getByLabelText('Grand Prix'), { target: { value: 'Monza' } });
   expect(params().get('circuit')).toBe('Monza');
-  fireEvent.change(screen.getByLabelText('Season'), { target: { value: '2023' } });
+  fireEvent.change(screen.getByLabelText(copy.scope.season), { target: { value: '2023' } });
   expect(params().get('year')).toBe('2023');
 });
 
@@ -104,13 +104,13 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   expect(document.querySelector('.analysis-split')).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText(copy.masthead.presetLabel), { target: { value: 'Race study' } });
   fireEvent.click(screen.getByRole('button', { name: copy.masthead.save }));
-  fireEvent.click(screen.getByRole('button', { name: 'Next lap' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.scope.nextLap }));
   fireEvent.change(screen.getByLabelText(copy.masthead.presetLabel), { target: { value: '' } });
   fireEvent.change(screen.getByLabelText(copy.masthead.presetLabel), { target: { value: 'Race study' } });
   expect(params().get('lap')).toBe('2');
-  fireEvent.click(screen.getByRole('button', { name: copy.masthead.share }));
+  fireEvent.click(screen.getByRole('button', { name: copy.cardBar.share }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('layout=split&theme=light')));
-  fireEvent.click(within(document.querySelector('.utility-content') as HTMLElement).getByRole('button', { name: copy.masthead.embed }));
+  fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('embed=1&theme=light')));
   fireEvent.click(screen.getByRole('button', { name: copy.masthead.print }));
   expect(print).toHaveBeenCalledOnce();
@@ -124,7 +124,7 @@ it('restores a read-only article embed with an open-analysis link', async () => 
   expect(document.querySelector('.embed-mode')).toBeInTheDocument();
   expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   expect(screen.queryByText('Adjust session & lap')).not.toBeInTheDocument();
-  expect(screen.queryByText('Edit drivers')).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: copy.scope.add })).not.toBeInTheDocument();
   expect(params().get('lap')).toBe('3');
   expect(params().get('embed')).toBe('1');
   expect(screen.getByRole('link', { name: 'Open analysis ↗' }).getAttribute('href')).not.toContain('embed=1');
@@ -153,8 +153,8 @@ it('renders only the requested embed panel and its legend without authoring cont
   expect(screen.getByRole('heading', { name: 'Speed Trace' })).toBeInTheDocument();
   expect(screen.queryByRole('heading', { name: 'Sector Comparison' })).not.toBeInTheDocument();
   expect(document.querySelectorAll('.dashboard-panel')).toHaveLength(1);
-  expect(screen.queryByRole('button', { name: 'Download' })).not.toBeInTheDocument();
-  expect(screen.queryByRole('button', { name: 'Embed' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: copy.panel.download })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: copy.panel.embed })).not.toBeInTheDocument();
 });
 
 it.each([

@@ -96,7 +96,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   if (intervalsLoading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <Panel
+        <Panel lead
           title="Current Gaps"
           icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest interval samples"
@@ -120,7 +120,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   }
   if (!intervals || intervals.length === 0) {
     return (
-      <Panel title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
         <NoData msg="No interval data for this session. Interval data is available for race and sprint race sessions." />
       </Panel>
     );
@@ -163,7 +163,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
 
       {/* DRS battle summary */}
       {drsWindows.some((w) => w.drsCount > 0) && (
-        <Panel
+        <Panel lead
           title="DRS Window Time"
           icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub={`Proportion of session where each driver was within ${DRS_DETECTION_WINDOW_S}s of the car ahead`}
@@ -183,7 +183,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       )}
 
       {/* Gap to leader chart */}
-      <ChartPanel
+      <ChartPanel lead={!drsWindows.some((w) => w.drsCount > 0)}
         title="Gap to Leader"
         icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — gaps capped at ${MAX_GAP_DISPLAY}s`}

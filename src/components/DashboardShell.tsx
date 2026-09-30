@@ -13,6 +13,10 @@ import { TAB_LABELS } from './dashboard/tabLabels';
 import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
 import { SignalBand } from './dashboard/SignalBand';
+import { CardBar } from './dashboard/CardBar';
+import { LapStrip } from './dashboard/LapStrip';
+import { TabLeadContext } from './dashboard/tabLeadContext';
+import { safetyCarLaps } from './dashboard/lapStripUtils';
 import { SiteFooter } from './dashboard/SiteFooter';
 import { pickNextMeeting } from './dashboard/nextMeeting';
 import { copy } from '../copy';
@@ -68,9 +72,7 @@ export type DashboardShellProps = {
   // ── Handlers ───────────────────────────────────────────────────────────
   onPresetNameChange: (name: string) => void;
   onSavePreset: () => void;
-  onShare: () => Promise<void>;
   onShareTab: (tab: Tab) => Promise<void>;
-  onEmbed: () => Promise<void>;
   onEmbedTab: (tab: Tab) => Promise<void>;
   onEmbedPanel: (panelId: string) => Promise<void>;
   onPrint: () => void;
@@ -98,9 +100,7 @@ export function DashboardShell({
   tabBoundaryResetKey,
   onPresetNameChange,
   onSavePreset,
-  onShare,
   onShareTab,
-  onEmbed,
   onEmbedTab,
   onEmbedPanel,
   onPrint,
@@ -135,6 +135,15 @@ export function DashboardShell({
     stepLap,
   } = data;
 
+  const tabLead = useMemo(() => embedMode ? null : {
+    kicker: [TAB_LABELS[filters.tab], LAP_TABS.includes(filters.tab) && copy.scope.lapOption(filters.lapNum)].filter(Boolean).join(' · '),
+    cardBar: <CardBar tabLabel={TAB_LABELS[filters.tab]} onShare={() => void onShareTab(filters.tab)} onEmbed={() => void onEmbedTab(filters.tab)} />,
+  }, [embedMode, filters.lapNum, filters.tab, onEmbedTab, onShareTab]);
+
+  const stripDriver = filters.driverNums[0];
+  const stripLaps = selectionData.allLaps[stripDriver];
+  const stripSafetyCar = useMemo(() => safetyCarLaps(raceControl.data, totalLaps ?? 0), [raceControl.data, totalLaps]);
+
   const nextMeeting = useMemo(() => pickNextMeeting(meetings.data), [meetings.data]);
 
   const header = (
@@ -154,8 +163,6 @@ export function DashboardShell({
       nextMeeting={nextMeeting}
       onPresetNameChange={onPresetNameChange}
       onSavePreset={onSavePreset}
-      onShare={onShare}
-      onEmbed={onEmbed}
       onPrint={onPrint}
       onToggleSplit={onToggleSplit}
       onToggleTheme={onToggleTheme}
@@ -206,18 +213,28 @@ export function DashboardShell({
             onSessionChange={filters.handleSessionChange}
             onLapChange={filters.setLapNum}
             onStepLap={stepLap}
-          />
-
-          {meetings.error   && <Err msg={`Failed to load calendar: ${meetings.error}`}   onAction={meetings.refetch} />}
-          {sessions.error   && <Err msg={`Failed to load sessions: ${sessions.error}`}   onAction={sessions.refetch} />}
-          {drivers.error    && <Err msg={`Failed to load drivers: ${drivers.error}`}     onAction={drivers.refetch} />}
-
-          <DriverSelector
+          >
+            <DriverSelector
               drivers={selectionData.driverList}
               selectedDrivers={filters.driverNums}
               embedMode={embedMode}
               onToggle={filters.toggleDriver}
             />
+          </DashboardSelectors>
+
+          {meetings.error   && <Err msg={`Failed to load calendar: ${meetings.error}`}   onAction={meetings.refetch} />}
+          {sessions.error   && <Err msg={`Failed to load sessions: ${sessions.error}`}   onAction={sessions.refetch} />}
+          {drivers.error    && <Err msg={`Failed to load drivers: ${drivers.error}`}     onAction={drivers.refetch} />}
+
+
+
+          <LapStrip
+            driverName={selectionData.driverMap[stripDriver]?.name_acronym || `#${stripDriver}`}
+            laps={stripLaps ?? []}
+            safetyCar={stripSafetyCar}
+            lapNum={filters.lapNum}
+            onSelect={filters.setLapNum}
+          />
 
           <DashboardTabs
             activeTab={filters.tab}
@@ -242,6 +259,7 @@ export function DashboardShell({
                 </ul>
               </section>
             )}
+            <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
                 <TelemetryTab
@@ -373,6 +391,7 @@ export function DashboardShell({
                 </Suspense>
               )}
             </div>
+            </TabLeadContext.Provider>
           </ErrorBoundary>
         </main>
         {embedMode && <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>}
@@ -383,6 +402,7 @@ export function DashboardShell({
 }
 
 // ─── Year options constant (computed once at module load) ─────────────────────
+const LAP_TABS: Tab[] = ['telemetry', 'energy', 'trackmap', 'broadcast'];
 const YEAR_OPTIONS = Array.from(
   { length: new Date().getFullYear() - 2022 },
   (_, index) => 2023 + index,

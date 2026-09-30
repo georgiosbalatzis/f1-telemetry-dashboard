@@ -16,7 +16,7 @@ it('P3-01: theme changes are announced off-screen without adding a visible statu
     <DashboardHeader
       loading={false} presetName="" presetNames={[]} feedback={null} splitMode={false} embedMode={false} themeMode="dark"
       embedTitle="Race" embedSubtitle="Telemetry" embedContext={[]} openDashboardUrl="/" heroSubtitle="Race · Γύρος 1" nextMeeting={null}
-      onPresetNameChange={noop} onSavePreset={noop} onShare={noop} onEmbed={noop} onPrint={noop}
+      onPresetNameChange={noop} onSavePreset={noop} onPrint={noop}
       onToggleSplit={noop} onToggleTheme={onToggleTheme} onBack={noop}
     />,
   );
@@ -38,7 +38,7 @@ it('P3-02: tooltips show lap progress as %, DRS as a state and whole km/h like t
 
 it('P3-04: chart action glyphs are 16px inside their 44px controls', () => {
   render(<ChartPanel title="Speed" exportName="speed" panelId="speed" onEmbedPanel={() => {}}><div /></ChartPanel>);
-  for (const name of ['Embed', 'Download', 'Full Screen']) {
+  for (const name of [copy.panel.embed, copy.panel.download, copy.panel.fullScreen]) {
     expect(screen.getByRole('button', { name }).querySelector('svg')).toHaveAttribute('width', '16');
   }
 });
@@ -58,4 +58,17 @@ it('P1-03: the signal band carries loading and partial-data status, with a retry
   expect(retry).toHaveBeenCalledOnce();
   rerender(<SignalBand loading feedback={null} lapNum={49} totalLaps={51} drivers={[]} />);
   expect(screen.getByText(copy.band.loading)).toBeInTheDocument();
+});
+
+it('R2-02: the lap strip selects laps by click and arrow key, and labels safety-car and pit laps', async () => {
+  const { LapStrip } = await import('../dashboard/LapStrip');
+  const onSelect = vi.fn();
+  const laps = [1, 2, 3, 4].map((lap_number) => ({ lap_number, lap_duration: 100 + lap_number, is_pit_out_lap: lap_number === 4 }));
+  render(<LapStrip driverName="VER" laps={laps as never} safetyCar={new Set([2])} lapNum={2} onSelect={onSelect} />);
+  expect(screen.getByRole('button', { name: /Γύρος 2, 1:42.0, Safety car/ })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /Γύρος 3, 1:43.0, Pit stop/ })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /Γύρος 4/ }));
+  expect(onSelect).toHaveBeenLastCalledWith(4);
+  fireEvent.keyDown(screen.getByRole('button', { name: /Γύρος 2/ }), { key: 'ArrowRight' });
+  expect(onSelect).toHaveBeenLastCalledWith(3);
 });

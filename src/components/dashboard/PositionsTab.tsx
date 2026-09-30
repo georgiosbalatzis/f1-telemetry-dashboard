@@ -55,7 +55,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   if (positionsLoading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <Panel
+        <Panel lead
           title="Current Standings"
           icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest recorded positions"
@@ -79,7 +79,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   }
   if (!positions || positions.length === 0) {
     return (
-      <Panel title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
         <NoData msg="No position data for this session. Race positions are available for race and sprint sessions." />
       </Panel>
     );
@@ -88,7 +88,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   return (
     <PanelSelection embedMode={embedMode}>
       {/* Position history chart */}
-      <ChartPanel
+      <ChartPanel lead
         title="Position History"
         icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — position over the session`}

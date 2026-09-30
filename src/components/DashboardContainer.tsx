@@ -320,9 +320,7 @@ export function DashboardContainer() {
     setFeedback(clipboardError ?? `${label} ready`);
   }, [splitMode, themeMode]);
 
-  const handleShare    = useCallback(async () => shareSnapshot(filters.snapshot, 'Share link'), [filters.snapshot, shareSnapshot]);
   const handleShareTab = useCallback(async (tab: Tab) => shareSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} link`), [filters.snapshot, shareSnapshot]);
-  const handleEmbed    = useCallback(async () => embedSnapshot(filters.snapshot, 'Embed code'), [embedSnapshot, filters.snapshot]);
   const handleEmbedTab = useCallback(async (tab: Tab) => embedSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} embed`), [embedSnapshot, filters.snapshot]);
 
   const handleEmbedPanel = useCallback(async (panelId: string) => {
@@ -382,9 +380,7 @@ export function DashboardContainer() {
       tabBoundaryResetKey={tabBoundaryResetKey}
       onPresetNameChange={handlePresetNameChange}
       onSavePreset={handleSavePreset}
-      onShare={handleShare}
       onShareTab={handleShareTab}
-      onEmbed={handleEmbed}
       onEmbedTab={handleEmbedTab}
       onEmbedPanel={handleEmbedPanel}
       onPrint={handlePrint}

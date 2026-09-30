@@ -139,7 +139,7 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <Panel
+      <Panel lead
         title="Tyre Strategy"
         icon={<CircleDot size={14} style={{ color: 'var(--accent)' }} />}
         sub={`Stint map through lap ${lapNum}`}

@@ -31,7 +31,7 @@ export function RadioTab({ loading, error, messages, onRetry }: Props) {
   );
 
   return (
-    <Panel title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : radioMessages.length > 0 ? (
         <div className="radio-list">
           {radioMessages.map((message) => (

@@ -112,14 +112,14 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
 
   if (locationLoading) {
     return (
-      <Panel title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />} sub="Fetching GPS location data">
+      <Panel lead title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />} sub="Fetching GPS location data">
         <ChartSkeleton label="Fetching GPS location data..." className="h-[260px] sm:h-[360px]" />
       </Panel>
     );
   }
   if (!trackPolyline) {
     return (
-      <Panel title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />}>
         <NoData msg="No location data for this lap. Location data is available for most sessions from 2023 onwards." />
       </Panel>
     );
@@ -127,7 +127,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <Panel
+      <Panel lead
         title={`Track Map — Lap ${lapNum}`}
         icon={<Map size={14} style={{ color: 'var(--accent)' }} />}
         sub={activeDrivers.length >= 2

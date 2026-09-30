@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { copy } from '../../copy';
 import type { SelectOption } from './types';
 
 type Props = {
@@ -17,6 +19,8 @@ type Props = {
   canStepBackward: boolean;
   canStepForward: boolean;
   embedMode?: boolean;
+  /** Extra fields for the end of the bar (the driver field). */
+  children?: ReactNode;
   onYearChange: (year: number) => void;
   onCircuitChange: (circuit: string) => void;
   onSessionChange: (sessionKey: number) => void;
@@ -28,39 +32,40 @@ export function DashboardSelectors({
   year, circuit, sessionKey, lapNum, totalLaps, yearOptions, circuitOptions,
   sessionOptions, lapOptions, meetingsLoading, sessionsLoading, lapsLoading,
   canStepBackward, canStepForward, onYearChange, onCircuitChange, onSessionChange,
-  onLapChange, onStepLap, embedMode = false,
+  onLapChange, onStepLap, embedMode = false, children,
 }: Props) {
   const controls = (
-    <section className="session-scope" aria-label="Session scope">
+    <section className="session-scope" aria-label={copy.scope.label}>
       <div className="scope-fields">
-        <label className="scope-field"><span className="field-label">Season</span>
+        <label className="scope-field"><span className="field-label">{copy.scope.season}</span>
           <select value={year} onChange={(event) => onYearChange(+event.target.value)} className="dashboard-select">
             {yearOptions.map((option) => <option key={option} value={option}>{option}</option>)}
           </select>
         </label>
-        <label className="scope-field"><span className="field-label">Grand Prix</span>
+        <label className="scope-field"><span className="field-label">{copy.scope.grandPrix}</span>
           <select value={circuit || ''} onChange={(event) => onCircuitChange(event.target.value)} disabled={!circuitOptions.length} className="dashboard-select">
-            {!circuitOptions.length && <option value="">{meetingsLoading ? 'Loading circuits…' : `No data for ${year}`}</option>}
+            {!circuitOptions.length && <option value="">{meetingsLoading ? copy.scope.loadingCircuits : copy.scope.noData(year)}</option>}
             {circuitOptions.map((option) => <option key={option.v} value={option.v}>{option.l}</option>)}
           </select>
         </label>
-        <label className="scope-field"><span className="field-label">Session</span>
+        <label className="scope-field"><span className="field-label">{copy.scope.session}</span>
           <select value={sessionKey || ''} onChange={(event) => onSessionChange(+event.target.value)} disabled={!sessionOptions.length} className="dashboard-select">
-            {!sessionOptions.length && <option value="">{sessionsLoading ? 'Loading sessions…' : 'Select a GP first'}</option>}
+            {!sessionOptions.length && <option value="">{sessionsLoading ? copy.scope.loadingSessions : copy.scope.selectGp}</option>}
             {sessionOptions.map((option) => <option key={option.v} value={option.v}>{option.l}</option>)}
           </select>
         </label>
         <div className="scope-field">
-          <label className="field-label" htmlFor="lap-selection">Lap {totalLaps ? `/ ${totalLaps}` : ''}</label>
+          <label className="field-label" htmlFor="lap-selection">{copy.scope.lap(totalLaps)}</label>
           <div className="lap-controls">
-            <button aria-label="Previous lap" onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button"><ChevronLeft size={16} /></button>
+            <button aria-label={copy.scope.prevLap} onClick={() => onStepLap(-1)} disabled={!canStepBackward} className="dashboard-nav-button"><ChevronLeft size={16} /></button>
             <select id="lap-selection" value={lapNum} onChange={(event) => onLapChange(+event.target.value)} disabled={!lapOptions.length} className="dashboard-select">
-              {!lapOptions.length && <option>{lapsLoading ? 'Loading…' : 'Select drivers'}</option>}
-              {lapOptions.map((option) => <option key={option} value={option}>Lap {option}</option>)}
+              {!lapOptions.length && <option>{lapsLoading ? copy.scope.loadingLaps : copy.scope.selectDrivers}</option>}
+              {lapOptions.map((option) => <option key={option} value={option}>{option}</option>)}
             </select>
-            <button aria-label="Next lap" onClick={() => onStepLap(1)} disabled={!canStepForward} className="dashboard-nav-button"><ChevronRight size={16} /></button>
+            <button aria-label={copy.scope.nextLap} onClick={() => onStepLap(1)} disabled={!canStepForward} className="dashboard-nav-button"><ChevronRight size={16} /></button>
           </div>
         </div>
+        {children}
       </div>
     </section>
   );

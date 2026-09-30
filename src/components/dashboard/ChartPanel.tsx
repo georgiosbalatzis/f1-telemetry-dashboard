@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, Expand, Shrink } from 'lucide-react';
 import { COLORS } from '../../constants/colors';
+import { copy } from '../../copy';
 import { exportChartAsSvg, sanitizeFilename, stackChartSvgs, type ExportChartLegendItem } from '../../utils/exportChart';
 import { EmbedPanelButton, Panel, ToolbarButton } from './shared';
 import { cn } from './utils';
@@ -18,6 +19,7 @@ type Props = {
   legend?: ChartLegendItem[];
   panelId?: string;
   embedMode?: boolean;
+  lead?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
 
@@ -32,6 +34,7 @@ export function ChartPanel({
   legend = [],
   panelId,
   embedMode = false,
+  lead = false,
   onEmbedPanel,
 }: Props) {
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -76,22 +79,25 @@ export function ChartPanel({
   const actions = !embedMode && (
     <div className="dashboard-chart-actions">
       {headerRight}
-      {panelId && onEmbedPanel && (
-        <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />
-      )}
-      <ToolbarButton icon={<Download size={16} />} label="Download" onClick={handleDownload} />
-      <ToolbarButton
-        icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
-        label={isFullscreen ? 'Exit Full' : 'Full Screen'}
-        onClick={handleToggleFullscreen}
-        active={isFullscreen}
-      />
+      <details className="panel-menu">
+        <summary aria-label={copy.panel.menu}><span aria-hidden="true">⋯</span></summary>
+        <div className="panel-menu-list" onClick={(event) => event.currentTarget.closest('details')?.removeAttribute('open')}>
+          {panelId && onEmbedPanel && <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />}
+          <ToolbarButton icon={<Download size={16} />} label={copy.panel.download} onClick={handleDownload} />
+          <ToolbarButton
+            icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
+            label={isFullscreen ? copy.panel.exitFull : copy.panel.fullScreen}
+            onClick={handleToggleFullscreen}
+            active={isFullscreen}
+          />
+        </div>
+      </details>
     </div>
   );
 
   return (
     <div ref={frameRef} className="dashboard-chart-frame">
-      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId}>
+      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
         <div className="space-y-3">
           <div ref={chartRef} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
             {children}

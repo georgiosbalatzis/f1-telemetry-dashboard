@@ -39,7 +39,7 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
   }, [activeFilter, messages, query]);
 
   return (
-    <Panel title="Race Control" icon={<Flag size={14} className="text-yellow-500" />} sub={`Official flags, penalties, safety car, and session status messages · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Race Control" icon={<Flag size={14} className="text-yellow-500" />} sub={`Official flags, penalties, safety car, and session status messages · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : messages.length > 0 ? (
         <>
           <div className="mb-4 flex items-center gap-3 lg:justify-between">

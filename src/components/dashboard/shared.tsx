@@ -1,8 +1,10 @@
-import { Children, isValidElement, type ReactNode } from 'react';
+import { Children, isValidElement, useContext, type ReactNode } from 'react';
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { AlertTriangle, Code2, Loader2 } from 'lucide-react';
 import type { OpenF1Driver } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
+import { copy } from '../../copy';
+import { TabLeadContext } from './tabLeadContext';
 import { cn } from './utils';
 
 export function Spinner({ label }: { label?: string }) {
@@ -109,6 +111,7 @@ export function Panel({
   className,
   headerRight,
   panelId,
+  lead = false,
 }: {
   title: string;
   icon?: ReactNode;
@@ -117,16 +120,21 @@ export function Panel({
   className?: string;
   headerRight?: ReactNode;
   panelId?: string;
+  /** First panel of a tab: large headline, kicker and the share/embed card bar. */
+  lead?: boolean;
 }) {
+  const tabLead = useContext(TabLeadContext);
   return (
-    <div id={panelId} className={cn('dashboard-panel', className)}>
+    <div id={panelId} className={cn('dashboard-panel', lead && 'panel-lead', className)}>
       <div className="panel-heading">
         <div>
+          {lead && tabLead && <span className="lead-kicker">{tabLead.kicker}</span>}
           <h2>{title}</h2>
           {sub ? <p className="panel-caption">{sub}</p> : null}
         </div>
         {headerRight}
       </div>
+      {lead && tabLead?.cardBar}
       {children}
     </div>
   );
@@ -167,7 +175,7 @@ export function ToolbarButton({
   );
 }
 
-export function EmbedPanelButton({ onClick, label = 'Embed' }: { onClick: () => void; label?: string }) {
+export function EmbedPanelButton({ onClick, label = copy.panel.embed }: { onClick: () => void; label?: string }) {
   return <ToolbarButton icon={<Code2 size={16} />} label={label} onClick={onClick} />;
 }
 

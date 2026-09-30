@@ -37,7 +37,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
     return (
       <PanelSelection embedMode={embedMode}>
         <CardGridSkeleton count={3} label="Loading weather readings..." />
-        <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+        <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
           <ChartSkeleton label="Loading weather chart..." className="h-[180px] sm:h-[260px]" />
         </ChartPanel>
       </PanelSelection>
@@ -53,7 +53,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         <Stat label="Air Temperature" value={latestWeather.air_temperature.toFixed(1)} unit="°C" />
         <Stat label="Rainfall" value={latestWeather.rainfall ? 'Yes' : 'No'} />
       </div>
-      <ChartPanel title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+      <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         {weatherTrend.length > 1 ? (
           <>
             <div className="h-[150px] sm:h-[220px]">

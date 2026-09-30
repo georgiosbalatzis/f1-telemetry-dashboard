@@ -116,12 +116,12 @@ Each task lists **Files**, **Change** and **Accept**. Keep diffs small. Don't in
 
 ### Phase 2: Controls
 
-- [ ] **R2-01 Scope bar with underlined fields**
+- [x] ✅ **R2-01 Scope bar with underlined fields**
   Files: `src/components/dashboard/DashboardSelectors.tsx`, `DriverSelector.tsx`, `index.css` (`.session-scope`, `.scope-fields`, `.dashboard-select`, `.driver-*`).
   Change: keep the native `<select>` elements but style them as the site's contact-form fields: uppercase 11px label, 16px value, no box, 1.5px ink bottom border, custom caret. Grid on desktop: `.7fr 1.4fr 1fr 1.2fr 2fr`. Lap stepper: 28px outline squares around the number (44px hit area kept through padding). Driver field: chips with a 3px team bar and code, `+ ΠΡΟΣΘΗΚΗ` in accent, which opens the existing roster; restyle the roster as THE NUMBERS rows (team bar, code, surname, number). On mobile, show 2 columns and hide Season behind the roster/overflow menu.
   Accept: every control is keyboard reachable and 44px tall; the 390px layout matches `A-data-hub-mobile.png`.
 
-- [ ] **R2-02 Lap strip (from C)**
+- [x] ✅ **R2-02 Lap strip (from C)**
   Files: new `src/components/dashboard/LapStrip.tsx`, `DashboardShell.tsx`, `index.css`. Data: `viewModel.lapTimeData` (already computed), race control SC/VSC periods from `raceControl`, pit laps from `pits`.
   Change: a row of `<button>` bars (one per lap) inside a labelled group; bar height is inversely proportional to lap time (clamped); states for selected, SC/VSC and pit. Clicking calls `filters.setLapNum`. Each bar's accessible name reads `Γύρος 34, 2:18.4, Safety car`. Hidden when fewer than 2 laps are loaded. Mobile: 34px tall, sitting just above the tab strip.
   Accept: clicking bar 12 updates the selectors, the URL `lap=12` and the charts; arrow keys move the selection; SC laps are visually distinct in both themes.
@@ -133,12 +133,12 @@ Each task lists **Files**, **Change** and **Accept**. Keep diffs small. Don't in
   Change: replace the three grouped clusters and the mobile `<select>` with one horizontal strip of 10 tabs: 15px text, 18px padding, a 2px `--signal` underline on the active tab, a 1px rule below. Mobile: horizontal scroll with the active tab scrolled into view; no select. Use `role="tablist"` / `role="tab"` with `aria-selected` and roving tabindex, or keep the buttons with `aria-current`; pick one and update the tests to match.
   Accept: matches the `/standings` tab strip at 1440 and 390; every tab is reachable by keyboard.
 
-- [ ] **R3-02 Section header with kicker, headline and lede**
+- [x] ✅ **R3-02 Section header with kicker, headline and lede**
   Files: `src/components/dashboard/shared.tsx` (`Panel`), `ChartPanel.tsx`, `index.css` (`.panel-heading`, `.dashboard-panel`).
   Change: `Panel`/`ChartPanel` accept `kicker`, `title` and `lede`. The **first** panel of each tab renders the large header (red square kicker, 46px h3, lede). Later panels render a compact header: 2px ink top rule, uppercase 12px title on the left, unit on the right (THE NUMBERS style). Drop the three per-panel icon buttons from compact panels. Download and Full screen move into a single `⋯` panel menu; Embed moves to the card bar.
   Accept: each tab has exactly one large headline; secondary panels look like `Sectors · Γύρος 49 ▸ ΧΡΟΝΟΣ` in the mockup.
 
-- [ ] **R3-03 Card bar (share and embed per tab)**
+- [x] ✅ **R3-03 Card bar (share and embed per tab)**
   Files: `DashboardShell.tsx`, `DashboardContainer.tsx` (`onShareTab`, `onEmbedTab`, which already exist), `index.css`.
   Change: under each tab's lead, a bordered bar reading `Καρτέλα {tab}` with a caption, plus the outline buttons `↗ Κοινοποίηση καρτέλας` and `</> Ενσωμάτωση καρτέλας`, copying the Data Hub's `Καρτέλα Ρυθμός ελαστικών` bar exactly. Stack them full width on mobile.
   Accept: the share URL keeps season, GP, session, lap, drivers and tab; the embed snippet is unchanged in behaviour.

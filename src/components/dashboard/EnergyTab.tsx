@@ -85,7 +85,7 @@ export function EnergyTab({
         </div>
       )}
 
-      <ChartPanel
+      <ChartPanel lead
         title="DRS Activation"
         icon={<Zap size={14} style={{ color: 'var(--accent)' }} />}
         sub={comparisonMode

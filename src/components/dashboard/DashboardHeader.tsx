@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Code2, Columns2, Loader2, Menu, MoonStar, Printer, Save, Share2, SunMedium, Undo2 } from 'lucide-react';
+import { Columns2, Loader2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
 import { copy, SITE_NAV } from '../../copy';
 import { formatCountdown, pickNextMeeting } from './nextMeeting';
 import { ToolbarButton } from './shared';
@@ -25,8 +25,6 @@ type Props = {
   nextMeeting: ReturnType<typeof pickNextMeeting>;
   onPresetNameChange: (value: string) => void;
   onSavePreset: () => void;
-  onShare: () => void;
-  onEmbed: () => void;
   onPrint: () => void;
   onToggleSplit: () => void;
   onToggleTheme: () => void;
@@ -57,7 +55,7 @@ function SiteLinks() {
 export function DashboardHeader({
   loading, presetName, presetNames, feedback, splitMode, embedMode, themeMode,
   embedTitle, embedSubtitle, embedContext, openDashboardUrl, heroSubtitle, nextMeeting, onPresetNameChange,
-  onSavePreset, onShare, onEmbed, onPrint, onToggleSplit, onToggleTheme, onBack,
+  onSavePreset, onPrint, onToggleSplit, onToggleTheme, onBack,
 }: Props) {
   // Theme is a visual preference: announce it to assistive tech without adding a visible line that moves the page.
   const [themeAnnouncement, setThemeAnnouncement] = useState('');
@@ -102,8 +100,6 @@ export function DashboardHeader({
               <div className="utility-content">
                 <div className="utility-actions">
                   <ToolbarButton icon={<Undo2 size={15} />} label={copy.masthead.back} onClick={onBack} />
-                  <ToolbarButton icon={<Share2 size={15} />} label={copy.masthead.share} onClick={onShare} />
-                  <ToolbarButton icon={<Code2 size={15} />} label={copy.masthead.embed} onClick={onEmbed} />
                   <ToolbarButton icon={<Printer size={15} />} label={copy.masthead.print} onClick={onPrint} />
                   <ToolbarButton icon={<Columns2 size={15} />} label={copy.masthead.split} onClick={onToggleSplit} active={splitMode} />
                 </div>

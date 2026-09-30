@@ -122,7 +122,7 @@ export function TelemetryTab({
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <ChartPanel
+      <ChartPanel lead
         title="Speed Trace"
         icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
         sub={comparisonSpeedData.length > 0
