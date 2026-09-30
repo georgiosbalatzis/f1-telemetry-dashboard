@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { copy } from '../../copy';
@@ -28,7 +29,7 @@ type Props = {
   onStepLap: (direction: -1 | 1) => void;
 };
 
-export function DashboardSelectors({
+export const DashboardSelectors = memo(function DashboardSelectors({
   year, circuit, sessionKey, lapNum, totalLaps, yearOptions, circuitOptions,
   sessionOptions, lapOptions, meetingsLoading, sessionsLoading, lapsLoading,
   canStepBackward, canStepForward, onYearChange, onCircuitChange, onSessionChange,
@@ -70,4 +71,4 @@ export function DashboardSelectors({
     </section>
   );
   return embedMode ? <details className="embed-scope"><summary className="text-action">Adjust session & lap</summary>{controls}</details> : controls;
-}
+});

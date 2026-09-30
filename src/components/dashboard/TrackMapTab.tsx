@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { teamColor } from '../../constants/colors';
 import { Map } from 'lucide-react';
 import type { OpenF1Location } from '../../api/openf1';
@@ -34,7 +34,7 @@ type DriverMarker = {
   label: string;
 };
 
-export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
+export const TrackMapTab = memo(function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverDash } = useDriverContext();
   const { trackPolyline, refPts, driverPaths, driverMarkers, startPt, activeDrivers, box } = useMemo((): {
     trackPolyline: string;
@@ -235,4 +235,4 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
       </div>
     </PanelSelection>
   );
-}
+});

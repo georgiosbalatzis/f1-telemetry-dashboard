@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Sun } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Weather } from '../../api/openf1';
@@ -26,7 +27,7 @@ type Props = {
   onRetry?: () => void;
 };
 
-export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
+export const WeatherTab = memo(function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const timeTicks = evenTicks(weatherTrend.map((point) => point.time), useXTickCount());
   const weatherLegend = [
@@ -98,4 +99,4 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
       </p>
     </PanelSelection>
   );
-}
+});

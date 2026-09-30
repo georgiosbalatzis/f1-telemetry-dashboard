@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import { Loader2 } from 'lucide-react';
 import { copy } from '../../copy';
 
 type ComparisonDriver = { driverNumber: number; name: string; status: string; retry?: (() => void) | null };
 
 /** Full-bleed status line under the hero: source, comparison, lap, and every loading / partial-data message. */
-export function SignalBand({ loading, feedback, lapNum, totalLaps, drivers }: {
+export const SignalBand = memo(function SignalBand({ loading, feedback, lapNum, totalLaps, drivers }: {
   loading: boolean;
   feedback: string | null;
   lapNum: number;
@@ -35,4 +36,4 @@ export function SignalBand({ loading, feedback, lapNum, totalLaps, drivers }: {
       </div>
     </div>
   );
-}
+});

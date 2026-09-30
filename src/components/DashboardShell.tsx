@@ -8,6 +8,7 @@
 
 import { Suspense, lazy, useMemo } from 'react';
 import type { DashboardData } from '../hooks/useDashboard';
+import type { OpenF1Lap } from '../api/openf1';
 import type { Tab } from './dashboard/types';
 import { TAB_LABELS } from './dashboard/tabLabels';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -29,7 +30,6 @@ import { DriverSelector } from './dashboard/DriverSelector';
 import { TelemetryTab } from './dashboard/TelemetryTab';
 import { TrackMapTab } from './dashboard/TrackMapTab';
 import { ChartSkeleton, Err } from './dashboard/shared';
-import { PerfProbe } from '../utils/perfProbe'; // PERF-PROBE: remove in P7-01
 
 // ─── Lazy-loaded tab chunks ───────────────────────────────────────────────────
 
@@ -240,7 +240,7 @@ export function DashboardShell({
 
           <LapStrip
             driverName={selectionData.driverMap[stripDriver]?.name_acronym || `#${stripDriver}`}
-            laps={stripLaps ?? []}
+            laps={stripLaps ?? NO_LAPS}
             safetyCar={stripSafetyCar}
             lapNum={filters.lapNum}
             onSelect={filters.setLapNum}
@@ -269,7 +269,7 @@ export function DashboardShell({
             <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
-                <PerfProbe id="TelemetryTab"><TelemetryTab
+                <TelemetryTab
                   lapNum={filters.lapNum}
                   lapsLoading={lapsLoading}
                   sectorRows={viewModel.sectorRows}
@@ -287,7 +287,7 @@ export function DashboardShell({
                   embedMode={embedMode}
                   onEmbedPanel={onEmbedPanel}
                   onTelemetryRetry={primaryTelemetry?.refetch}
-                /></PerfProbe>
+                />
               )}
 
               {filters.tab === 'tires' && (
@@ -411,6 +411,8 @@ export function DashboardShell({
     </div>
   );
 }
+
+const NO_LAPS: OpenF1Lap[] = [];
 
 // ─── Year options constant (computed once at module load) ─────────────────────
 const LAP_TABS: Tab[] = ['telemetry', 'energy', 'trackmap', 'broadcast'];

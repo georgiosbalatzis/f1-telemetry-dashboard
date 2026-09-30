@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import type { OpenF1Driver } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
 import { copy } from '../../copy';
@@ -12,7 +12,7 @@ type Props = {
 };
 
 /** The driver field of the scope bar: selected chips, an add button, and the roster it opens. Render inside the scope grid. */
-export function DriverSelector({ drivers, selectedDrivers, onToggle }: Props) {
+export const DriverSelector = memo(function DriverSelector({ drivers, selectedDrivers, onToggle }: Props) {
   const [open, setOpen] = useState(false);
   if (drivers.length === 0) return null;
   return (
@@ -41,4 +41,4 @@ export function DriverSelector({ drivers, selectedDrivers, onToggle }: Props) {
       )}
     </>
   );
-}
+});

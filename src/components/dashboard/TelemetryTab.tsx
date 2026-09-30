@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { Activity, Gauge, Timer } from 'lucide-react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { COLORS } from '../../constants/colors';
+import { usePerfCommit } from '../../utils/perfProbe'; // PERF-PROBE: remove in P7-01
 import { copy } from '../../copy';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
@@ -49,7 +50,7 @@ function PedalHalvesLabel({ viewBox }: { viewBox?: { x: number; y: number; heigh
   );
 }
 
-export function TelemetryTab({
+export const TelemetryTab = memo(function TelemetryTab({
   lapNum,
   lapsLoading,
   sectorRows,
@@ -68,6 +69,7 @@ export function TelemetryTab({
   onEmbedPanel,
   onTelemetryRetry,
 }: Props) {
+  usePerfCommit('TelemetryTab'); // PERF-PROBE: remove in P7-01
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   // Purple = quickest of the selected drivers in that sector, green = second quickest.
   const sectorClasses = (['s1', 's2', 's3'] as const).map((key) => classifySectorEntries(
@@ -355,4 +357,4 @@ export function TelemetryTab({
       </ChartPanel>
     </PanelSelection>
   );
-}
+});

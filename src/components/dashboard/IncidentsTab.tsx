@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, memo } from 'react';
 import { Flag, Search } from 'lucide-react';
 import type { OpenF1RaceControl } from '../../api/openf1';
 import { Err, NoData, Panel, Spinner } from './shared';
@@ -30,7 +30,7 @@ function flagTone(flag: string) {
   return 'text-[color:var(--text-muted)]';
 }
 
-export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
+export const IncidentsTab = memo(function IncidentsTab({ loading, error, messages, onRetry }: Props) {
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('ALL');
 
@@ -112,4 +112,4 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
       ) : <NoData msg="No race control messages for this session." />}
     </Panel>
   );
-}
+});

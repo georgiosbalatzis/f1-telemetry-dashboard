@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { Gauge } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Interval } from '../../api/openf1';
@@ -20,7 +20,7 @@ const DRS_DETECTION_WINDOW_S = 1.0;
 const MAX_CHART_POINTS = 120;
 const MAX_GAP_DISPLAY = 60; // cap gaps at 60s to avoid outliers from safety cars crushing the chart
 
-export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, onEmbedPanel }: Props) {
+export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
@@ -259,4 +259,4 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       </div>
     </PanelSelection>
   );
-}
+});

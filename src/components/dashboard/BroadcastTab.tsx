@@ -1,5 +1,5 @@
 import { PanelSelection } from './shared';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import type { DriverLapSummary, SectorRow } from './types';
 import { buildSectorAnalysis } from './broadcast/broadcastUtils';
 import { TimingTower } from './broadcast/TimingTower';
@@ -20,7 +20,7 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
-export function BroadcastTab({
+export const BroadcastTab = memo(function BroadcastTab({
   lapNum,
   lapsLoading,
   sectorRows,
@@ -115,4 +115,4 @@ export function BroadcastTab({
       />
     </PanelSelection>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { Columns2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
 import { copy, SITE_NAV } from '../../copy';
 import { formatCountdown, pickNextMeeting } from './nextMeeting';
@@ -42,7 +42,7 @@ function SiteLinks() {
   ));
 }
 
-export function DashboardHeader({
+export const DashboardHeader = memo(function DashboardHeader({
   presetName, presetNames, splitMode, embedMode, themeMode,
   openDashboardUrl, heroSubtitle, nextMeeting, onPresetNameChange,
   onSavePreset, onPrint, onToggleSplit, onToggleTheme, onBack,
@@ -112,4 +112,4 @@ export function DashboardHeader({
       </div>
     </header>
   );
-}
+});

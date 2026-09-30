@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { CircleDot, Timer } from 'lucide-react';
 import type { OpenF1Pit, OpenF1Stint } from '../../api/openf1';
 import { COLORS, teamColor } from '../../constants/colors';
@@ -58,7 +58,7 @@ function stintCountLabel(count: number) {
   return `${count} stint${count > 1 ? 's' : ''}`;
 }
 
-export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading, filteredPits, embedMode = false, onEmbedPanel }: Props) {
+export const StrategyTab = memo(function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading, filteredPits, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap } = useDriverContext();
   const fallbackDriverNums = useMemo(() => Object.keys(stintsByDriver).map(Number), [stintsByDriver]);
   const strategyDriverNums = useMemo(
@@ -208,4 +208,4 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
       </Panel>
     </PanelSelection>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { TrendingDown } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Position } from '../../api/openf1';
@@ -17,7 +17,7 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
-export function PositionsTab({ positions, positionsLoading, embedMode = false, onEmbedPanel }: Props) {
+export const PositionsTab = memo(function PositionsTab({ positions, positionsLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
@@ -168,4 +168,4 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
       </div>
     </PanelSelection>
   );
-}
+});

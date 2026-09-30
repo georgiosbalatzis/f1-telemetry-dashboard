@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { Gauge, Zap } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDriverContext } from '../../contexts/useDriverContext';
@@ -20,7 +20,7 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
-export function EnergyTab({
+export const EnergyTab = memo(function EnergyTab({
   lapNum,
   speedData,
   comparisonEnergyData,
@@ -202,4 +202,4 @@ export function EnergyTab({
       </ChartPanel>
     </PanelSelection>
   );
-}
+});
