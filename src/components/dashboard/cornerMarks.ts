@@ -1,6 +1,6 @@
 import type { ComparisonPoint } from './types';
 
-export type CornerMark = { progress: number; label: string };
+type CornerMark = { progress: number; label: string };
 
 const HALF_WINDOW = 6; // a corner is the lowest speed within ±6 points (~5% of the lap)
 const REACH = 30;      // and the speed must climb at least MIN_PROMINENCE on both sides within ±30 points

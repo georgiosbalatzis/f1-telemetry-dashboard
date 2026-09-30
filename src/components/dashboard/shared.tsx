@@ -11,7 +11,7 @@ export function Spinner({ label }: { label?: string }) {
   return <div className="flex items-center justify-center gap-2 py-10 text-sm text-[color:var(--text-muted)]"><Loader2 size={16} className="animate-spin" />{label || 'Loading…'}</div>;
 }
 
-export function SkeletonBlock({ className }: { className?: string }) {
+function SkeletonBlock({ className }: { className?: string }) {
   return <div className={cn('animate-pulse rounded-[2px] bg-[color:var(--surface-soft)]', className)} />;
 }
 

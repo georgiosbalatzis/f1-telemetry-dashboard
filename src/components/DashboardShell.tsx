@@ -52,7 +52,7 @@ function TabLoadingPlaceholder({ label, skeletonClassName = 'h-32' }: { label: s
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
-export type DashboardShellProps = {
+type DashboardShellProps = {
   // ── Core data (from useDashboard) ──────────────────────────────────────
   data: DashboardData;
 

@@ -7,7 +7,7 @@ export const MINI_SECTORS = 25;
 type Path = Pick<OpenF1Location, 'date' | 'x' | 'y'>[];
 
 /** Seconds elapsed since the first sample at each of `bins + 1` equal steps of path length. */
-export function timesAtPathFractions(path: Path, bins: number): number[] | null {
+function timesAtPathFractions(path: Path, bins: number): number[] | null {
   const pts = path.map((p) => ({ t: Date.parse(p.date), x: p.x, y: p.y })).filter((p) => Number.isFinite(p.t));
   if (pts.length < 2) return null;
   const dist = [0];

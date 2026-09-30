@@ -86,7 +86,7 @@ function clearExpiredCacheEntries() {
 
 // ─── Generic hook ────────────────────────────────────────────────────────────
 
-export interface FetchState<T> {
+interface FetchState<T> {
   data: T | null;
   loading: boolean;
   error: string | null;

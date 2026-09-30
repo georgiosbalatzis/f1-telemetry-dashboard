@@ -2,7 +2,7 @@ import type { OpenF1Position } from '../../api/openf1';
 
 export const MAX_CHART_POINTS = 100;
 
-export type PositionChartResult = {
+type PositionChartResult = {
   chartData: Record<string, number | string>[];
   totalLaps: number;
   driverCount: number;

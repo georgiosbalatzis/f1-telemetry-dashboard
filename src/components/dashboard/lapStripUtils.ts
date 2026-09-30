@@ -1,7 +1,7 @@
 import type { OpenF1Lap, OpenF1RaceControl } from '../../api/openf1';
 
-export type LapBarState = 'normal' | 'sc' | 'pit' | 'missing';
-export type LapBar = { lap: number; height: number; state: LapBarState; duration: number | null };
+type LapBarState = 'normal' | 'sc' | 'pit' | 'missing';
+type LapBar = { lap: number; height: number; state: LapBarState; duration: number | null };
 
 /** Laps run under a (virtual) safety car, from the deployed message to its ending message. */
 export function safetyCarLaps(messages: OpenF1RaceControl[] | null | undefined, lastLap: number) {
