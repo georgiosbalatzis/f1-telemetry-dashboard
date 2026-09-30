@@ -135,7 +135,6 @@ export function DashboardShell({
     <div
       className={[
         'dashboard-app',
-        themeMode === 'light' ? 'theme-light' : 'theme-dark',
         embedMode ? 'embed-mode' : 'min-h-screen',
       ].filter(Boolean).join(' ')}
     >

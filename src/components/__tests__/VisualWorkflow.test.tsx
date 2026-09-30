@@ -2,6 +2,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { DashboardContainer } from '../DashboardContainer';
 import { ChartTip, ChartSkeleton, Err } from '../dashboard/shared';
+import { TAB_LABELS } from '../dashboard/tabLabels';
 
 // Exercise the real shell, URL filters and handlers without a live OpenF1 service.
 vi.mock('../../hooks/useDashboard', async () => {
@@ -72,9 +73,9 @@ it('preserves scope, driver selection, both navigation controls, and URL state',
   }
   fireEvent.change(screen.getByLabelText('Analysis'), { target: { value: 'weather' } });
   expect(await screen.findByText('No weather data for this session.')).toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Telemetry' }));
+  fireEvent.click(screen.getByRole('button', { name: TAB_LABELS.telemetry }));
   expect(params().get('tab')).toBe('telemetry');
-  expect(screen.getByRole('button', { name: 'Telemetry' })).toHaveAttribute('aria-current', 'page');
+  expect(screen.getByRole('button', { name: TAB_LABELS.telemetry })).toHaveAttribute('aria-current', 'page');
   fireEvent.change(screen.getByLabelText('Session'), { target: { value: '9471' } });
   expect(params().get('session')).toBe('9471');
   fireEvent.change(screen.getByLabelText('Grand Prix'), { target: { value: 'Monza' } });
@@ -89,9 +90,13 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   const print = vi.spyOn(window, 'print').mockImplementation(() => {});
   render(<DashboardContainer />);
   fireEvent.click(screen.getByText('Tools'));
+  expect(window.localStorage.getItem('f1stories-theme')).toBeNull(); // nothing is stored until the reader chooses
+  fireEvent.click(screen.getByRole('button', { name: 'Dark theme' }));
+  expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+  expect(window.localStorage.getItem('f1stories-theme')).toBe('dark');
   fireEvent.click(screen.getByRole('button', { name: 'Light theme' }));
-  expect(document.documentElement).toHaveClass('theme-light');
-  expect(window.localStorage.getItem('f1-telemetry-dashboard:theme')).toBe('light');
+  expect(document.documentElement).toHaveAttribute('data-theme', 'light');
+  expect(window.localStorage.getItem('f1stories-theme')).toBe('light');
   fireEvent.click(screen.getByRole('button', { name: 'Split view' }));
   expect(document.querySelector('.analysis-split')).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText('Save or load a comparison'), { target: { value: 'Race study' } });
@@ -113,7 +118,8 @@ it('restores a read-only article embed with an open-analysis link', async () => 
   render(<DashboardContainer />);
   expect(await screen.findByRole('heading', { name: 'Team Radio Recordings' })).toBeInTheDocument();
   expect(screen.queryByLabelText('Analysis')).not.toBeInTheDocument();
-  expect(document.querySelector('.embed-mode.theme-light')).toBeInTheDocument();
+  expect(document.querySelector('.embed-mode')).toBeInTheDocument();
+  expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   expect(screen.queryByText('Adjust session & lap')).not.toBeInTheDocument();
   expect(screen.queryByText('Edit drivers')).not.toBeInTheDocument();
   expect(params().get('lap')).toBe('3');

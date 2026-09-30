@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A — Data Hub Chapter</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .hero { padding: 28px 0 40px; background: linear-gradient(180deg, var(--paper-2), var(--paper)); }
+  .hero-grid { display: grid; grid-template-columns: 1fr 290px; gap: 40px; align-items: end; margin-top: 36px; }
+  .hero h2 { font-size: 30px; font-weight: 400; margin: 18px 0 0; letter-spacing: -.02em; }
+  .hero aside { border-left: 1px solid var(--rule); padding-left: 24px; color: var(--ink-2); }
+  .hero aside strong { display: block; font-size: 26px; font-weight: 400; color: #8b8f86; line-height: 1.25; margin-bottom: 10px; }
+  .hero aside p { font-size: 13px; margin: 0; }
+
+  .scope { display: grid; grid-template-columns: .7fr 1.4fr 1fr 1.2fr 2fr; gap: 28px; padding: 26px 0 22px; border-bottom: 1px solid var(--rule); }
+  .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 6px; }
+  .field .val { display: flex; align-items: center; justify-content: space-between; min-height: 40px; border-bottom: 1.5px solid var(--ink); font-size: 16px; }
+  .field .val small { color: var(--ink-2); }
+  .stepper { display: flex; gap: 6px; align-items: center; }
+  .stepper span { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--rule); font-size: 13px; }
+  .drivers { display: flex; gap: 14px; align-items: center; min-height: 40px; border-bottom: 1.5px solid var(--ink); }
+  .drivers .add { margin-left: auto; font-size: 12px; font-weight: 600; letter-spacing: .1em; color: var(--accent); }
+
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--rule); overflow: hidden; }
+  .tabs a { padding: 18px 22px; font-size: 15px; color: var(--ink-2); white-space: nowrap; position: relative; }
+  .tabs a.on { color: var(--ink); font-weight: 600; }
+  .tabs a.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--signal); }
+
+  .sec { padding: 44px 0 10px; }
+  .sec-k { display: flex; align-items: center; gap: 8px; }
+  .sec-k::before { content: ''; width: 7px; height: 7px; background: var(--signal); }
+  .sec h3 { font-size: 46px; font-weight: 600; letter-spacing: -.035em; line-height: 1.08; margin: 16px 0 14px; max-width: 900px; }
+  .sec .lede { max-width: 640px; color: var(--ink-2); font-size: 15px; margin: 0; }
+  .cardbar { display: flex; align-items: center; justify-content: space-between; margin-top: 36px; padding: 18px 0; border-block: 1px solid var(--rule); }
+  .cardbar b { display: block; font-size: 15px; }
+  .cardbar small { color: var(--ink-2); font-size: 12px; }
+  .cardbar .acts { display: flex; gap: 8px; }
+
+  .summary { display: grid; grid-template-columns: 1.3fr repeat(4, 1fr); align-items: center; margin-top: 36px; padding: 16px 18px; background: var(--paper-2); border-left: 3px solid var(--signal); }
+  .summary .t { font-size: 18px; font-weight: 600; }
+  .summary .t small { display: block; font-size: 12px; font-weight: 400; color: var(--ink-2); }
+  .summary .s { text-align: right; }
+  .summary .s label { display: block; text-transform: uppercase; font-size: 11px; font-weight: 600; letter-spacing: .12em; color: var(--ink-2); }
+  .summary .s b { font-size: 18px; }
+  .legend { display: flex; gap: 22px; align-items: center; margin: 22px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .1em; }
+  .legend i { display: inline-block; width: 22px; height: 3px; margin-right: 8px; vertical-align: middle; }
+  .src { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 56px; }
+  .table-h { display: flex; justify-content: space-between; border-top: 2px solid var(--ink); padding: 12px 0; font-size: 12px; font-weight: 600; letter-spacing: .12em; }
+  .row { display: grid; grid-template-columns: 50px 1fr repeat(3, 76px) 90px; align-items: center; min-height: 60px; border-bottom: 1px solid var(--rule); border-left: 3px solid; padding-left: 12px; }
+  .row .pos { font: 600 24px/1 var(--font-body); }
+  .row .pos.first { color: var(--accent); }
+  .row .nm b { font-size: 14px; display: block; letter-spacing: .06em; }
+  .row .nm small { color: var(--ink-2); font-size: 12px; }
+  .row .n { text-align: right; font-size: 14px; }
+  .row .n.best { color: #7d3fa0; font-weight: 600; }
+  .row .tot { text-align: right; font-size: 20px; font-weight: 600; }
+  .thead { display: grid; grid-template-columns: 50px 1fr repeat(3, 76px) 90px; padding: 0 0 8px 15px; font-size: 11px; font-weight: 600; letter-spacing: .12em; color: var(--ink-2); }
+  .thead span:nth-child(n+3) { text-align: right; }
+
+  .next { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 72px; border-top: 1px solid var(--ink); }
+  .next a { padding: 20px 20px 26px 0; border-right: 1px solid var(--rule); margin-right: 20px; }
+  .next a:last-child { border: 0; }
+  .next b { font-size: 13px; letter-spacing: .12em; } .next small { display: block; color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+
+  @media (max-width: 700px) {
+    .hero { padding: 16px 0 24px; } .hero-grid { grid-template-columns: 1fr; margin-top: 22px; } .hero aside { display: none; }
+    .hero h2 { font-size: 20px; margin-top: 10px; }
+    .kicker-row .kicker:last-child { display: none; }
+    .scope { grid-template-columns: 1fr 1fr; gap: 16px; padding: 18px 0; }
+    .scope .field:first-child { display: none; } .scope .field:last-child { grid-column: 1 / -1; }
+    .tabs { overflow-x: auto; } .tabs a { padding: 14px 14px; font-size: 14px; }
+    .sec { padding-top: 28px; } .sec h3 { font-size: 30px; }
+    .cardbar { flex-direction: column; align-items: stretch; gap: 10px; } .cardbar .acts .btn-line { flex: 1; justify-content: center; }
+    .summary { grid-template-columns: 1fr 1fr; gap: 12px; } .summary .t { grid-column: 1 / -1; } .summary .s { text-align: left; }
+    .pair { grid-template-columns: 1fr; gap: 40px; }
+    .row, .thead { grid-template-columns: 34px 1fr 64px 64px 82px; } .row .n:nth-of-type(3), .thead span:nth-child(5) { display: none; }
+    .next { grid-template-columns: 1fr; } .next a { border-right: 0; border-bottom: 1px solid var(--rule); margin: 0; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="nav-brand" href="#"><img src="../../../public/logo192.png" alt="">F1 STORIES<b>.</b></a>
+  <div class="nav-links"><a>Αρχική</a><a>Άρθρα</a><a>YouTube</a><a>Βαθμολογία</a><a class="on">Δεδομένα</a><a>Συντάκτες</a><a>BetCast</a></div>
+  <div class="nav-right"><div class="nav-count">🏁 Bahrain GP in Malay…<b>4d 0h 34m</b></div><span class="moon"></span><span class="burger"></span></div>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="kicker-row"><span class="kicker">F1 Stories / Race Desk</span><span class="kicker">Τηλεμετρία &amp; ανάλυση γύρου</span></div>
+  <div class="hero-grid">
+    <div><h1 class="display">Telemetry<span class="dot">.</span></h1><h2>Baku · Αγώνας · Γύρος 49 από 51</h2></div>
+    <aside><strong>Κάθε γύρος,<br>μια ιστορία.</strong><p>Ταχύτητα, φρένα, sectors και στρατηγική για κάθε οδηγό. Σύγκρινε έως τέσσερις.</p></aside>
+  </div>
+</div></header>
+
+<div class="band"><div class="wrap"><span>● Live δεδομένα · OpenF1</span><span class="sep"></span><span>RUS vs VER</span><span class="sep"></span><span>Γύρος 49 / 51</span><span class="slogan">EVERY TENTH COUNTS.</span></div></div>
+
+<main class="wrap">
+  <section class="scope">
+    <div class="field"><label>Σεζόν</label><div class="val">2026 <small>▾</small></div></div>
+    <div class="field"><label>Grand Prix</label><div class="val">Baku — Azerbaijan <small>▾</small></div></div>
+    <div class="field"><label>Συνεδρία</label><div class="val">Αγώνας <small>▾</small></div></div>
+    <div class="field"><label>Γύρος</label><div class="val stepper"><span>‹</span><b style="flex:1;text-align:center">49</b><span>›</span></div></div>
+    <div class="field"><label>Οδηγοί · 2 / 4</label><div class="drivers"><span class="chip"><i style="background:var(--rus)"></i>RUS</span><span class="chip"><i style="background:var(--ver)"></i>VER</span><span class="add">+ ΠΡΟΣΘΗΚΗ</span></div></div>
+  </section>
+
+  <nav class="tabs"><a class="on">Τηλεμετρία</a><a>DRS &amp; RPM</a><a>Track Map</a><a>Θέσεις</a><a>Intervals</a><a>Ελαστικά</a><a>Team Radio</a><a>Race Control</a><a>Καιρός</a><a>Broadcast</a></nav>
+
+  <section class="sec">
+    <span class="kicker sec-k">Τηλεμετρία · Γύρος 49</span>
+    <h3>Ταχύτητα σε όλο τον γύρο: ο Russell κερδίζει στα φρένα, ο Verstappen στις ευθείες</h3>
+    <p class="lede">Η ταχύτητα κάθε οδηγού ανά σημείο της πίστας. Οι κάθετες γραμμές σημειώνουν τις στροφές· η διαφορά ανοίγει εκεί που οι γραμμές χωρίζουν.</p>
+
+    <div class="cardbar"><div><b>Καρτέλα Τηλεμετρία</b><small>Ο κοινόχρηστος σύνδεσμος κρατά τη σεζόν, τον αγώνα, τον γύρο και τους οδηγούς.</small></div>
+      <div class="acts"><a class="btn-line">↗ Κοινοποίηση καρτέλας</a><a class="btn-line">&lt;/&gt; Ενσωμάτωση καρτέλας</a></div></div>
+
+    <div class="summary"><div class="t">Azerbaijan · Αγώνας<small>Γύρος 49 · 14:52 τοπική</small></div>
+      <div class="s"><label>RUS</label><b>1:44.916</b></div><div class="s"><label>VER</label><b>1:45.020</b></div>
+      <div class="s"><label>Διαφορα</label><b>+0.104</b></div><div class="s"><label>Top speed</label><b>326 / 333</b></div></div>
+
+    <div class="legend"><span><i style="background:var(--rus)"></i>RUS · Russell</span><span><i style="background:var(--ver)"></i>VER · Verstappen</span></div>
+    <div id="a-speed"></div>
+    <p class="src">Πηγή: OpenF1 car_data · κανονικοποιημένο ανά πρόοδο γύρου.</p>
+
+    <div class="pair">
+      <div>
+        <div class="table-h"><span>Sectors · Γύρος 49</span><span class="muted">Χρονος</span></div>
+        <div class="thead"><span></span><span>Οδηγός</span><span>S1</span><span>S2</span><span>S3</span><span>Γύρος</span></div>
+        <div class="row" style="border-left-color:var(--rus)"><span class="pos first">01</span><span class="nm"><b>RUS</b><small>Mercedes</small></span><span class="n best">37.056</span><span class="n best">42.656</span><span class="n">25.204</span><span class="tot">1:44.916</span></div>
+        <div class="row" style="border-left-color:var(--ver)"><span class="pos">02</span><span class="nm"><b>VER</b><small>Red Bull</small></span><span class="n">37.169</span><span class="n">43.101</span><span class="n best">24.750</span><span class="tot">+0.104</span></div>
+      </div>
+      <div>
+        <div class="table-h"><span>Διαφορά ταχύτητας</span><span class="muted">km/h · RUS − VER</span></div>
+        <div id="a-delta"></div>
+      </div>
+    </div>
+
+    <div class="next">
+      <a><b>01 TELEMETRY</b><small>Ταχύτητα &amp; πεντάλ</small></a><a><b>02 TRACK MAP</b><small>Ποιος κερδίζει πού</small></a>
+      <a><b>03 ΘΕΣΕΙΣ</b><small>Γύρο προς γύρο</small></a><a><b>04 ΕΛΑΣΤΙΚΑ</b><small>Stints &amp; pit stops</small></a><a><b>05 RACE CONTROL</b><small>Σημαίες &amp; ποινές</small></a>
+    </div>
+  </section>
+</main>
+<footer class="foot" style="margin-top:80px"><div class="wrap"><div class="brandline"><b>F1 STORIES<span class="dot">.</span></b><span>Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.</span></div><div class="links"><span>ΑΡΘΡΑ</span><span>ΒΑΘΜΟΛΟΓΙΑ</span><span>ΔΕΔΟΜΕΝΑ</span><span>ΣΥΝΤΑΚΤΕΣ</span><span>BETCAST ↗</span></div></div></footer>
+
+<script src="mock.js"></script>
+<script>
+  const m = innerWidth < 700;
+  MOCK.chart(document.getElementById('a-speed'), { height: m ? 240 : 380, yMin: 60, yMax: 350, yTicks: [100, 200, 300], xTicks: MOCK.cornerTicks(m ? 3 : 1),
+    series: [{ data: MOCK.B, color: 'var(--ver)', width: 2 }, { data: MOCK.A, color: 'var(--rus)', width: 2, dash: '6 3' }] });
+  MOCK.chart(document.getElementById('a-delta'), { height: 220, yMin: -40, yMax: 40, yTicks: [-30, 0, 30], zero: 0, xTicks: MOCK.pctTicks,
+    series: [{ data: MOCK.DELTA, color: 'var(--ink)', width: 1.5, area: '#a82e1c22', areaBase: 0 }] });
+</script>
+</body>
+</html>

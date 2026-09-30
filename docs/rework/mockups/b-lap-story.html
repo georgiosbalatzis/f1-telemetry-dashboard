@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B — Lap Story</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .cover { background: linear-gradient(180deg, var(--paper-2), var(--paper)); padding: 28px 0 0; }
+  .cover-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 0; margin-top: 44px; position: relative; }
+  .num { display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 600; letter-spacing: .12em; }
+  .num::after { content: ''; order: 1; width: 48px; height: 1.5px; background: var(--signal); }
+  .num span:last-child { order: 2; }
+  .cover h1 { font-size: 84px; font-weight: 600; line-height: 1.02; letter-spacing: -.045em; margin: 34px 0 26px; position: relative; z-index: 2; }
+  .cover .stand { font-size: 23px; line-height: 1.45; letter-spacing: -.01em; max-width: 30ch; margin: 0 0 14px; }
+  .cover .body { font-size: 14px; color: var(--ink-2); max-width: 52ch; margin: 0 0 18px; }
+  .meta { font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--ink-2); }
+  .cta { display: flex; gap: 26px; align-items: center; margin: 28px 0 48px; }
+  .visual { position: relative; background: var(--charcoal); border-bottom-right-radius: var(--cut); padding: 36px 34px 28px; color: var(--cream); align-self: start; }
+  .visual::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 111px, #ffffff08 111px 112px); border-bottom-right-radius: var(--cut); pointer-events: none; }
+  .visual .kicker { color: var(--cream-2); display: flex; justify-content: space-between; }
+  .visual .legend { display: flex; gap: 20px; margin-top: 14px; font-size: 12px; font-weight: 600; letter-spacing: .1em; }
+  .visual .legend i { display: inline-block; width: 18px; height: 4px; margin-right: 8px; vertical-align: middle; }
+  .sticker { position: absolute; top: -26px; right: 36px; z-index: 3; background: var(--signal); color: #17191b; font: 700 26px/.95 var(--font-brand); padding: 12px 18px; transform: rotate(4deg); border: 2px solid #17191b; }
+  .caption { display: flex; justify-content: space-between; padding: 12px 0 18px; font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--ink-2); grid-column: 2; }
+
+  .band .wrap { justify-content: space-between; }
+  .band nav { display: flex; gap: 22px; font-size: 13px; letter-spacing: .12em; }
+
+  .layout { display: grid; grid-template-columns: 240px 1fr; gap: 64px; padding-top: 64px; }
+  .rail { position: sticky; top: 24px; align-self: start; font-size: 13px; }
+  .rail h4 { margin: 0 0 14px; padding-top: 12px; border-top: 2px solid var(--ink); font-size: 12px; letter-spacing: .12em; }
+  .rail .f { padding: 10px 0; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; }
+  .rail .f span:first-child { color: var(--ink-2); }
+  .rail .who { margin-top: 22px; }
+  .rail .who div { display: flex; align-items: center; min-height: 40px; border-bottom: 1px solid var(--rule); }
+  .rail .who .off { color: var(--ink-2); }
+  .rail .toc { margin-top: 28px; display: grid; gap: 10px; }
+  .rail .toc a { display: flex; gap: 12px; } .rail .toc a b { color: var(--ink-2); width: 20px; }
+  .rail .toc a.on { color: var(--accent); font-weight: 600; }
+
+  .ch { margin-bottom: 72px; }
+  .ch-head { display: flex; align-items: end; justify-content: space-between; border-top: 1px solid var(--ink); padding-top: 12px; }
+  .ch h2 { font: 700 96px/.85 var(--font-brand); text-transform: uppercase; margin: 22px 0 22px; }
+  .ch p.lead { font-size: 19px; line-height: 1.6; max-width: 62ch; margin: 0 0 30px; }
+  .ch p.lead b { background: linear-gradient(transparent 62%, #ed4c3240 62%); }
+  .pull { display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center; margin: 38px 0; padding: 26px 0; border-block: 1px solid var(--rule); }
+  .pull .big { font: 700 120px/.8 var(--font-brand); letter-spacing: -.02em; }
+  .pull .big small { font-size: 44px; color: var(--ink-2); }
+  .pull p { font-size: 16px; margin: 0; max-width: 40ch; color: var(--ink-2); }
+  .fig figcaption { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); padding-top: 8px; }
+
+  .tech { background: var(--charcoal); color: var(--cream); padding: 64px 0 80px; margin: 24px 0 72px; position: relative; }
+  .tech::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 111px, #ffffff08 111px 112px); pointer-events: none; }
+  .tech .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; position: relative; }
+  .tech h2 { font: 700 110px/.84 var(--font-brand); text-transform: uppercase; margin: 26px 0 22px; }
+  .tech h2 .t { color: var(--teal); }
+  .tech p { color: var(--cream-2); max-width: 46ch; }
+  .card { background: var(--charcoal-2); border: 1px solid var(--charcoal-rule); border-top: 2px solid var(--teal); padding: 30px 36px; }
+  .card .top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; letter-spacing: .12em; padding-bottom: 12px; border-bottom: 1px solid var(--charcoal-rule); }
+  .card .top span:last-child { color: #7d7f7a; }
+  .card .who { font-size: 12px; font-weight: 600; letter-spacing: .12em; margin-top: 12px; }
+  .card .gap { font: 500 96px/1 var(--font-body); letter-spacing: -.04em; margin: 16px 0 8px; }
+  .card .gap .p { color: var(--teal); } .card .gap small { font-size: 28px; color: #7d7f7a; }
+  .card .sub { font-size: 13px; color: var(--cream-2); padding-bottom: 20px; border-bottom: 1px solid var(--charcoal-rule); }
+  .card .secs { display: grid; grid-template-columns: repeat(3, 1fr); padding: 18px 0; border-bottom: 1px solid var(--charcoal-rule); }
+  .card .secs div { border-right: 1px solid var(--charcoal-rule); padding-left: 16px; } .card .secs div:first-child { padding-left: 0; } .card .secs div:last-child { border: 0; }
+  .card .secs label { font-size: 11px; letter-spacing: .12em; color: #7d7f7a; display: block; }
+  .card .secs b { font-size: 18px; }
+  .bars { padding-top: 16px; display: grid; gap: 12px; }
+  .bars div { display: grid; grid-template-columns: 150px 1fr 60px; gap: 16px; align-items: center; font-size: 12px; font-weight: 600; letter-spacing: .1em; }
+  .bars i { height: 4px; background: #47494a; position: relative; } .bars i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--teal); }
+  .bars b { text-align: right; }
+  .card .srcl { font-size: 11px; letter-spacing: .12em; color: #7d7f7a; margin-top: 20px; }
+
+  .stints { margin-top: 10px; }
+  .stint-row { display: grid; grid-template-columns: 80px 1fr; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 14px; font-weight: 600; letter-spacing: .06em; }
+  .stint-row .track { display: flex; height: 34px; }
+  .stint-row .track span { display: flex; align-items: center; padding-left: 10px; font-size: 11px; font-weight: 600; border-top: 3px solid; background: var(--paper-2); margin-right: 3px; }
+  .S { border-color: #ad322c !important; } .M { border-color: #b8900f !important; } .H { border-color: #20251f !important; }
+
+  .more { border-top: 2px solid var(--ink); display: grid; grid-template-columns: 200px repeat(3, 1fr); gap: 0; padding-top: 16px; }
+  .more a { padding: 0 24px; border-left: 1px solid var(--rule); } .more .n { font: 700 40px/1 var(--font-brand); color: #8b8f86; }
+  .more small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .12em; color: #12655f; margin: 8px 0; } .more b { font-size: 17px; line-height: 1.3; }
+
+  @media (max-width: 700px) {
+    .cover-grid { grid-template-columns: 1fr; margin-top: 24px; }
+    .cover h1 { font-size: 44px; margin: 20px 0 16px; } .cover .stand { font-size: 18px; } .cover .body { display: none; }
+    .cta { margin: 20px 0 28px; } .caption { grid-column: 1; }
+    .visual { padding: 26px 18px 18px; } .sticker { font-size: 18px; top: -18px; right: 14px; padding: 8px 12px; }
+    .band nav { display: none; }
+    .layout { grid-template-columns: 1fr; gap: 28px; padding-top: 0; }
+    .rail { position: sticky; top: 0; z-index: 5; background: var(--paper); margin: 0 -20px; padding: 10px 20px; border-bottom: 1px solid var(--rule); display: flex; gap: 12px; overflow-x: auto; white-space: nowrap; }
+    .rail h4, .rail .toc, .rail .f:nth-child(n+4) { display: none; }
+    .rail .f { border: 1px solid var(--rule); padding: 6px 10px; gap: 8px; } .rail .who { margin: 0; display: flex; gap: 10px; } .rail .who div { border: 0; min-height: 0; } .rail .who .off { display: none; }
+    .ch h2 { font-size: 64px; } .ch p.lead { font-size: 16px; }
+    .pull { grid-template-columns: 1fr; gap: 10px; } .pull .big { font-size: 88px; }
+    .tech .row2 { grid-template-columns: 1fr; gap: 28px; } .tech h2 { font-size: 72px; } .card { padding: 22px 18px; } .card .gap { font-size: 64px; }
+    .bars div { grid-template-columns: 110px 1fr 52px; font-size: 10px; }
+    .more { grid-template-columns: 1fr; } .more a { border: 0; border-bottom: 1px solid var(--rule); padding: 16px 0; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="nav-brand" href="#"><img src="../../../public/logo192.png" alt="">F1 STORIES<b>.</b></a>
+  <div class="nav-links"><a>Αρχική</a><a>Άρθρα</a><a>YouTube</a><a>Βαθμολογία</a><a class="on">Telemetry</a><a>Συντάκτες</a><a>BetCast</a></div>
+  <div class="nav-right"><div class="nav-count">🏁 Bahrain GP in Malay…<b>4d 0h 34m</b></div><span class="moon"></span><span class="burger"></span></div>
+</div></nav>
+
+<header class="cover"><div class="wrap">
+  <div class="kicker-row"><span class="kicker">F1 Stories / Lap Story</span><span class="kicker">Τεχνική ματιά · Καθαρά δεδομένα</span></div>
+  <div class="cover-grid">
+    <div>
+      <div class="num"><span>01</span><span>ΓΥΡΟΣ 49</span></div>
+      <h1>Ο Russell κέρδισε τον γύρο στο φρένο<span class="dot">.</span></h1>
+      <p class="stand">Ο Verstappen ήταν ταχύτερος σε κάθε ευθεία του Baku, αλλά έχασε 0.445s μόνο στο δεύτερο sector.</p>
+      <p class="body">Σύγκριση του γύρου 49 στον αγώνα του Αζερμπαϊτζάν: RUS 1:44.916 έναντι VER 1:45.020. Τα δεδομένα προέρχονται από το OpenF1 και ανανεώνονται μετά από κάθε συνεδρία.</p>
+      <div class="meta">ΑΝΑΛΥΣΗ ΔΕΔΟΜΕΝΩΝ · BAKU · ΑΓΩΝΑΣ · 26 ΣΕΠΤΕΜΒΡΙΟΥ 2026</div>
+      <div class="cta"><a class="btn-ink">Άλλαξε σύγκριση →</a><a class="link-u">Ενσωμάτωση σε άρθρο</a></div>
+    </div>
+    <div class="visual">
+      <div class="sticker">PURE DATA.<br>REAL STORIES.</div>
+      <div class="kicker"><span>Κυριαρχία ανά mini-sector</span><span>R15 · Baku</span></div>
+      <div id="b-map" style="margin-top:14px"></div>
+      <div class="legend"><span><i style="background:var(--rus-dark)"></i>RUS · 9 mini-sectors</span><span><i style="background:var(--ver-dark)"></i>VER · 7</span></div>
+    </div>
+    <div class="caption"><span>01 / ΚΥΡΙΑΡΧΙΑ ΣΤΗΝ ΠΙΣΤΑ</span><span>ΠΗΓΗ / OPENF1</span></div>
+  </div>
+</div></header>
+
+<div class="band"><div class="wrap"><span style="font:700 24px/1 var(--font-brand)">BRAKE. TURN. REPEAT.</span><nav><span>ΤΑΧΥΤΗΤΑ</span>✳<span>SECTORS</span>✳<span>ΣΤΡΑΤΗΓΙΚΗ</span>✳<span>RACE CONTROL</span></nav><span>ΟΛΑ ΤΑ ΔΕΔΟΜΕΝΑ ↗</span></div></div>
+
+<div class="wrap layout">
+  <aside class="rail">
+    <h4>Η ΣΥΓΚΡΙΣΗ</h4>
+    <div class="f"><span>Αγώνας</span><b>Baku 2026</b></div>
+    <div class="f"><span>Συνεδρία</span><b>Race</b></div>
+    <div class="f"><span>Γύρος</span><b>‹ 49 / 51 ›</b></div>
+    <div class="who"><div><span class="bar" style="background:var(--rus)"></span><b>RUS</b>&nbsp;Russell</div><div><span class="bar" style="background:var(--ver)"></span><b>VER</b>&nbsp;Verstappen</div><div class="off">+ Πρόσθεσε οδηγό</div></div>
+    <div class="toc"><a class="on"><b>02</b>Ταχύτητα</a><a><b>03</b>Tech desk</a><a><b>04</b>Στρατηγική</a><a><b>05</b>Race control</a><a><b>06</b>Team radio</a></div>
+  </aside>
+
+  <main>
+    <section class="ch">
+      <div class="ch-head"><span class="kicker">02 / Ταχύτητα</span><span class="kicker muted">Γύρος 49</span></div>
+      <h2>Speed<span class="dot">.</span></h2>
+      <p class="lead">Στις ευθείες ο Verstappen έφτασε τα <b>333 km/h</b>, 7 περισσότερα. Η διαφορά όμως κρίθηκε στα φρεναρίσματα της T8 και της T15, όπου ο Russell φρέναρε αργότερα και <b>βγήκε ταχύτερα</b>.</p>
+      <figure class="fig" style="margin:0"><div id="b-speed"></div><figcaption><span><span class="bar" style="background:var(--rus)"></span>RUS &nbsp; <span class="bar" style="background:var(--ver)"></span>VER</span><span>Πηγή: OpenF1 · km/h</span></figcaption></figure>
+      <div class="pull"><div class="big">+0.104<small>s</small></div><p>Η τελική διαφορά του γύρου. Ο Russell ήταν μπροστά από την T7 και μετά, και δεν την έχασε ποτέ.</p></div>
+      <figure class="fig" style="margin:0"><div id="b-pedal"></div><figcaption><span>Γκάζι (πάνω) &amp; φρένο (κάτω)</span><span>%</span></figcaption></figure>
+    </section>
+  </main>
+</div>
+
+<section class="tech"><div class="wrap row2">
+  <div>
+    <div class="kicker" style="color:var(--cream-2)">03 / Tech desk</div>
+    <h2>Where the<br>time went<span class="t">.</span></h2>
+    <p>Ανάλυση του γύρου ανά τύπο στροφής. Οι αργές στροφές του κάστρου (T7–T9) κρίνουν τον γύρο στο Baku περισσότερο από την ευθεία.</p>
+    <a class="btn-line" style="color:var(--cream);border-color:#77797580;margin-top:18px">ΟΛΗ Η ΤΗΛΕΜΕΤΡΙΑ →</a>
+  </div>
+  <div class="card">
+    <div class="top"><span>R15 / BAKU GP</span><span>RACE · L49</span></div>
+    <div class="who">VERSTAPPEN · ΑΠΟΣΤΑΣΗ ΑΠΟ RUSSELL</div>
+    <div class="gap"><span class="p">+</span>0.104<small>s</small></div>
+    <div class="sub">1:45.020 · top speed 333 km/h · 2ος από 2 επιλεγμένους</div>
+    <div class="secs"><div><label>S1</label><b>+0.113</b></div><div><label>S2</label><b>+0.445</b></div><div><label>S3</label><b>−0.454</b></div></div>
+    <div class="bars"><div>ΑΡΓΕΣ ΣΤΡΟΦΕΣ<i style="--w:78%"></i><b>+0.312</b></div><div>ΜΕΣΑΙΕΣ ΣΤΡΟΦΕΣ<i style="--w:42%"></i><b>+0.171</b></div><div>ΕΥΘΕΙΕΣ<i style="--w:10%"></i><b>−0.379</b></div></div>
+    <div class="srcl">ΠΗΓΗ / OPENF1 · CAR_DATA</div>
+  </div>
+</div></section>
+
+<div class="wrap">
+  <section class="ch">
+    <div class="ch-head"><span class="kicker">04 / Στρατηγική</span><span class="kicker muted">51 γύροι</span></div>
+    <h2>Stints<span class="dot">.</span></h2>
+    <div class="stints">
+      <div class="stint-row"><span><span class="bar" style="background:var(--rus)"></span>RUS</span><div class="track"><span class="M" style="flex:17">MEDIUM · 1–17</span><span class="H" style="flex:34">HARD · 18–51</span></div></div>
+      <div class="stint-row"><span><span class="bar" style="background:var(--ver)"></span>VER</span><div class="track"><span class="M" style="flex:20">MEDIUM · 1–20</span><span class="H" style="flex:13">HARD · 21–33</span><span class="S" style="flex:18">SOFT · 34–51</span></div></div>
+    </div>
+  </section>
+
+  <section class="more"><span class="kicker">ΔΙΑΒΑΣΕ ΣΤΟ JOURNAL</span>
+    <a><span class="n">05</span><small>ΤΕΧΝΙΚΑ</small><b>Κρύα ελαστικά και η παγίδα της Turn 1</b></a>
+    <a><span class="n">06</span><small>ΑΝΑΛΥΣΗ</small><b>Το Baku ήταν το τελευταίο upgrade test της McLaren</b></a>
+    <a><span class="n">07</span><small>ΟΜΑΔΕΣ</small><b>Aston Martin: ποινές, βλάβες και διπλό DNF</b></a>
+  </section>
+</div>
+<footer class="foot" style="margin-top:80px"><div class="wrap"><div class="brandline"><b>F1 STORIES<span class="dot">.</span></b><span>Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.</span></div><div class="links"><span>ΑΡΘΡΑ</span><span>ΒΑΘΜΟΛΟΓΙΑ</span><span>TELEMETRY</span><span>ΣΥΝΤΑΚΤΕΣ</span><span>BETCAST ↗</span></div></div></footer>
+
+<script src="mock.js"></script>
+<script>
+  const m = innerWidth < 700;
+  MOCK.trackMap(document.getElementById('b-map'), { dark: true, dots: false });
+  MOCK.chart(document.getElementById('b-speed'), { height: m ? 230 : 340, yMin: 60, yMax: 350, yTicks: [100, 200, 300], xTicks: MOCK.cornerTicks(m ? 3 : 1),
+    bands: [{ from: .34, to: .43, fill: '#ed4c3214' }, { from: .6, to: .65, fill: '#ed4c3214' }],
+    series: [{ data: MOCK.B, color: 'var(--ver)' }, { data: MOCK.A, color: 'var(--rus)', dash: '6 3' }] });
+  MOCK.chart(document.getElementById('b-pedal'), { height: m ? 150 : 180, yMin: -110, yMax: 110, yTicks: [-100, 0, 100], yFmt: (t) => Math.abs(t) + '%', zero: 0, xTicks: MOCK.cornerTicks(m ? 3 : 1),
+    series: [{ data: MOCK.PB.map((p) => p.thr), color: 'var(--ver)', width: 1.5 }, { data: MOCK.PA.map((p) => p.thr), color: 'var(--rus)', width: 1.5, dash: '5 3' },
+      { data: MOCK.PB.map((p) => -p.brk), color: 'var(--ver)', width: 1.5, area: '#3671c622', areaBase: 0 }, { data: MOCK.PA.map((p) => -p.brk), color: 'var(--rus)', width: 1.5, dash: '5 3' }] });
+</script>
+</body>
+</html>

@@ -1,8 +1,77 @@
 @import "tailwindcss";
 @import "./fonts.css";
 
-/* F1 Stories homepage / editorial tokens; semantic race colours stay independent. */
+/* Tokens follow f1StoriesPage/styles/editorial.css: light paper is the default; dark lives under [data-theme="dark"].
+   The attribute is set before first paint by the inline script in index.html. Semantic race colours stay independent. */
 :root {
+  color-scheme: light;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-brand: 'Barlow Condensed', var(--font-body);
+  --bg: #f2eee4;
+  --surface: #e9e3d6;
+  --surface-soft: #dfd9ca;
+  --surface-soft-2: #e9e3d6;
+  --surface-track: #bcb9ae;
+  --surface-avatar: #dfd9ca;
+  --line: #c8c8b9;
+  --line-strong: #858779;
+  --text: #20251f;
+  --text-strong: #20251f;
+  --text-soft: #363c32;
+  --text-muted: #5b6256;
+  --text-dim: #5b6256;
+  --text-faint: #62685d;
+  --accent: #a82e1c;
+  --accent-hover: #8e281a;
+  --accent-border: #a82e1c70;
+  --accent-muted: #a82e1c0c;
+  --accent-strong: var(--text-strong);
+  --accent-neutral: var(--text-muted);
+  --input-bg: transparent;
+  --selection: #a82e1c25;
+  --focus: var(--accent);
+  --chart-grid: #d4d0c5;
+  --chart-axis: #5b6256;
+  --chart-axis-soft: #5b6256;
+  --chart-rpm: #5b6256;
+  --chart-reference: #858779;
+  --color-driver-fallback: #5b6256;
+  --color-muted-dot: #62685d;
+  --color-danger: #ad322c;
+  --color-success: #276846;
+  --color-warning: #795500;
+  --color-weather-air: #5b6256;
+  --color-weather-track: #a82e1c;
+  --color-weather-humidity: #426b87;
+  --color-weather-wind: #397456;
+  --color-sector-fastest: #7d3fa0;
+  --color-sector-fastest-bg: #7d3fa012;
+  --color-sector-fastest-bg-soft: #7d3fa009;
+  --color-sector-second: #276846;
+  --color-sector-second-bg: #27684612;
+  --color-sector-slower: #795500;
+  --color-sector-slower-bg: #79550012;
+  --color-sector-three: #276846;
+  --color-compound-soft: #ad322c;
+  --color-compound-medium: #795500;
+  --color-compound-hard: #5b6256;
+  --color-compound-intermediate: #276846;
+  --color-compound-wet: #286b9b;
+  --color-compound-unknown: #5b6256;
+  --color-compound-hypersoft: #993962;
+  --color-compound-ultrasoft: #7d3fa0;
+  --color-compound-supersoft: #ad322c;
+  --font-display: var(--font-brand);
+  --signal: #ed4c32;
+  --cut: 40px;
+  --paper: var(--bg);
+  --paper-2: var(--surface);
+  --paper-3: var(--surface-soft);
+  --ink: var(--text);
+  --ink-2: var(--text-muted);
+  --teal: #12655f;
+}
+:root[data-theme="dark"] {
   color-scheme: dark;
   --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-brand: 'Barlow Condensed', var(--font-body);
@@ -60,59 +129,7 @@
   --color-compound-hypersoft: #e9a1bd;
   --color-compound-ultrasoft: #c29bea;
   --color-compound-supersoft: #f17b75;
-}
-.theme-light {
-  color-scheme: light;
-  --bg: #f2eee4;
-  --surface: #e9e3d6;
-  --surface-soft: #dfd9ca;
-  --surface-soft-2: #e9e3d6;
-  --surface-track: #bcb9ae;
-  --surface-avatar: #dfd9ca;
-  --line: #c8c8b9;
-  --line-strong: #858779;
-  --text: #20251f;
-  --text-strong: #20251f;
-  --text-soft: #363c32;
-  --text-muted: #5b6256;
-  --text-dim: #5b6256;
-  --text-faint: #62685d;
-  --accent: #a82e1c;
-  --accent-hover: #8e281a;
-  --accent-border: #a82e1c70;
-  --accent-muted: #a82e1c0c;
-  --selection: #a82e1c25;
-  --chart-grid: #d4d0c5;
-  --chart-axis: #5b6256;
-  --chart-axis-soft: #5b6256;
-  --chart-rpm: #5b6256;
-  --chart-reference: #858779;
-  --color-driver-fallback: #5b6256;
-  --color-muted-dot: #62685d;
-  --color-danger: #ad322c;
-  --color-success: #276846;
-  --color-warning: #795500;
-  --color-weather-air: #5b6256;
-  --color-weather-track: #a82e1c;
-  --color-weather-humidity: #426b87;
-  --color-weather-wind: #397456;
-  --color-sector-fastest: #7d3fa0;
-  --color-sector-fastest-bg: #7d3fa012;
-  --color-sector-fastest-bg-soft: #7d3fa009;
-  --color-sector-second: #276846;
-  --color-sector-second-bg: #27684612;
-  --color-sector-slower: #795500;
-  --color-sector-slower-bg: #79550012;
-  --color-sector-three: #276846;
-  --color-compound-soft: #ad322c;
-  --color-compound-medium: #795500;
-  --color-compound-hard: #5b6256;
-  --color-compound-intermediate: #276846;
-  --color-compound-wet: #286b9b;
-  --color-compound-unknown: #5b6256;
-  --color-compound-hypersoft: #993962;
-  --color-compound-ultrasoft: #7d3fa0;
-  --color-compound-supersoft: #ad322c;
+  --teal: #6ec6bb;
 }
 html, body { background: var(--bg); color: var(--text); }
 body { margin: 0; font-family: var(--font-body); -webkit-font-smoothing: antialiased; }

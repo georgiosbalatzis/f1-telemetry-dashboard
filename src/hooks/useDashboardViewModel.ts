@@ -17,6 +17,7 @@ import type {
   Tab,
   WeatherTrendPoint,
 } from '../components/dashboard/types';
+import { copy } from '../copy';
 
 type Params = {
   activeTab: Tab;
@@ -252,7 +253,7 @@ export function useDashboardViewModel({
     return weather
       .filter((_, index) => index % step === 0)
       .map((entry) => ({
-        time: new Date(entry.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: new Date(entry.date).toLocaleTimeString(copy.locale, { hour: '2-digit', minute: '2-digit' }),
         air: entry.air_temperature,
         track: entry.track_temperature,
         humidity: entry.humidity,
