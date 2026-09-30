@@ -66,15 +66,15 @@
     "semantic_hash": "0e74ac1fc3f9643a92dcd3f5c8826d13"
   },
   "src/components/DashboardContainer.tsx": {
-    "mtime": 1790758063.1336875,
-    "seen": 1790758649.7469,
-    "ast_hash": "c2ed030009d1a1273d2ee867bbb0d49f",
+    "mtime": 1790772374.8406885,
+    "seen": 1790773226.211738,
+    "ast_hash": "9e8d2b0df94d6649f2fe91187ffbaa02",
     "semantic_hash": ""
   },
   "src/components/DashboardShell.tsx": {
-    "mtime": 1790765039.0800593,
-    "seen": 1790770458.405922,
-    "ast_hash": "be51be0f88cec4103f954dfed5c4fe03",
+    "mtime": 1790772151.6087847,
+    "seen": 1790773226.211738,
+    "ast_hash": "93d6ceb6fe33b09a3ef12c225fdaa24a",
     "semantic_hash": ""
   },
   "src/components/ErrorBoundary.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/BroadcastTab.tsx": {
-    "mtime": 1790754688.13634,
-    "seen": 1790758649.7469041,
-    "ast_hash": "8b5db42586d84d4ed01e4a71fc1c62d1",
+    "mtime": 1790772030.119678,
+    "seen": 1790773226.211744,
+    "ast_hash": "16284b9017a7e621dfbbb82c1f442ca0",
     "semantic_hash": ""
   },
   "src/components/dashboard/ChartPanel.tsx": {
@@ -132,15 +132,15 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardHeader.tsx": {
-    "mtime": 1790758063.1331692,
-    "seen": 1790758649.746906,
-    "ast_hash": "e2e89a45cb514c7ecf1f75fb9cce486b",
+    "mtime": 1790772030.119275,
+    "seen": 1790773226.211745,
+    "ast_hash": "86097b599190178709a843d038b648f9",
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardSelectors.tsx": {
-    "mtime": 1790753658.557271,
-    "seen": 1790758649.746906,
-    "ast_hash": "eed24f5e6bff73d3b931ba6164643e5d",
+    "mtime": 1790772030.1186192,
+    "seen": 1790773226.211745,
+    "ast_hash": "4a099c467dc43e98220e2b225dedfcfc",
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardTabs.tsx": {
@@ -150,63 +150,63 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/DriverSelector.tsx": {
-    "mtime": 1790752998.3930035,
-    "seen": 1790758649.746907,
-    "ast_hash": "20f0382636c51714a25b2b94f3926574",
+    "mtime": 1790772030.1189432,
+    "seen": 1790773226.211746,
+    "ast_hash": "de725fcb91491a95f661cc7d88e6f35c",
     "semantic_hash": ""
   },
   "src/components/dashboard/EnergyTab.tsx": {
-    "mtime": 1790755379.9618652,
-    "seen": 1790758649.746907,
-    "ast_hash": "948a2520e0e9dcf21cf921833d115142",
+    "mtime": 1790772030.1151516,
+    "seen": 1790773226.2117472,
+    "ast_hash": "82e68f7292c00d9cf6069a4e3c864c82",
     "semantic_hash": ""
   },
   "src/components/dashboard/IncidentsTab.tsx": {
-    "mtime": 1790757446.0480456,
-    "seen": 1790758649.746908,
-    "ast_hash": "c79e7c8c89585a50aa11144328719d0c",
+    "mtime": 1790772030.1159918,
+    "seen": 1790773226.2117481,
+    "ast_hash": "4a26eb147fa41c7e4f4ac7545b6c644b",
     "semantic_hash": ""
   },
   "src/components/dashboard/IntervalsTab.tsx": {
-    "mtime": 1790757573.3675098,
-    "seen": 1790758649.746909,
-    "ast_hash": "5bb959fa81acdfdc26064f8dd9a43a03",
+    "mtime": 1790772030.117596,
+    "seen": 1790773226.2117481,
+    "ast_hash": "e8a8c1b482adabdad8dec1beb74da590",
     "semantic_hash": ""
   },
   "src/components/dashboard/PositionsTab.tsx": {
-    "mtime": 1790756148.7657297,
-    "seen": 1790758649.7469099,
-    "ast_hash": "5900740b2e6d00abd301e46d0f6cf003",
+    "mtime": 1790772030.1169205,
+    "seen": 1790773226.2117498,
+    "ast_hash": "e3cbe3b6fba64f3b7c3459e239918062",
     "semantic_hash": ""
   },
   "src/components/dashboard/RadioTab.tsx": {
-    "mtime": 1790757446.0479238,
-    "seen": 1790758649.746911,
-    "ast_hash": "fbe4556c17d9baaf001f66516b7cf10a",
+    "mtime": 1790772030.1154408,
+    "seen": 1790773226.2117498,
+    "ast_hash": "7a738bc74bd2990f1e5e2c31e3fb6d35",
     "semantic_hash": ""
   },
   "src/components/dashboard/StrategyTab.tsx": {
-    "mtime": 1790757446.047615,
-    "seen": 1790758649.746912,
-    "ast_hash": "d42a72ed4c2827d408a110cb3bb3b9ed",
+    "mtime": 1790772030.1142645,
+    "seen": 1790773226.211752,
+    "ast_hash": "d0908a3c943fe130249454a78840f198",
     "semantic_hash": ""
   },
   "src/components/dashboard/TelemetryTab.tsx": {
-    "mtime": 1790755379.951239,
-    "seen": 1790758649.746913,
-    "ast_hash": "eb93ebcdf3a95a97cbec617f9234659a",
+    "mtime": 1790772151.6089842,
+    "seen": 1790773226.211752,
+    "ast_hash": "cf141d296b4b4ad78a8fb20b83d974c4",
     "semantic_hash": ""
   },
   "src/components/dashboard/TrackMapTab.tsx": {
-    "mtime": 1790756148.7648816,
-    "seen": 1790758649.746913,
-    "ast_hash": "faa1354b3dbcfd86a85de7ef659e15e6",
+    "mtime": 1790772030.1134937,
+    "seen": 1790773226.211753,
+    "ast_hash": "086a2b638c3378583227b6626d211a97",
     "semantic_hash": ""
   },
   "src/components/dashboard/WeatherTab.tsx": {
-    "mtime": 1790757723.2665894,
-    "seen": 1790758649.7469141,
-    "ast_hash": "13e5b0043c08c70721222f2d84c15069",
+    "mtime": 1790772030.1164541,
+    "seen": 1790773226.211754,
+    "ast_hash": "36e24a2c4de7daa51a3739d984bd03f3",
     "semantic_hash": ""
   },
   "src/components/dashboard/__tests__/positionsUtils.test.ts": {
@@ -306,22 +306,22 @@
     "semantic_hash": "acf4b37877a4e71f6f4443155e9f4886"
   },
   "src/contexts/DriverContext.tsx": {
-    "mtime": 1775891979.0339277,
-    "seen": 1790060867.207167,
-    "ast_hash": "21e7575123c77d4af36724c9411633ae",
-    "semantic_hash": "21e7575123c77d4af36724c9411633ae"
+    "mtime": 1790772374.827619,
+    "seen": 1790773226.21177,
+    "ast_hash": "b1983c77ecf4acdc359d668675bb59a0",
+    "semantic_hash": ""
   },
   "src/contexts/driverContextValue.ts": {
-    "mtime": 1775891979.0340443,
-    "seen": 1790060867.207167,
-    "ast_hash": "1f086bfbf556c112f26497e892f6b744",
-    "semantic_hash": "1f086bfbf556c112f26497e892f6b744"
+    "mtime": 1790772374.8246384,
+    "seen": 1790773226.2117708,
+    "ast_hash": "882e1a1cfb158a86e4242f49ce179e72",
+    "semantic_hash": ""
   },
   "src/contexts/useDriverContext.ts": {
-    "mtime": 1790058151.676098,
-    "seen": 1790060867.207168,
-    "ast_hash": "7efc313de44c9a5c86492f594ec48fdc",
-    "semantic_hash": "7efc313de44c9a5c86492f594ec48fdc"
+    "mtime": 1790772374.8300548,
+    "seen": 1790773226.2117708,
+    "ast_hash": "04a2a6ebc3adcb940658932afa6e91aa",
+    "semantic_hash": ""
   },
   "src/hooks/__tests__/P0Comparison.test.ts": {
     "mtime": 1790025381.5562372,
@@ -636,9 +636,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/LapStrip.tsx": {
-    "mtime": 1790758409.8576303,
-    "seen": 1790758649.746909,
-    "ast_hash": "f0b0c0e4852fa33f4bc74efad2a97363",
+    "mtime": 1790772030.1182203,
+    "seen": 1790773226.211749,
+    "ast_hash": "d443a4eee4da6306b98b7d259144b8f1",
     "semantic_hash": ""
   },
   "src/components/dashboard/NextViews.tsx": {
@@ -648,9 +648,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/SignalBand.tsx": {
-    "mtime": 1790751759.3708038,
-    "seen": 1790758649.746911,
-    "ast_hash": "6b31c3f97e3c35f84ea2a0af18d63113",
+    "mtime": 1790772030.1179335,
+    "seen": 1790773226.211751,
+    "ast_hash": "461b0fe1a6d2a932c7ec9b5f2c6d42f4",
     "semantic_hash": ""
   },
   "src/components/dashboard/SiteFooter.tsx": {
@@ -1019,16 +1019,10 @@
     "ast_hash": "190239d83ff2ba272fe17e9793054911",
     "semantic_hash": ""
   },
-  "src/utils/perfProbe.tsx": {
-    "mtime": 1790765039.0645278,
-    "seen": 1790770458.405965,
-    "ast_hash": "07825745061cd3cdcc47241667c76bf0",
-    "semantic_hash": ""
-  },
   "PERFREDO.md": {
-    "mtime": 1790770381.9309742,
-    "seen": 1790770458.4059808,
-    "ast_hash": "d6d64bf99a18c57d1ae4eca0c5838377",
+    "mtime": 1790773224.4431689,
+    "seen": 1790773226.211794,
+    "ast_hash": "22cb998a16e2382e4bef4e7de04f9867",
     "semantic_hash": ""
   },
   "docs/rework/final/broadcast-dark-390.png": {
@@ -1101,6 +1095,12 @@
     "mtime": 1790759020.3091862,
     "seen": 1790770458.406008,
     "ast_hash": "f09c7ee8c131b9ded669661694cd945c",
+    "semantic_hash": ""
+  },
+  "src/utils/perfProbe.ts": {
+    "mtime": 1790772151.5731807,
+    "seen": 1790773226.2117782,
+    "ast_hash": "97dcc4462a53876e2d1dc587bb1453b3",
     "semantic_hash": ""
   }
 }
