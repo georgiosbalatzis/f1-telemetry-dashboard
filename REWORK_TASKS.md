@@ -128,7 +128,7 @@ Each task lists **Files**, **Change** and **Accept**. Keep diffs small. Don't in
 
 ### Phase 3: Navigation and section framing
 
-- [ ] **R3-01 Data Hub tab strip**
+- [x] ✅ **R3-01 Data Hub tab strip**
   Files: `DashboardTabs.tsx`, `index.css` (`.analysis-*`, `.mobile-analysis-selector`).
   Change: replace the three grouped clusters and the mobile `<select>` with one horizontal strip of 10 tabs: 15px text, 18px padding, a 2px `--signal` underline on the active tab, a 1px rule below. Mobile: horizontal scroll with the active tab scrolled into view; no select. Use `role="tablist"` / `role="tab"` with `aria-selected` and roving tabindex, or keep the buttons with `aria-current`; pick one and update the tests to match.
   Accept: matches the `/standings` tab strip at 1440 and 390; every tab is reachable by keyboard.

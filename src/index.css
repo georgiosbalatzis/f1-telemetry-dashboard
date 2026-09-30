@@ -195,10 +195,13 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .driver-option strong { font-weight: 500; }
 .driver-option small { display: block; font-size: 10px; overflow-wrap: anywhere; }
 .driver-option-number { margin-left: auto; font-size: 10px; }
-.analysis-navigation { margin: 22px 0 8px; }
-.mobile-analysis-selector { display: grid; gap: 8px; }
-.mobile-analysis-selector select { font-size: 16px; font-weight: 500; }
-.analysis-groups { display: none; }
+.analysis-navigation { margin: 0 0 24px; border-bottom: 1px solid var(--line); }
+.tab-strip { display: flex; overflow-x: auto; scrollbar-width: none; }
+.tab-strip::-webkit-scrollbar { display: none; }
+.tab-strip button { flex: none; min-height: 56px; padding: 0 16px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--text-muted); font-size: 15px; white-space: nowrap; }
+.tab-strip button:hover { color: var(--accent); }
+.tab-strip button[aria-current="page"] { color: var(--text); border-bottom-color: var(--signal); }
+@media (min-width: 1024px) { .tab-strip { justify-content: space-between; } .tab-strip button { padding-inline: 12px; } }
 .view-actions { display: flex; gap: 20px; justify-content: end; }
 .text-action { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); background: transparent; border: 0; padding: 0; min-height: 44px; }
 .text-action:hover, .utility-button:hover, .dashboard-nav-button:hover:not(:disabled) { color: var(--accent); }
@@ -302,13 +305,6 @@ option, optgroup { background: var(--surface); color: var(--text); }
   .comparison-scope { position: relative; padding-right: 145px; }
   .driver-roster > summary { position: absolute; right: 0; top: 4px; }
   .driver-roster[open] { padding-top: 8px; }
-  .mobile-analysis-selector { display: none; }
-  .analysis-navigation { position: relative; margin-block: 28px 16px; }
-  .analysis-groups { display: grid; grid-template-columns: 1.1fr 1fr 1.2fr; gap: 20px; }
-  .analysis-group > div { display: flex; flex-wrap: wrap; gap: 0 16px; }
-  .analysis-group button { font-size: 12px; color: var(--text-muted); border-bottom: 2px solid transparent; }
-  .analysis-group button[aria-current] { color: var(--text); border-bottom-color: var(--accent); }
-  .analysis-group button:hover { color: var(--accent); }
   .view-actions { margin-top: 4px; }
   .analysis-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .analysis-split > :first-child { grid-column: 1 / -1; }
@@ -902,8 +898,6 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .selected-drivers { gap: 6px 12px; }
 .driver-roster > summary { position: absolute; right: 0; top: 8px; margin: 0; }
 .driver-roster[open] { margin-right: -116px; padding-top: 8px; }
-.analysis-navigation { margin: 12px 0; }
-.mobile-analysis-selector { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; }
 .weather-primary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .weather-metadata { font-size: 12px; color: var(--text-muted); line-height: 1.8; }
 .embed-mode .session-heading { padding: 10px 0 14px; }
@@ -915,11 +909,6 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .embed-mode .dashboard-chart-actions { display: none; }
 @media (min-width: 1024px) {
   /* P2-02: compact bounded analysis row; the selected underline sits on the content boundary. */
-  .analysis-navigation { margin: 8px 0 24px; border-bottom: 1px solid var(--line); }
-  .analysis-groups { grid-template-columns: repeat(3, minmax(0, auto)); justify-content: space-between; gap: 0 24px; }
-  .analysis-group .section-label { display: block; line-height: 1.4; }
-  .analysis-group > div { gap: 0 clamp(14px, 1.4vw, 20px); }
-  .analysis-group button { margin-bottom: -1px; padding: 0; font-size: 14px; }
   .analysis-navigation ~ #analysis-content > .dashboard-panel:first-child,
   .analysis-navigation ~ #analysis-content > .dashboard-chart-frame:first-child > .dashboard-panel { border-top: 0; padding-top: 0; }
 }

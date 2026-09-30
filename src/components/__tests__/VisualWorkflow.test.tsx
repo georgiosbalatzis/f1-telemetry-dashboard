@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { DashboardContainer } from '../DashboardContainer';
 import { ChartTip, ChartSkeleton, Err } from '../dashboard/shared';
 import { TAB_LABELS } from '../dashboard/tabLabels';
+import type { Tab } from '../dashboard/types';
 import { copy } from '../../copy';
 
 // Exercise the real shell, URL filters and handlers without a live OpenF1 service.
@@ -69,11 +70,11 @@ it('preserves scope, driver selection, both navigation controls, and URL state',
     ['radio', 'Team Radio Recordings'], ['incidents', 'Race Control'], ['broadcast', 'Lap Classification'],
   ];
   for (const [value, heading] of views) {
-    fireEvent.change(screen.getByLabelText('Analysis'), { target: { value } });
+    fireEvent.click(screen.getByRole('button', { name: TAB_LABELS[value as Tab] }));
     expect(params().get('tab')).toBe(value);
     expect(await screen.findByRole('heading', { name: heading })).toBeInTheDocument();
   }
-  fireEvent.change(screen.getByLabelText('Analysis'), { target: { value: 'weather' } });
+  fireEvent.click(screen.getByRole('button', { name: TAB_LABELS.weather }));
   expect(await screen.findByText('No weather data for this session.')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: TAB_LABELS.telemetry }));
   expect(params().get('tab')).toBe('telemetry');
@@ -119,7 +120,7 @@ it('restores a read-only article embed with an open-analysis link', async () => 
   window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=44&lap=3&tab=radio&embed=1&theme=light');
   render(<DashboardContainer />);
   expect(await screen.findByRole('heading', { name: 'Team Radio Recordings' })).toBeInTheDocument();
-  expect(screen.queryByLabelText('Analysis')).not.toBeInTheDocument();
+  expect(screen.queryByRole('navigation', { name: 'Analysis views' })).not.toBeInTheDocument();
   expect(document.querySelector('.embed-mode')).toBeInTheDocument();
   expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   expect(screen.queryByText('Adjust session & lap')).not.toBeInTheDocument();
