@@ -13,6 +13,7 @@ import { useCallback, useMemo } from 'react';
 import { useDashboardFilters } from './useDashboardFilters';
 import { useDashboardSelectionData } from './useDashboardSelectionData';
 import { useDashboardViewModel } from './useDashboardViewModel';
+import { useDebouncedValue } from './useDebouncedValue';
 import {
   useDrivers,
   useIntervals,
@@ -29,6 +30,9 @@ import {
   useTeamRadio,
   useWeather,
 } from './useOpenF1';
+
+/** Quiet time before a manually stepped lap starts fetching its telemetry and GPS (auto-picked laps fetch at once). */
+const LAP_FETCH_DEBOUNCE_MS = 200;
 
 /** Maximum number of simultaneously-compared drivers. */
 const MAX_DRIVER_SLOTS = 4;
@@ -54,7 +58,6 @@ export function useDashboard() {
   const stints        = useStints(needsStrategyData  ? filters.sessionKey : null);
   const pits          = usePits(needsStrategyData     ? filters.sessionKey : null);
   const weather       = useWeather(needsWeatherData   ? filters.sessionKey : null);
-  const raceControl   = useRaceControl(filters.sessionKey);
   const teamRadio     = useTeamRadio(needsRadioData   ? filters.sessionKey : null);
   const positions     = usePositions(needsPositionsData ? filters.sessionKey : null);
   const intervals     = useIntervals(needsIntervalsData  ? filters.sessionKey : null);
@@ -78,6 +81,9 @@ export function useDashboard() {
   const lapStates = useMemo(() => [laps0, laps1, laps2, laps3], [laps0, laps1, laps2, laps3]);
   const lapData = useMemo(() => [laps0.data, laps1.data, laps2.data, laps3.data], [laps0.data, laps1.data, laps2.data, laps3.data]);
 
+  // The UI lap updates instantly; heavy per-lap fetches wait until the user stops stepping.
+  const windowLapNum = useDebouncedValue(filters.lapNum, filters.lapSelectionAuto ? 0 : LAP_FETCH_DEBOUNCE_MS);
+
   // ── Selection data: derives circuit/session/driver/lap options ───────────
   const selectionData = useDashboardSelectionData({
     meetings:              meetings.data,
@@ -90,6 +96,7 @@ export function useDashboard() {
     sessionKey:            filters.sessionKey,
     driverNums:            filters.driverNums,
     lapNum:                filters.lapNum,
+    windowLapNum,
     driverSelectionAuto:   filters.driverSelectionAuto,
     lapSelectionAuto:      filters.lapSelectionAuto,
     setCircuit:            filters.setCircuit,
@@ -109,6 +116,11 @@ export function useDashboard() {
   const telem2 = useLapTelemetry(filters.sessionKey, driverSlots[2], win(2).start, win(2).next);
   const telem3 = useLapTelemetry(filters.sessionKey, driverSlots[3], win(3).start, win(3).next);
   const telemetryStates = useMemo(() => [telem0, telem1, telem2, telem3], [telem0, telem1, telem2, telem3]);
+
+  // Only the lap-strip safety-car shading and the Race Control tab use this. It waits until laps have arrived and is
+  // declared after the car-data hooks, so in that same commit car data is queued first (effects run in hook order).
+  const lapsArrived = lapData.some((laps) => laps !== null);
+  const raceControl = useRaceControl(filters.tab === 'incidents' || lapsArrived ? filters.sessionKey : null);
 
   // ── GPS location — windowed to the selected lap per driver ───────────────
   const locKey = needsLocationData ? filters.sessionKey : null;

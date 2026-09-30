@@ -27,8 +27,10 @@ type InflightEntry<T> = {
 
 const cache = new Map<string, CacheEntry>();
 const inflight = new Map<string, InflightEntry<unknown>>();
-const CACHE_TTL = 5 * 60 * 1000;
-const CACHE_STALE_TTL = 30 * 60 * 1000;
+// Finished sessions never change, so data stays fresh for 30 min (shown as a stale fallback for 2 h) and is kept when
+// the user switches session and back. Only a session that is still live could be a little behind.
+const CACHE_TTL = 30 * 60 * 1000;
+const CACHE_STALE_TTL = 2 * 60 * 60 * 1000;
 const MAX_CACHE_ENTRIES = 200;
 
 function isAbortError(error: unknown) {
@@ -78,40 +80,6 @@ function clearExpiredCacheEntries() {
   for (const [key, entry] of cache.entries()) {
     if (now - entry.ts > CACHE_STALE_TTL) {
       cache.delete(key);
-    }
-  }
-}
-
-function isSessionScopedCacheKey(key: string, sessionKey: number) {
-  return (
-    key === `drivers:${sessionKey}`
-    || key === `stints:${sessionKey}`
-    || key === `pits:${sessionKey}`
-    || key === `weather:${sessionKey}`
-    || key === `rc:${sessionKey}`
-    || key === `radio:${sessionKey}`
-    || key === `result:${sessionKey}`
-    || key === `positions:${sessionKey}`
-    || key === `intervals:${sessionKey}`
-    || key.startsWith(`laps:${sessionKey}:`)
-    || key.startsWith(`telem:${sessionKey}:`)
-    || key.startsWith(`location:${sessionKey}:`)
-  );
-}
-
-export function invalidateOpenF1SessionCache(sessionKey: number | null | undefined) {
-  if (sessionKey == null) return;
-
-  for (const key of cache.keys()) {
-    if (isSessionScopedCacheKey(key, sessionKey)) {
-      cache.delete(key);
-    }
-  }
-
-  for (const [key, entry] of inflight.entries()) {
-    if (isSessionScopedCacheKey(key, sessionKey)) {
-      entry.controller.abort();
-      inflight.delete(key);
     }
   }
 }

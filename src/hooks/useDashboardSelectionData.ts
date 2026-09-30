@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session, OpenF1SessionResult } from '../api/openf1';
-import { invalidateOpenF1SessionCache } from './useOpenF1';
 import type { SelectOption } from '../components/dashboard/types';
 
 type Params = {
@@ -15,6 +14,8 @@ type Params = {
   sessionKey: number | null;
   driverNums: number[];
   lapNum: number;
+  /** Lap the telemetry/location windows follow; lags `lapNum` while the user is stepping quickly. */
+  windowLapNum: number;
   driverSelectionAuto: boolean;
   lapSelectionAuto: boolean;
   setCircuit: (circuit: string) => void;
@@ -56,6 +57,7 @@ export function useDashboardSelectionData({
   sessionKey,
   driverNums,
   lapNum,
+  windowLapNum,
   driverSelectionAuto,
   lapSelectionAuto,
   setCircuit,
@@ -63,16 +65,6 @@ export function useDashboardSelectionData({
   setDriverNums,
   setLapNum,
 }: Params) {
-  const previousSessionKeyRef = useRef<number | null>(sessionKey);
-
-  useEffect(() => {
-    const previousSessionKey = previousSessionKeyRef.current;
-    if (previousSessionKey != null && previousSessionKey !== sessionKey) {
-      invalidateOpenF1SessionCache(previousSessionKey);
-    }
-    previousSessionKeyRef.current = sessionKey;
-  }, [sessionKey]);
-
   const circuitOptions = useMemo<SelectOption<string>[]>(() => {
     if (!meetings?.length) return [];
     const seen = new Set<string>();
@@ -143,15 +135,15 @@ export function useDashboardSelectionData({
   const telemetryWindows = useMemo(() => {
     return driverNums.map((driverNumber) => {
       const laps = allLaps[driverNumber] || [];
-      const lap = laps.find((item) => item.lap_number === lapNum) || null;
-      const nextLap = laps.find((item) => item.lap_number === lapNum + 1) || null;
+      const lap = laps.find((item) => item.lap_number === windowLapNum) || null;
+      const nextLap = laps.find((item) => item.lap_number === windowLapNum + 1) || null;
       return {
         driverNumber,
         lapStart: lap?.date_start || null,
         nextLapStart: nextLap?.date_start || null,
       };
     });
-  }, [allLaps, driverNums, lapNum]);
+  }, [allLaps, driverNums, windowLapNum]);
 
   useEffect(() => {
     if (circuitOptions.length > 0 && !circuit) {
