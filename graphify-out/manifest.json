@@ -48,10 +48,10 @@
     "semantic_hash": "354e1383646e5ffafe30993786ceb942"
   },
   "src/api/__tests__/openf1.integration.test.ts": {
-    "mtime": 1775894223.4617684,
-    "seen": 1790060867.2071512,
-    "ast_hash": "ebdc7fc62dc150d144182b4c3addf6fd",
-    "semantic_hash": "ebdc7fc62dc150d144182b4c3addf6fd"
+    "mtime": 1790774971.7462919,
+    "seen": 1790778677.72611,
+    "ast_hash": "9bf4a2888092d5045b45715adbe3d0b7",
+    "semantic_hash": ""
   },
   "src/api/__tests__/openf1.test.ts": {
     "mtime": 1775893390.6478355,
@@ -60,10 +60,10 @@
     "semantic_hash": "9a46f8cc7093345a87317e04c7f22ef1"
   },
   "src/api/openf1.ts": {
-    "mtime": 1775893292.72104,
-    "seen": 1790060867.2071521,
-    "ast_hash": "0e74ac1fc3f9643a92dcd3f5c8826d13",
-    "semantic_hash": "0e74ac1fc3f9643a92dcd3f5c8826d13"
+    "mtime": 1790774971.7458198,
+    "seen": 1790778677.726111,
+    "ast_hash": "6890ba04ad7abfcd4375ef324cf128bd",
+    "semantic_hash": ""
   },
   "src/components/DashboardContainer.tsx": {
     "mtime": 1790772374.8406885,
@@ -342,9 +342,9 @@
     "semantic_hash": "1c32bbfdb4e40dbe5a8cc50638e76d95"
   },
   "src/hooks/useDashboard.ts": {
-    "mtime": 1790771834.5159943,
-    "seen": 1790771943.4682739,
-    "ast_hash": "74ca80884f83e02f3f6e7fbdd2d188d5",
+    "mtime": 1790776152.7753644,
+    "seen": 1790778677.7261498,
+    "ast_hash": "504f4d69a0f6a62ce71de13b87a288ec",
     "semantic_hash": ""
   },
   "src/hooks/useDashboardFilters.ts": {
@@ -354,9 +354,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useDashboardSelectionData.ts": {
-    "mtime": 1790771697.4627552,
-    "seen": 1790771943.4682748,
-    "ast_hash": "f3fae48d256bfd488b83c12b1ff050b5",
+    "mtime": 1790776092.0290358,
+    "seen": 1790778677.726151,
+    "ast_hash": "6e8f52f7f603804209b71264acca8a15",
     "semantic_hash": ""
   },
   "src/hooks/useDashboardViewModel.ts": {
@@ -366,9 +366,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useOpenF1.ts": {
-    "mtime": 1790771585.156816,
-    "seen": 1790771943.468276,
-    "ast_hash": "b27ac1df1815341c1b2687e58dbd12d6",
+    "mtime": 1790776092.0292125,
+    "seen": 1790778677.726153,
+    "ast_hash": "276dfc4c97040f57bc45151c3d405456",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -504,9 +504,9 @@
     "semantic_hash": "c5014099aa09b28021f01bdb37f41cc3"
   },
   "index.html": {
-    "mtime": 1790751107.3678958,
-    "seen": 1790758649.746953,
-    "ast_hash": "65c7ddaa2222f55ab5e214189409bc97",
+    "mtime": 1790776092.0300944,
+    "seen": 1790778677.7261708,
+    "ast_hash": "49ee5314f0c71ba5e6a9e5e25cc9a0fb",
     "semantic_hash": ""
   },
   "public/fonts/barlowcondensed-OFL.txt": {
@@ -996,33 +996,33 @@
     "semantic_hash": ""
   },
   "scripts/lib.mjs": {
-    "mtime": 1790769106.2400067,
-    "seen": 1790770458.405917,
-    "ast_hash": "d1e1dc14a435e51f6c3e0dc183641192",
+    "mtime": 1790777347.162623,
+    "seen": 1790778677.726107,
+    "ast_hash": "b1a6125d9e2a2a14751883285e982b21",
     "semantic_hash": ""
   },
   "scripts/perf-metrics.mjs": {
-    "mtime": 1790769890.3777697,
-    "seen": 1790770458.405917,
-    "ast_hash": "3c1c0a735ca25ff73a02b50d33b0fe9c",
+    "mtime": 1790776577.1766803,
+    "seen": 1790778677.7261078,
+    "ast_hash": "673f8453127901a9f7ad09d0733dd313",
     "semantic_hash": ""
   },
   "scripts/render-probe.mjs": {
-    "mtime": 1790765039.0623248,
-    "seen": 1790770458.405918,
-    "ast_hash": "af7cc8a124af781c5c527fcf18d83c46",
+    "mtime": 1790777347.1623304,
+    "seen": 1790778677.7261078,
+    "ast_hash": "d0f80194867092fa4625712be2ff541c",
     "semantic_hash": ""
   },
   "scripts/visual-baseline.mjs": {
-    "mtime": 1790769773.9069066,
-    "seen": 1790770458.405919,
-    "ast_hash": "190239d83ff2ba272fe17e9793054911",
+    "mtime": 1790777347.1618276,
+    "seen": 1790778677.726109,
+    "ast_hash": "085113fe49bc53afa472aa0de1ab3af0",
     "semantic_hash": ""
   },
   "PERFREDO.md": {
-    "mtime": 1790773224.4431689,
-    "seen": 1790773226.211794,
-    "ast_hash": "22cb998a16e2382e4bef4e7de04f9867",
+    "mtime": 1790778676.0221202,
+    "seen": 1790778677.72617,
+    "ast_hash": "376a93b6d15ad0ad740c904e9c8961aa",
     "semantic_hash": ""
   },
   "docs/rework/final/broadcast-dark-390.png": {
@@ -1101,6 +1101,18 @@
     "mtime": 1790772151.5731807,
     "seen": 1790773226.2117782,
     "ast_hash": "97dcc4462a53876e2d1dc587bb1453b3",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useDebouncedValue.test.ts": {
+    "mtime": 1790775696.691601,
+    "seen": 1790778677.726149,
+    "ast_hash": "a3de20e36eff16cab6a64e28179cdf5d",
+    "semantic_hash": ""
+  },
+  "src/hooks/useDebouncedValue.ts": {
+    "mtime": 1790775020.032974,
+    "seen": 1790778677.726152,
+    "ast_hash": "7dc3d5d08596dc27c236739410c8b3ed",
     "semantic_hash": ""
   }
 }
