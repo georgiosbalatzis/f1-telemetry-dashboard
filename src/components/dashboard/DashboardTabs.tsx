@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { Tab } from './types';
-import { TAB_LABELS } from './tabLabels';
-
-const TABS: Tab[] = ['telemetry', 'energy', 'trackmap', 'positions', 'intervals', 'tires', 'radio', 'incidents', 'weather', 'broadcast'];
+import { TAB_LABELS, TAB_ORDER } from './tabLabels';
 
 export function DashboardTabs({ activeTab, onChange }: {
   activeTab: Tab;
@@ -30,7 +28,7 @@ export function DashboardTabs({ activeTab, onChange }: {
   return (
     <nav className="analysis-navigation" aria-label="Analysis views">
       <div className="tab-strip" ref={strip}>
-        {TABS.map((tab) => <button key={tab} aria-current={activeTab === tab ? 'page' : undefined} aria-controls="analysis-content" onClick={() => onChange(tab)}>{TAB_LABELS[tab]}</button>)}
+        {TAB_ORDER.map((tab) => <button key={tab} aria-current={activeTab === tab ? 'page' : undefined} aria-controls="analysis-content" onClick={() => onChange(tab)}>{TAB_LABELS[tab]}</button>)}
       </div>
     </nav>
   );
