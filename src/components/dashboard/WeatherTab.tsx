@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import { Sun } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Weather } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
@@ -38,7 +37,7 @@ export const WeatherTab = memo(function WeatherTab({ loading, error, latestWeath
   if (loading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+        <ChartPanel lead title="Conditions Trend" sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
           <div className="mb-6"><CardGridSkeleton count={4} label="Loading weather readings..." /></div>
           <ChartSkeleton label="Loading weather chart..." className="h-[180px] sm:h-[260px]" />
         </ChartPanel>
@@ -50,7 +49,7 @@ export const WeatherTab = memo(function WeatherTab({ loading, error, latestWeath
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+      <ChartPanel lead title="Conditions Trend" sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         <div className="weather-stats">
           {[
             [copy.weather.track, latestWeather.track_temperature.toFixed(1), '°C'],

@@ -1,5 +1,5 @@
 import { useMemo, useState, memo } from 'react';
-import { Flag, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type { OpenF1RaceControl } from '../../api/openf1';
 import { Err, NoData, Panel, Spinner } from './shared';
 import { CLOCK_ZONE_NOTE, cn, fmtClock } from './utils';
@@ -49,7 +49,7 @@ export const IncidentsTab = memo(function IncidentsTab({ loading, error, message
   }, [activeFilter, messages, query]);
 
   return (
-    <Panel lead title="Race Control" icon={<Flag size={14} className="text-yellow-500" />} sub={`Official flags, penalties, safety car, and session status messages · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Race Control" sub={`Official flags, penalties, safety car, and session status messages · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : messages.length > 0 ? (
         <>
           <div className="mb-4 flex items-center gap-3 lg:justify-between">

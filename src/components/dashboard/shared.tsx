@@ -114,7 +114,6 @@ export function Panel({
   lead = false,
 }: {
   title: string;
-  icon?: ReactNode;
   children: ReactNode;
   sub?: string;
   className?: string;

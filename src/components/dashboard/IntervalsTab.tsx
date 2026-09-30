@@ -1,5 +1,4 @@
 import { useMemo, memo } from 'react';
-import { Gauge } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Interval } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
@@ -103,14 +102,12 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
       <PanelSelection embedMode={embedMode}>
         <Panel lead
           title="Current Gaps"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest interval samples"
         >
           <CardGridSkeleton count={8} label="Loading interval data..." />
         </Panel>
         <ChartPanel
           title="Gap to Leader"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading gap history"
           exportName="gap-to-leader"
           legend={legend}
@@ -125,7 +122,7 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
   }
   if (!intervals || intervals.length === 0) {
     return (
-      <Panel lead title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Intervals & Battles">
         <NoData msg="No interval data for this session. Interval data is available for race and sprint race sessions." />
       </Panel>
     );
@@ -136,7 +133,6 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
       {/* Gap to leader chart */}
       <ChartPanel lead
         title="Gap to Leader"
-        icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — gaps capped at ${MAX_GAP_DISPLAY}s`}
         exportName="gap-to-leader"
         legend={legend}
@@ -197,7 +193,6 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
       {drsWindows.some((w) => w.drsCount > 0) && (
         <Panel
           title="DRS Window Time"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub={`Proportion of session where each driver was within ${DRS_DETECTION_WINDOW_S}s of the car ahead`}
         >
           <div className="lap-comparison">
@@ -217,7 +212,6 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
       {/* Interval to car ahead chart */}
       <ChartPanel
         title="Gap to Car Ahead"
-        icon={<Gauge size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub="Time to the next car — below the 1s line means DRS is available"
         exportName="interval-to-ahead"
         legend={legend}

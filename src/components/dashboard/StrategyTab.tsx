@@ -1,5 +1,4 @@
 import { useMemo, memo } from 'react';
-import { CircleDot, Timer } from 'lucide-react';
 import type { OpenF1Pit, OpenF1Stint } from '../../api/openf1';
 import { COLORS, teamColor } from '../../constants/colors';
 import { useDriverContext } from '../../contexts/useDriverContext';
@@ -141,7 +140,6 @@ export const StrategyTab = memo(function StrategyTab({ lapNum, stintsLoading, st
     <PanelSelection embedMode={embedMode}>
       <Panel lead
         title="Tyre Strategy"
-        icon={<CircleDot size={14} style={{ color: 'var(--accent)' }} />}
         sub={`Stint map through lap ${lapNum}`}
         panelId="strategy-tyre-strategy"
         headerRight={!embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('strategy-tyre-strategy')} /> : undefined}
@@ -176,7 +174,7 @@ export const StrategyTab = memo(function StrategyTab({ lapNum, stintsLoading, st
         ) : <NoData msg="No stint data for this session. Stint data is typically available for race and sprint sessions." />}
       </Panel>
 
-      <Panel title="Stint Context" icon={<CircleDot size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Current stint context at the focused lap">
+      <Panel title="Stint Context" sub="Current stint context at the focused lap">
         {stintsLoading ? <CardGridSkeleton count={4} label="Loading stint context..." /> : tyreLifeCards.length > 0 ? (
           <div className="strategy-rows">
             {tyreLifeCards.map((card) => (
@@ -192,7 +190,7 @@ export const StrategyTab = memo(function StrategyTab({ lapNum, stintsLoading, st
         ) : <NoData msg="No active stint context available for this lap." />}
       </Panel>
 
-      <Panel title="Pit Stops" icon={<Timer size={14} style={{ color: 'var(--accent)' }} />} sub="Ordered by stationary time">
+      <Panel title="Pit Stops" sub="Ordered by stationary time">
         {pitsLoading ? <CardGridSkeleton count={4} label="Loading pit stops..." /> : pitStopCards.length > 0 ? (
           <div className="strategy-rows">
             {pitStopCards.map((card) => (

@@ -1,5 +1,4 @@
 import { useMemo, memo } from 'react';
-import { Headphones } from 'lucide-react';
 import type { OpenF1TeamRadio } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { Err, NoData, Panel, Spinner } from './shared';
@@ -32,7 +31,7 @@ export const RadioTab = memo(function RadioTab({ loading, error, messages, onRet
   );
 
   return (
-    <Panel lead title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Team Radio Recordings" sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : radioMessages.length > 0 ? (
         <div className="radio-list">
           {radioMessages.map((message, index) => (

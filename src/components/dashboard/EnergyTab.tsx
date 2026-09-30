@@ -1,5 +1,4 @@
 import { useMemo, memo } from 'react';
-import { Gauge, Zap } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SpeedPoint } from './types';
@@ -57,7 +56,6 @@ export const EnergyTab = memo(function EnergyTab({
     <PanelSelection embedMode={embedMode}>
       <ChartPanel lead
         title="DRS Activation"
-        icon={<Zap size={14} style={{ color: 'var(--accent)' }} />}
         sub={comparisonMode
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum} · DRS values ≥ 10 = active`}
@@ -117,7 +115,6 @@ export const EnergyTab = memo(function EnergyTab({
 
       <ChartPanel
         title="Gear Trace"
-        icon={<Gauge size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub={comparisonMode
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — shift map normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum}`}
@@ -160,7 +157,6 @@ export const EnergyTab = memo(function EnergyTab({
 
       <ChartPanel
         title="RPM Trace"
-        icon={<Gauge size={14} style={{ color: chartRpm }} />}
         sub={comparisonMode
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — engine speed normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum}`}

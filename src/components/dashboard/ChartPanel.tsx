@@ -11,7 +11,6 @@ export type ChartLegendItem = ExportChartLegendItem;
 
 type Props = {
   title: string;
-  icon?: ReactNode;
   sub?: string;
   children: ReactNode;
   className?: string;
@@ -27,7 +26,6 @@ type Props = {
 
 export function ChartPanel({
   title,
-  icon,
   sub,
   children,
   className,
@@ -105,7 +103,7 @@ export function ChartPanel({
 
   return (
     <div ref={frameRef} className="dashboard-chart-frame">
-      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
+      <Panel title={title} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
         <div className="space-y-3">
           {legend.length > 0 && (
             <div className="dashboard-chart-legend">

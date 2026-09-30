@@ -1,4 +1,3 @@
-import { Tv2 } from 'lucide-react';
 import { useDriverContext } from '../../../contexts/useDriverContext';
 import type { DriverLapSummary } from '../types';
 import { EmbedPanelButton, NoData, Panel, TableSkeleton } from '../shared';
@@ -27,7 +26,6 @@ export function TimingTower({
   return (
     <Panel lead
       title="Lap Classification"
-      icon={<Tv2 size={14} style={{ color: 'var(--accent)' }} />}
       sub={`Lap ${lapNum} — selected drivers ranked by lap time`}
       panelId="broadcast-timing-tower"
       headerRight={

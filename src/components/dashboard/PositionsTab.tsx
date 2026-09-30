@@ -1,5 +1,4 @@
 import { useMemo, memo } from 'react';
-import { TrendingDown } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Position } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
@@ -57,14 +56,12 @@ export const PositionsTab = memo(function PositionsTab({ positions, positionsLoa
       <PanelSelection embedMode={embedMode}>
         <Panel lead
           title="Current Standings"
-          icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest recorded positions"
         >
           <CardGridSkeleton count={10} label="Loading race positions..." />
         </Panel>
         <ChartPanel
           title="Position History"
-          icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
           sub="Loading position history"
           exportName="position-history"
           legend={legend}
@@ -79,7 +76,7 @@ export const PositionsTab = memo(function PositionsTab({ positions, positionsLoa
   }
   if (!positions || positions.length === 0) {
     return (
-      <Panel lead title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Race Positions">
         <NoData msg="No position data for this session. Race positions are available for race and sprint sessions." />
       </Panel>
     );
@@ -90,7 +87,6 @@ export const PositionsTab = memo(function PositionsTab({ positions, positionsLoa
       {/* Position history chart */}
       <ChartPanel lead
         title="Position History"
-        icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — position over the session`}
         exportName="position-history"
         legend={legend}
@@ -135,7 +131,6 @@ export const PositionsTab = memo(function PositionsTab({ positions, positionsLoa
       {/* Current standings */}
       <Panel
         title="Current Standings"
-        icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
         sub={`Latest recorded positions · ${driverCount} drivers`}
       >
         <div className="standings-tables">
