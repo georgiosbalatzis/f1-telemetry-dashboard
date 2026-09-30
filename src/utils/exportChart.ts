@@ -93,9 +93,27 @@ function appendLegend(
   });
 }
 
+const CSS_VAR = /var\(\s*(--[\w-]+)\s*(?:,\s*([^)]*))?\)/g;
+
+/**
+ * Chart attributes use `var(--chart-grid)` and friends, which only exist inside this page: in a downloaded .svg they are
+ * undefined, so grid, ticks and lines turn black or vanish. Replaces them with the values they have right now (current theme).
+ * @internal exported for unit tests only
+ */
+export function resolveCssVariables(root: Element) {
+  const styles = getComputedStyle(document.documentElement);
+  const resolve = (value: string) => value.replace(CSS_VAR, (_match, name: string, fallback?: string) => styles.getPropertyValue(name).trim() || fallback?.trim() || '');
+  for (const element of [root, ...root.querySelectorAll('*')]) {
+    for (const attribute of Array.from(element.attributes)) {
+      if (attribute.value.includes('var(')) element.setAttribute(attribute.name, resolve(attribute.value));
+    }
+  }
+}
+
 function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportChartOptions>) {
   const serializer = new XMLSerializer();
   const clonedSvg = svg.cloneNode(true) as SVGSVGElement;
+  resolveCssVariables(clonedSvg);
   const parent = svg.parentElement as HTMLElement | null;
   const { width, height } = getChartDimensions(svg, parent?.clientWidth || DEFAULT_EXPORT_WIDTH, parent?.clientHeight || DEFAULT_EXPORT_HEIGHT);
   const legendRows = options.legend.length > 0 ? Math.ceil(options.legend.length / LEGEND_ITEMS_PER_ROW_ESTIMATE) : 0;
