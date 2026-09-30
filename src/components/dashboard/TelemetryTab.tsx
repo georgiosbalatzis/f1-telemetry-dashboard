@@ -1,7 +1,6 @@
 import { useMemo, memo } from 'react';
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { COLORS } from '../../constants/colors';
-import { usePerfCommit } from '../../utils/perfProbe'; // PERF-PROBE: remove in P7-01
 import { copy } from '../../copy';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
@@ -68,7 +67,6 @@ export const TelemetryTab = memo(function TelemetryTab({
   onEmbedPanel,
   onTelemetryRetry,
 }: Props) {
-  usePerfCommit('TelemetryTab'); // PERF-PROBE: remove in P7-01
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   // Purple = quickest of the selected drivers in that sector, green = second quickest.
   const { s1Classes, s2Classes, s3Classes } = useMemo(() => buildSectorAnalysis(sectorRows), [sectorRows]);
