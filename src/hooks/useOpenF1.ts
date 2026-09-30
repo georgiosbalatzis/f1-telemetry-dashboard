@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
@@ -158,7 +158,8 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
 
   useEffect(() => {
     if (!key) {
-      setState({ data: null, loading: false, error: null });
+      // Disabled hooks run this on every mount/key change: keep the same state object when it is already idle.
+      setState((prev) => (prev.data === null && !prev.loading && prev.error === null ? prev : { data: null, loading: false, error: null }));
       return;
     }
 
@@ -216,7 +217,7 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
     };
   }, [key, refetchToken]); // key/refetchToken drive fetches — fetcher is accessed via ref
 
-  return { ...state, refetch };
+  return useMemo(() => ({ ...state, refetch }), [state, refetch]);
 }
 
 // ─── Typed hooks ─────────────────────────────────────────────────────────────
