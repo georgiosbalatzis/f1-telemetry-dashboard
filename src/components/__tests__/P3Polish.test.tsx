@@ -7,7 +7,12 @@ import { formatDrsState } from '../dashboard/chartAxis';
 import { SignalBand } from '../dashboard/SignalBand';
 import { copy } from '../../copy';
 
-afterEach(cleanup);
+const setFullscreenEnabled = (value: boolean | undefined) => Object.defineProperty(document, 'fullscreenEnabled', { value, configurable: true });
+
+afterEach(() => {
+  cleanup();
+  setFullscreenEnabled(undefined);
+});
 
 it('P3-01: theme changes are announced off-screen without adding a visible status line', () => {
   const onToggleTheme = vi.fn();
@@ -37,10 +42,18 @@ it('P3-02: tooltips show lap progress as %, DRS as a state and whole km/h like t
 });
 
 it('P3-04: chart action glyphs are 16px inside their 44px controls', () => {
+  setFullscreenEnabled(true);
   render(<ChartPanel title="Speed" exportName="speed" panelId="speed" onEmbedPanel={() => {}}><div /></ChartPanel>);
   for (const name of [copy.panel.embed, copy.panel.download, copy.panel.fullScreen]) {
     expect(screen.getByRole('button', { name }).querySelector('svg')).toHaveAttribute('width', '16');
   }
+});
+
+it('P5-02: the full-screen action is hidden where the browser has no element fullscreen (iPhone Safari)', () => {
+  setFullscreenEnabled(false);
+  render(<ChartPanel title="Speed" exportName="speed" panelId="speed" onEmbedPanel={() => {}}><div /></ChartPanel>);
+  expect(screen.queryByRole('button', { name: copy.panel.fullScreen })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: copy.panel.download })).toBeInTheDocument();
 });
 
 it('P1-03: the signal band carries loading and partial-data status, with a retry per failed driver', () => {

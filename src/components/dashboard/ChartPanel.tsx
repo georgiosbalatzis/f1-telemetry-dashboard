@@ -60,12 +60,11 @@ export function ChartPanel({
     const frame = frameRef.current;
     if (!frame) return;
 
-    if (document.fullscreenElement === frame) {
-      await document.exitFullscreen();
-      return;
-    }
-
-    await frame.requestFullscreen();
+    // Both calls return promises that reject when the browser refuses (iframe without allowfullscreen, no user gesture).
+    try {
+      if (document.fullscreenElement === frame) await document.exitFullscreen();
+      else await frame.requestFullscreen();
+    } catch { /* stay in the normal layout */ }
   };
 
   const handleDownload = () => {
@@ -90,12 +89,15 @@ export function ChartPanel({
         <div className="panel-menu-list" onClick={(event) => event.currentTarget.closest('details')?.removeAttribute('open')}>
           {panelId && onEmbedPanel && <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />}
           <ToolbarButton icon={<Download size={16} />} label={copy.panel.download} onClick={handleDownload} />
-          <ToolbarButton
-            icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
-            label={isFullscreen ? copy.panel.exitFull : copy.panel.fullScreen}
-            onClick={handleToggleFullscreen}
-            active={isFullscreen}
-          />
+          {/* iPhone Safari has no element fullscreen (fullscreenEnabled is false): hide the item instead of a dead button. */}
+          {document.fullscreenEnabled && (
+            <ToolbarButton
+              icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
+              label={isFullscreen ? copy.panel.exitFull : copy.panel.fullScreen}
+              onClick={handleToggleFullscreen}
+              active={isFullscreen}
+            />
+          )}
         </div>
       </details>
     </div>
