@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/TelemetryTab.tsx": {
-    "mtime": 1790788465.3146033,
-    "seen": 1790790248.2377,
-    "ast_hash": "524c756ba08400727299aef84161b64e",
+    "mtime": 1790791122.981653,
+    "seen": 1790792255.4583712,
+    "ast_hash": "2290e2fba03971aa316db0b4d0ee8d77",
     "semantic_hash": ""
   },
   "src/components/dashboard/TrackMapTab.tsx": {
@@ -983,12 +983,6 @@
     "ast_hash": "673f8453127901a9f7ad09d0733dd313",
     "semantic_hash": ""
   },
-  "scripts/render-probe.mjs": {
-    "mtime": 1790777347.1623304,
-    "seen": 1790778677.7261078,
-    "ast_hash": "d0f80194867092fa4625712be2ff541c",
-    "semantic_hash": ""
-  },
   "scripts/visual-baseline.mjs": {
     "mtime": 1790777347.1618276,
     "seen": 1790778677.726109,
@@ -996,9 +990,9 @@
     "semantic_hash": ""
   },
   "PERFREDO.md": {
-    "mtime": 1790790246.7836838,
-    "seen": 1790790248.2377422,
-    "ast_hash": "ea2fdc6d76a1114b6d682e700756b42a",
+    "mtime": 1790792253.9185114,
+    "seen": 1790792255.45841,
+    "ast_hash": "5aaee47cc9ca5120860c179afeb6dab9",
     "semantic_hash": ""
   },
   "docs/rework/final/broadcast-dark-390.png": {
@@ -1071,12 +1065,6 @@
     "mtime": 1790759020.3091862,
     "seen": 1790770458.406008,
     "ast_hash": "f09c7ee8c131b9ded669661694cd945c",
-    "semantic_hash": ""
-  },
-  "src/utils/perfProbe.ts": {
-    "mtime": 1790772151.5731807,
-    "seen": 1790773226.2117782,
-    "ast_hash": "97dcc4462a53876e2d1dc587bb1453b3",
     "semantic_hash": ""
   },
   "src/hooks/__tests__/useDebouncedValue.test.ts": {
