@@ -133,6 +133,9 @@ export function DashboardShell({
     canStepBackward,
     canStepForward,
     stepLap,
+    driversPending,
+    lapsPending,
+    expectsDrivers,
   } = data;
 
   const gapCards = useMemo(
@@ -196,7 +199,7 @@ export function DashboardShell({
         </a>
       )}
       {!embedMode && header}
-      {!embedMode && <SignalBand loading={anyLoading} feedback={feedback} lapNum={filters.lapNum} totalLaps={totalLaps} drivers={comparisonDrivers} />}
+      {!embedMode && <SignalBand loading={anyLoading} feedback={feedback} lapNum={filters.lapNum} totalLaps={totalLaps} drivers={comparisonDrivers} expectDrivers={expectsDrivers} lapsPending={lapsPending} />}
       <div className={pageShellClass}>
         {embedMode && header}
 
@@ -228,6 +231,7 @@ export function DashboardShell({
               drivers={selectionData.driverList}
               selectedDrivers={filters.driverNums}
               embedMode={embedMode}
+              pending={driversPending}
               onToggle={filters.toggleDriver}
             />
           </DashboardSelectors>
@@ -244,6 +248,7 @@ export function DashboardShell({
             safetyCar={stripSafetyCar}
             lapNum={filters.lapNum}
             onSelect={filters.setLapNum}
+            pending={lapsPending}
           />
 
           <DashboardTabs
@@ -256,10 +261,10 @@ export function DashboardShell({
 
           </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
-            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
+            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded' && !driver.loading) && (
               <p className="embed-partial" role="status">
                 {copy.band.partial(comparisonDrivers.filter((driver) => driver.status === 'Loaded').length, comparisonDrivers.length)}
-                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
+                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded' && !driver.loading).map((driver) => (
                   <span key={driver.driverNumber} title={driver.status}>
                     {' · '}{driver.retry ? <button className="signal-retry" onClick={driver.retry}>{copy.band.retry(driver.name)}</button> : driver.name}
                   </span>

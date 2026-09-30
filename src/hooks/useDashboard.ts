@@ -170,9 +170,15 @@ export function useDashboard() {
       driverNumber,
       name: driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
       status,
+      /** False until the driver roster has loaded (the name is then only a #number). */
+      known: driverMap[driverNumber] !== undefined,
+      /** Still fetching: not a failure, so the band shows no "partial data" line for it. */
+      // Includes "not requested yet" (the render before the fetch effects run), which is not a failure either.
+      loading: laps.loading || (!laps.error && laps.data === null)
+        || (!laps.error && !!lap && (telemetry.loading || (telemetry.data === null && !telemetry.error && !!windows[index]?.lapStart))),
       retry: laps.error ? laps.refetch : telemetry.error ? telemetry.refetch : null,
     };
-  }) : [], [driverMap, filters.driverNums, filters.lapNum, lapStates, needsTelemetryData, telemetryStates]);
+  }) : [], [driverMap, filters.driverNums, filters.lapNum, lapStates, needsTelemetryData, telemetryStates, windows]);
 
   // ── View model: tab-gated data transformations for charts ────────────────
   const viewModel = useDashboardViewModel({
@@ -189,6 +195,13 @@ export function useDashboard() {
     teamRadio:        teamRadio.data,
     telemetryByDriver,
   });
+
+  // ── Pending flags: the scope bar's driver row and the lap strip reserve their space until data arrives ──────
+  // "Pending" ends as soon as the data is there or it is clear it never will be (empty or failed responses).
+  const nothingToLoad = Boolean(meetings.error || sessions.error || drivers.error)
+    || meetings.data?.length === 0 || sessions.data?.length === 0 || drivers.data?.length === 0;
+  const driversPending = !nothingToLoad && drivers.data === null;
+  const lapsPending = !nothingToLoad && laps0.data === null && laps0.error === null;
 
   // ── Aggregate loading flags ──────────────────────────────────────────────
   const anyLoading       = meetings.loading || sessions.loading || drivers.loading || sessionResults.loading;
@@ -237,8 +250,11 @@ export function useDashboard() {
     canStepBackward,
     canStepForward,
     stepLap,
+    driversPending,
+    lapsPending,
+    expectsDrivers: needsTelemetryData,
   }), [
-    filters, meetings, sessions, drivers, stints, pits, weather, raceControl, teamRadio, positions, intervals, primaryTelemetry, comparisonDrivers, selectionData, viewModel, locationByDriver, anyLoading, lapsLoading, locationLoading, telemetryLoading, totalLaps, canStepBackward, canStepForward, stepLap,
+    filters, meetings, sessions, drivers, stints, pits, weather, raceControl, teamRadio, positions, intervals, primaryTelemetry, comparisonDrivers, selectionData, viewModel, locationByDriver, anyLoading, lapsLoading, locationLoading, telemetryLoading, totalLaps, canStepBackward, canStepForward, stepLap, driversPending, lapsPending, needsTelemetryData,
   ]);
 }
 

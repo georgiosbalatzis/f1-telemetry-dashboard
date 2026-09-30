@@ -949,6 +949,8 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .signal-band .session-status, .signal-partial { margin: 0; color: inherit; font-size: 13px; }
 .signal-retry { min-height: 44px; padding: 0 2px; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .signal-band :focus-visible { outline-color: #17191b; }
+/* On phones the loading spinner floats in the band's corner instead of wrapping onto its own row (which re-centred the band's text twice). */
+@media (max-width: 639px) { .signal-band-inner { position: relative; } .session-loading { position: absolute; top: 8px; right: 20px; } }
 .signal-slogan { display: none; margin-left: auto; font: 700 24px/1 var(--font-display); letter-spacing: -.01em; text-transform: uppercase; }
 
 .colophon { margin-top: 40px; padding: 56px 0 24px; background: linear-gradient(180deg, #20251f, #262b25); color: #eee7dc; }

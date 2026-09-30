@@ -9,12 +9,21 @@ type Props = {
   selectedDrivers: number[];
   onToggle: (driverNumber: number) => void;
   embedMode?: boolean;
+  /** Drivers are still loading: hold the row's space so the page below does not jump when they arrive. */
+  pending?: boolean;
 };
 
 /** The driver field of the scope bar: selected chips, an add button, and the roster it opens. Render inside the scope grid. */
-export const DriverSelector = memo(function DriverSelector({ drivers, selectedDrivers, onToggle }: Props) {
+export const DriverSelector = memo(function DriverSelector({ drivers, selectedDrivers, onToggle, pending = false }: Props) {
   const [open, setOpen] = useState(false);
-  if (drivers.length === 0) return null;
+  if (drivers.length === 0) {
+    return pending ? (
+      <div className="scope-field scope-drivers" aria-hidden="true">
+        <span className="field-label">{copy.scope.drivers} · 0 / 4</span>
+        <div className="drivers-row" />
+      </div>
+    ) : null;
+  }
   return (
     <>
       <div className="scope-field scope-drivers" role="group" aria-label={copy.scope.drivers}>
