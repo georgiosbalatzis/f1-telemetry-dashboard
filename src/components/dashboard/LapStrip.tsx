@@ -9,6 +9,7 @@ const fmt = (seconds: number) => {
 };
 
 /** One bar per lap of the reference driver; taller = quicker. Click or use the arrow keys to pick the lap. */
+// One button per lap: F1 races run at most ~80 laps, which keeps the strip inside the 80-button budget.
 export function LapStrip({ driverName, laps, safetyCar, lapNum, onSelect }: {
   driverName: string;
   laps: OpenF1Lap[];

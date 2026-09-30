@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, Expand, Shrink } from 'lucide-react';
 import { COLORS } from '../../constants/colors';
 import { copy } from '../../copy';
 import { exportChartAsSvg, sanitizeFilename, stackChartSvgs, type ExportChartLegendItem } from '../../utils/exportChart';
 import { EmbedPanelButton, Panel, ToolbarButton } from './shared';
+import { TabLeadContext } from './tabLeadContext';
 import { cn } from './utils';
 
 export type ChartLegendItem = ExportChartLegendItem;
@@ -42,6 +43,9 @@ export function ChartPanel({
   const frameRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<HTMLDivElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const headline = useContext(TabLeadContext)?.headline;
+  // Screen readers get what the chart says (its headline or caption), not just that a chart exists.
+  const chartSummary = lead && headline ? `${headline.title}. ${headline.lede}` : sub ? `${title}. ${sub}` : title;
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -115,7 +119,7 @@ export function ChartPanel({
               ))}
             </div>
           )}
-          <div ref={chartRef} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
+          <div ref={chartRef} role="group" aria-label={chartSummary} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
             {children}
           </div>
           <p className="chart-source">{source}</p>

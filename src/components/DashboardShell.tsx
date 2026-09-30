@@ -65,8 +65,6 @@ export type DashboardShellProps = {
 
   // ── Computed display values ────────────────────────────────────────────
   embedTitle: string;
-  embedSubtitle: string;
-  embedContext: Array<{ label: string; value: string }>;
   openDashboardUrl: string;
   contentLayoutClass: string;
   pageShellClass: string;
@@ -95,8 +93,6 @@ export function DashboardShell({
   presetNames,
   feedback,
   embedTitle,
-  embedSubtitle,
-  embedContext,
   openDashboardUrl,
   contentLayoutClass,
   pageShellClass,
@@ -166,16 +162,11 @@ export function DashboardShell({
 
   const header = (
     <DashboardHeader
-      loading={anyLoading}
       presetName={presetName}
       presetNames={presetNames}
-      feedback={feedback}
       splitMode={splitMode}
       embedMode={embedMode}
       themeMode={themeMode}
-      embedTitle={embedTitle}
-      embedSubtitle={embedSubtitle}
-      embedContext={embedContext}
       openDashboardUrl={openDashboardUrl}
       heroSubtitle={`${embedTitle} · ${copy.hero.lap(filters.lapNum, totalLaps ?? 0)}`}
       nextMeeting={nextMeeting}
@@ -198,7 +189,7 @@ export function DashboardShell({
       {!embedMode && (
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 z-50 rounded bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg"
+          className="skip-link"
         >
           {copy.skipToContent}
         </a>
@@ -265,17 +256,14 @@ export function DashboardShell({
           </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
             {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
-              <section className="dashboard-panel mb-4 text-sm" aria-label="Comparison data status">
-                <p role="status">{comparisonDrivers.filter((driver) => driver.status === 'Loaded').length} of {comparisonDrivers.length} drivers loaded</p>
-                <ul className="mt-2 text-[color:var(--text-muted)]">
-                  {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
-                    <li key={driver.driverNumber} className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span>{driver.name} — {driver.status}</span>
-                      {driver.retry && <button className="text-action" onClick={driver.retry}>Retry {driver.name}</button>}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+              <p className="embed-partial" role="status">
+                {copy.band.partial(comparisonDrivers.filter((driver) => driver.status === 'Loaded').length, comparisonDrivers.length)}
+                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
+                  <span key={driver.driverNumber} title={driver.status}>
+                    {' · '}{driver.retry ? <button className="signal-retry" onClick={driver.retry}>{copy.band.retry(driver.name)}</button> : driver.name}
+                  </span>
+                ))}
+              </p>
             )}
             <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
@@ -417,7 +405,6 @@ export function DashboardShell({
           </ErrorBoundary>
           {!embedMode && <NextViews activeTab={filters.tab} onChange={filters.setTab} />}
         </main>
-        {embedMode && <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>}
       </div>
       {!embedMode && <SiteFooter />}
     </div>

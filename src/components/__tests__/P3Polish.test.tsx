@@ -14,8 +14,8 @@ it('P3-01: theme changes are announced off-screen without adding a visible statu
   const noop = () => {};
   render(
     <DashboardHeader
-      loading={false} presetName="" presetNames={[]} feedback={null} splitMode={false} embedMode={false} themeMode="dark"
-      embedTitle="Race" embedSubtitle="Telemetry" embedContext={[]} openDashboardUrl="/" heroSubtitle="Race · Γύρος 1" nextMeeting={null}
+      presetName="" presetNames={[]} splitMode={false} embedMode={false} themeMode="dark"
+      openDashboardUrl="/" heroSubtitle="Race · Γύρος 1" nextMeeting={null}
       onPresetNameChange={noop} onSavePreset={noop} onPrint={noop}
       onToggleSplit={noop} onToggleTheme={onToggleTheme} onBack={noop}
     />,

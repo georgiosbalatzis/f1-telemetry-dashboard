@@ -127,7 +127,7 @@ it('restores a read-only article embed with an open-analysis link', async () => 
   expect(screen.queryByRole('button', { name: copy.scope.add })).not.toBeInTheDocument();
   expect(params().get('lap')).toBe('3');
   expect(params().get('embed')).toBe('1');
-  expect(screen.getByRole('link', { name: 'Open analysis ↗' }).getAttribute('href')).not.toContain('embed=1');
+  expect(screen.getByRole('link', { name: copy.embed.open }).getAttribute('href')).not.toContain('embed=1');
 });
 
 it('formats chart annotations with units, timing precision and unsigned brake percentages', () => {

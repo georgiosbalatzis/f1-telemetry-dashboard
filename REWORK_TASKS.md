@@ -194,20 +194,20 @@ For each tab: large header (R3-02), card bar (R3-03), primary visual, then compa
 
 ### Phase 7: Embed mode and mobile pass
 
-- [ ] **R7-01 Embed mode in the new chrome**
+- [x] ✅ **R7-01 Embed mode in the new chrome**
   Files: `DashboardShell.tsx`, `DashboardHeader.tsx`, `index.css` (`.embed-mode *`).
   Change: embeds get no site nav, no hero display, no scope bar, no tabs and no card bar. What remains is a slim line (`F1 STORIES.` wordmark · session · `Άνοιξε την ανάλυση ↗`), the headline, the requested panel, the legend and the source line. The theme comes from `?theme=` (the host article's theme). Keep P1-03's rule that a panel embed shows only its panel.
   Accept: a mobile embed shows the chart within the first 250px; there is no nav or band inside an article.
 
-- [ ] **R7-02 Mobile layout audit at 390×844**
+- [x] ✅ **R7-02 Mobile layout audit at 390×844**
   Accept: no horizontal page scroll (only the tab strip and lap strip scroll); every target is at least 44px; the first chart's legend is visible within 2 screen heights with the roster closed.
 
 ### Phase 8: QA and polish
 
-- [ ] **R8-01 Visual comparison**: screenshots of every tab × {light, dark} × {1440, 390}, saved next to `docs/rework/` mockups for review. Use the Playwright MCP (already used for the mockups).
-- [ ] **R8-02 Accessibility**: focus rings in accent; a visible skip link styled like the site; `lang="el"`; chart summaries (`aria-label` on each chart with the headline text); contrast of `--ink-2` on paper-2 at 11px (bump to 12px if it fails).
-- [ ] **R8-03 Performance**: no new runtime dependencies; the fonts are the same self-hosted woff2 files; keep the lazy-loaded tabs; the lap strip renders ≤80 buttons.
-- [ ] **R8-04 Clean-up**: remove the dead `.theme-light` / `.utility-*` / `.analysis-group*` CSS, `src/tailwind.config.js` if unused, and `src/assets/react.svg`. Run `graphify update .`.
+- [x] ✅ **R8-01 Visual comparison**: screenshots of every tab × {light, dark} × {1440, 390}, saved in `docs/rework/final/` (`{tab}-{light|dark}-{1440|390}.png`, clipped to the first 2600px / 3400px). Use the Playwright MCP (already used for the mockups).
+- [x] ✅ **R8-02 Accessibility**: focus rings in accent; a visible skip link styled like the site; `lang="el"`; chart summaries (`aria-label` on each chart with the headline text); contrast of `--ink-2` on paper-2 at 11px (bump to 12px if it fails).
+- [x] ✅ **R8-03 Performance**: no new runtime dependencies; the fonts are the same self-hosted woff2 files; keep the lazy-loaded tabs; the lap strip renders ≤80 buttons.
+- [x] ✅ **R8-04 Clean-up**: remove the dead `.theme-light` / `.utility-*` / `.analysis-group*` CSS, `src/tailwind.config.js` if unused, and `src/assets/react.svg`. Run `graphify update .`.
 
 ---
 
@@ -224,8 +224,8 @@ For each tab: large header (R3-02), card bar (R3-03), primary visual, then compa
 
 - **Separate origin**: github.io can't read f1stories.gr's localStorage, so the theme only carries over through `?theme=` in links. That needs a site-side change (§7), which is not in scope.
 - **Hard-coded nav links**: the masthead copies `partials/nav.html` by hand. If the site nav changes, this copy has to be updated too. A comment in `DashboardHeader.tsx` points at the source.
-- **Corner labels** need per-circuit data; without them the axis falls back to percentages. Start with the current season's circuits only.
-- **OpenF1 rate limits (429)** already occur during page load; the lap strip and gap card reuse data that is already fetched and add no requests.
+- **Corner labels** are found from the speed trace and numbered `C1, C2…` in driving order. They are not the circuit's official turn numbers (that would need per-circuit data); without a full speed series the axis falls back to percentages.
+- **OpenF1 rate limits (429)** already occur during page load. The gap card reuses data that is already fetched; the lap strip adds one request (race control, for safety-car laps) and reads pit laps from lap data.
 - **Always-dark gap card inside the light page** is intentional (homepage Tech Desk); check its contrast separately.
 
 ## 7. Optional follow-ups in f1StoriesPage (not in scope)

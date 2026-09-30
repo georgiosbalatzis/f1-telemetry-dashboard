@@ -111,6 +111,7 @@ export const copy = {
     listen: 'Άκουσε την ηχογράφηση',
     listenAria: (driver: string, time: string) => `Άκουσε την ηχογράφηση του ${driver} στις ${time}`,
   },
+  embed: { open: 'Άνοιξε την ανάλυση ↗' },
   weather: { track: 'Πίστα', air: 'Αέρας', humidity: 'Υγρασία', wind: 'Άνεμος' },
   next: {
     label: 'Επόμενες προβολές',

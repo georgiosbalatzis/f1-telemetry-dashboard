@@ -1,25 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Columns2, Loader2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
+import { Columns2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
 import { copy, SITE_NAV } from '../../copy';
 import { formatCountdown, pickNextMeeting } from './nextMeeting';
 import { ToolbarButton } from './shared';
 
-type EmbedContextChip = {
-  label: string;
-  value: string;
-};
-
 type Props = {
-  loading: boolean;
   presetName: string;
   presetNames: string[];
-  feedback: string | null;
   splitMode: boolean;
   embedMode: boolean;
   themeMode: 'dark' | 'light';
-  embedTitle: string;
-  embedSubtitle: string;
-  embedContext: EmbedContextChip[];
   openDashboardUrl: string;
   heroSubtitle: string;
   nextMeeting: ReturnType<typeof pickNextMeeting>;
@@ -53,8 +43,8 @@ function SiteLinks() {
 }
 
 export function DashboardHeader({
-  loading, presetName, presetNames, feedback, splitMode, embedMode, themeMode,
-  embedTitle, embedSubtitle, embedContext, openDashboardUrl, heroSubtitle, nextMeeting, onPresetNameChange,
+  presetName, presetNames, splitMode, embedMode, themeMode,
+  openDashboardUrl, heroSubtitle, nextMeeting, onPresetNameChange,
   onSavePreset, onPrint, onToggleSplit, onToggleTheme, onBack,
 }: Props) {
   // Theme is a visual preference: announce it to assistive tech without adding a visible line that moves the page.
@@ -64,23 +54,13 @@ export function DashboardHeader({
     onToggleTheme();
   };
 
-  // Embeds keep the compact lockup until the embed rework (Phase 7).
+  // Embeds carry one slim line: wordmark, what is shown, and the way back to the full analysis.
   if (embedMode) {
     return (
-      <header className="masthead">
-        <div className="masthead-row">
-          <a href="https://f1stories.gr/" className="brand" aria-label="F1 Stories home"><img src={`${import.meta.env.BASE_URL}logo192.png`} alt="" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
-          <span className="product-name">TELEMETRY</span>
-          <a className="text-action masthead-tools" href={openDashboardUrl} target="_blank" rel="noreferrer">Open analysis ↗</a>
-        </div>
-        <div className="session-heading">
-          <div>
-            <p className="section-label">Data hub / Race analysis</p>
-            <h1>{embedTitle}</h1>
-            <p className="session-edition">{embedSubtitle.replace(' view', '')} · {embedContext.filter((item) => item.label !== 'View').map((item) => `${item.label} ${item.value}`).join(' · ')}</p>
-          </div>
-          <p className="session-status" role="status">{feedback || (loading ? <><Loader2 size={12} className="animate-spin" /> Loading session…</> : null)}</p>
-        </div>
+      <header className="embed-bar">
+        <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+        <h1 className="embed-bar-title">{heroSubtitle}</h1>
+        <a className="embed-bar-open" href={openDashboardUrl} target="_blank" rel="noreferrer">{copy.embed.open}</a>
       </header>
     );
   }

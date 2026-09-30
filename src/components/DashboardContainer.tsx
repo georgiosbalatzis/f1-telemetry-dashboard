@@ -182,20 +182,6 @@ export function DashboardContainer() {
     return parts.length > 0 ? parts.join(' · ') : 'F1 Telemetry Embed';
   }, [filters.circuit, sessionLabel]);
 
-  const embedSubtitle = useMemo(
-    () => `${filters.year} season · ${TAB_LABELS[filters.tab]} view`,
-    [filters.tab, filters.year],
-  );
-
-  const embedContext = useMemo(
-    () => [
-      { label: 'Lap',     value: `L${filters.lapNum}` },
-      { label: 'Drivers', value: `${filters.driverNums.length}/4` },
-      { label: 'View',    value: TAB_LABELS[filters.tab] },
-    ],
-    [filters.driverNums.length, filters.lapNum, filters.tab],
-  );
-
   const openDashboardUrl = useMemo(
     () => buildDashboardUrl(filters.snapshot, splitMode, false, themeMode),
     [filters.snapshot, splitMode, themeMode],
@@ -372,8 +358,6 @@ export function DashboardContainer() {
       presetNames={presetNames}
       feedback={feedback}
       embedTitle={embedTitle}
-      embedSubtitle={embedSubtitle}
-      embedContext={embedContext}
       openDashboardUrl={openDashboardUrl}
       contentLayoutClass={contentLayoutClass}
       pageShellClass={pageShellClass}
