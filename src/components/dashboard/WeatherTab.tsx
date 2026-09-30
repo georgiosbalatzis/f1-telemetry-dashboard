@@ -3,7 +3,8 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import type { OpenF1Weather } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
 import type { WeatherTrendPoint } from './types';
-import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, Err, NoData, Stat } from './shared';
+import { copy } from '../../copy';
+import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, Err, NoData } from './shared';
 import { ChartPanel } from './ChartPanel';
 import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
 
@@ -36,8 +37,8 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
   if (loading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <CardGridSkeleton count={3} label="Loading weather readings..." />
         <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+          <div className="mb-6"><CardGridSkeleton count={4} label="Loading weather readings..." /></div>
           <ChartSkeleton label="Loading weather chart..." className="h-[180px] sm:h-[260px]" />
         </ChartPanel>
       </PanelSelection>
@@ -48,12 +49,17 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <div className="weather-primary">
-        <Stat label="Track Temperature" value={latestWeather.track_temperature.toFixed(1)} unit="°C" />
-        <Stat label="Air Temperature" value={latestWeather.air_temperature.toFixed(1)} unit="°C" />
-        <Stat label="Rainfall" value={latestWeather.rainfall ? 'Yes' : 'No'} />
-      </div>
       <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+        <div className="weather-stats">
+          {[
+            [copy.weather.track, latestWeather.track_temperature.toFixed(1), '°C'],
+            [copy.weather.air, latestWeather.air_temperature.toFixed(1), '°C'],
+            [copy.weather.humidity, latestWeather.humidity.toFixed(0), '%'],
+            [copy.weather.wind, latestWeather.wind_speed.toFixed(1), 'm/s'],
+          ].map(([label, value, unit]) => (
+            <div key={label} className="weather-stat"><span>{label}</span><b>{value}<small>{unit}</small></b></div>
+          ))}
+        </div>
         {weatherTrend.length > 1 ? (
           <>
             <div className="h-[150px] sm:h-[220px]">
@@ -88,7 +94,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
         ) : <NoData msg="More weather samples are needed to draw a session trend." />}
       </ChartPanel>
       <p className="weather-metadata">
-        Humidity {latestWeather.humidity.toFixed(0)}% · Wind {latestWeather.wind_speed.toFixed(1)} m/s at {latestWeather.wind_direction.toFixed(0)}° · Pressure {latestWeather.pressure.toFixed(0)} mbar · {sampleCount} samples
+        Rainfall {latestWeather.rainfall ? 'yes' : 'no'} · Wind from {latestWeather.wind_direction.toFixed(0)}° · Pressure {latestWeather.pressure.toFixed(0)} mbar · {sampleCount} samples
       </p>
     </PanelSelection>
   );

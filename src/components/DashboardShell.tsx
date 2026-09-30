@@ -14,6 +14,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
 import { SignalBand } from './dashboard/SignalBand';
 import { CardBar } from './dashboard/CardBar';
+import { NextViews } from './dashboard/NextViews';
 import { LapStrip } from './dashboard/LapStrip';
 import { TabLeadContext } from './dashboard/tabLeadContext';
 import { safetyCarLaps } from './dashboard/lapStripUtils';
@@ -414,6 +415,7 @@ export function DashboardShell({
             </div>
             </TabLeadContext.Provider>
           </ErrorBoundary>
+          {!embedMode && <NextViews activeTab={filters.tab} onChange={filters.setTab} />}
         </main>
         {embedMode && <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>}
       </div>

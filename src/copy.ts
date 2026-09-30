@@ -111,6 +111,22 @@ export const copy = {
     listen: 'Άκουσε την ηχογράφηση',
     listenAria: (driver: string, time: string) => `Άκουσε την ηχογράφηση του ${driver} στις ${time}`,
   },
+  weather: { track: 'Πίστα', air: 'Αέρας', humidity: 'Υγρασία', wind: 'Άνεμος' },
+  next: {
+    label: 'Επόμενες προβολές',
+    hints: {
+      telemetry: 'Ταχύτητα & πεντάλ',
+      energy: 'DRS, ταχύτητες & στροφές',
+      trackmap: 'Ποιος κερδίζει πού',
+      positions: 'Γύρο προς γύρο',
+      intervals: 'Διαφορές & DRS',
+      tires: 'Stints & pit stops',
+      radio: 'Οι ηχογραφήσεις',
+      incidents: 'Σημαίες & ποινές',
+      weather: 'Πίστα, αέρας, υγρασία',
+      broadcast: 'Ταξινόμηση γύρου',
+    },
+  },
   footer: {
     tagline: 'Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.',
     credit: 'Δεδομένα από OpenF1',

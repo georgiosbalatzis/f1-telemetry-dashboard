@@ -188,9 +188,9 @@ For each tab: large header (R3-02), card bar (R3-03), primary visual, then compa
 - [x] ✅ **R6-06 Ελαστικά**: stint bars as paper-2 segments with a 3px compound-colour top border and a `MEDIUM · 1–17` label (as in mockup B's `STINTS.`). `StrategyTab.tsx`.
 - [x] ✅ **R6-07 Team Radio**: list rows with a 1px rule, driver bar, time and a play link, in the style of the homepage's "ΠΡΟΣΦΑΤΑ" list. `RadioTab.tsx`.
 - [x] ✅ **R6-08 Race Control**: rows with a 3px flag-colour left rule and a lap code (as in mockup C's race control list). `IncidentsTab.tsx`.
-- [ ] **R6-09 Καιρός**: four big stat numerals (Πίστα / Αέρας / Υγρασία / Άνεμος) with a 2px top rule, then trend charts. `WeatherTab.tsx`.
-- [ ] **R6-10 Broadcast**: gap card (R4-02), timing tower (R4-03), speed trap and sector analysis in the compact panel style. `BroadcastTab.tsx`, `broadcast/*`.
-- [ ] **R6-11 "Next" row**: numbered links to 5 other views at the end of each tab (the homepage quick-link pattern). `DashboardShell.tsx`.
+- [x] ✅ **R6-09 Καιρός**: four big stat numerals (Πίστα / Αέρας / Υγρασία / Άνεμος) with a 2px top rule, then trend charts. `WeatherTab.tsx`.
+- [x] ✅ **R6-10 Broadcast**: gap card (R4-02), timing tower (R4-03), speed trap and sector analysis in the compact panel style. `BroadcastTab.tsx`, `broadcast/*`.
+- [x] ✅ **R6-11 "Next" row**: numbered links to 5 other views at the end of each tab (the homepage quick-link pattern). `DashboardShell.tsx`.
 
 ### Phase 7: Embed mode and mobile pass
 

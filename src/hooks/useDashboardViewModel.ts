@@ -273,7 +273,7 @@ export function useDashboardViewModel({
     return weather
       .filter((_, index) => index % step === 0)
       .map((entry) => ({
-        time: new Date(entry.date).toLocaleTimeString(copy.locale, { hour: '2-digit', minute: '2-digit' }),
+        time: new Date(entry.date).toLocaleTimeString(copy.locale, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }),
         air: entry.air_temperature,
         track: entry.track_temperature,
         humidity: entry.humidity,
