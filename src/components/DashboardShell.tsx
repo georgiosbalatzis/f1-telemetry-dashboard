@@ -29,6 +29,7 @@ import { DriverSelector } from './dashboard/DriverSelector';
 import { TelemetryTab } from './dashboard/TelemetryTab';
 import { TrackMapTab } from './dashboard/TrackMapTab';
 import { ChartSkeleton, Err } from './dashboard/shared';
+import { PerfProbe } from '../utils/perfProbe'; // PERF-PROBE: remove in P7-01
 
 // ─── Lazy-loaded tab chunks ───────────────────────────────────────────────────
 
@@ -268,7 +269,7 @@ export function DashboardShell({
             <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
-                <TelemetryTab
+                <PerfProbe id="TelemetryTab"><TelemetryTab
                   lapNum={filters.lapNum}
                   lapsLoading={lapsLoading}
                   sectorRows={viewModel.sectorRows}
@@ -286,7 +287,7 @@ export function DashboardShell({
                   embedMode={embedMode}
                   onEmbedPanel={onEmbedPanel}
                   onTelemetryRetry={primaryTelemetry?.refetch}
-                />
+                /></PerfProbe>
               )}
 
               {filters.tab === 'tires' && (
