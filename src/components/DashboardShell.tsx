@@ -6,12 +6,16 @@
  * DashboardShell with mock props without any API calls or router state.
  */
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 import type { DashboardData } from '../hooks/useDashboard';
 import type { Tab } from './dashboard/types';
 import { TAB_LABELS } from './dashboard/tabLabels';
 import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
+import { SignalBand } from './dashboard/SignalBand';
+import { SiteFooter } from './dashboard/SiteFooter';
+import { pickNextMeeting } from './dashboard/nextMeeting';
+import { copy } from '../copy';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
@@ -131,6 +135,34 @@ export function DashboardShell({
     stepLap,
   } = data;
 
+  const nextMeeting = useMemo(() => pickNextMeeting(meetings.data), [meetings.data]);
+
+  const header = (
+    <DashboardHeader
+      loading={anyLoading}
+      presetName={presetName}
+      presetNames={presetNames}
+      feedback={feedback}
+      splitMode={splitMode}
+      embedMode={embedMode}
+      themeMode={themeMode}
+      embedTitle={embedTitle}
+      embedSubtitle={embedSubtitle}
+      embedContext={embedContext}
+      openDashboardUrl={openDashboardUrl}
+      heroSubtitle={`${embedTitle} · ${copy.hero.lap(filters.lapNum, totalLaps ?? 0)}`}
+      nextMeeting={nextMeeting}
+      onPresetNameChange={onPresetNameChange}
+      onSavePreset={onSavePreset}
+      onShare={onShare}
+      onEmbed={onEmbed}
+      onPrint={onPrint}
+      onToggleSplit={onToggleSplit}
+      onToggleTheme={onToggleTheme}
+      onBack={onBack}
+    />
+  );
+
   return (
     <div
       className={[
@@ -138,37 +170,18 @@ export function DashboardShell({
         embedMode ? 'embed-mode' : 'min-h-screen',
       ].filter(Boolean).join(' ')}
     >
+      {!embedMode && (
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 z-50 rounded bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg"
+        >
+          {copy.skipToContent}
+        </a>
+      )}
+      {!embedMode && header}
+      {!embedMode && <SignalBand loading={anyLoading} feedback={feedback} lapNum={filters.lapNum} totalLaps={totalLaps} drivers={comparisonDrivers} />}
       <div className={pageShellClass}>
-        {!embedMode && (
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 z-50 rounded bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg"
-          >
-            Skip to content
-          </a>
-        )}
-
-        <DashboardHeader
-          loading={anyLoading}
-          presetName={presetName}
-          presetNames={presetNames}
-          feedback={feedback}
-          splitMode={splitMode}
-          embedMode={embedMode}
-          themeMode={themeMode}
-          embedTitle={embedTitle}
-          embedSubtitle={embedSubtitle}
-          embedContext={embedContext}
-          openDashboardUrl={openDashboardUrl}
-          onPresetNameChange={onPresetNameChange}
-          onSavePreset={onSavePreset}
-          onShare={onShare}
-          onEmbed={onEmbed}
-          onPrint={onPrint}
-          onToggleSplit={onToggleSplit}
-          onToggleTheme={onToggleTheme}
-          onBack={onBack}
-        />
+        {embedMode && header}
 
         <main id="main-content" tabIndex={-1}>
           {!embedMode && <>
@@ -216,7 +229,7 @@ export function DashboardShell({
 
           </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
-            {comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
+            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
               <section className="dashboard-panel mb-4 text-sm" aria-label="Comparison data status">
                 <p role="status">{comparisonDrivers.filter((driver) => driver.status === 'Loaded').length} of {comparisonDrivers.length} drivers loaded</p>
                 <ul className="mt-2 text-[color:var(--text-muted)]">
@@ -362,8 +375,9 @@ export function DashboardShell({
             </div>
           </ErrorBoundary>
         </main>
-        <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>
+        {embedMode && <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>}
       </div>
+      {!embedMode && <SiteFooter />}
     </div>
   );
 }

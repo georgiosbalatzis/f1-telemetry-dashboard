@@ -940,3 +940,68 @@ option, optgroup { background: var(--surface); color: var(--text); }
   .selected-drivers { gap: 6px 10px; }
   .embed-mode .product-name { display: none; }
 }
+
+/* ── Site chrome: masthead, hero, signal band, colophon (mirrors f1stories.gr) ── */
+.site-header { position: relative; z-index: 40; }
+.site-nav { position: relative; background: var(--surface); border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+.site-nav-inner { display: flex; align-items: center; gap: 20px; min-height: 74px; }
+.site-nav .brand { display: flex; align-items: center; gap: 10px; }
+.site-nav .brand img { width: 36px; height: 36px; }
+.site-nav-links { display: none; gap: 22px; margin-left: 12px; font-size: 14px; }
+.site-nav-links a, .nav-mobile-panel a { position: relative; display: inline-flex; align-items: center; min-height: 44px; }
+.site-nav-links a.is-current::after, .nav-mobile-panel a.is-current::after { content: ''; position: absolute; left: 0; bottom: 6px; width: 18px; height: 2px; background: var(--signal); }
+.site-nav-right { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.nav-countdown { display: none; flex-direction: column; margin-right: 14px; padding-left: 16px; border-left: 1px solid var(--line); font-size: 12px; line-height: 1.3; }
+.nav-countdown-name { max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); }
+.nav-countdown-time { font-weight: 600; }
+.site-nav .utility-menu > summary { justify-content: center; width: 44px; font-size: 22px; line-height: 1; }
+.nav-mobile > summary { display: grid; place-items: center; width: 44px; list-style: none; }
+.nav-mobile > summary::-webkit-details-marker { display: none; }
+.nav-mobile-panel { position: absolute; left: 0; right: 0; top: 100%; display: grid; padding: 8px 20px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.nav-mobile-panel a { width: fit-content; }
+
+.hero { padding: 24px 0 32px; background: linear-gradient(180deg, var(--surface), var(--bg)); }
+.kicker-row { display: flex; justify-content: space-between; gap: 16px; padding-top: 12px; border-top: 1px solid var(--ink); }
+.kicker { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.kicker-row .kicker:last-child { display: none; }
+.hero-grid { display: grid; gap: 24px; align-items: end; margin-top: 22px; }
+.display { margin: 0; font: 700 clamp(64px, 10vw, 150px)/.84 var(--font-display); letter-spacing: -.01em; text-transform: uppercase; }
+.display .dot { color: var(--signal); }
+.hero-subtitle { margin: 14px 0 0; font-size: 20px; font-weight: 400; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.hero-aside { display: none; }
+
+.signal-band { background: var(--signal); color: #17191b; }
+.signal-band-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; min-height: 58px; padding-block: 7px; font-size: 13px; font-weight: 600; }
+.signal-live::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: currentColor; }
+.signal-sep { width: 1px; height: 18px; background: #17191b55; }
+.signal-band .session-status, .signal-partial { margin: 0; color: inherit; font-size: 13px; }
+.signal-retry { min-height: 44px; padding: 0 2px; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.signal-band :focus-visible { outline-color: #17191b; }
+.signal-slogan { display: none; margin-left: auto; font: 700 24px/1 var(--font-display); letter-spacing: -.01em; text-transform: uppercase; }
+
+.colophon { margin-top: 40px; padding: 56px 0 24px; background: linear-gradient(180deg, #20251f, #262b25); color: #eee7dc; }
+.colophon a:hover { color: #ff826b; }
+.colophon-brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 22px; padding-bottom: 22px; border-bottom: 1px solid #ffffff22; }
+.colophon-brand .brand-wordmark { font: 700 28px/1 var(--font-brand); letter-spacing: -.035em; }
+.colophon-brand .brand-wordmark span { color: var(--signal); }
+.colophon-brand p { margin: 0; font-size: 14px; color: #bcb8b0; }
+.colophon-links { display: flex; flex-wrap: wrap; gap: 0 24px; padding-top: 10px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.colophon-links a, .colophon-legal a { display: inline-flex; align-items: center; min-height: 44px; }
+.colophon-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin-top: 12px; font-size: 12px; color: #bcb8b0; }
+.colophon-legal { display: flex; gap: 20px; margin-top: 12px; padding-top: 4px; border-top: 1px solid #ffffff22; font-size: 12px; color: #bcb8b0; }
+@media (min-width: 640px) {
+  .kicker-row .kicker:last-child { display: inline; }
+  .nav-countdown { display: flex; }
+  .nav-mobile-panel { padding-inline: 32px; }
+}
+@media (min-width: 1024px) {
+  .site-nav-links { display: flex; }
+  .nav-mobile { display: none; }
+  .hero { padding: 28px 0 40px; }
+  .hero-grid { grid-template-columns: 1fr 290px; gap: 40px; margin-top: 36px; }
+  .hero-subtitle { font-size: 30px; }
+  .hero-aside { display: block; padding-left: 24px; border-left: 1px solid var(--line); color: var(--text-muted); }
+  .hero-aside strong { display: block; margin-bottom: 10px; font-size: 26px; font-weight: 400; line-height: 1.25; color: var(--text-faint); }
+  .hero-aside p { margin: 0; font-size: 13px; }
+  .signal-slogan { display: block; }
+}

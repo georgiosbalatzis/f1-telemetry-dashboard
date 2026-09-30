@@ -94,22 +94,22 @@ Each task lists **Files**, **Change** and **Accept**. Keep diffs small. Don't in
 
 ### Phase 1: Site chrome (masthead, hero, band, footer)
 
-- [ ] **R1-01 Full site masthead**
+- [x] ✅ **R1-01 Full site masthead**
   Files: `src/components/dashboard/DashboardHeader.tsx`, `src/index.css` (`.masthead*`, `.brand`, `.utility-menu`).
   Change: rebuild the nav to match `partials/nav.html`: logo (48px), `F1 STORIES.` in Barlow 28px with a red dot, links (Αρχική, Άρθρα, YouTube, Βαθμολογία, Δεδομένα, Συντάκτες, BetCast) as absolute f1stories.gr URLs, a 2px short red underline on hover and active, and a theme toggle drawn as the site's moon/sun glyph. Below 1024px, a hamburger opens the link list plus the theme toggle (native `<details>`, no JS library). Move **Tools** (Back, Print, Split view, presets) into an overflow menu (`⋯`) on the right, since Share and Embed move to the card bar (R3-03). The race countdown shows the next session from OpenF1 `/meetings`, which is already fetched; hide it if nothing upcoming is in the data.
   Accept: a side-by-side screenshot at 1440 and 390 with f1stories.gr shows the same masthead height, wordmark, link order and toggle position.
 
-- [ ] **R1-02 Hero with display headline**
+- [x] ✅ **R1-02 Hero with display headline**
   Files: `DashboardHeader.tsx` (`.session-heading` block), `index.css`.
   Change: add a kicker row with a 1px ink rule. `TELEMETRY.` uses `font: 700 clamp(64px,10vw,150px)/.84 var(--font-display)`, uppercase, red period. The h2 subtitle holds the session context (`{circuit} · {session} · Γύρος {lap} από {total}`). The right aside (≥1024px) has the tagline. Use a paper-2 → paper vertical gradient, like `/standings`. Keep the `h1` semantics on the display word and put the session in the `h2`, so the document outline stays sensible.
   Accept: matches `A-data-hub-desktop.png` above the band; on 390px the headline stays on one line (`TELEMETRY.` at about 64px).
 
-- [ ] **R1-03 Signal band as the status line**
+- [x] ✅ **R1-03 Signal band as the status line**
   Files: `DashboardHeader.tsx`, `DashboardShell.tsx` (the partial-data `<section>` currently at the top of the ErrorBoundary), `index.css`.
   Change: a full-bleed `#ed4c32` band with ink text shows `● Live δεδομένα · OpenF1`, the driver comparison, and the lap. The **loading spinner, the feedback toast text and the "2 of 4 drivers loaded" message** move here with `role="status"`, and retry actions render as underlined ink links inside the band. Desktop-only slogan in Barlow 24px.
   Accept: with a failed driver request, the band reads `2 / 4 οδηγοί φορτώθηκαν · Επανάληψη NOR`, and nothing else on the page shifts.
 
-- [ ] **R1-04 Colophon footer**
+- [x] ✅ **R1-04 Colophon footer**
   Files: `DashboardShell.tsx` (`.page-footer`), `index.css`.
   Change: a dark ink gradient footer, as on the site: wordmark, tagline `Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.`, uppercase letter-spaced links, and the `Δεδομένα από OpenF1` credit.
   Accept: visually identical to the site footer in both themes.

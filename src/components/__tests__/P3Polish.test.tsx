@@ -4,24 +4,25 @@ import { DashboardHeader } from '../dashboard/DashboardHeader';
 import { ChartPanel } from '../dashboard/ChartPanel';
 import { ChartTip } from '../dashboard/shared';
 import { formatDrsState } from '../dashboard/chartAxis';
+import { SignalBand } from '../dashboard/SignalBand';
+import { copy } from '../../copy';
 
 afterEach(cleanup);
 
 it('P3-01: theme changes are announced off-screen without adding a visible status line', () => {
   const onToggleTheme = vi.fn();
   const noop = () => {};
-  const { container } = render(
+  render(
     <DashboardHeader
       loading={false} presetName="" presetNames={[]} feedback={null} splitMode={false} embedMode={false} themeMode="dark"
-      embedTitle="Race" embedSubtitle="Telemetry" embedContext={[]} openDashboardUrl="/"
+      embedTitle="Race" embedSubtitle="Telemetry" embedContext={[]} openDashboardUrl="/" heroSubtitle="Race · Γύρος 1" nextMeeting={null}
       onPresetNameChange={noop} onSavePreset={noop} onShare={noop} onEmbed={noop} onPrint={noop}
       onToggleSplit={noop} onToggleTheme={onToggleTheme} onBack={noop}
     />,
   );
-  fireEvent.click(screen.getByRole('button', { name: 'Light theme' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.themeToLight }));
   expect(onToggleTheme).toHaveBeenCalledOnce();
-  expect(container.querySelector('.session-status')).toBeEmptyDOMElement();
-  expect(screen.getByText('Light theme on')).toHaveClass('sr-only');
+  expect(screen.getByText(copy.masthead.themeOnLight)).toHaveClass('sr-only');
 });
 
 it('P3-02: tooltips show lap progress as %, DRS as a state and whole km/h like their axes', () => {
@@ -40,4 +41,21 @@ it('P3-04: chart action glyphs are 16px inside their 44px controls', () => {
   for (const name of ['Embed', 'Download', 'Full Screen']) {
     expect(screen.getByRole('button', { name }).querySelector('svg')).toHaveAttribute('width', '16');
   }
+});
+
+it('P1-03: the signal band carries loading and partial-data status, with a retry per failed driver', () => {
+  const retry = vi.fn();
+  const drivers = [
+    { driverNumber: 1, name: 'VER', status: 'Loaded', retry: null },
+    { driverNumber: 4, name: 'NOR', status: 'Lap request failed', retry },
+  ];
+  const { container, rerender } = render(<SignalBand loading={false} feedback={null} lapNum={49} totalLaps={51} drivers={[drivers[0]]} />);
+  expect(container.querySelector('.session-status')).toBeEmptyDOMElement();
+  expect(screen.getByText(copy.band.lap(49, 51))).toBeInTheDocument();
+  rerender(<SignalBand loading={false} feedback={null} lapNum={49} totalLaps={51} drivers={drivers} />);
+  expect(screen.getByText(copy.band.partial(1, 2), { exact: false })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: copy.band.retry('NOR') }));
+  expect(retry).toHaveBeenCalledOnce();
+  rerender(<SignalBand loading feedback={null} lapNum={49} totalLaps={51} drivers={[]} />);
+  expect(screen.getByText(copy.band.loading)).toBeInTheDocument();
 });

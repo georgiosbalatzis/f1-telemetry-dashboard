@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { DashboardContainer } from '../DashboardContainer';
 import { ChartTip, ChartSkeleton, Err } from '../dashboard/shared';
 import { TAB_LABELS } from '../dashboard/tabLabels';
+import { copy } from '../../copy';
 
 // Exercise the real shell, URL filters and handlers without a live OpenF1 service.
 vi.mock('../../hooks/useDashboard', async () => {
@@ -51,7 +52,8 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 it('preserves scope, driver selection, both navigation controls, and URL state', async () => {
   render(<DashboardContainer />);
-  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Bahrain · Race');
+  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(copy.hero.title);
+  expect(screen.getByRole('heading', { level: 2, name: /Bahrain · Race/ })).toHaveTextContent(`Bahrain · Race · ${copy.hero.lap(2, 3)}`);
   expect(screen.getByLabelText('Lap / 3')).toHaveValue('2');
   fireEvent.click(screen.getByRole('button', { name: 'Next lap' }));
   expect(params().get('lap')).toBe('3');
@@ -89,27 +91,27 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: clipboard } });
   const print = vi.spyOn(window, 'print').mockImplementation(() => {});
   render(<DashboardContainer />);
-  fireEvent.click(screen.getByText('Tools'));
+  fireEvent.click(screen.getByText(copy.masthead.tools));
   expect(window.localStorage.getItem('f1stories-theme')).toBeNull(); // nothing is stored until the reader chooses
-  fireEvent.click(screen.getByRole('button', { name: 'Dark theme' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.themeToDark }));
   expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
   expect(window.localStorage.getItem('f1stories-theme')).toBe('dark');
-  fireEvent.click(screen.getByRole('button', { name: 'Light theme' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.themeToLight }));
   expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   expect(window.localStorage.getItem('f1stories-theme')).toBe('light');
-  fireEvent.click(screen.getByRole('button', { name: 'Split view' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.split }));
   expect(document.querySelector('.analysis-split')).toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText('Save or load a comparison'), { target: { value: 'Race study' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+  fireEvent.change(screen.getByLabelText(copy.masthead.presetLabel), { target: { value: 'Race study' } });
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.save }));
   fireEvent.click(screen.getByRole('button', { name: 'Next lap' }));
-  fireEvent.change(screen.getByLabelText('Save or load a comparison'), { target: { value: '' } });
-  fireEvent.change(screen.getByLabelText('Save or load a comparison'), { target: { value: 'Race study' } });
+  fireEvent.change(screen.getByLabelText(copy.masthead.presetLabel), { target: { value: '' } });
+  fireEvent.change(screen.getByLabelText(copy.masthead.presetLabel), { target: { value: 'Race study' } });
   expect(params().get('lap')).toBe('2');
-  fireEvent.click(screen.getByRole('button', { name: 'Share' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.share }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('layout=split&theme=light')));
-  fireEvent.click(within(document.querySelector('.utility-content') as HTMLElement).getByRole('button', { name: 'Embed' }));
+  fireEvent.click(within(document.querySelector('.utility-content') as HTMLElement).getByRole('button', { name: copy.masthead.embed }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('embed=1&theme=light')));
-  fireEvent.click(screen.getByRole('button', { name: 'Print' }));
+  fireEvent.click(screen.getByRole('button', { name: copy.masthead.print }));
   expect(print).toHaveBeenCalledOnce();
 });
 
