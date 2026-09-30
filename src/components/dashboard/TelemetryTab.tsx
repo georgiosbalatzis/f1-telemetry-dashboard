@@ -11,7 +11,7 @@ import { fmtLap } from './utils';
 import { GapCard } from './GapCard';
 import { SummaryStrip } from './SummaryStrip';
 import { useProgressAxis } from './useProgressAxis';
-import { SECTOR_STYLE, classifySectorEntries } from './broadcast/broadcastUtils';
+import { SECTOR_STYLE, buildSectorAnalysis } from './broadcast/broadcastUtils';
 import type { GapCardData } from './gapCardData';
 import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, PEDAL_TICKS, evenTicks, formatLapAxis, formatPedalAxis, useXTickCount } from './chartAxis';
 
@@ -71,10 +71,8 @@ export const TelemetryTab = memo(function TelemetryTab({
   usePerfCommit('TelemetryTab'); // PERF-PROBE: remove in P7-01
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   // Purple = quickest of the selected drivers in that sector, green = second quickest.
-  const sectorClasses = (['s1', 's2', 's3'] as const).map((key) => classifySectorEntries(
-    sectorRows.flatMap((row, index) => (row[key] != null ? [{ index, time: row[key] as number }] : [])),
-    sectorRows.length,
-  ));
+  const { s1Classes, s2Classes, s3Classes } = useMemo(() => buildSectorAnalysis(sectorRows), [sectorRows]);
+  const sectorClasses = [s1Classes, s2Classes, s3Classes];
   const chartGrid = 'var(--chart-grid)';
   const xTickCount = useXTickCount();
   const sampleTicks = evenTicks(speedData.map((point) => point.idx), xTickCount);
