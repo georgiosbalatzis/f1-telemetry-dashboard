@@ -281,6 +281,29 @@ What changed and what was learned:
 
 ---
 
+### Phase 3 status: ✅ DONE (P3-01..P3-06, 2026-09-30)
+
+Measured with `scripts/perf-metrics.mjs --label=p3` (live API):
+
+| Metric | Baseline | After Phase 3 | Target |
+|---|---|---|---|
+| Initial JS gzip (entry + modulepreloads) | 200.3 KB | **83 KB** (index 23 + react-vendor 59 + icons 3) | ≤ 100 KB ✅ |
+| `charts` chunk | preloaded on first paint | lazy (415 KB min / 112 KB gzip, loads with Telemetry or any chart tab) | not preloaded ✅ |
+| Fonts | discovered after CSS | preloaded; each downloads once (verified) | no double download ✅ |
+| Mobile CLS (cold load) | 0.198 | 0.151 | not worse ✅ |
+| Charts visible | ~2.4 s | ~2.4 s | not slower ✅ |
+
+Notes:
+- P3-01: Telemetry and Track Map are `lazy()` with fallbacks sized like their loading skeletons (`TabLoadingPlaceholder` now takes `skeletonClassName`). The default tab is Telemetry, so a cold load on it still fetches the `charts` chunk right after the entry script; the win is the smaller entry and every non-chart tab.
+- P3-02: the old `vendor` chunk was 100% Recharts' dependencies, so everything non-React, non-Lucide goes to `charts` (one 415 KB chunk instead of 293 + 123).
+- P3-03: `nearestPerBucket` (in `positionsUtils.ts`) is shared by Positions and Intervals. It is O(samples + buckets), parses each date once and no longer spreads tens of thousands of arguments into `Math.min`. Verified equal to the old full scan on random data, and there are no duplicate timestamps in the recorded OpenF1 data. One intentional difference: Intervals now skips rows with an unparseable date instead of turning the whole chart into NaN.
+- P3-04: `index.html` preloads `/src/fonts/*.woff2`; Vite rewrites those to the same hashed files the CSS uses, so nothing had to move to `public/`. `latin-ext` is not preloaded.
+- P3-05: `App.tsx` and `F1TelemetryDashboard.tsx` are gone; `main.tsx` renders `DashboardContainer` directly (and imports the CSS once). P5-01 adds the root error boundary. `check.sh` still mentions `App.tsx`: it is deleted in P6-11.
+- Screenshot check after Phase 3: 0 diffs in Chromium at 390 and 1440 px and in Firefox everywhere; 5 Chromium shots at 820 px (Tires, Intervals, Positions) moved by ~3 px inside the tab strip. `DashboardTabs` centers the active tab in its scrollable strip, and with the fonts preloaded it now measures with the real font instead of the fallback, so the strip lands a few px closer to centre. Accepted by design and re-baselined; nothing else moved. WebKit diffs stay advisory.
+- P3-06: `build.target` is `es2022, safari16.4, chrome111, edge111, firefox128`; the README has a "Supported browsers" section.
+
+---
+
 ### Phase 4: Layout stability (F5), loading states only
 
 **P4-01 · Signal band: reserve the status line** · `SignalBand.tsx`, `index.css`
