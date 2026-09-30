@@ -172,34 +172,16 @@ function sortEntries(params: Record<string, QueryValue>) {
  * Builds OpenF1 query URLs while preserving operator syntax in parameter names.
  * Supported keys include plain filters (`session_key`) and OpenF1 operator keys
  * such as `date>=`, `date<=`, `speed>=`; keys are not encoded, values are.
+ * `dateFilters` keys must include the operator (`date>=`, `date<=`); their values are appended as ISO strings
+ * without escaping colons, matching the API's expected filter format.
  * @internal exported for unit tests only
  */
-export function buildUrl(endpoint: string, params: Record<string, QueryValue>): string {
+export function buildUrl(endpoint: string, params: Record<string, QueryValue>, dateFilters: Record<string, string> = {}): string {
   const parts = sortEntries(params)
     .filter(([, v]) => v !== undefined && v !== null && v !== '')
     .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`);
+  for (const [k, v] of sortEntries(dateFilters)) parts.push(`${k}${v}`);
   return `${BASE}/${endpoint}${parts.length ? '?' + parts.join('&') : ''}`;
-}
-
-/**
- * Builds URLs for date-windowed endpoints. `dateFilters` keys must include the
- * OpenF1 operator (`date>=`, `date<=`) and values are appended as ISO strings
- * without escaping colons, matching the API's expected filter format.
- */
-function buildUrlWithDateFilters(
-  endpoint: string,
-  params: Record<string, QueryValue>,
-  dateFilters: Record<string, string>,
-): string {
-  const parts: string[] = [];
-  for (const [k, v] of sortEntries(params)) {
-    if (v === undefined || v === null || v === '') continue;
-    parts.push(`${k}=${encodeURIComponent(String(v))}`);
-  }
-  for (const [k, v] of sortEntries(dateFilters)) {
-    parts.push(`${k}${v}`);
-  }
-  return `${BASE}/${endpoint}?${parts.join('&')}`;
 }
 
 // ─── Fetch with retry ────────────────────────────────────────────────────────
@@ -395,39 +377,36 @@ export const getPositions = (sessionKey: number, options?: RequestOptions) =>
 export const getIntervals = (sessionKey: number, options?: RequestOptions) =>
   fetchJson<OpenF1Interval>(buildUrl('intervals', { session_key: sessionKey }), options);
 
-export function getLocationForLap(
+/** Per-lap series for one driver, windowed by date_start of this lap and the next; the last lap uses a 2-min window. */
+function getForLap<T>(
+  endpoint: string,
   sessionKey: number,
   driverNumber: number,
   lapDateStart: string,
   nextLapDateStart?: string,
   options?: RequestOptions,
-): Promise<OpenF1Location[]> {
+): Promise<T[]> {
   const dateEnd = nextLapDateStart
     || new Date(new Date(lapDateStart).getTime() + FALLBACK_LAP_WINDOW_MS).toISOString();
-  const url = buildUrlWithDateFilters(
-    'location',
-    { session_key: sessionKey, driver_number: driverNumber },
-    { 'date>=': lapDateStart, 'date<=': dateEnd },
+  return fetchJson<T>(
+    buildUrl(endpoint, { session_key: sessionKey, driver_number: driverNumber }, { 'date>=': lapDateStart, 'date<=': dateEnd }),
+    options,
   );
-  return fetchJson<OpenF1Location>(url, options);
 }
 
-/** Car telemetry for a single lap, windowed by date_start of this lap and next lap.
- *  If nextLapDateStart is missing (last lap), uses a 2-min window. */
-export function getCarDataForLap(
+export const getLocationForLap = (
   sessionKey: number,
   driverNumber: number,
   lapDateStart: string,
   nextLapDateStart?: string,
   options?: RequestOptions,
-): Promise<OpenF1CarData[]> {
-  const dateEnd = nextLapDateStart
-    || new Date(new Date(lapDateStart).getTime() + FALLBACK_LAP_WINDOW_MS).toISOString();
+) => getForLap<OpenF1Location>('location', sessionKey, driverNumber, lapDateStart, nextLapDateStart, options);
 
-  const url = buildUrlWithDateFilters(
-    'car_data',
-    { session_key: sessionKey, driver_number: driverNumber },
-    { 'date>=': lapDateStart, 'date<=': dateEnd },
-  );
-  return fetchJson<OpenF1CarData>(url, options);
-}
+/** Car telemetry for a single lap (see getForLap for the window). */
+export const getCarDataForLap = (
+  sessionKey: number,
+  driverNumber: number,
+  lapDateStart: string,
+  nextLapDateStart?: string,
+  options?: RequestOptions,
+) => getForLap<OpenF1CarData>('car_data', sessionKey, driverNumber, lapDateStart, nextLapDateStart, options);
