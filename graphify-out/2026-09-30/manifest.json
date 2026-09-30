@@ -41,12 +41,6 @@
     "ast_hash": "8abff1fca6faf096c0854946d00d530e",
     "semantic_hash": "8abff1fca6faf096c0854946d00d530e"
   },
-  "src/App.tsx": {
-    "mtime": 1774958466.110488,
-    "seen": 1790060867.2071512,
-    "ast_hash": "354e1383646e5ffafe30993786ceb942",
-    "semantic_hash": "354e1383646e5ffafe30993786ceb942"
-  },
   "src/api/__tests__/openf1.integration.test.ts": {
     "mtime": 1790774971.7462919,
     "seen": 1790778677.72611,
@@ -72,9 +66,9 @@
     "semantic_hash": ""
   },
   "src/components/DashboardShell.tsx": {
-    "mtime": 1790772151.6087847,
-    "seen": 1790773226.211738,
-    "ast_hash": "93d6ceb6fe33b09a3ef12c225fdaa24a",
+    "mtime": 1790778985.8260288,
+    "seen": 1790782584.363348,
+    "ast_hash": "e9909bd1753d18802ccbb2280401664a",
     "semantic_hash": ""
   },
   "src/components/ErrorBoundary.tsx": {
@@ -82,12 +76,6 @@
     "seen": 1790060867.2071528,
     "ast_hash": "21365309b1ac79ea74330ec33c28d6fa",
     "semantic_hash": "21365309b1ac79ea74330ec33c28d6fa"
-  },
-  "src/components/F1TelemetryDashboard.tsx": {
-    "mtime": 1775892210.3176193,
-    "seen": 1790060867.207154,
-    "ast_hash": "230dc17e4573ccd113d5a03235f85b88",
-    "semantic_hash": "230dc17e4573ccd113d5a03235f85b88"
   },
   "src/components/__tests__/ErrorBoundary.test.tsx": {
     "mtime": 1775894180.737249,
@@ -168,9 +156,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/IntervalsTab.tsx": {
-    "mtime": 1790772030.117596,
-    "seen": 1790773226.2117481,
-    "ast_hash": "e8a8c1b482adabdad8dec1beb74da590",
+    "mtime": 1790779706.2140062,
+    "seen": 1790782584.363358,
+    "ast_hash": "eb203c737e6497fe459c791a6e988638",
     "semantic_hash": ""
   },
   "src/components/dashboard/PositionsTab.tsx": {
@@ -210,10 +198,10 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/__tests__/positionsUtils.test.ts": {
-    "mtime": 1775894210.3742695,
-    "seen": 1790060867.2071612,
-    "ast_hash": "f997a28da98bc8cb5f3c901eb25d7d45",
-    "semantic_hash": "f997a28da98bc8cb5f3c901eb25d7d45"
+    "mtime": 1790779722.5909953,
+    "seen": 1790782584.363368,
+    "ast_hash": "bc5e2e89fef5a751e5be838685e54b43",
+    "semantic_hash": ""
   },
   "src/components/dashboard/__tests__/trackMapUtils.test.ts": {
     "mtime": 1790063277.5253603,
@@ -264,10 +252,10 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/positionsUtils.ts": {
-    "mtime": 1775893336.133282,
-    "seen": 1790060867.207165,
-    "ast_hash": "ac15a852c0302875fd69b997925500e0",
-    "semantic_hash": "ac15a852c0302875fd69b997925500e0"
+    "mtime": 1790779706.2138326,
+    "seen": 1790782584.3633769,
+    "ast_hash": "332ab5c981e7f6e8faa93668d3264899",
+    "semantic_hash": ""
   },
   "src/components/dashboard/shared.tsx": {
     "mtime": 1790754242.4312205,
@@ -372,10 +360,10 @@
     "semantic_hash": ""
   },
   "src/main.tsx": {
-    "mtime": 1774958466.1113532,
-    "seen": 1790060867.207171,
-    "ast_hash": "787e5a07efeb2bf6209d5937195f2f68",
-    "semantic_hash": "787e5a07efeb2bf6209d5937195f2f68"
+    "mtime": 1790779850.3041332,
+    "seen": 1790782584.36339,
+    "ast_hash": "be866e6ce9e55fa4963c0e86d2b77738",
+    "semantic_hash": ""
   },
   "src/test/setup.ts": {
     "mtime": 1775893281.437854,
@@ -414,10 +402,10 @@
     "semantic_hash": "b39b0c04c8b06a94fa53e598a344f2b4"
   },
   "vite.config.ts": {
-    "mtime": 1775894262.7071197,
-    "seen": 1790060867.207173,
-    "ast_hash": "06001e3d2267384121822dafda9ea17e",
-    "semantic_hash": "06001e3d2267384121822dafda9ea17e"
+    "mtime": 1790779898.8011732,
+    "seen": 1790782584.363394,
+    "ast_hash": "990462ba79c25048cf04adcee93c6da7",
+    "semantic_hash": ""
   },
   ".claude/CLAUDE.md": {
     "mtime": 1790060560.8087637,
@@ -498,15 +486,15 @@
     "semantic_hash": "82efb97a359f5c7290bf2513d14686be"
   },
   "README.md": {
-    "mtime": 1774958536.4611435,
-    "seen": 1790060867.2071779,
-    "ast_hash": "c5014099aa09b28021f01bdb37f41cc3",
-    "semantic_hash": "c5014099aa09b28021f01bdb37f41cc3"
+    "mtime": 1790779898.801403,
+    "seen": 1790782584.3634079,
+    "ast_hash": "2b93a487857ca599ed6e54311151bef4",
+    "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1790776092.0300944,
-    "seen": 1790778677.7261708,
-    "ast_hash": "49ee5314f0c71ba5e6a9e5e25cc9a0fb",
+    "mtime": 1790779835.8934684,
+    "seen": 1790782584.3634088,
+    "ast_hash": "33b41fafe9d1a8e2bbc04f5ade584f87",
     "semantic_hash": ""
   },
   "public/fonts/barlowcondensed-OFL.txt": {
@@ -1020,9 +1008,9 @@
     "semantic_hash": ""
   },
   "PERFREDO.md": {
-    "mtime": 1790778676.0221202,
-    "seen": 1790778677.72617,
-    "ast_hash": "376a93b6d15ad0ad740c904e9c8961aa",
+    "mtime": 1790782560.0054,
+    "seen": 1790782584.3634071,
+    "ast_hash": "e4ae9c228293dcb393517ea61ba79186",
     "semantic_hash": ""
   },
   "docs/rework/final/broadcast-dark-390.png": {

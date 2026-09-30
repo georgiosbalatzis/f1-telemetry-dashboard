@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "src/components/DashboardShell.tsx": {
-    "mtime": 1790778985.8260288,
-    "seen": 1790782584.363348,
-    "ast_hash": "e9909bd1753d18802ccbb2280401664a",
+    "mtime": 1790787296.4439385,
+    "seen": 1790787938.8246741,
+    "ast_hash": "aa7a2e18e60d52fb0afdbd85270d3d96",
     "semantic_hash": ""
   },
   "src/components/ErrorBoundary.tsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/ChartPanel.tsx": {
-    "mtime": 1790758385.48688,
-    "seen": 1790758649.746905,
-    "ast_hash": "9583f81a7260c3ad8956048a2933509d",
+    "mtime": 1790784187.822739,
+    "seen": 1790787938.824682,
+    "ast_hash": "e5e9a3680d901ab4c226bc41adf50c0e",
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardHeader.tsx": {
@@ -132,15 +132,15 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardTabs.tsx": {
-    "mtime": 1790752665.855215,
-    "seen": 1790758649.746907,
-    "ast_hash": "755e3f0b924b217482fb7c601c422c52",
+    "mtime": 1790786090.2700906,
+    "seen": 1790787938.8246841,
+    "ast_hash": "d84335e207f0b0e8d9eb04025a5f46f8",
     "semantic_hash": ""
   },
   "src/components/dashboard/DriverSelector.tsx": {
-    "mtime": 1790772030.1189432,
-    "seen": 1790773226.211746,
-    "ast_hash": "de725fcb91491a95f661cc7d88e6f35c",
+    "mtime": 1790782823.050132,
+    "seen": 1790787938.8246841,
+    "ast_hash": "66b7f959486ffb652b15bc9b19924a80",
     "semantic_hash": ""
   },
   "src/components/dashboard/EnergyTab.tsx": {
@@ -228,9 +228,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/broadcast/TimingTower.tsx": {
-    "mtime": 1790753080.792911,
-    "seen": 1790758649.7469199,
-    "ast_hash": "aa17cd43bd97c79dc191f9ad58afa46e",
+    "mtime": 1790784357.82549,
+    "seen": 1790787938.8246999,
+    "ast_hash": "ccf430f6cf3472d7f36fb27aae0ceafd",
     "semantic_hash": ""
   },
   "src/components/dashboard/broadcast/broadcastTypes.ts": {
@@ -330,9 +330,9 @@
     "semantic_hash": "1c32bbfdb4e40dbe5a8cc50638e76d95"
   },
   "src/hooks/useDashboard.ts": {
-    "mtime": 1790776152.7753644,
-    "seen": 1790778677.7261498,
-    "ast_hash": "504f4d69a0f6a62ce71de13b87a288ec",
+    "mtime": 1790784657.2182212,
+    "seen": 1790787938.824716,
+    "ast_hash": "57f107040cce26b230e8bd73b4948561",
     "semantic_hash": ""
   },
   "src/hooks/useDashboardFilters.ts": {
@@ -360,9 +360,9 @@
     "semantic_hash": ""
   },
   "src/main.tsx": {
-    "mtime": 1790779850.3041332,
-    "seen": 1790782584.36339,
-    "ast_hash": "be866e6ce9e55fa4963c0e86d2b77738",
+    "mtime": 1790784187.8224127,
+    "seen": 1790787938.8247192,
+    "ast_hash": "01107df545ea897e3cb8a5dda87dcdcc",
     "semantic_hash": ""
   },
   "src/test/setup.ts": {
@@ -372,9 +372,9 @@
     "semantic_hash": "00e47f7b9836e8f731101981fa2bb2de"
   },
   "src/utils/exportChart.ts": {
-    "mtime": 1790064396.0424016,
-    "seen": 1790065548.9736571,
-    "ast_hash": "6191179306c313712e2f5383e3e53cb2",
+    "mtime": 1790784433.4571376,
+    "seen": 1790787938.82472,
+    "ast_hash": "98bc0ccd442e68592882619411507d25",
     "semantic_hash": ""
   },
   "src/vite-env.d.ts": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "src/components/__tests__/P3Polish.test.tsx": {
-    "mtime": 1790758063.133818,
-    "seen": 1790758649.746903,
-    "ast_hash": "498f8f8b8cab4224d7c0a1ff89dbf36e",
+    "mtime": 1790784235.377332,
+    "seen": 1790787938.8246772,
+    "ast_hash": "d7e7cc4fcf46015cd60f2beb52536cfa",
     "semantic_hash": ""
   },
   "src/components/dashboard/CardBar.tsx": {
@@ -624,9 +624,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/LapStrip.tsx": {
-    "mtime": 1790772030.1182203,
-    "seen": 1790773226.211749,
-    "ast_hash": "d443a4eee4da6306b98b7d259144b8f1",
+    "mtime": 1790782823.050374,
+    "seen": 1790787938.824687,
+    "ast_hash": "f4ce2cdeb6f9fc1e9e169081f7739d91",
     "semantic_hash": ""
   },
   "src/components/dashboard/NextViews.tsx": {
@@ -636,9 +636,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/SignalBand.tsx": {
-    "mtime": 1790772030.1179335,
-    "seen": 1790773226.211751,
-    "ast_hash": "461b0fe1a6d2a932c7ec9b5f2c6d42f4",
+    "mtime": 1790784657.2178984,
+    "seen": 1790787938.8246899,
+    "ast_hash": "6510f90754070c35943bd1ea2a72be0c",
     "semantic_hash": ""
   },
   "src/components/dashboard/SiteFooter.tsx": {
@@ -1008,9 +1008,9 @@
     "semantic_hash": ""
   },
   "PERFREDO.md": {
-    "mtime": 1790782560.0054,
-    "seen": 1790782584.3634071,
-    "ast_hash": "e4ae9c228293dcb393517ea61ba79186",
+    "mtime": 1790787926.265314,
+    "seen": 1790787938.824737,
+    "ast_hash": "1279109a7c2a6ed27ed5e89d5017c767",
     "semantic_hash": ""
   },
   "docs/rework/final/broadcast-dark-390.png": {
@@ -1101,6 +1101,18 @@
     "mtime": 1790775020.032974,
     "seen": 1790778677.726152,
     "ast_hash": "7dc3d5d08596dc27c236739410c8b3ed",
+    "semantic_hash": ""
+  },
+  "src/components/__tests__/TimingTowerRoles.test.tsx": {
+    "mtime": 1790784315.5362341,
+    "seen": 1790787938.824679,
+    "ast_hash": "441795f8ac0c64dd987c8261649b502d",
+    "semantic_hash": ""
+  },
+  "src/utils/__tests__/exportChart.test.ts": {
+    "mtime": 1790784433.4631655,
+    "seen": 1790787938.82472,
+    "ast_hash": "57ce7dab36e8152830b8d9c5f2883e4c",
     "semantic_hash": ""
   }
 }
