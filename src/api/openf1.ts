@@ -10,6 +10,9 @@ const BASE = 'https://api.openf1.org/v1';
 const DEFAULT_TIMEOUT_MS = 12_000;
 const DEFAULT_RETRIES = 2;
 const FALLBACK_LAP_WINDOW_MS = 120_000;
+// The free tier rejects bursts of more than ~3 concurrent requests (measured: 4 at once -> one 429, 9 -> six), so
+// request starts are spaced this far apart. ~2.9 requests/second.
+const MIN_GAP_MS = 350;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -201,6 +204,23 @@ function buildUrlWithDateFilters(
 
 // ─── Fetch with retry ────────────────────────────────────────────────────────
 
+// ponytail: one global FIFO pacer; a per-priority queue only if first paint suffers from it.
+let nextSlot = 0;
+
+/** Resolves when this request may start. A request aborted while queued gives its slot back if nobody queued behind it. */
+async function takeSlot(signal: AbortSignal) {
+  const now = Date.now();
+  const at = Math.max(now, nextSlot);
+  nextSlot = at + MIN_GAP_MS;
+  if (at === now) return;
+  try {
+    await sleep(at - now, signal);
+  } catch (err) {
+    if (nextSlot === at + MIN_GAP_MS) nextSlot = at;
+    throw err;
+  }
+}
+
 function sleep(ms: number, signal?: AbortSignal) {
   return new Promise<void>((resolve, reject) => {
     const timeoutId = window.setTimeout(() => {
@@ -284,13 +304,15 @@ async function fetchJson<T>(url: string, options: RequestOptions = {}): Promise<
   try {
     for (let i = 0; i <= retries; i++) {
       try {
+        await takeSlot(signal);
         const res = await fetch(url, { signal });
         if (res.ok) {
           const data = await res.json();
           return Array.isArray(data) ? data : [];
         }
         if ((res.status === 429 || res.status >= 500) && i < retries) {
-          await sleep(1500 * (i + 1), signal);
+          const retryAfter = Number(res.headers.get('retry-after'));
+          await sleep(retryAfter > 0 ? Math.min(retryAfter, 10) * 1000 : 1500 * (i + 1), signal);
           continue;
         }
         throw new Error(`OpenF1 API ${res.status} ${res.statusText}`);

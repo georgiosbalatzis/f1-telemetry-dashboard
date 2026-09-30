@@ -79,3 +79,35 @@ describe('getMeetings – abort', () => {
     await expect(promise).rejects.toThrow();
   });
 });
+
+describe('request pacing', () => {
+  it('starts back-to-back requests at least 300 ms apart', async () => {
+    const starts: number[] = [];
+    server.use(
+      http.get(`${BASE}/meetings`, () => { starts.push(Date.now()); return HttpResponse.json([fakeMeeting]); }),
+    );
+
+    const signal = new AbortController().signal;
+    await Promise.all([getMeetings(2024, { signal }), getMeetings(2023, { signal }), getMeetings(2022, { signal })]);
+
+    starts.sort((a, b) => a - b);
+    expect(starts).toHaveLength(3);
+    expect(starts[1] - starts[0]).toBeGreaterThanOrEqual(300);
+    expect(starts[2] - starts[1]).toBeGreaterThanOrEqual(300);
+  });
+
+  it('does not send a request that is aborted while queued', async () => {
+    let calls = 0;
+    server.use(
+      http.get(`${BASE}/meetings`, () => { calls += 1; return HttpResponse.json([fakeMeeting]); }),
+    );
+
+    const first = getMeetings(2024, { signal: new AbortController().signal });
+    const controller = new AbortController();
+    const queued = getMeetings(2023, { signal: controller.signal });
+    controller.abort();
+    await expect(queued).rejects.toBeDefined();
+    await first;
+    expect(calls).toBe(1);
+  });
+});
