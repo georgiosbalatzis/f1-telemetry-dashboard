@@ -6,9 +6,8 @@ import { fmtLap } from '../utils';
 type TimingTowerProps = {
   lapNum: number;
   lapsLoading: boolean;
-  /** lapSummaries pre-sorted by lap time ascending */
+  /** lapSummaries pre-sorted by lap time ascending, with gapToLeader filled in */
   sorted: DriverLapSummary[];
-  leaderTime: number | null;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
@@ -17,7 +16,6 @@ export function TimingTower({
   lapNum,
   lapsLoading,
   sorted,
-  leaderTime,
   embedMode = false,
   onEmbedPanel,
 }: TimingTowerProps) {
@@ -60,10 +58,7 @@ export function TimingTower({
               const driver   = driverMap[summary.driverNumber];
               const color    = summary.color;
               const isLeader = pos === 1;
-              const gap =
-                !isLeader && leaderTime != null && summary.lapTime != null
-                  ? summary.lapTime - leaderTime
-                  : null;
+              const gap = isLeader ? null : summary.gapToLeader;
 
               return (
                 <tr key={summary.driverNumber} className="bc-tower-row" role="row">

@@ -30,17 +30,8 @@ export const BroadcastTab = memo(function BroadcastTab({
   embedMode = false,
   onEmbedPanel,
 }: Props) {
-  const sorted = useMemo(
-    () =>
-      lapSummaries.filter((summary) => summary.lapTime != null).sort((a, b) => {
-        if (a.lapTime == null) return 1;
-        if (b.lapTime == null) return -1;
-        return a.lapTime - b.lapTime;
-      }),
-    [lapSummaries],
-  );
-
-  const leaderTime = sorted[0]?.lapTime ?? null;
+  // lapSummaries is already ordered fastest first (untimed drivers last) with gaps filled in.
+  const sorted = useMemo(() => lapSummaries.filter((summary) => summary.lapTime != null), [lapSummaries]);
 
   const { s1Classes, s2Classes, s3Classes, bestI1, bestI2, bestSt } = useMemo(
     () => buildSectorAnalysis(sectorRows),
@@ -70,7 +61,6 @@ export const BroadcastTab = memo(function BroadcastTab({
         lapNum={lapNum}
         lapsLoading={lapsLoading}
         sorted={sorted}
-        leaderTime={leaderTime}
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       />

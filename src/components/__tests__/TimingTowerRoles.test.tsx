@@ -6,14 +6,14 @@ import type { DriverLapSummary } from '../dashboard/types';
 
 afterEach(cleanup);
 
-const summary = (driverNumber: number, name: string, lapTime: number): DriverLapSummary => ({
-  driverNumber, name, color: '#888', lapTime, gapToLeader: null, topSpeed: 330, avgSpeed: null, avgThrottle: null, avgBrake: null, peakRpm: null, peakGear: null, drsOpenPct: null,
+const summary = (driverNumber: number, name: string, lapTime: number, gapToLeader = 0): DriverLapSummary => ({
+  driverNumber, name, color: '#888', lapTime, gapToLeader, topSpeed: 330, avgSpeed: null, avgThrottle: null, avgBrake: null, peakRpm: null, peakGear: null, drsOpenPct: null,
 });
 
 it('P5-04: the timing tower keeps table semantics although its rows are display:grid', () => {
   render(
     <DriverProvider driverNums={[1, 4]} driverMap={{}} driverColor={() => '#888'}>
-      <TimingTower lapNum={5} lapsLoading={false} sorted={[summary(1, 'VER', 81.1), summary(4, 'NOR', 81.3)]} leaderTime={81.1} />
+      <TimingTower lapNum={5} lapsLoading={false} sorted={[summary(1, 'VER', 81.1), summary(4, 'NOR', 81.3, 0.2)]} />
     </DriverProvider>,
   );
   const table = screen.getByRole('table', { name: 'Timing tower' });
