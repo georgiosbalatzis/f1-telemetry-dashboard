@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildPositionChartData, MAX_CHART_POINTS } from '../positionsUtils';
+import { buildPositionChartData, MAX_CHART_POINTS, nearestPerBucket } from '../positionsUtils';
 import type { OpenF1Position } from '../../../api/openf1';
 
 function makePosition(driverNumber: number, position: number, isoDate: string): OpenF1Position {
@@ -88,5 +88,30 @@ describe('buildPositionChartData', () => {
     expect(chartData[0]?.['p_44']).toBe(3);
     // Last bucket should be closest to t1 → position 1
     expect(chartData[MAX_CHART_POINTS - 1]?.['p_44']).toBe(1);
+  });
+});
+
+describe('nearestPerBucket', () => {
+  // The scan Intervals used before: every sample per bucket, strictly-closer wins, first of equals wins.
+  const naive = (timestamps: number[], bucketTimes: number[]) => bucketTimes.map((t) => {
+    let best = 0;
+    let bestDiff = Infinity;
+    timestamps.forEach((ts, index) => {
+      const diff = Math.abs(ts - t);
+      if (diff < bestDiff) { bestDiff = diff; best = index; }
+    });
+    return best;
+  });
+
+  it('picks the same samples as a full scan for sorted, distinct timestamps', () => {
+    let seed = 7;
+    const random = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    for (let round = 0; round < 25; round += 1) {
+      const count = 1 + Math.floor(random() * 60);
+      const timestamps = [...new Set(Array.from({ length: count }, () => Math.floor(random() * 10_000)))].sort((a, b) => a - b);
+      const samples = timestamps.map((timestamp, index) => ({ timestamp, index }));
+      const buckets = Array.from({ length: 40 }, (_, i) => (i / 39) * 10_000);
+      expect(nearestPerBucket(samples, buckets).map((sample) => sample.index)).toEqual(naive(timestamps, buckets));
+    }
   });
 });

@@ -8,6 +8,7 @@ import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Pane
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 import { AXIS_TICK, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
+import { nearestPerBucket } from './positionsUtils';
 
 type Props = {
   intervals: OpenF1Interval[] | null;
@@ -31,35 +32,38 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
     }
 
     const byDriver: Record<number, OpenF1Interval[]> = {};
+    const timed: Record<number, { timestamp: number; entry: OpenF1Interval }[]> = {};
+    let tMin = Infinity;
+    let tMax = -Infinity;
     for (const entry of intervals) {
+      const timestamp = Date.parse(entry.date);
+      if (!Number.isFinite(timestamp)) continue;
       (byDriver[entry.driver_number] ||= []).push(entry);
+      (timed[entry.driver_number] ||= []).push({ timestamp, entry });
+      if (timestamp < tMin) tMin = timestamp;
+      if (timestamp > tMax) tMax = timestamp;
     }
 
     const activeDrvs = driverNums.filter((n) => byDriver[n]?.length > 0);
 
     // Time-sampled chart
-    const allDates = intervals.map((p) => new Date(p.date).getTime());
-    const tMin = Math.min(...allDates);
-    const tMax = Math.max(...allDates);
     const duration = tMax - tMin || 1;
     const N = MAX_CHART_POINTS;
+    const bucketTimes = Array.from({ length: N }, (_, i) => tMin + (i / (N - 1)) * duration);
+    const nearest: Record<number, OpenF1Interval[]> = {};
+    for (const n of activeDrvs) {
+      nearest[n] = nearestPerBucket(timed[n].sort((a, b) => a.timestamp - b.timestamp), bucketTimes).map((sample) => sample.entry);
+    }
 
-    const data = Array.from({ length: N }, (_, i) => {
-      const t = tMin + (i / (N - 1)) * duration;
+    const data = bucketTimes.map((_, i) => {
       const point: Record<string, number | string> = { t: i + 1 };
       for (const n of activeDrvs) {
-        const samples = byDriver[n];
-        let best: OpenF1Interval | null = null;
-        let bestDiff = Infinity;
-        for (const s of samples) {
-          const diff = Math.abs(new Date(s.date).getTime() - t);
-          if (diff < bestDiff) { bestDiff = diff; best = s; }
-        }
-        if (best?.gap_to_leader != null) {
+        const best = nearest[n][i];
+        if (best.gap_to_leader != null) {
           const gap = Math.min(best.gap_to_leader, MAX_GAP_DISPLAY);
           if (gap >= 0) point[`gap_${n}`] = gap;
         }
-        if (best?.interval != null && best.interval >= 0) {
+        if (best.interval != null && best.interval >= 0) {
           point[`int_${n}`] = Math.min(best.interval, 10);
         }
       }
