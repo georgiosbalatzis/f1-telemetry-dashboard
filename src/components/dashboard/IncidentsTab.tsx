@@ -11,6 +11,16 @@ type Props = {
   onRetry?: () => void;
 };
 
+/** Colour key for a message's left rule: its flag, or the safety car for messages without one. */
+function toneOf(message: OpenF1RaceControl) {
+  const flag = message.flag ?? '';
+  if (flag.includes('RED')) return 'danger';
+  if (flag.includes('YELLOW') || message.category === 'SafetyCar') return 'warning';
+  if (flag.includes('GREEN')) return 'success';
+  if (flag.includes('BLUE')) return 'blue';
+  return 'neutral';
+}
+
 function flagTone(flag: string) {
   if (flag.includes('RED')) return 'flag-danger';
   if (flag.includes('YELLOW')) return 'flag-warning';
@@ -39,7 +49,7 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
   }, [activeFilter, messages, query]);
 
   return (
-    <Panel title="Race Control" icon={<Flag size={14} className="text-yellow-500" />} sub={`Official flags, penalties, safety car, and session status messages · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Race Control" icon={<Flag size={14} className="text-yellow-500" />} sub={`Official flags, penalties, safety car, and session status messages · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : messages.length > 0 ? (
         <>
           <div className="mb-4 flex items-center gap-3 lg:justify-between">
@@ -83,9 +93,9 @@ export function IncidentsTab({ loading, error, messages, onRetry }: Props) {
 
           <div className="race-event-list">
             {filteredMessages.map((message, index) => (
-              <div key={index} className="race-event">
+              <div key={index} className="race-event" data-tone={toneOf(message)}>
                 <div className="text-[10px] text-[color:var(--text-dim)]">
-                  {message.lap_number != null && <div className="mb-1 uppercase tracking-[0.16em] text-[color:var(--text-muted)]">L{message.lap_number}</div>}
+                  {message.lap_number != null && <div className="race-lap">L{message.lap_number}</div>}
                   <time className="clock-time" dateTime={message.date}>{fmtClock(message.date)}</time>
                 </div>
                 <div>

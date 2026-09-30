@@ -23,7 +23,7 @@ it('keeps teammate patterns stable across selection order and distinct from brak
   expect(result.current.driverDash(63)).toBe(driverDash(63));
 });
 
-it('puts weather trend immediately after the primary readings and sample count in metadata', () => {
+it('leads the weather tab with four big readings, then the trend, with the sample count in metadata', () => {
   window.history.replaceState({}, '', '/');
   const weather: OpenF1Weather = {
     date: '2026-09-20T15:00:00Z', air_temperature: 24, track_temperature: 36,
@@ -31,8 +31,8 @@ it('puts weather trend immediately after the primary readings and sample count i
     session_key: 11369, meeting_key: 1,
   };
   const { container } = render(<WeatherTab loading={false} error={null} latestWeather={weather} sampleCount={120} weatherTrend={[]} />);
-  expect(container.querySelector('.weather-primary')?.nextElementSibling).toHaveTextContent('Conditions Trend');
+  expect(container.querySelector('.panel-lead')).toHaveTextContent('Conditions Trend');
+  expect([...container.querySelectorAll('.weather-stat')].map((node) => node.textContent)).toEqual(['Πίστα36.0°C', 'Αέρας24.0°C', 'Υγρασία50%', 'Άνεμος3.0m/s']);
   expect(container.querySelector('.weather-metadata')).toHaveTextContent('120 samples');
   expect(screen.queryByText('Conditions Radar')).not.toBeInTheDocument();
-  expect(container.querySelectorAll('.dashboard-stat')).toHaveLength(3);
 });

@@ -41,7 +41,6 @@ export function useDashboard() {
   const needsTelemetryData = filters.tab === 'telemetry' || filters.tab === 'energy' || filters.tab === 'broadcast';
   const needsStrategyData  = filters.tab === 'tires';
   const needsRadioData     = filters.tab === 'radio';
-  const needsIncidentsData = filters.tab === 'incidents';
   const needsWeatherData   = filters.tab === 'weather';
   const needsLocationData  = filters.tab === 'trackmap';
   const needsPositionsData = filters.tab === 'positions';
@@ -55,7 +54,7 @@ export function useDashboard() {
   const stints        = useStints(needsStrategyData  ? filters.sessionKey : null);
   const pits          = usePits(needsStrategyData     ? filters.sessionKey : null);
   const weather       = useWeather(needsWeatherData   ? filters.sessionKey : null);
-  const raceControl   = useRaceControl(needsIncidentsData ? filters.sessionKey : null);
+  const raceControl   = useRaceControl(filters.sessionKey);
   const teamRadio     = useTeamRadio(needsRadioData   ? filters.sessionKey : null);
   const positions     = usePositions(needsPositionsData ? filters.sessionKey : null);
   const intervals     = useIntervals(needsIntervalsData  ? filters.sessionKey : null);

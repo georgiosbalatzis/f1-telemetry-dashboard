@@ -1,15 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="el">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#181a1c" />
+    <meta name="theme-color" content="#f2eee4" />
     <meta
       name="description"
-      content="f1stories.gr F1 telemetry dashboard with lap-by-lap analysis, comparison charts, and embeddable race coverage."
+      content="F1 Stories Telemetry: ανάλυση γύρου με τηλεμετρία, συγκρίσεις οδηγών και ενσωματώσιμα γραφήματα αγώνων."
     />
     <title>F1 Stories / Telemetry</title>
+    <script>
+      // Mirrors f1StoriesPage/scripts/theme-init.js so the page never flashes the wrong theme.
+      // Order: ?theme= → stored choice (site key, then the app's legacy key) → OS preference → light.
+      (function () {
+        var t = new URLSearchParams(location.search).get('theme');
+        try {
+          if (t !== 'light' && t !== 'dark') t = localStorage.getItem('f1stories-theme') || localStorage.getItem('f1-telemetry-dashboard:theme');
+        } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#181a1c' : '#f2eee4');
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+import { teamColor } from '../../constants/colors';
 import { Map } from 'lucide-react';
 import type { OpenF1Location } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
-import { MAP_W, buildTransform, fitBox, subsample, toPolyline, type MapBox } from './trackMapUtils';
+import { MINI_SECTORS, stretchPolylines, stretchWinners } from './trackDominance';
+import { MAP_W, buildTransform, fitBox, subsample, toPolyline, type MapBox, type SvgPoint } from './trackMapUtils';
 
 type Props = {
   lapNum: number;
@@ -33,9 +35,10 @@ type DriverMarker = {
 };
 
 export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
-  const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
-  const { trackPolyline, driverPaths, driverMarkers, startPt, activeDrivers, box } = useMemo((): {
+  const { driverNums, driverMap, driverDash } = useDriverContext();
+  const { trackPolyline, refPts, driverPaths, driverMarkers, startPt, activeDrivers, box } = useMemo((): {
     trackPolyline: string;
+    refPts: SvgPoint[];
     driverPaths: Partial<Record<number, string>>;
     driverMarkers: Partial<Record<number, DriverMarker>>;
     startPt: { nx: number; ny: number } | null;
@@ -51,6 +54,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
     if (!transform) {
       return {
         trackPolyline: '',
+        refPts: [],
         driverPaths: {} as Partial<Record<number, string>>,
         driverMarkers: {} as Partial<Record<number, DriverMarker>>,
         startPt: null,
@@ -90,8 +94,25 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
       }
     }
 
-    return { trackPolyline: outline, driverPaths: paths, driverMarkers: markers, startPt: first, activeDrivers: active, box: fitBox(allRaw.map(transform), BOX_MARGIN) };
+    return { trackPolyline: outline, refPts: refNorm, driverPaths: paths, driverMarkers: markers, startPt: first, activeDrivers: active, box: fitBox(allRaw.map(transform), BOX_MARGIN) };
   }, [driverMap, driverNums, locationByDriver]);
+  // The map sits on a dark panel, so it uses the raw team colours; a teammate of an earlier driver is lightened to stay distinguishable.
+  const colourOf = useMemo(() => {
+    const seen: string[] = [];
+    const colours: Record<number, string> = {};
+    for (const n of driverNums) {
+      const base = teamColor(driverMap[n]?.team_colour);
+      colours[n] = seen.includes(base) ? `color-mix(in srgb, ${base} 45%, white)` : base;
+      seen.push(base);
+    }
+    return (n: number) => colours[n] ?? 'var(--color-driver-fallback)';
+  }, [driverMap, driverNums]);
+  const winners = useMemo(
+    () => stretchWinners(Object.fromEntries(activeDrivers.map((n) => [n, locationByDriver[n] ?? []]))),
+    [activeDrivers, locationByDriver],
+  );
+  const stretches = useMemo(() => stretchPolylines(refPts), [refPts]);
+  const stretchCounts = useMemo(() => activeDrivers.map((n) => winners.filter((winner) => winner === n).length), [activeDrivers, winners]);
   const svgLabel = useMemo(() => {
     const describedDrivers = (activeDrivers.length > 0 ? activeDrivers : driverNums)
       .map((driverNumber) => driverMap[driverNumber]?.full_name ?? `#${driverNumber}`)
@@ -112,14 +133,14 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
 
   if (locationLoading) {
     return (
-      <Panel title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />} sub="Fetching GPS location data">
+      <Panel lead title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />} sub="Fetching GPS location data">
         <ChartSkeleton label="Fetching GPS location data..." className="h-[260px] sm:h-[360px]" />
       </Panel>
     );
   }
   if (!trackPolyline) {
     return (
-      <Panel title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />}>
         <NoData msg="No location data for this lap. Location data is available for most sessions from 2023 onwards." />
       </Panel>
     );
@@ -127,7 +148,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <Panel
+      <Panel lead
         title={`Track Map — Lap ${lapNum}`}
         icon={<Map size={14} style={{ color: 'var(--accent)' }} />}
         sub={activeDrivers.length >= 2
@@ -136,6 +157,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
         panelId="trackmap-lap-map"
         headerRight={!embedMode && onEmbedPanel ? <EmbedPanelButton onClick={() => onEmbedPanel('trackmap-lap-map')} /> : undefined}
       >
+        <div className="track-panel">
         <div className="relative mx-auto" style={{ aspectRatio: `${box.w} / ${box.h}`, width: `min(100%, ${(MAX_MAP_HEIGHT * box.w) / box.h}px, ${MAP_W}px)` }}>
           <svg
             viewBox={`${box.x} ${box.y} ${box.w} ${box.h}`}
@@ -151,13 +173,16 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
             {/* Centre dashes */}
             <polyline points={trackPolyline} fill="none" stroke="var(--line-strong)" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="8 5" />
 
-            {/* Driver paths */}
-            {activeDrivers.map((n) => (
+            {/* Who was quicker through each stretch (two or more drivers), else each driver's own path */}
+            {winners.length > 0 && stretches.map((points, k) => winners[k] != null && (
+              <polyline key={k} points={points} fill="none" stroke={colourOf(winners[k] as number)} strokeWidth={5} strokeLinejoin="round" />
+            ))}
+            {winners.length === 0 && activeDrivers.map((n) => (
               <polyline
                 key={n}
                 points={driverPaths[n]}
                 fill="none"
-                stroke={driverColor(n)} strokeDasharray={driverDash(n)}
+                stroke={colourOf(n)} strokeDasharray={driverDash(n)}
                 strokeWidth={activeDrivers.length >= 2 ? 2.5 : 3.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -173,7 +198,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
             )}
             {labelledMarkers.map(({ n, marker, stack, flip }) => (
               <span key={n} className="absolute" style={mapPosition(marker, box)}>
-                <span className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--bg)]" style={{ background: driverColor(n) }} />
+                <span className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--bg)]" style={{ background: colourOf(n) }} />
                 <span
                   className="absolute whitespace-nowrap text-[12px] font-medium leading-none text-[color:var(--text-strong)] [text-shadow:0_0_3px_var(--bg),0_0_3px_var(--bg)]"
                   style={{ [flip ? 'right' : 'left']: 9, top: -6 + stack * 14 }}
@@ -190,12 +215,13 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-[color:var(--accent)]" />
             Start / Finish
           </div>
-          {activeDrivers.map((n) => (
+          {activeDrivers.map((n, index) => (
             <div key={n} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.1em] text-[color:var(--text-muted)]">
-              <svg width="32" height="8" aria-hidden="true"><line x1="0" y1="4" x2="32" y2="4" stroke={driverColor(n)} strokeWidth="3" strokeDasharray={driverDash(n)} /></svg>
-              {driverMap[n]?.name_acronym}
+              <svg width="32" height="8" aria-hidden="true"><line x1="0" y1="4" x2="32" y2="4" stroke={colourOf(n)} strokeWidth="3" strokeDasharray={winners.length > 0 ? undefined : driverDash(n)} /></svg>
+              {driverMap[n]?.name_acronym}{winners.length > 0 && ` · ${stretchCounts[index]} / ${MINI_SECTORS}`}
             </div>
           ))}
+        </div>
         </div>
       </Panel>
 
@@ -203,7 +229,7 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
         <div className="text-[10px] uppercase tracking-[0.06em] text-[color:var(--text-dim)]">Data note</div>
         <p className="mt-1 text-[12px] leading-[1.55] text-[color:var(--text-muted)]">
           GPS from OpenF1 <code className="font-mono text-[color:var(--text-soft)]">/location</code> at ~3.7 Hz.
-          Coloured lines show each driver's path for lap {lapNum}. Dot markers show the final recorded position.
+          {winners.length > 0 ? `The line takes the colour of the driver who covered each of ${MINI_SECTORS} equal stretches of lap ${lapNum} in less time.` : `Coloured lines show each driver's path for lap ${lapNum}.`} Dot markers show the final recorded position.
           Use the Telemetry tab for speed traces along the same lap.
         </p>
       </div>

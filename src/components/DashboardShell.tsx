@@ -6,12 +6,23 @@
  * DashboardShell with mock props without any API calls or router state.
  */
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 import type { DashboardData } from '../hooks/useDashboard';
 import type { Tab } from './dashboard/types';
 import { TAB_LABELS } from './dashboard/tabLabels';
 import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardHeader } from './dashboard/DashboardHeader';
+import { SignalBand } from './dashboard/SignalBand';
+import { CardBar } from './dashboard/CardBar';
+import { NextViews } from './dashboard/NextViews';
+import { LapStrip } from './dashboard/LapStrip';
+import { TabLeadContext } from './dashboard/tabLeadContext';
+import { safetyCarLaps } from './dashboard/lapStripUtils';
+import { buildGapCards } from './dashboard/gapCardData';
+import { buildHeadline } from './dashboard/headlines';
+import { SiteFooter } from './dashboard/SiteFooter';
+import { pickNextMeeting } from './dashboard/nextMeeting';
+import { copy } from '../copy';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
@@ -54,8 +65,6 @@ export type DashboardShellProps = {
 
   // ── Computed display values ────────────────────────────────────────────
   embedTitle: string;
-  embedSubtitle: string;
-  embedContext: Array<{ label: string; value: string }>;
   openDashboardUrl: string;
   contentLayoutClass: string;
   pageShellClass: string;
@@ -64,9 +73,7 @@ export type DashboardShellProps = {
   // ── Handlers ───────────────────────────────────────────────────────────
   onPresetNameChange: (name: string) => void;
   onSavePreset: () => void;
-  onShare: () => Promise<void>;
   onShareTab: (tab: Tab) => Promise<void>;
-  onEmbed: () => Promise<void>;
   onEmbedTab: (tab: Tab) => Promise<void>;
   onEmbedPanel: (panelId: string) => Promise<void>;
   onPrint: () => void;
@@ -86,17 +93,13 @@ export function DashboardShell({
   presetNames,
   feedback,
   embedTitle,
-  embedSubtitle,
-  embedContext,
   openDashboardUrl,
   contentLayoutClass,
   pageShellClass,
   tabBoundaryResetKey,
   onPresetNameChange,
   onSavePreset,
-  onShare,
   onShareTab,
-  onEmbed,
   onEmbedTab,
   onEmbedPanel,
   onPrint,
@@ -131,45 +134,70 @@ export function DashboardShell({
     stepLap,
   } = data;
 
+  const gapCards = useMemo(
+    () => buildGapCards(viewModel.lapSummaries, viewModel.sectorRows, viewModel.cornerSplits),
+    [viewModel.cornerSplits, viewModel.lapSummaries, viewModel.sectorRows],
+  );
+  const headline = useMemo(() => buildHeadline(filters.tab, {
+    lapNum: filters.lapNum,
+    driverNums: filters.driverNums,
+    nameOf: (driverNumber) => selectionData.driverMap[driverNumber]?.last_name || selectionData.driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
+    summaries: viewModel.lapSummaries,
+    gapCards,
+    stintsByDriver: viewModel.stintsByDriver,
+    positions: positions.data,
+  }), [filters.driverNums, filters.lapNum, filters.tab, gapCards, positions.data, selectionData.driverMap, viewModel.lapSummaries, viewModel.stintsByDriver]);
+
+  const tabLead = useMemo(() => embedMode ? { kicker: '', cardBar: null, headline } : {
+    kicker: [TAB_LABELS[filters.tab], LAP_TABS.includes(filters.tab) && copy.scope.lapOption(filters.lapNum)].filter(Boolean).join(' · '),
+    cardBar: <CardBar tabLabel={TAB_LABELS[filters.tab]} onShare={() => void onShareTab(filters.tab)} onEmbed={() => void onEmbedTab(filters.tab)} />,
+    headline,
+  }, [embedMode, filters.lapNum, filters.tab, headline, onEmbedTab, onShareTab]);
+
+  const stripDriver = filters.driverNums[0];
+  const stripLaps = selectionData.allLaps[stripDriver];
+  const stripSafetyCar = useMemo(() => safetyCarLaps(raceControl.data, totalLaps ?? 0), [raceControl.data, totalLaps]);
+
+  const nextMeeting = useMemo(() => pickNextMeeting(meetings.data), [meetings.data]);
+
+  const header = (
+    <DashboardHeader
+      presetName={presetName}
+      presetNames={presetNames}
+      splitMode={splitMode}
+      embedMode={embedMode}
+      themeMode={themeMode}
+      openDashboardUrl={openDashboardUrl}
+      heroSubtitle={`${embedTitle} · ${copy.hero.lap(filters.lapNum, totalLaps ?? 0)}`}
+      nextMeeting={nextMeeting}
+      onPresetNameChange={onPresetNameChange}
+      onSavePreset={onSavePreset}
+      onPrint={onPrint}
+      onToggleSplit={onToggleSplit}
+      onToggleTheme={onToggleTheme}
+      onBack={onBack}
+    />
+  );
+
   return (
     <div
       className={[
         'dashboard-app',
-        themeMode === 'light' ? 'theme-light' : 'theme-dark',
         embedMode ? 'embed-mode' : 'min-h-screen',
       ].filter(Boolean).join(' ')}
     >
+      {!embedMode && (
+        <a
+          href="#main-content"
+          className="skip-link"
+        >
+          {copy.skipToContent}
+        </a>
+      )}
+      {!embedMode && header}
+      {!embedMode && <SignalBand loading={anyLoading} feedback={feedback} lapNum={filters.lapNum} totalLaps={totalLaps} drivers={comparisonDrivers} />}
       <div className={pageShellClass}>
-        {!embedMode && (
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 z-50 rounded bg-white px-4 py-2 text-sm font-semibold text-black shadow-lg"
-          >
-            Skip to content
-          </a>
-        )}
-
-        <DashboardHeader
-          loading={anyLoading}
-          presetName={presetName}
-          presetNames={presetNames}
-          feedback={feedback}
-          splitMode={splitMode}
-          embedMode={embedMode}
-          themeMode={themeMode}
-          embedTitle={embedTitle}
-          embedSubtitle={embedSubtitle}
-          embedContext={embedContext}
-          openDashboardUrl={openDashboardUrl}
-          onPresetNameChange={onPresetNameChange}
-          onSavePreset={onSavePreset}
-          onShare={onShare}
-          onEmbed={onEmbed}
-          onPrint={onPrint}
-          onToggleSplit={onToggleSplit}
-          onToggleTheme={onToggleTheme}
-          onBack={onBack}
-        />
+        {embedMode && header}
 
         <main id="main-content" tabIndex={-1}>
           {!embedMode && <>
@@ -194,18 +222,28 @@ export function DashboardShell({
             onSessionChange={filters.handleSessionChange}
             onLapChange={filters.setLapNum}
             onStepLap={stepLap}
-          />
-
-          {meetings.error   && <Err msg={`Failed to load calendar: ${meetings.error}`}   onAction={meetings.refetch} />}
-          {sessions.error   && <Err msg={`Failed to load sessions: ${sessions.error}`}   onAction={sessions.refetch} />}
-          {drivers.error    && <Err msg={`Failed to load drivers: ${drivers.error}`}     onAction={drivers.refetch} />}
-
-          <DriverSelector
+          >
+            <DriverSelector
               drivers={selectionData.driverList}
               selectedDrivers={filters.driverNums}
               embedMode={embedMode}
               onToggle={filters.toggleDriver}
             />
+          </DashboardSelectors>
+
+          {meetings.error   && <Err msg={`Failed to load calendar: ${meetings.error}`}   onAction={meetings.refetch} />}
+          {sessions.error   && <Err msg={`Failed to load sessions: ${sessions.error}`}   onAction={sessions.refetch} />}
+          {drivers.error    && <Err msg={`Failed to load drivers: ${drivers.error}`}     onAction={drivers.refetch} />}
+
+
+
+          <LapStrip
+            driverName={selectionData.driverMap[stripDriver]?.name_acronym || `#${stripDriver}`}
+            laps={stripLaps ?? []}
+            safetyCar={stripSafetyCar}
+            lapNum={filters.lapNum}
+            onSelect={filters.setLapNum}
+          />
 
           <DashboardTabs
             activeTab={filters.tab}
@@ -217,19 +255,17 @@ export function DashboardShell({
 
           </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
-            {comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
-              <section className="dashboard-panel mb-4 text-sm" aria-label="Comparison data status">
-                <p role="status">{comparisonDrivers.filter((driver) => driver.status === 'Loaded').length} of {comparisonDrivers.length} drivers loaded</p>
-                <ul className="mt-2 text-[color:var(--text-muted)]">
-                  {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
-                    <li key={driver.driverNumber} className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      <span>{driver.name} — {driver.status}</span>
-                      {driver.retry && <button className="text-action" onClick={driver.retry}>Retry {driver.name}</button>}
-                    </li>
-                  ))}
-                </ul>
-              </section>
+            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
+              <p className="embed-partial" role="status">
+                {copy.band.partial(comparisonDrivers.filter((driver) => driver.status === 'Loaded').length, comparisonDrivers.length)}
+                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
+                  <span key={driver.driverNumber} title={driver.status}>
+                    {' · '}{driver.retry ? <button className="signal-retry" onClick={driver.retry}>{copy.band.retry(driver.name)}</button> : driver.name}
+                  </span>
+                ))}
+              </p>
             )}
+            <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
                 <TelemetryTab
@@ -245,6 +281,8 @@ export function DashboardShell({
                   lapTimeData={viewModel.lapTimeData}
                   lapDeltaData={viewModel.lapDeltaData}
                   lapSummaries={viewModel.lapSummaries}
+                  gapCards={gapCards}
+                  sessionTitle={embedTitle}
                   embedMode={embedMode}
                   onEmbedPanel={onEmbedPanel}
                   onTelemetryRetry={primaryTelemetry?.refetch}
@@ -355,21 +393,26 @@ export function DashboardShell({
                     lapsLoading={lapsLoading}
                     sectorRows={viewModel.sectorRows}
                     lapSummaries={viewModel.lapSummaries}
+                    gapCards={gapCards}
+                    sessionTitle={embedTitle}
                     embedMode={embedMode}
                     onEmbedPanel={onEmbedPanel}
                   />
                 </Suspense>
               )}
             </div>
+            </TabLeadContext.Provider>
           </ErrorBoundary>
+          {!embedMode && <NextViews activeTab={filters.tab} onChange={filters.setTab} />}
         </main>
-        <footer className="page-footer"><a href="https://f1stories.gr/">F1 STORIES.</a><span>Race analysis · Data by <a href="https://openf1.org/" target="_blank" rel="noreferrer">OpenF1 ↗</a></span></footer>
       </div>
+      {!embedMode && <SiteFooter />}
     </div>
   );
 }
 
 // ─── Year options constant (computed once at module load) ─────────────────────
+const LAP_TABS: Tab[] = ['telemetry', 'energy', 'trackmap', 'broadcast'];
 const YEAR_OPTIONS = Array.from(
   { length: new Date().getFullYear() - 2022 },
   (_, index) => 2023 + index,

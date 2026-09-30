@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Gauge } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Interval } from '../../api/openf1';
+import { teamColor } from '../../constants/colors';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Panel, Stat } from './shared';
 import { ChartPanel } from './ChartPanel';
@@ -96,7 +97,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   if (intervalsLoading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <Panel
+        <Panel lead
           title="Current Gaps"
           icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest interval samples"
@@ -120,7 +121,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   }
   if (!intervals || intervals.length === 0) {
     return (
-      <Panel title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
         <NoData msg="No interval data for this session. Interval data is available for race and sprint race sessions." />
       </Panel>
     );
@@ -128,62 +129,8 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
 
   return (
     <PanelSelection embedMode={embedMode}>
-      {/* Current gaps */}
-      {latestGaps.length > 0 && (
-        <div className="lap-comparison">
-          {latestGaps.slice(0, 8).map((entry) => {
-            const color = driverColor(entry.driver_number);
-            const gap = entry.gap_to_leader;
-            const interval = entry.interval;
-            return (
-              <div
-                key={entry.driver_number}
-                className="interval-summary"
-              >
-                <div className="mb-1 flex items-center gap-[6px] text-[10px] uppercase tracking-[0.06em] text-[color:var(--text)]">
-                  <i className="driver-marker" style={{ background: color }} />
-                  {driverMap[entry.driver_number]?.name_acronym ?? `#${entry.driver_number}`}
-                </div>
-                <div className="timing-value">
-                  {gap != null && gap > 0 ? `+${gap.toFixed(3)}s` : gap === 0 ? 'Leader' : '—'}
-                </div>
-                {interval != null && interval >= 0 && (
-                  <div
-                    className="mt-1 text-[10px] font-mono"
-                    style={{ color: interval <= DRS_DETECTION_WINDOW_S ? 'var(--accent)' : 'var(--text-dim)' }}
-                  >
-                    {interval <= DRS_DETECTION_WINDOW_S ? '● DRS ' : ''}+{interval.toFixed(3)}s ahead
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* DRS battle summary */}
-      {drsWindows.some((w) => w.drsCount > 0) && (
-        <Panel
-          title="DRS Window Time"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
-          sub={`Proportion of session where each driver was within ${DRS_DETECTION_WINDOW_S}s of the car ahead`}
-        >
-          <div className="lap-comparison">
-            {drsWindows.map(({ driverNum, drsCount, pct }) => (
-              <Stat
-                key={driverNum}
-                label={driverMap[driverNum]?.name_acronym ?? `#${driverNum}`}
-                value={`${pct}%`}
-                unit={`${drsCount} samples`}
-                markerColor={driverColor(driverNum)}
-              />
-            ))}
-          </div>
-        </Panel>
-      )}
-
       {/* Gap to leader chart */}
-      <ChartPanel
+      <ChartPanel lead
         title="Gap to Leader"
         icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — gaps capped at ${MAX_GAP_DISPLAY}s`}
@@ -193,6 +140,27 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
+        {latestGaps.length > 0 && (
+          <div className="overflow-x-auto mb-6" tabIndex={0} role="region" aria-label="Current gaps, scroll horizontally for all columns">
+            <table className="data-table">
+              <thead><tr><th>Driver</th><th>Gap to leader</th><th>To car ahead</th><th>DRS</th></tr></thead>
+              <tbody>{latestGaps.map((entry) => {
+                const gap = entry.gap_to_leader;
+                const interval = entry.interval;
+                const isLeader = gap === 0; // the leader has no car ahead
+                const inDrs = !isLeader && interval != null && interval >= 0 && interval <= DRS_DETECTION_WINDOW_S;
+                return (
+                  <tr key={entry.driver_number} className="interval-summary" style={{ ['--row-color' as string]: teamColor(driverMap[entry.driver_number]?.team_colour) }}>
+                    <td>{driverMap[entry.driver_number]?.name_acronym ?? `#${entry.driver_number}`}</td>
+                    <td className="total">{gap != null && gap > 0 ? `+${gap.toFixed(3)}s` : gap === 0 ? 'Leader' : '—'}</td>
+                    <td>{!isLeader && interval != null && interval >= 0 ? `+${interval.toFixed(3)}s` : '—'}</td>
+                    <td style={{ color: inDrs ? 'var(--accent)' : undefined }}>{inDrs ? '● DRS' : '—'}</td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
+        )}
         {chartData.length > 0 ? (
           <div className="h-[200px] sm:h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -220,6 +188,27 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
           </div>
         ) : <NoData msg="Not enough interval data for the selected drivers." />}
       </ChartPanel>
+
+      {/* DRS battle summary */}
+      {drsWindows.some((w) => w.drsCount > 0) && (
+        <Panel
+          title="DRS Window Time"
+          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
+          sub={`Proportion of session where each driver was within ${DRS_DETECTION_WINDOW_S}s of the car ahead`}
+        >
+          <div className="lap-comparison">
+            {drsWindows.map(({ driverNum, drsCount, pct }) => (
+              <Stat
+                key={driverNum}
+                label={driverMap[driverNum]?.name_acronym ?? `#${driverNum}`}
+                value={`${pct}%`}
+                unit={`${drsCount} samples`}
+                markerColor={driverColor(driverNum)}
+              />
+            ))}
+          </div>
+        </Panel>
+      )}
 
       {/* Interval to car ahead chart */}
       <ChartPanel

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C — Pit Wall</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  html, body { background: var(--charcoal); color: var(--cream); }
+  body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 111px, #ffffff06 111px 112px); pointer-events: none; }
+  .nav { background: #1b1d1f; border-color: var(--charcoal-rule); }
+  .moon { box-shadow: inset -5px -3px 0 0 var(--cream); }
+  .nav-count { border-color: var(--charcoal-rule); }
+  .wrap.wide { max-width: 1440px; padding: 0 32px; }
+  .muted { color: var(--cream-2); }
+  .k2 { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #8d8f89; }
+
+  .cmd { display: flex; align-items: end; gap: 28px; padding: 26px 0 18px; border-bottom: 1px solid var(--charcoal-rule); position: relative; }
+  .cmd h1 { font: 700 64px/.85 var(--font-brand); text-transform: uppercase; margin: 8px 0 0; letter-spacing: -.01em; }
+  .cmd .sel { display: flex; gap: 0; margin-left: auto; border: 1px solid var(--charcoal-rule); }
+  .cmd .sel div { padding: 8px 16px; border-right: 1px solid var(--charcoal-rule); min-width: 120px; }
+  .cmd .sel div:last-child { border: 0; }
+  .cmd .sel b { display: block; font-size: 15px; font-weight: 500; }
+  .cmd .acts { display: flex; gap: 8px; }
+  .ico { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--charcoal-rule); font-size: 14px; color: var(--cream-2); }
+  .live { display: inline-flex; align-items: center; gap: 8px; color: var(--signal); }
+  .live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); }
+
+  .scrub { position: relative; padding: 14px 0 10px; border-bottom: 1px solid var(--charcoal-rule); }
+  .scrub .head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .laps { display: flex; align-items: end; gap: 2px; height: 54px; }
+  .laps i { flex: 1; background: #47494a; }
+  .laps i.sc { background: #d9b76f55; }
+  .laps i.on { background: var(--signal); }
+  .laps i.pit { background: #6c6e6a; }
+  .lapaxis { display: flex; justify-content: space-between; font-size: 10px; color: #8d8f89; margin-top: 4px; }
+
+  .grid { display: grid; grid-template-columns: 290px 1fr 340px; min-height: 900px; }
+  .col { border-right: 1px solid var(--charcoal-rule); padding: 18px 20px 20px 0; }
+  .col.c { padding: 0 24px 24px; }
+  .col.r { border: 0; padding: 18px 0 0 24px; }
+  .tower-h { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid var(--cream); }
+  .t-row { display: grid; grid-template-columns: 30px 3px 44px 1fr 18px; gap: 10px; align-items: center; height: 38px; border-bottom: 1px solid #2f3133; font-size: 13px; }
+  .t-row .p { font-weight: 600; color: #8d8f89; text-align: right; }
+  .t-row .c { align-self: stretch; margin: 8px 0; }
+  .t-row .g { text-align: right; color: var(--cream-2); font-size: 12px; }
+  .t-row .box { width: 14px; height: 14px; border: 1px solid #6c6e6a; }
+  .t-row.sel { background: #ffffff08; } .t-row.sel .p { color: var(--cream); } .t-row.sel .box { background: var(--signal); border-color: var(--signal); }
+  .t-row.lead .p { color: var(--signal); }
+
+  .mods { display: flex; gap: 22px; border-bottom: 1px solid var(--charcoal-rule); margin: 0 -24px 0; padding: 0 24px; }
+  .mods a { white-space: nowrap; padding: 16px 0 14px; font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #8d8f89; position: relative; }
+  .mods a.on { color: var(--cream); } .mods a.on::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--teal); }
+  .mods .x { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .stack-h { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 0 6px; }
+  .stack-h b { font-size: 12px; letter-spacing: .12em; }
+  .legend { display: flex; gap: 18px; font-size: 12px; font-weight: 600; letter-spacing: .08em; }
+  .legend i { display: inline-block; width: 18px; height: 3px; margin-right: 6px; vertical-align: middle; }
+  .strip { border-top: 1px solid #2f3133; }
+
+  .gapcard { border: 1px solid var(--charcoal-rule); border-top: 2px solid var(--teal); background: var(--charcoal-2); padding: 22px 22px 18px; margin-top: 20px; }
+  .gapcard .n { font: 500 64px/1 var(--font-body); letter-spacing: -.04em; margin: 12px 0 4px; } .gapcard .n .p { color: var(--teal); } .gapcard .n small { font-size: 22px; color: #8d8f89; }
+  .secs { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 14px; border-top: 1px solid var(--charcoal-rule); }
+  .secs div { padding: 12px 0 0 12px; border-right: 1px solid var(--charcoal-rule); } .secs div:first-child { padding-left: 0; } .secs div:last-child { border: 0; }
+  .secs b { display: block; font-size: 15px; } .secs .f { color: #c29bea; } .secs .g { color: #70bd91; }
+  .mini { display: grid; grid-template-columns: 1fr 1fr; margin-top: 20px; border-top: 2px solid var(--cream); }
+  .mini div { padding: 12px 0; border-bottom: 1px solid #2f3133; }
+  .mini b { display: block; font-size: 22px; font-weight: 500; }
+  .rc { margin-top: 20px; } .rc div { display: grid; grid-template-columns: 48px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid #2f3133; font-size: 12px; }
+  .rc span { font-weight: 600; letter-spacing: .08em; border-left: 3px solid; padding-left: 6px; }
+  .foot { background: #121315; }
+  .mobile-only { display: none; }
+
+  @media (max-width: 700px) {
+    .wrap.wide { padding: 0 16px; }
+    .cmd { flex-wrap: wrap; gap: 14px; padding: 18px 0 14px; } .cmd h1 { font-size: 44px; } .cmd .acts { display: none; }
+    .cmd .sel { margin: 0; width: 100%; } .cmd .sel div { min-width: 0; flex: 1; padding: 6px 10px; } .cmd .sel b { font-size: 13px; }
+    .grid { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    .col { border: 0; padding: 0; } .col.l { order: 0; } .col.c { padding: 0; order: 1; } .col.r { padding: 0 0 24px; order: 2; }
+    .tower-h, .t-row:not(.sel) { display: none; }
+    .col.l { display: flex; gap: 8px; padding: 12px 0; overflow-x: auto; border-bottom: 1px solid var(--charcoal-rule); }
+    .t-row.sel { display: flex; height: 38px; padding: 0 10px; gap: 8px; border: 1px solid var(--charcoal-rule); } .t-row .g, .t-row .box, .t-row .p { display: none; } .t-row .c { width: 3px; height: 16px; margin: 0; }
+    .mobile-only { display: flex; } .add { align-items: center; padding: 0 12px; border: 1px dashed #6c6e6a; font-size: 12px; white-space: nowrap; color: var(--cream-2); }
+    .mods { margin: 0 -16px; padding: 0 16px; overflow-x: auto; gap: 20px; } .mods .x { display: none; } .mods a { white-space: nowrap; }
+    .scrub { position: sticky; bottom: 0; order: 9; background: var(--charcoal); z-index: 5; }
+    .laps { height: 34px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap wide">
+  <a class="nav-brand" href="#"><img src="../../../public/logo192.png" alt="">F1 STORIES<b>.</b></a>
+  <div class="nav-links"><a>Αρχική</a><a>Άρθρα</a><a>YouTube</a><a>Βαθμολογία</a><a>Δεδομένα</a><a class="on">Tech Desk</a><a>BetCast</a></div>
+  <div class="nav-right"><div class="nav-count">🏁 Bahrain GP in Malay…<b>4d 0h 34m</b></div><span class="moon"></span><span class="burger" style="border-color:var(--charcoal-rule)"></span></div>
+</div></nav>
+
+<div class="wrap wide">
+  <section class="cmd">
+    <div><div class="k2"><span class="live">OpenF1</span> &nbsp;· 2026 · R15</div><h1>Baku GP<span class="dot">.</span></h1></div>
+    <div class="sel"><div><span class="k2">Σεζόν</span><b>2026 ▾</b></div><div><span class="k2">Grand Prix</span><b>Baku ▾</b></div><div><span class="k2">Συνεδρία</span><b>Race ▾</b></div><div><span class="k2">Γύρος</span><b>‹ 49 ›</b></div></div>
+    <div class="acts"><span class="ico">↗</span><span class="ico">&lt;/&gt;</span><span class="ico">⤢</span></div>
+  </section>
+
+  <section class="scrub" id="scrub">
+    <div class="head"><span class="k2">Χρόνοι γύρου · RUS</span><span class="k2"><span style="color:#d9b76f">■</span> Safety car 30–36 &nbsp; <span style="color:var(--signal)">■</span> Γύρος 49</span></div>
+    <div class="laps" id="laps"></div>
+    <div class="lapaxis"><span>L1</span><span>L10</span><span>L20</span><span>L30</span><span>L40</span><span>L51</span></div>
+  </section>
+
+  <div class="grid">
+    <aside class="col l">
+      <div class="tower-h"><span class="k2" style="color:var(--cream)">Κατάταξη · L49</span><span class="k2">Επιλογή 2/4</span></div>
+      <div id="tower"></div>
+      <span class="add mobile-only">+ Οδηγός</span>
+    </aside>
+
+    <main class="col c">
+      <nav class="mods"><a class="on">SPEED</a><a>ENERGY</a><a>TRACK</a><a>POSITIONS</a><a>STRATEGY</a><a>RADIO</a><a>RACE CONTROL</a><span class="x"><span class="ico">⇩</span><span class="ico">&lt;/&gt;</span></span></nav>
+      <div class="stack-h"><b>ΤΑΧΥΤΗΤΑ · KM/H</b><span class="legend"><span><i style="background:var(--rus-dark)"></i>RUS</span><span><i style="background:var(--ver-dark)"></i>VER</span></span></div>
+      <div id="c-speed"></div>
+      <div class="stack-h strip"><b>Δ ΤΑΧΥΤΗΤΑΣ</b><span class="k2">RUS − VER</span></div>
+      <div id="c-delta"></div>
+      <div class="stack-h strip"><b>ΓΚΑΖΙ</b><span class="k2">%</span></div>
+      <div id="c-thr"></div>
+      <div class="stack-h strip"><b>ΦΡΕΝΟ</b><span class="k2">%</span></div>
+      <div id="c-brk"></div>
+    </main>
+
+    <aside class="col r">
+      <div class="k2" style="color:var(--cream)">Θέση στην πίστα · L49 · 62%</div>
+      <div id="c-map" style="margin-top:10px"></div>
+      <div class="gapcard">
+        <div class="k2">VER · Απόσταση από RUS</div>
+        <div class="n"><span class="p">+</span>0.104<small>s</small></div>
+        <div class="muted" style="font-size:12px">1:45.020 vs 1:44.916 · top 333 / 326</div>
+        <div class="secs"><div><span class="k2">S1</span><b>+0.113</b></div><div><span class="k2">S2</span><b>+0.445</b></div><div><span class="k2">S3</span><b class="f">−0.454</b></div></div>
+      </div>
+      <div class="mini"><div><span class="k2">Πίστα</span><b>41.2°</b></div><div><span class="k2">Αέρας</span><b>27.8°</b></div><div><span class="k2">Υγρασία</span><b>48%</b></div><div><span class="k2">Άνεμος</span><b>3.1 m/s</b></div></div>
+      <div class="rc"><div class="k2" style="padding-bottom:6px;border-bottom:2px solid var(--cream);display:block;color:var(--cream)">Race control</div>
+        <div><span style="color:#70bd91">L37</span>Green flag · Track clear</div><div><span style="color:#d9b76f">L30</span>Safety car deployed · T15</div><div><span style="color:#f17b75">L29</span>Car 18 stopped · T15</div></div>
+    </aside>
+  </div>
+</div>
+<footer class="foot"><div class="wrap wide"><div class="brandline"><b>F1 STORIES<span class="dot">.</span></b><span>Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.</span></div></div></footer>
+
+<script src="mock.js"></script>
+<script>
+  const m = innerWidth < 700;
+  const TEAM = { MER: '#27f4d2', RBR: '#3671c6', FER: '#e8002d', MCL: '#ff8000', AST: '#229971', ALP: '#0093cc', WIL: '#64c4ff', RB: '#6692ff', SAU: '#c92d4b', HAA: '#b6babd', CAD: '#c0c0c0' };
+  const tower = [['RUS', 'MER', 'LEADER'], ['VER', 'RBR', '+1.842'], ['ANT', 'MER', '+4.310'], ['LEC', 'FER', '+6.905'], ['NOR', 'MCL', '+9.114'], ['HAM', 'FER', '+11.62'], ['PIA', 'MCL', '+13.08'], ['SAI', 'WIL', '+19.44'], ['ALO', 'AST', '+22.71'], ['HAD', 'RBR', '+24.03'], ['GAS', 'ALP', '+27.55'], ['LAW', 'RB', '+30.12'], ['HUL', 'SAU', '+31.90'], ['ALB', 'WIL', '+33.47'], ['OCO', 'HAA', '+38.06'], ['BEA', 'HAA', '+41.29'], ['LIN', 'RB', '+44.83'], ['BOR', 'SAU', '+49.17'], ['PER', 'CAD', '+1 LAP'], ['BOT', 'CAD', '+1 LAP']];
+  document.getElementById('tower').innerHTML = tower.map(([c, t, g], i) => `<div class="t-row ${i < 2 ? 'sel' : ''} ${i === 0 ? 'lead' : ''}"><span class="p">${String(i + 1).padStart(2, '0')}</span><i class="c" style="background:${TEAM[t]}"></i><b>${c}</b><span class="g">${g}</span><span class="box"></span></div>`).join('');
+  const lt = MOCK.LAPTIMES, lo = Math.min(...lt), hi = Math.max(...lt);
+  document.getElementById('laps').innerHTML = lt.map((t, i) => `<i class="${i + 1 === 49 ? 'on' : i + 1 >= 30 && i + 1 <= 36 ? 'sc' : i + 1 === 17 ? 'pit' : ''}" style="height:${18 + (1 - (t - lo) / (hi - lo)) * 82}%"></i>`).join('');
+  const dark = { theme: 'dark' }, ct = MOCK.cornerTicks(m ? 3 : 1), W = 'var(--rus-dark)', V = 'var(--ver-dark)';
+  MOCK.chart(document.getElementById('c-speed'), { ...dark, height: m ? 230 : 330, yMin: 60, yMax: 350, yTicks: [100, 200, 300], xTicks: ct,
+    markers: [{ x: .62, color: '#ed4c32', label: 'L49 · 62%' }],
+    series: [{ data: MOCK.B, color: V }, { data: MOCK.A, color: W, dash: '6 3' }] });
+  MOCK.chart(document.getElementById('c-delta'), { ...dark, height: 100, yMin: -40, yMax: 40, yTicks: [-30, 0, 30], zero: 0,
+    series: [{ data: MOCK.DELTA, color: '#6ec6bb', width: 1.5, area: '#6ec6bb22', areaBase: 0 }] });
+  MOCK.chart(document.getElementById('c-thr'), { ...dark, height: 80, yMin: 0, yMax: 105, yTicks: [0, 100],
+    series: [{ data: MOCK.PB.map((p) => p.thr), color: V, width: 1.5 }, { data: MOCK.PA.map((p) => p.thr), color: W, width: 1.5, dash: '5 3' }] });
+  MOCK.chart(document.getElementById('c-brk'), { ...dark, height: m ? 90 : 96, yMin: 0, yMax: 105, yTicks: [0, 100], xTicks: ct,
+    series: [{ data: MOCK.PB.map((p) => p.brk), color: V, width: 1.5 }, { data: MOCK.PA.map((p) => p.brk), color: W, width: 1.5, dash: '5 3' }] });
+  MOCK.trackMap(document.getElementById('c-map'), { dark: true });
+</script>
+</body>
+</html>

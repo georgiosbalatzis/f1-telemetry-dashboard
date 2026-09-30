@@ -33,7 +33,8 @@ type SavedPreset = {
 // ─── Storage keys ─────────────────────────────────────────────────────────────
 
 const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
-const THEME_STORAGE_KEY  = 'f1-telemetry-dashboard:theme';
+const THEME_STORAGE_KEY  = 'f1stories-theme'; // same key as f1stories.gr (theme-init.js)
+const LEGACY_THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
 
 // ─── One-time readers (called as useState initialisers) ───────────────────────
 
@@ -53,14 +54,15 @@ function normalizeThemeMode(value: string | null | undefined): ThemeMode | null 
 }
 
 function readInitialThemeMode(): ThemeMode {
-  if (typeof window === 'undefined') return 'dark';
+  // Same order as the inline script in index.html: ?theme=, stored choice, OS preference, light paper.
+  if (typeof window === 'undefined') return 'light';
   const fromQuery = normalizeThemeMode(new URLSearchParams(window.location.search).get('theme'));
   if (fromQuery) return fromQuery;
   try {
-    const fromStorage = normalizeThemeMode(window.localStorage.getItem(THEME_STORAGE_KEY));
+    const fromStorage = normalizeThemeMode(window.localStorage.getItem(THEME_STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_THEME_STORAGE_KEY));
     if (fromStorage) return fromStorage;
   } catch { /* storage unavailable */ }
-  return 'dark';
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 function readSavedPresets(): Record<string, SavedPreset> {
@@ -77,7 +79,7 @@ function buildDashboardUrl(
   snapshot: DashboardFilterSnapshot,
   splitMode: boolean,
   embedMode = false,
-  themeMode: ThemeMode = 'dark',
+  themeMode: ThemeMode = 'light',
   anchorId?: string,
 ) {
   if (typeof window === 'undefined') return '';
@@ -90,7 +92,7 @@ function buildDashboardUrl(
   params.set('tab', snapshot.tab);
   if (splitMode) params.set('layout', 'split');
   if (embedMode) params.set('embed', '1');
-  if (themeMode === 'light') params.set('theme', 'light');
+  params.set('theme', themeMode);
   const query = params.toString();
   const hash  = anchorId ? `#${anchorId}` : window.location.hash;
   return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${hash}`;
@@ -180,20 +182,6 @@ export function DashboardContainer() {
     return parts.length > 0 ? parts.join(' · ') : 'F1 Telemetry Embed';
   }, [filters.circuit, sessionLabel]);
 
-  const embedSubtitle = useMemo(
-    () => `${filters.year} season · ${TAB_LABELS[filters.tab]} view`,
-    [filters.tab, filters.year],
-  );
-
-  const embedContext = useMemo(
-    () => [
-      { label: 'Lap',     value: `L${filters.lapNum}` },
-      { label: 'Drivers', value: `${filters.driverNums.length}/4` },
-      { label: 'View',    value: TAB_LABELS[filters.tab] },
-    ],
-    [filters.driverNums.length, filters.lapNum, filters.tab],
-  );
-
   const openDashboardUrl = useMemo(
     () => buildDashboardUrl(filters.snapshot, splitMode, false, themeMode),
     [filters.snapshot, splitMode, themeMode],
@@ -244,16 +232,13 @@ export function DashboardContainer() {
     return () => window.clearTimeout(id);
   }, [feedback]);
 
-  // Apply theme class + meta theme-color
+  // Apply theme attribute + meta theme-color
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const root = window.document.documentElement;
-    root.classList.toggle('theme-light', themeMode === 'light');
-    root.classList.toggle('theme-dark',  themeMode === 'dark');
+    root.setAttribute('data-theme', themeMode);
     const themeColor = themeMode === 'light' ? COLORS.fallback.iframeLight : COLORS.fallback.iframeDark;
     window.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
-    try { window.localStorage.setItem(THEME_STORAGE_KEY, themeMode); }
-    catch { /* storage unavailable */ }
   }, [themeMode]);
 
   // ── Handlers ───────────────────────────────────────────────────────────
@@ -321,9 +306,7 @@ export function DashboardContainer() {
     setFeedback(clipboardError ?? `${label} ready`);
   }, [splitMode, themeMode]);
 
-  const handleShare    = useCallback(async () => shareSnapshot(filters.snapshot, 'Share link'), [filters.snapshot, shareSnapshot]);
   const handleShareTab = useCallback(async (tab: Tab) => shareSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} link`), [filters.snapshot, shareSnapshot]);
-  const handleEmbed    = useCallback(async () => embedSnapshot(filters.snapshot, 'Embed code'), [embedSnapshot, filters.snapshot]);
   const handleEmbedTab = useCallback(async (tab: Tab) => embedSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} embed`), [embedSnapshot, filters.snapshot]);
 
   const handleEmbedPanel = useCallback(async (panelId: string) => {
@@ -342,7 +325,12 @@ export function DashboardContainer() {
 
   const handlePrint       = useCallback(() => { setFeedback('Opening print dialog'); window.print(); }, []);
   const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled'); }, [splitMode]);
-  const handleToggleTheme = useCallback(() => setThemeMode((mode) => (mode === 'light' ? 'dark' : 'light')), []);
+  const handleToggleTheme = useCallback(() => {
+    const next = themeMode === 'light' ? 'dark' : 'light';
+    setThemeMode(next);
+    try { window.localStorage.setItem(THEME_STORAGE_KEY, next); } // only an explicit choice is stored, so the OS preference keeps applying until then
+    catch { /* storage unavailable */ }
+  }, [themeMode]);
   const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback('No previous page in history'); } }, []);
 
   // ── Driver context value (shared with all tab components via DriverProvider) ─
@@ -370,17 +358,13 @@ export function DashboardContainer() {
       presetNames={presetNames}
       feedback={feedback}
       embedTitle={embedTitle}
-      embedSubtitle={embedSubtitle}
-      embedContext={embedContext}
       openDashboardUrl={openDashboardUrl}
       contentLayoutClass={contentLayoutClass}
       pageShellClass={pageShellClass}
       tabBoundaryResetKey={tabBoundaryResetKey}
       onPresetNameChange={handlePresetNameChange}
       onSavePreset={handleSavePreset}
-      onShare={handleShare}
       onShareTab={handleShareTab}
-      onEmbed={handleEmbed}
       onEmbedTab={handleEmbedTab}
       onEmbedPanel={handleEmbedPanel}
       onPrint={handlePrint}

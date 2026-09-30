@@ -55,7 +55,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   if (positionsLoading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <Panel
+        <Panel lead
           title="Current Standings"
           icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest recorded positions"
@@ -79,7 +79,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   }
   if (!positions || positions.length === 0) {
     return (
-      <Panel title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
         <NoData msg="No position data for this session. Race positions are available for race and sprint sessions." />
       </Panel>
     );
@@ -88,7 +88,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   return (
     <PanelSelection embedMode={embedMode}>
       {/* Position history chart */}
-      <ChartPanel
+      <ChartPanel lead
         title="Position History"
         icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — position over the session`}
@@ -138,21 +138,22 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
         icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
         sub={`Latest recorded positions · ${driverCount} drivers`}
       >
-        <div className="standings-list">
-          {positionTable.map((entry) => {
-            const driver = driverMap[entry.driver_number];
-            const color = teamColor(driver?.team_colour);
-            return (
-              <div
-                key={entry.driver_number}
-                className="standing-row"
-              >
-                <span>{entry.position}</span>
-                <strong className="standing-driver"><i className="driver-marker" style={{ background: color }} />{driver?.name_acronym ?? `#${entry.driver_number}`}</strong>
-                <small>{driver?.team_name ?? ''}</small>
-              </div>
-            );
-          })}
+        <div className="standings-tables">
+          {[positionTable.slice(0, Math.ceil(positionTable.length / 2)), positionTable.slice(Math.ceil(positionTable.length / 2))].filter((rows) => rows.length > 0).map((rows, index) => (
+            <table key={index} className="data-table" style={{ minWidth: 0 }}>
+              <thead><tr><th className="left">P</th><th className="left">Driver</th><th className="left">Team</th></tr></thead>
+              <tbody>{rows.map((entry) => {
+                const driver = driverMap[entry.driver_number];
+                return (
+                  <tr key={entry.driver_number} className="standing-row" style={{ ['--row-color' as string]: teamColor(driver?.team_colour) }}>
+                    <td className="pos">{entry.position}</td>
+                    <td className="left"><b>{driver?.name_acronym ?? `#${entry.driver_number}`}</b> <span className="muted">{driver?.last_name ?? ''}</span></td>
+                    <td className="left muted">{driver?.team_name ?? ''}</td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          ))}
         </div>
       </Panel>
 

@@ -3,6 +3,7 @@ import { Headphones } from 'lucide-react';
 import type { OpenF1TeamRadio } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { Err, NoData, Panel, Spinner } from './shared';
+import { copy } from '../../copy';
 import { CLOCK_ZONE_NOTE, fmtClock } from './utils';
 
 type Props = {
@@ -31,13 +32,14 @@ export function RadioTab({ loading, error, messages, onRetry }: Props) {
   );
 
   return (
-    <Panel title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : radioMessages.length > 0 ? (
         <div className="radio-list">
-          {radioMessages.map((message) => (
-            <article key={message.key} className="radio-entry">
-              <div><strong><i className="driver-marker" style={{ background: message.teamColor }} />{message.driverLabel}</strong><time className="clock-time" dateTime={message.date}>{message.timeLabel}</time></div>
-              <a href={message.recordingUrl} target="_blank" rel="noopener noreferrer" aria-label={`Listen to ${message.driverLabel} at ${message.timeLabel}`}>Listen to recording ↗</a>
+          {radioMessages.map((message, index) => (
+            <article key={message.key} className="radio-entry" style={{ ['--row-color' as string]: message.teamColor }}>
+              <span className="radio-num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              <div><strong>{message.driverLabel}</strong><time className="clock-time" dateTime={message.date}>{message.timeLabel}</time></div>
+              <a href={message.recordingUrl} target="_blank" rel="noopener noreferrer" aria-label={copy.radio.listenAria(message.driverLabel, message.timeLabel)}>{copy.radio.listen} ↗</a>
             </article>
           ))}
         </div>

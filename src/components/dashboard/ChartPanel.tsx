@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Download, Expand, Shrink } from 'lucide-react';
 import { COLORS } from '../../constants/colors';
+import { copy } from '../../copy';
 import { exportChartAsSvg, sanitizeFilename, stackChartSvgs, type ExportChartLegendItem } from '../../utils/exportChart';
 import { EmbedPanelButton, Panel, ToolbarButton } from './shared';
+import { TabLeadContext } from './tabLeadContext';
 import { cn } from './utils';
 
 export type ChartLegendItem = ExportChartLegendItem;
@@ -18,6 +20,8 @@ type Props = {
   legend?: ChartLegendItem[];
   panelId?: string;
   embedMode?: boolean;
+  lead?: boolean;
+  source?: string;
   onEmbedPanel?: (panelId: string) => void;
 };
 
@@ -32,11 +36,16 @@ export function ChartPanel({
   legend = [],
   panelId,
   embedMode = false,
+  lead = false,
+  source = copy.chart.source,
   onEmbedPanel,
 }: Props) {
   const frameRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<HTMLDivElement | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const headline = useContext(TabLeadContext)?.headline;
+  // Screen readers get what the chart says (its headline or caption), not just that a chart exists.
+  const chartSummary = lead && headline ? `${headline.title}. ${headline.lede}` : sub ? `${title}. ${sub}` : title;
 
   useEffect(() => {
     const onFullscreenChange = () => {
@@ -76,40 +85,44 @@ export function ChartPanel({
   const actions = !embedMode && (
     <div className="dashboard-chart-actions">
       {headerRight}
-      {panelId && onEmbedPanel && (
-        <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />
-      )}
-      <ToolbarButton icon={<Download size={16} />} label="Download" onClick={handleDownload} />
-      <ToolbarButton
-        icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
-        label={isFullscreen ? 'Exit Full' : 'Full Screen'}
-        onClick={handleToggleFullscreen}
-        active={isFullscreen}
-      />
+      <details className="panel-menu">
+        <summary aria-label={copy.panel.menu}><span aria-hidden="true">⋯</span></summary>
+        <div className="panel-menu-list" onClick={(event) => event.currentTarget.closest('details')?.removeAttribute('open')}>
+          {panelId && onEmbedPanel && <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />}
+          <ToolbarButton icon={<Download size={16} />} label={copy.panel.download} onClick={handleDownload} />
+          <ToolbarButton
+            icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
+            label={isFullscreen ? copy.panel.exitFull : copy.panel.fullScreen}
+            onClick={handleToggleFullscreen}
+            active={isFullscreen}
+          />
+        </div>
+      </details>
     </div>
   );
 
   return (
     <div ref={frameRef} className="dashboard-chart-frame">
-      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId}>
+      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
         <div className="space-y-3">
-          <div ref={chartRef} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
-            {children}
-          </div>
           {legend.length > 0 && (
             <div className="dashboard-chart-legend">
               {legend.map((item) => (
                 <span key={`${item.label}-${item.color}-${item.variant || 'line'}-${item.dashed ? 'dashed' : 'solid'}`} className="dashboard-chart-legend-item">
-                  <svg width="32" height="10" role="img" aria-label={`${item.label} ${item.strokeDasharray || item.dashed ? 'dashed' : 'solid'} colour indicator`}>
+                  <svg width="22" height="10" role="img" aria-label={`${item.label} ${item.strokeDasharray || item.dashed ? 'dashed' : 'solid'} colour indicator`}>
                     {item.variant === 'bar'
-                      ? <rect width="32" height="8" fill={item.color} />
-                      : <line x1="0" y1="5" x2="32" y2="5" stroke={item.color} strokeWidth={item.variant === 'area' ? 6 : 2} strokeDasharray={item.strokeDasharray || (item.dashed ? '6 5' : undefined)} opacity={item.variant === 'area' ? 0.6 : 1} />}
+                      ? <rect width="22" height="8" fill={item.color} />
+                      : <line x1="0" y1="5" x2="22" y2="5" stroke={item.color} strokeWidth={item.variant === 'area' ? 6 : 2} strokeDasharray={item.strokeDasharray || (item.dashed ? '6 5' : undefined)} opacity={item.variant === 'area' ? 0.6 : 1} />}
                   </svg>
                   <span>{item.label}</span>
                 </span>
               ))}
             </div>
           )}
+          <div ref={chartRef} role="group" aria-label={chartSummary} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
+            {children}
+          </div>
+          <p className="chart-source">{source}</p>
         </div>
       </Panel>
     </div>

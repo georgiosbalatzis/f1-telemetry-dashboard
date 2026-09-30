@@ -79,9 +79,8 @@ export function SectorAnalysis({
               {sectorRows.map((row, rowIndex) => {
                 const summary = summaryByName[row.name];
                 return (
-                  <tr key={row.name} className="bc-sector-row">
+                  <tr key={row.name} className="bc-sector-row" style={{ ['--row-color' as string]: row.color }}>
                     <td className="bc-sector-driver-cell">
-                      <span className="bc-sector-driver-bar" style={{ backgroundColor: row.color }} />
                       <span className="bc-sector-driver-name">
                         {row.name}
                       </span>

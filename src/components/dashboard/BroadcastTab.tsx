@@ -6,12 +6,16 @@ import { TimingTower } from './broadcast/TimingTower';
 import { SectorAnalysis } from './broadcast/SectorAnalysis';
 import { SpeedTrap } from './broadcast/SpeedTrap';
 import { DriverCards } from './broadcast/DriverCards';
+import { GapCard } from './GapCard';
+import type { GapCardData } from './gapCardData';
 
 type Props = {
   lapNum: number;
   lapsLoading: boolean;
   sectorRows: SectorRow[];
   lapSummaries: DriverLapSummary[];
+  gapCards: GapCardData[];
+  sessionTitle: string;
   embedMode?: boolean;
   onEmbedPanel?: (panelId: string) => void;
 };
@@ -21,6 +25,8 @@ export function BroadcastTab({
   lapsLoading,
   sectorRows,
   lapSummaries,
+  gapCards,
+  sessionTitle,
   embedMode = false,
   onEmbedPanel,
 }: Props) {
@@ -68,6 +74,12 @@ export function BroadcastTab({
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       />
+
+      {gapCards.length > 0 && (
+        <div key="broadcast-gap-cards" className="gap-cards">
+          {gapCards.map((card) => <GapCard key={card.driverNumber} card={card} context={`${sessionTitle} · L${lapNum}`} />)}
+        </div>
+      )}
 
       <SectorAnalysis key="broadcast-sector-analysis"
         lapsLoading={lapsLoading}
