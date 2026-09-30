@@ -95,13 +95,13 @@ Tailwind v4 already requires **Safari 16.4+, Chrome/Edge 111+, Firefox 128+**. T
 - Save the result as `.perf-baseline/metrics-before.json`.
 
 **P0-04 ✅ · Render-count probe (temporary, dev only)**
-- Behind `import.meta.env.DEV && localStorage.perfProbe`, wrap `TelemetryTab` in `<Profiler>` and log commit counts. Use it to prove P1. **Remove it in P7-01.**
+- Behind `import.meta.env.DEV && localStorage.perfProbe`, `usePerfCommit('TelemetryTab')` (an effect inside the component) counts real re-renders. A `<Profiler>` wrapper over-counts, because it fires whenever its parent renders even if a memo'd child bails out. Use it to prove P1. **Remove it in P7-01.**
 
 ---
 
 ### Phase 0 status: ✅ DONE (2026-09-30)
 
-Implemented by `scripts/lib.mjs`, `scripts/visual-baseline.mjs`, `scripts/perf-metrics.mjs`, `scripts/render-probe.mjs` and `src/utils/perfProbe.tsx`. `playwright@1.63.0` was added as a devDependency (scripts only, never bundled); Chromium, Firefox and WebKit are installed. `.perf-baseline/` and `.playwright-mcp/` are gitignored.
+Implemented by `scripts/lib.mjs`, `scripts/visual-baseline.mjs`, `scripts/perf-metrics.mjs`, `scripts/render-probe.mjs` and `src/utils/perfProbe.ts`. `playwright@1.63.0` was added as a devDependency (scripts only, never bundled); Chromium, Firefox and WebKit are installed. `.perf-baseline/` and `.playwright-mcp/` are gitignored.
 
 | Command | What it does |
 |---|---|
@@ -115,7 +115,7 @@ How it works, and what to know:
 - **Chromium and Firefox are strict gates** (0 diffs on a full self-compare). **WebKit headless is advisory**: identical runs differ by up to ~15 px of height or a text shift, at a different place each time (hero, map legend). Use `--strict-webkit` to gate on it; before Phase 7, eyeball any WebKit diffs against `docs/rework/final/`.
 - Full-page capture neutralizes `#root`/`.min-h-screen` min-heights (they feed back through `100vh`). Pages are always taller than the viewport, so no pixel changes. This also means **P5-03 (dvh) is invisible to the screenshot check**: verify it manually on iOS.
 - After Phase 1 changes, re-run `--compare` **before** committing each phase; re-baseline only for changes the owner approved (⚠ VISIBLE tasks).
-- The metrics script needs a fresh `npm run build`; the probe uses the dev server. `PerfProbe` is wrapped around `TelemetryTab` in `DashboardShell.tsx` and is removed in P7-01.
+- The metrics script needs a fresh `npm run build`; the probe uses the dev server. `usePerfCommit` is called at the top of `TelemetryTab` and removed in P7-01 (with `src/utils/perfProbe.ts`).
 
 **Measured baseline** (`.perf-baseline/metrics-before.json`, production build, live API):
 
@@ -174,6 +174,26 @@ Order matters: P1-01 → P1-02 → P1-03 → P1-04 → P1-05 → P1-06.
 - `useDriverContext` returns `{...context, driverDash}` (a new object per call), and `driverDash` re-sorts teammates on every call. Precompute a `dashByDriver: Record<number, {line, brake}>` inside the provider's memo and have `driverDash` read from it. Return the context value unchanged: put `driverDash` inside the provider value.
 - `driverColor` calls `chartColorForTheme` (a loop of up to 20 luminance computations) on every call. Cache per `(driverNumber, theme)` in the provider memo.
 - Acceptance: identical colours and dash patterns (visual check); `P1Presentation.test.tsx` and `P2Polish.test.tsx` pass.
+
+---
+
+### Phase 1 status: ✅ DONE (P1-01..P1-07, 2026-09-30)
+
+Measured with `scripts/perf-metrics.mjs --label=p1` (live API) and `render-probe.mjs`:
+
+| Metric | Baseline | After Phase 1 | Target |
+|---|---|---|---|
+| `replaceState`, desktop cold load | 12 | **1** | ≤ 6 ✅ |
+| `replaceState`, 15 lap steps | 19 | **15** | ≤ 15 ✅ |
+| `TelemetryTab` renders, 10 keystrokes | 10 | **0** | 0 ✅ |
+| `TelemetryTab` renders, toast show + clear | 2 | **0** | 0 ✅ |
+| Screenshots, Chromium + Firefox, 80 shots | n/a | 0 diffs | 0 ✅ |
+
+Notes for later phases:
+- Long tasks at 6× throttle did **not** move (51–101 ms on tab switch and theme toggle). Those are real mounts and chart repaints, not wasted renders; the remaining lever is the chart work itself (P3).
+- 429s (6 on cold load) and `car_data` per 15 lap steps (30) are unchanged: that's Phase 2. Mobile CLS is 0.28 this run (0.20 before, it varies with load timing): Phase 4.
+- `DashboardSelectors` is memo'd but receives a fresh `children` element each render, so it still re-renders with the Shell (cheap; left as is).
+- P1-07 moved `driverDash` and the teammate-index table into `DriverProvider`, so `useDriverContext()` now returns the context value itself (stable identity). `DriverProvider` keeps its three input props, so existing tests are unchanged.
 
 ---
 

@@ -192,11 +192,10 @@ export function DashboardContainer() {
   // Sync URL on any filter/layout/theme change
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    window.history.replaceState(
-      {},
-      '',
-      buildDashboardUrl(filters.snapshot, splitMode, embedMode, themeMode),
-    );
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, themeMode);
+    if (url === window.location.href) return;
+    // Safari throws SecurityError past ~100 calls per 10 s; the next real change writes the URL again.
+    try { window.history.replaceState({}, '', url); } catch { /* rate limited */ }
   }, [embedMode, filters.snapshot, splitMode, themeMode]);
 
   // Smooth-scroll to hash fragment on tab change
@@ -333,22 +332,23 @@ export function DashboardContainer() {
   }, [themeMode]);
   const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback('No previous page in history'); } }, []);
 
-  // ── Driver context value (shared with all tab components via DriverProvider) ─
+  // ── Driver colours (shared with all tab components via DriverProvider) ─
   // Chart traces use theme-adjusted team colours; markers elsewhere keep the raw colour.
+  // The adjustment loops over contrast steps, so each driver is computed once per theme.
   const teamDriverColor = data.viewModel.driverColor;
-  const driverContextValue = useMemo(
-    () => ({
-      driverNums:  data.filters.driverNums,
-      driverMap:   data.selectionData.driverMap,
-      driverColor: (driverNumber: number) => chartColorForTheme(teamDriverColor(driverNumber), themeMode),
-    }),
-    [data.filters.driverNums, data.selectionData.driverMap, teamDriverColor, themeMode],
-  );
+  const driverColor = useMemo(() => {
+    const cache = new Map<number, string>();
+    return (driverNumber: number) => {
+      let color = cache.get(driverNumber);
+      if (color === undefined) cache.set(driverNumber, color = chartColorForTheme(teamDriverColor(driverNumber), themeMode));
+      return color;
+    };
+  }, [teamDriverColor, themeMode]);
 
   // ── Render ─────────────────────────────────────────────────────────────
 
   return (
-    <DriverProvider {...driverContextValue}>
+    <DriverProvider driverNums={data.filters.driverNums} driverMap={data.selectionData.driverMap} driverColor={driverColor}>
     <DashboardShell
       data={data}
       splitMode={splitMode}
