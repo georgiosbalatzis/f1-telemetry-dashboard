@@ -23,6 +23,7 @@ export function TimingTower({
   onEmbedPanel,
 }: TimingTowerProps) {
   const { driverMap } = useDriverContext();
+  // The table's rows are display:grid, which makes WebKit/VoiceOver drop the table semantics: the roles below state them explicitly.
   return (
     <Panel lead
       title="Lap Classification"
@@ -42,20 +43,20 @@ export function TimingTower({
           <NoData msg="No lap data for the selected drivers." />
         )
       ) : (
-        <table className="bc-tower" aria-label="Timing tower">
-          <thead>
-            <tr className="bc-tower-header">
-              <th scope="col" className="bc-tower-col-bar">
+        <table className="bc-tower" aria-label="Timing tower" role="table">
+          <thead role="rowgroup">
+            <tr className="bc-tower-header" role="row">
+              <th scope="col" role="columnheader" className="bc-tower-col-bar">
                 <span className="sr-only">Team colour</span>
               </th>
-              <th scope="col" className="bc-tower-col-pos">P</th>
-              <th scope="col" className="bc-tower-col-driver">Driver</th>
-              <th scope="col" className="bc-tower-col-time">Lap Time</th>
-              <th scope="col" className="bc-tower-col-gap">Gap</th>
-              <th scope="col" className="bc-tower-col-speed">Top Speed</th>
+              <th scope="col" role="columnheader" className="bc-tower-col-pos">P</th>
+              <th scope="col" role="columnheader" className="bc-tower-col-driver">Driver</th>
+              <th scope="col" role="columnheader" className="bc-tower-col-time">Lap Time</th>
+              <th scope="col" role="columnheader" className="bc-tower-col-gap">Gap</th>
+              <th scope="col" role="columnheader" className="bc-tower-col-speed">Top Speed</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {sorted.map((summary, index) => {
               const pos      = index + 1;
               const driver   = driverMap[summary.driverNumber];
@@ -67,17 +68,17 @@ export function TimingTower({
                   : null;
 
               return (
-                <tr key={summary.driverNumber} className="bc-tower-row">
-                  <td className="bc-tower-col-bar">
+                <tr key={summary.driverNumber} className="bc-tower-row" role="row">
+                  <td className="bc-tower-col-bar" role="cell">
                     <div className="bc-tower-bar" style={{ backgroundColor: color }} />
                     <span className="sr-only">
                       {driver?.team_name ?? driver?.name_acronym ?? `Driver ${summary.driverNumber}`} team colour
                     </span>
                   </td>
-                  <td className={`bc-tower-col-pos bc-tower-pos${isLeader ? ' bc-tower-pos--leader' : ''}`}>
+                  <td role="cell" className={`bc-tower-col-pos bc-tower-pos${isLeader ? ' bc-tower-pos--leader' : ''}`}>
                     {pos}
                   </td>
-                  <th scope="row" className="bc-tower-col-driver">
+                  <th scope="row" role="rowheader" className="bc-tower-col-driver">
                     <div className="bc-tower-driver">
                       {driver?.headshot_url && (
                         <img
@@ -96,8 +97,8 @@ export function TimingTower({
                       </div>
                     </div>
                   </th>
-                  <td className="bc-tower-col-time bc-tower-laptime">{fmtLap(summary.lapTime)}</td>
-                  <td className="bc-tower-col-gap">
+                  <td role="cell" className="bc-tower-col-time bc-tower-laptime">{fmtLap(summary.lapTime)}</td>
+                  <td role="cell" className="bc-tower-col-gap">
                     {isLeader ? (
                       <span className="bc-badge-leader">LEADER</span>
                     ) : gap != null ? (
@@ -106,7 +107,7 @@ export function TimingTower({
                       <span className="bc-tower-gap">—</span>
                     )}
                   </td>
-                  <td className="bc-tower-col-speed bc-tower-speed">
+                  <td role="cell" className="bc-tower-col-speed bc-tower-speed">
                     {summary.topSpeed != null ? (
                       <>
                         <span className="bc-tower-speed-val">{summary.topSpeed.toFixed(0)}</span>
