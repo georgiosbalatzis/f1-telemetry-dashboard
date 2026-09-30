@@ -440,6 +440,31 @@ Every item is a deletion or a merge with no behaviour change. Run `npx knip` (it
 
 ---
 
+### Phase 6 status: ✅ DONE (P6-01..P6-11, 2026-09-30)
+
+Every task is its own commit; `npm run ci` green (106 tests); strict screenshot compare (Chromium + Firefox, 120 shots after the CSS work, 16 after the logo/header change): 0 differences. `knip` now reports only `scripts/*` (intentional dev tooling) and `playwright` (used by those scripts).
+
+| Task | What changed |
+|---|---|
+| P6-01 | Deleted the never-rendered `icon` prop of `Panel`/`ChartPanel` and the 35 icon elements built for it; dropped the unused Lucide imports (this also removed the `Map` import that shadowed the global `Map`). |
+| P6-02 | One `tryClipboard` helper and one `copySnippet`; share, embed and panel embed keep their exact messages. |
+| P6-03 | `TAB_ORDER` (in `tabLabels.ts`) replaces three hand-kept tab lists. `LAP_TABS` in the Shell stays: it means "tabs that show a lap", not an order. |
+| P6-04 | Telemetry's sector colours use `buildSectorAnalysis` like Broadcast. |
+| P6-05 | Broadcast filters instead of re-sorting; `TimingTower` reads `gapToLeader` (the `leaderTime` prop is gone). |
+| P6-06 | `summarizeTelemetry`: one pass instead of seven; unused `avgSpeed` removed. Test compares it to the old formulas. |
+| P6-07 | `getForLap` and `buildUrl(endpoint, params, dateFilters)` replace two copies each. URL test added. |
+| P6-08 | Removed ignored props (`DashboardTabs`, `DriverSelector`) and the dead embed-mode branch of `DashboardSelectors`; `COLORS.compound` is used directly. |
+| P6-09 | Deleted `withAlpha` and `COLORS.mutedDot/warning/sector.three`; un-exported internals that nothing imports. |
+| P6-10 | CSS: duplicate embed-mode, brand, utility-menu, legend, tooltip and bc-sector rules merged keeping the final cascade; 7 unused tokens and the identical dark-theme font tokens removed. CSS 59.2 → 58.4 kB (gzip 12.5 → 12.4). |
+| P6-11 | Removed the CRA `public/index.html`, `check.sh` and two unused (gitignored) asset files; manifest now linked with the light paper colours, `logo192`/`logo512` icons and an apple-touch-icon; `logo512.png` 210 → 163 KB and `logo192.png` 34 → 28 KB, **lossless** (0 differing bytes); header logo gets `width`/`height`/`decoding`; `tailwindcss` and `@tailwindcss/vite` moved to devDependencies (lockfile updated, `npm ci --dry-run` OK). |
+
+Decisions and leftovers:
+- **Favicon left as the PNG.** `public/favicon.svg` is a different (older) icon than `logo192.png`, so switching would visibly change the browser tab; it stays a PNG. `public/favicon.svg` itself is unreferenced now; left in place (it is a public URL the owner may link to), delete if you want.
+- `.gitignore` already ignores `assets`, which is why the two `src/assets` files were never tracked; they are deleted from disk only.
+- The manifest makes the page installable to a home screen on Android/iOS (standalone display). It has no service worker, so there is no offline mode (out of scope).
+
+---
+
 ### Phase 7: Close-out
 
 **P7-01** Remove the P0-04 probe.
