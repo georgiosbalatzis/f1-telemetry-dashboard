@@ -321,6 +321,27 @@ Notes:
 
 ---
 
+### Phase 4 status: ✅ DONE (P4-01, P4-02; P4-03 skipped, 2026-09-30)
+
+Measured with `scripts/perf-metrics.mjs` and a PerformanceObserver trace (`replay` data):
+
+| Metric | Baseline | After Phase 4 | Target |
+|---|---|---|---|
+| Mobile CLS, 390 px cold load | 0.198 | **0.0003** (same at 360) | < 0.05 ✅ |
+| Desktop CLS, 1366 px | 0.060 | **0.0018** | n/a |
+| Screenshots, Chromium + Firefox, 120 shots | n/a | 0 unexpected diffs | 0 ✅ |
+
+What caused the shifts (mobile, in order): the loading line appeared in the band (+25 px), the driver row appeared (+84 px), the loading line disappeared (−25 px), the lap strip appeared (+94 px). Fixes:
+- P4-01: a driver that is still loading (or not requested yet) no longer counts as "partial data" (that line flashed for one frame); the loading text is screen-reader-only on phones and its spinner floats in the band's corner instead of wrapping onto a row; invisible stand-ins for the driver names and the lap total keep the band's row wrapping the same before and after data arrives.
+- P4-02: `DriverSelector` and `LapStrip` take a `pending` flag and render same-height empty placeholders (`aria-hidden`) until their data arrives; `useDashboard` exposes `driversPending`, `lapsPending` and `expectsDrivers`.
+- P4-03 (fallback font metrics) skipped: no font-swap shift remains after P3-04.
+
+Lessons worth keeping:
+- **Reserve space only where data will appear.** My first version always reserved room for driver names, which changed the finished layout on the five tabs that never show names (31 screenshots at 390 px differed by 5–8%). The stand-ins are now gated on `expectDrivers` (telemetry, energy, broadcast) and on pending state. The screenshot check caught this; don't skip it.
+- **Tab strip scroll race.** `DashboardTabs` centers the active tab using measured widths, which depend on the font. It now centers again after `document.fonts.ready`, so the position no longer depends on whether the font arrived before the effect. This moved the strip by ~3 px in 31 shots (only that ~35 px band; verified per shot), which were re-baselined.
+
+---
+
 ### Phase 5: Cross-browser and platform correctness
 
 **P5-01 · Root error boundary** · `src/main.tsx`
@@ -350,6 +371,22 @@ Notes:
 **P5-07 · ⚠ VISIBLE (mobile only) · iOS input zoom**
 - `.preset-controls input` (13px) and the Incidents search (`text-sm`, 14px) make iOS Safari zoom the page on focus, and it doesn't zoom back.
 - Fix: `@supports (-webkit-touch-callout: none) { .preset-controls input, #incidents-search { font-size: 16px; } }`, scoped to iOS so desktop and Android don't change. **Needs owner OK.**
+
+---
+
+### Phase 5 status: ✅ DONE except P5-07 (needs the owner's OK, 2026-09-30)
+
+| Task | Result |
+|---|---|
+| P5-01 | Root `ErrorBoundary` around `DashboardContainer` in `main.tsx`. An error in the container's own effects/handlers shows the retry card instead of a blank page. |
+| P5-02 | Full-screen menu item only when `document.fullscreenEnabled`; `requestFullscreen`/`exitFullscreen` wrapped in try/catch. Two tests (`P3Polish.test.tsx`; the existing glyph test now declares a fullscreen-capable document because jsdom has none). |
+| P5-03 | `#root` has `min-height: 100dvh` (after the `100vh` fallback); the Shell uses `min-h-dvh`. **Not visible in screenshots** (the capture neutralizes min-heights): verify on a real iPhone. |
+| P5-04 | Timing tower: explicit `table/rowgroup/row/columnheader/rowheader/cell` roles (WebKit drops table semantics from `display:grid` rows). New `TimingTowerRoles.test.tsx`. |
+| P5-05 | All 10 hand-written `:hover` rules are inside `@media (hover: hover)`, same order, so the cascade is unchanged. Desktop pixel-identical; on touch devices the accent colour no longer sticks after a tap. |
+| P5-06 | `resolveCssVariables` replaces `var(--x)` attribute values on the export clone with the current theme's values (unknown variables use their fallback). Unit test. Verify a downloaded SVG in Safari, Chrome and Firefox. |
+| P5-07 ⚠ VISIBLE | **Not done: waiting for the owner's OK** (iOS-only 16px font size for the preset and incidents-search inputs). |
+
+Found during execution (not fixed, see §7): exported SVGs have no `font-family` (viewers fall back to a serif for axis text); `.recharts-text { font-family }` lives only in the page CSS.
 
 ---
 
@@ -452,3 +489,6 @@ Every item is a deletion or a merge with no behaviour change. Run `npx knip` (it
 ## 7. Found during execution
 
 (Sonnet: append new findings here with file:line and a proposed task ID; don't fix them without adding them to a phase first.)
+
+- `src/utils/exportChart.ts`: the exported SVG root has no `font-family`, so axis text renders in the viewer's default serif font. Proposed: set `font-family` on the export root from `getComputedStyle(document.body).fontFamily` (P5-06b, invisible on screen).
+- Live-API metrics runs made within about a minute of each other can still draw a single 429 (seen once on a second back-to-back cold load); the pacer retries it. Leave a pause between `perf-metrics.mjs` runs.
