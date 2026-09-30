@@ -5,9 +5,6 @@ import { TAB_LABELS, TAB_ORDER } from './tabLabels';
 export function DashboardTabs({ activeTab, onChange }: {
   activeTab: Tab;
   onChange: (tab: Tab) => void;
-  embedMode?: boolean;
-  onShareTab?: (tab: Tab) => void;
-  onEmbedTab?: (tab: Tab) => void;
 }) {
   const strip = useRef<HTMLDivElement>(null);
   // On narrow screens the strip scrolls sideways: keep the active tab centred (no page scroll involved).

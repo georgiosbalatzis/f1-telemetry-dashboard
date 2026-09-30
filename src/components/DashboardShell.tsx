@@ -220,7 +220,6 @@ export function DashboardShell({
             lapsLoading={lapsLoading}
             canStepBackward={canStepBackward}
             canStepForward={canStepForward}
-            embedMode={embedMode}
             onYearChange={filters.handleYearChange}
             onCircuitChange={filters.handleCircuitChange}
             onSessionChange={filters.handleSessionChange}
@@ -230,7 +229,6 @@ export function DashboardShell({
             <DriverSelector
               drivers={selectionData.driverList}
               selectedDrivers={filters.driverNums}
-              embedMode={embedMode}
               pending={driversPending}
               onToggle={filters.toggleDriver}
             />
@@ -254,9 +252,6 @@ export function DashboardShell({
           <DashboardTabs
             activeTab={filters.tab}
             onChange={filters.setTab}
-            embedMode={embedMode}
-            onShareTab={onShareTab}
-            onEmbedTab={onEmbedTab}
           />
 
           </>}

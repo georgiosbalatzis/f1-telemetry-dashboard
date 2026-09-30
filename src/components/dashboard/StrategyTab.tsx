@@ -4,9 +4,7 @@ import { COLORS, teamColor } from '../../constants/colors';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, CardGridSkeleton, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 
-const COMPOUND_COLORS: Record<string, string> = {
-  ...COLORS.compound,
-};
+const COMPOUND_COLORS: Record<string, string> = COLORS.compound;
 
 type Props = {
   lapNum: number;

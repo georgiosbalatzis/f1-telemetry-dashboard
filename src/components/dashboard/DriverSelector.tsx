@@ -8,7 +8,6 @@ type Props = {
   drivers: OpenF1Driver[];
   selectedDrivers: number[];
   onToggle: (driverNumber: number) => void;
-  embedMode?: boolean;
   /** Drivers are still loading: hold the row's space so the page below does not jump when they arrive. */
   pending?: boolean;
 };
