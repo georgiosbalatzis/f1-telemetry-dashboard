@@ -94,28 +94,28 @@ Tailwind v4 already requires **Safari 16.4+, Chrome/Edge 111+, Firefox 128+**. T
 - Also print initial JS: parse `dist/index.html` for the entry script plus `modulepreload` links, and sum their gzip sizes.
 - Save the result as `.perf-baseline/metrics-before.json`.
 
-**P0-04 ✅ · Render-count probe (temporary, dev only)**
+**P0-04 ✅ · Render-count probe (temporary, dev only; removed in P7-01)**
 - Behind `import.meta.env.DEV && localStorage.perfProbe`, `usePerfCommit('TelemetryTab')` (an effect inside the component) counts real re-renders. A `<Profiler>` wrapper over-counts, because it fires whenever its parent renders even if a memo'd child bails out. Use it to prove P1. **Remove it in P7-01.**
 
 ---
 
 ### Phase 0 status: ✅ DONE (2026-09-30)
 
-Implemented by `scripts/lib.mjs`, `scripts/visual-baseline.mjs`, `scripts/perf-metrics.mjs`, `scripts/render-probe.mjs` and `src/utils/perfProbe.ts`. `playwright@1.63.0` was added as a devDependency (scripts only, never bundled); Chromium, Firefox and WebKit are installed. `.perf-baseline/` and `.playwright-mcp/` are gitignored.
+Implemented by `scripts/lib.mjs`, `scripts/visual-baseline.mjs`, `scripts/perf-metrics.mjs` (and, until P7-01, `scripts/render-probe.mjs` with `src/utils/perfProbe.ts`). `playwright@1.63.0` was added as a devDependency (scripts only, never bundled); Chromium, Firefox and WebKit are installed. `.perf-baseline/` and `.playwright-mcp/` are gitignored.
 
 | Command | What it does |
 |---|---|
 | `npm run build && node scripts/visual-baseline.mjs` | writes the baseline: 180 PNGs (10 tabs × light/dark × 390/820/1440 × 3 engines) |
 | `node scripts/visual-baseline.mjs --compare` | re-captures to `.perf-baseline/current/` and diffs; exit 1 on a Chromium/Firefox diff > 0.1% of pixels. Subsets: `--engines= --tabs= --themes= --widths=` |
 | `node scripts/perf-metrics.mjs --label=after` | cold load (mobile and desktop), 15 lap steps, 6× throttled tab switches and theme toggle, initial-JS gzip; `--replay` uses recorded API data |
-| `node scripts/render-probe.mjs` | dev server + `<PerfProbe>`; counts `TelemetryTab` commits for 10 keystrokes and a toast |
+| ~~`node scripts/render-probe.mjs`~~ | removed in P7-01; it counted `TelemetryTab` commits (Phase 1: 10 keystrokes 10 → 0, toast 2 → 0). Recover it with `git show 4919ef3^:scripts/render-probe.mjs` and `git show 4919ef3^:src/utils/perfProbe.ts` if render counts matter again. |
 
 How it works, and what to know:
 - **Deterministic data.** OpenF1 responses are recorded on first use to `.perf-baseline/fixtures/` (paced, 429-safe) and replayed afterwards. Delete that folder to re-record. **Never freeze `Date.now()`** in these scripts: the request pacer (P2-01) schedules with it, so a frozen clock makes queued requests pile up and pages look idle while still loading (it produced false Broadcast-tab diffs). The 2025 scope has no upcoming meeting, so nothing depends on "now".
 - **Chromium and Firefox are strict gates** (0 diffs on a full self-compare). **WebKit headless is advisory**: identical runs differ by up to ~15 px of height or a text shift, at a different place each time (hero, map legend). Use `--strict-webkit` to gate on it; before Phase 7, eyeball any WebKit diffs against `docs/rework/final/`.
 - Full-page capture neutralizes `#root`/`.min-h-screen` min-heights (they feed back through `100vh`). Pages are always taller than the viewport, so no pixel changes. This also means **P5-03 (dvh) is invisible to the screenshot check**: verify it manually on iOS.
 - After Phase 1 changes, re-run `--compare` **before** committing each phase; re-baseline only for changes the owner approved (⚠ VISIBLE tasks).
-- The metrics script needs a fresh `npm run build`; the probe uses the dev server. `usePerfCommit` is called at the top of `TelemetryTab` and removed in P7-01 (with `src/utils/perfProbe.ts`).
+- The metrics script needs a fresh `npm run build`.
 
 **Measured baseline** (`.perf-baseline/metrics-before.json`, production build, live API):
 
@@ -179,7 +179,7 @@ Order matters: P1-01 → P1-02 → P1-03 → P1-04 → P1-05 → P1-06.
 
 ### Phase 1 status: ✅ DONE (P1-01..P1-07, 2026-09-30)
 
-Measured with `scripts/perf-metrics.mjs --label=p1` (live API) and `render-probe.mjs`:
+Measured with `scripts/perf-metrics.mjs --label=p1` (live API) and the render probe (since removed):
 
 | Metric | Baseline | After Phase 1 | Target |
 |---|---|---|---|
@@ -485,6 +485,51 @@ Decisions and leftovers:
 | Long tasks at 6× on tab switch | 53–99 ms | < 50 ms |
 | Visual diffs | n/a | 0 |
 | Tests | 94 green | all green (more is fine) |
+
+---
+
+### Phase 7 status: ✅ DONE except the real-device check (P7-04) (2026-09-30)
+
+- **P7-01** the render probe (`usePerfCommit`, `perfProbe.ts`, `render-probe.mjs`) is removed.
+- **P7-02** final metrics: `.perf-baseline/metrics-after.json` (live API, production build, clean run after a quiet period).
+- **P7-03** full screenshot compare, 10 tabs × light/dark × 390/820/1440 × 3 engines = 180 shots: **0 differences in all 120 Chromium and Firefox shots**. 12 WebKit shots differed (advisory): 6 were only the tab-strip band (WebKit's baseline predates the Phase 4 centering fix; refreshed), 6 were the known WebKit height jitter of ±15–18 px that also appears with no code change (Track Map, Weather). No real regression.
+- **P7-05** `npm run ci` green (lint 0 warnings, build, 106 tests); `graphify update .` run.
+
+**Final results against the targets**
+
+| Metric | Before | After | Target | |
+|---|---|---|---|---|
+| Initial JS gzip | 200.3 KB | **82.5 KB** | ≤ 100 KB | ✅ |
+| CSS gzip | 12.2 KB | 12.1 KB | n/a | |
+| `replaceState`, cold load / 15 lap steps | 12 / 19 | **1 / 15** | ≤ 6 / ≤ 15 | ✅ |
+| 429s on cold load (desktop / mobile) | 5 / 3 | **0 / 0** | 0 | ✅ |
+| Cold-load API requests (desktop / mobile) | 14 / 12 | **9 / 9** | n/a | |
+| `car_data` requests, 15 rapid lap steps | 32 | **2** | ≤ 4 | ✅ |
+| Mobile CLS (390 px) | 0.198 | **0.0003** | < 0.05 | ✅ |
+| Desktop CLS (1366 px) | 0.060 | **0.0018** | n/a | ✅ |
+| Long tasks at 6× CPU, tab switch | 51–56 ms | none on Energy and Broadcast; 55–58 ms on Telemetry | < 50 ms | ⚠️ partly |
+| Long task at 6× CPU, theme toggle | 72 ms | 65 ms | < 50 ms | ⚠️ not met |
+| `TelemetryTab` renders for 10 keystrokes / a toast | 10 / 2 | 0 / 0 | 0 | ✅ (measured in Phase 1) |
+| Screenshot diffs, Chromium + Firefox | n/a | 0 of 120 | 0 | ✅ |
+| Tests | 94 | 106, all green | all green | ✅ |
+
+The two ⚠️ rows are real mounts and chart repaints, not wasted renders (all the avoidable re-rendering is gone). Getting them under 50 ms at 6× throttle would mean less chart work per mount, for example replacing Recharts, which is explicitly out of scope (§5). Charts-visible time on a cold load is unchanged (~2.4 s); it is now dominated by the request sequence (9 requests paced 350 ms apart), which keeps us under the rate limit.
+
+**Still open (nothing here blocks shipping)**
+1. **P7-04, real devices** (I could not do this): see the checklist below.
+2. **P5-07** (iOS-only 16 px input font): needs the owner's OK.
+3. **P5-06b** (font-family in exported SVGs), §7.
+4. `public/favicon.svg` is unreferenced (kept on purpose).
+5. The in-memory cache treats data as fresh for 30 min: a live session could lag.
+
+**P7-04 manual smoke test** (iPhone Safari, iPad Safari, Android Chrome; also desktop Safari and Firefox): load with no query string and with `?year=2025&circuit=Monza`; the page must not jump while loading; step laps with the lap strip (tap, and arrow keys on desktop) 20 times quickly, with no blank page in Safari; open every tab and toggle the theme; Track Map and Broadcast render; share and embed copy (link/snippet reaches the clipboard or the prompt); on iPhone there is no "Full screen" item in a chart's ⋯ menu, and on desktop it works; download a chart SVG and open it in Safari, Chrome and Firefox (grid, ticks and lines coloured, like the screen); on iOS the page has no extra scroll below the footer (P5-03); tapping a tab or button does not leave the accent colour stuck (P5-05); print preview.
+
+**PR description (ready to paste)**
+
+> **Performance and cross-browser pass (Phases 0–7 of PERFREDO.md)**
+> Initial JS 200 → 83 KB gzip · mobile layout shift 0.198 → 0.0003 · 0 × 429 on cold load (was 5) · 15 rapid lap steps now send 2 telemetry requests (was 32) · `history.replaceState` 12 → 1 on load (Safari could blank the page after ~100 calls) · telemetry tab no longer re-renders on unrelated state (keystrokes, toasts) · lazy charts chunk, preloaded fonts, explicit Safari 16.4 / Chrome 111 / Firefox 128 build target · iPhone: no dead full-screen button · chart SVG export has real colours · timing tower keeps table semantics in WebKit · touch devices no longer keep hover colours · 35 dead icon elements, duplicated clipboard/tab-order/sector/URL code, dead CSS and assets removed.
+> No visual change: 120 of 120 Chromium/Firefox screenshots identical (10 tabs, 2 themes, 3 widths); WebKit checked by eye. 106 tests pass.
+> Left for the owner: P5-07 (visible, iOS-only input font size), real-device smoke test (checklist in PERFREDO.md §4, P7-04).
 
 ---
 
