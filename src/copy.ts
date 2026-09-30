@@ -107,6 +107,10 @@ export const copy = {
     cornerNote: 'Οι κάθετες γραμμές δείχνουν τις πιο αργές στροφές του γύρου.',
     corner: (n: number) => `C${n}`,
   },
+  radio: {
+    listen: 'Άκουσε την ηχογράφηση',
+    listenAria: (driver: string, time: string) => `Άκουσε την ηχογράφηση του ${driver} στις ${time}`,
+  },
   footer: {
     tagline: 'Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.',
     credit: 'Δεδομένα από OpenF1',

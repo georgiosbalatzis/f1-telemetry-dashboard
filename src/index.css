@@ -288,7 +288,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .sector-strip > div:last-child { border: 0; }
 .stint-map { display: flex; }
 .stint-segment { min-width: 24px; }
-.stint-bar { display: flex; align-items: center; justify-content: center; height: 40px; border-top: 3px solid currentColor; border-right: 1px solid var(--line-strong); font-size: 10px; font-weight: 700; }
+.stint-bar { display: flex; align-items: center; justify-content: flex-start; height: 40px; padding-left: 10px; overflow: hidden; white-space: nowrap; border-top: 3px solid currentColor; border-right: 1px solid var(--line-strong); background: var(--surface); color: var(--text); font-size: 11px; font-weight: 600; letter-spacing: .04em; }
 .stint-range { display: none; padding: 4px 4px 0 3px; border-left: 1px solid var(--line-strong); color: var(--text-muted); font-size: 11px; white-space: nowrap; }
 .stint-segment:first-child .stint-range { border-left: 0; padding-left: 0; }
 @media (max-width: 639px) {
@@ -306,12 +306,19 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .strategy-row small { display: block; margin-bottom: 2px; color: var(--text-muted); font-size: 11px; }
 .standing-driver { display: flex; align-items: center; gap: 7px; font-size: 13px; }
 .radio-list { display: grid; }
-.radio-entry { padding: 18px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-.radio-entry strong { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.radio-entry { padding: 14px 0 14px 14px; border-bottom: 1px solid var(--line); box-shadow: inset 3px 0 0 var(--row-color, transparent); display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.radio-num { font: 700 40px/1 var(--font-display); color: var(--text-faint); }
+.radio-entry strong { display: flex; align-items: center; gap: 8px; font-size: 15px; letter-spacing: .06em; }
 .radio-entry time { display: block; margin-top: 5px; color: var(--text-muted); font-size: 12px; }
 .radio-entry a { font-size: 12px; min-height: 44px; display: flex; align-items: center; }
 .clock-time { display: block; font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: normal; text-transform: none; white-space: nowrap; }
-.race-event { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.race-event { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 16px 0 16px 14px; border-bottom: 1px solid var(--line); box-shadow: inset 3px 0 0 var(--flag, var(--line-strong)); }
+.race-event[data-tone="danger"] { --flag: var(--color-danger); }
+.race-event[data-tone="warning"] { --flag: var(--color-warning); }
+.race-event[data-tone="success"] { --flag: var(--color-success); }
+.race-event[data-tone="blue"] { --flag: var(--color-compound-wet); }
+.race-event .flag-label { padding-left: 0; border-left: 0; }
+.race-lap { margin-bottom: 2px; font: 700 26px/1 var(--font-display); letter-spacing: .01em; color: var(--text); }
 .flag-label { font-size: 10px; font-weight: 600; padding-left: 7px; border-left: 3px solid currentColor; }
 .flag-danger { color: var(--color-danger); }
 .flag-warning { color: var(--color-warning); }

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { CircleDot, Timer } from 'lucide-react';
 import type { OpenF1Pit, OpenF1Stint } from '../../api/openf1';
-import { COLORS, teamColor, withAlpha } from '../../constants/colors';
+import { COLORS, teamColor } from '../../constants/colors';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, CardGridSkeleton, EmbedPanelButton, NoData, Panel, TableSkeleton } from './shared';
 
@@ -159,11 +159,11 @@ export function StrategyTab({ lapNum, stintsLoading, stintsByDriver, pitsLoading
                     <div key={segment.key} className="stint-segment" style={{ width: `${segment.width}%` }}>
                       <div
                         className="stint-bar"
-                        style={{ backgroundColor: withAlpha(segment.color, 9), color: segment.color }}
+                        style={{ borderTopColor: segment.color }}
                         title={segment.title}
                       >
-                        {segment.compound.charAt(0)}
-                        <span className="ml-1 hidden opacity-40 sm:inline">{segment.rangeLabel}</span>
+                        <span className="sm:hidden">{segment.compound.charAt(0)}</span>
+                        <span className="hidden sm:inline">{segment.compound} · {segment.rangeLabel}</span>
                       </div>
                       <span className="stint-range">L{segment.rangeLabel}</span>
                     </div>
