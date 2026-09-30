@@ -18,6 +18,7 @@ import type {
   WeatherTrendPoint,
 } from '../components/dashboard/types';
 import { copy } from '../copy';
+import { computeCornerSplits, type CornerSplits } from '../components/dashboard/cornerSplits';
 
 type Params = {
   activeTab: Tab;
@@ -201,6 +202,24 @@ export function useDashboardViewModel({
     });
   }, [activeTab, allLaps, driverNums, lapOptions]);
 
+  // Where each driver lost or gained time against the quickest selected lap, by kind of track (telemetry and broadcast views only).
+  const cornerSplits = useMemo(() => {
+    if (activeTab !== 'telemetry' && activeTab !== 'broadcast') return null;
+    const traces = driverNums.flatMap((driverNumber) => {
+      const lapTime = allLaps[driverNumber]?.find((entry) => entry.lap_number === lapNum)?.lap_duration;
+      const samples = telemetryByDriver[driverNumber];
+      return lapTime && samples?.length ? [{ driverNumber, trace: { samples, lapTime } }] : [];
+    });
+    if (traces.length < 2) return null;
+    const reference = traces.reduce((best, item) => (item.trace.lapTime < best.trace.lapTime ? item : best));
+    const byDriver: Record<number, CornerSplits> = {};
+    traces.forEach((item) => {
+      const splits = item.driverNumber === reference.driverNumber ? null : computeCornerSplits(reference.trace, item.trace);
+      if (splits) byDriver[item.driverNumber] = splits;
+    });
+    return { reference: reference.driverNumber, byDriver };
+  }, [activeTab, allLaps, driverNums, lapNum, telemetryByDriver]);
+
   const lapSummaries = useMemo<DriverLapSummary[]>(() => {
     const rows = driverNums.map((driverNumber) => {
       const lap = allLaps[driverNumber]?.find((entry) => entry.lap_number === lapNum) || null;
@@ -271,6 +290,7 @@ export function useDashboardViewModel({
     lapTimeData,
     lapDeltaData,
     lapSummaries,
+    cornerSplits,
     sectorRows,
     stintsByDriver,
     filteredPits,

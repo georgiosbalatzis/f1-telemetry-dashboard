@@ -128,9 +128,9 @@ export function Panel({
     <div id={panelId} className={cn('dashboard-panel', lead && 'panel-lead', className)}>
       <div className="panel-heading">
         <div>
-          {lead && tabLead && <span className="lead-kicker">{tabLead.kicker}</span>}
-          <h2>{title}</h2>
-          {sub ? <p className="panel-caption">{sub}</p> : null}
+          {lead && tabLead?.kicker && <span className="lead-kicker">{tabLead.kicker}</span>}
+          <h2>{lead && tabLead?.headline?.title || title}</h2>
+          {(lead && tabLead?.headline?.lede) || sub ? <p className="panel-caption">{(lead && tabLead?.headline?.lede) || sub}</p> : null}
         </div>
         {headerRight}
       </div>

@@ -20,6 +20,7 @@ type Props = {
   panelId?: string;
   embedMode?: boolean;
   lead?: boolean;
+  source?: string;
   onEmbedPanel?: (panelId: string) => void;
 };
 
@@ -35,6 +36,7 @@ export function ChartPanel({
   panelId,
   embedMode = false,
   lead = false,
+  source = copy.chart.source,
   onEmbedPanel,
 }: Props) {
   const frameRef = useRef<HTMLDivElement | null>(null);
@@ -99,23 +101,24 @@ export function ChartPanel({
     <div ref={frameRef} className="dashboard-chart-frame">
       <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
         <div className="space-y-3">
-          <div ref={chartRef} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
-            {children}
-          </div>
           {legend.length > 0 && (
             <div className="dashboard-chart-legend">
               {legend.map((item) => (
                 <span key={`${item.label}-${item.color}-${item.variant || 'line'}-${item.dashed ? 'dashed' : 'solid'}`} className="dashboard-chart-legend-item">
-                  <svg width="32" height="10" role="img" aria-label={`${item.label} ${item.strokeDasharray || item.dashed ? 'dashed' : 'solid'} colour indicator`}>
+                  <svg width="22" height="10" role="img" aria-label={`${item.label} ${item.strokeDasharray || item.dashed ? 'dashed' : 'solid'} colour indicator`}>
                     {item.variant === 'bar'
-                      ? <rect width="32" height="8" fill={item.color} />
-                      : <line x1="0" y1="5" x2="32" y2="5" stroke={item.color} strokeWidth={item.variant === 'area' ? 6 : 2} strokeDasharray={item.strokeDasharray || (item.dashed ? '6 5' : undefined)} opacity={item.variant === 'area' ? 0.6 : 1} />}
+                      ? <rect width="22" height="8" fill={item.color} />
+                      : <line x1="0" y1="5" x2="22" y2="5" stroke={item.color} strokeWidth={item.variant === 'area' ? 6 : 2} strokeDasharray={item.strokeDasharray || (item.dashed ? '6 5' : undefined)} opacity={item.variant === 'area' ? 0.6 : 1} />}
                   </svg>
                   <span>{item.label}</span>
                 </span>
               ))}
             </div>
           )}
+          <div ref={chartRef} className={cn('dashboard-chart-stage', isFullscreen && 'min-h-[70vh]')}>
+            {children}
+          </div>
+          <p className="chart-source">{source}</p>
         </div>
       </Panel>
     </div>

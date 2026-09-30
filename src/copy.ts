@@ -86,6 +86,27 @@ export const copy = {
     share: 'Κοινοποίηση καρτέλας',
     embed: 'Ενσωμάτωση καρτέλας',
   },
+  summary: {
+    reference: 'Reference',
+    gap: 'Διαφορά',
+    topSpeed: 'Top speed',
+    driverLap: (driver: string) => driver,
+  },
+  gapCard: {
+    who: (target: string, reference: string) => `${target} · απόσταση από ${reference}`,
+    sub: (lapTime: string, topSpeed: number | null) => [lapTime, topSpeed != null ? `top speed ${Math.round(topSpeed)} km/h` : null].filter(Boolean).join(' · '),
+    slow: 'Αργές στροφές',
+    medium: 'Μεσαίες στροφές',
+    fast: 'Ευθείες',
+    source: 'Πηγή / OpenF1 · car_data',
+    label: 'Απόσταση από τον ταχύτερο γύρο',
+  },
+  chart: {
+    source: 'Πηγή: OpenF1',
+    sourceCarData: 'Πηγή: OpenF1 car_data · κανονικοποιημένο ανά πρόοδο γύρου',
+    cornerNote: 'Οι κάθετες γραμμές δείχνουν τις πιο αργές στροφές του γύρου.',
+    corner: (n: number) => `C${n}`,
+  },
   footer: {
     tagline: 'Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.',
     credit: 'Δεδομένα από OpenF1',

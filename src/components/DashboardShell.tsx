@@ -17,6 +17,8 @@ import { CardBar } from './dashboard/CardBar';
 import { LapStrip } from './dashboard/LapStrip';
 import { TabLeadContext } from './dashboard/tabLeadContext';
 import { safetyCarLaps } from './dashboard/lapStripUtils';
+import { buildGapCards } from './dashboard/gapCardData';
+import { buildHeadline } from './dashboard/headlines';
 import { SiteFooter } from './dashboard/SiteFooter';
 import { pickNextMeeting } from './dashboard/nextMeeting';
 import { copy } from '../copy';
@@ -135,10 +137,25 @@ export function DashboardShell({
     stepLap,
   } = data;
 
-  const tabLead = useMemo(() => embedMode ? null : {
+  const gapCards = useMemo(
+    () => buildGapCards(viewModel.lapSummaries, viewModel.sectorRows, viewModel.cornerSplits),
+    [viewModel.cornerSplits, viewModel.lapSummaries, viewModel.sectorRows],
+  );
+  const headline = useMemo(() => buildHeadline(filters.tab, {
+    lapNum: filters.lapNum,
+    driverNums: filters.driverNums,
+    nameOf: (driverNumber) => selectionData.driverMap[driverNumber]?.last_name || selectionData.driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
+    summaries: viewModel.lapSummaries,
+    gapCards,
+    stintsByDriver: viewModel.stintsByDriver,
+    positions: positions.data,
+  }), [filters.driverNums, filters.lapNum, filters.tab, gapCards, positions.data, selectionData.driverMap, viewModel.lapSummaries, viewModel.stintsByDriver]);
+
+  const tabLead = useMemo(() => embedMode ? { kicker: '', cardBar: null, headline } : {
     kicker: [TAB_LABELS[filters.tab], LAP_TABS.includes(filters.tab) && copy.scope.lapOption(filters.lapNum)].filter(Boolean).join(' · '),
     cardBar: <CardBar tabLabel={TAB_LABELS[filters.tab]} onShare={() => void onShareTab(filters.tab)} onEmbed={() => void onEmbedTab(filters.tab)} />,
-  }, [embedMode, filters.lapNum, filters.tab, onEmbedTab, onShareTab]);
+    headline,
+  }, [embedMode, filters.lapNum, filters.tab, headline, onEmbedTab, onShareTab]);
 
   const stripDriver = filters.driverNums[0];
   const stripLaps = selectionData.allLaps[stripDriver];
@@ -275,6 +292,8 @@ export function DashboardShell({
                   lapTimeData={viewModel.lapTimeData}
                   lapDeltaData={viewModel.lapDeltaData}
                   lapSummaries={viewModel.lapSummaries}
+                  gapCards={gapCards}
+                  sessionTitle={embedTitle}
                   embedMode={embedMode}
                   onEmbedPanel={onEmbedPanel}
                   onTelemetryRetry={primaryTelemetry?.refetch}
@@ -385,6 +404,8 @@ export function DashboardShell({
                     lapsLoading={lapsLoading}
                     sectorRows={viewModel.sectorRows}
                     lapSummaries={viewModel.lapSummaries}
+                    gapCards={gapCards}
+                    sessionTitle={embedTitle}
                     embedMode={embedMode}
                     onEmbedPanel={onEmbedPanel}
                   />

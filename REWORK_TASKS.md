@@ -145,34 +145,34 @@ Each task lists **Files**, **Change** and **Accept**. Keep diffs small. Don't in
 
 ### Phase 4: Data surfaces
 
-- [ ] **R4-01 Summary strip**
+- [x] ✅ **R4-01 Summary strip**
   Files: `TelemetryTab.tsx` (replaces `.lap-comparison`), `index.css`.
   Change: a paper-2 block with a 3px signal left border: session and lap on the left; right-aligned stats per driver (lap time), `ΔΙΑΦΟΡΑ`, `TOP SPEED a / b`. Uppercase 11px labels, 18px 600 values. Mobile: 2-column grid.
   Accept: shows the same values as the current `lap-comparison` cards, and partial-data drivers show `—` plus a status in the band (R1-03).
 
-- [ ] **R4-02 Tech Desk gap card (from B)**
+- [x] ✅ **R4-02 Tech Desk gap card (from B)**
   Files: new `src/components/dashboard/GapCard.tsx`, `TelemetryTab.tsx`, `BroadcastTab.tsx` (replacing or absorbing `DriverCards` where it overlaps), `index.css`.
   Change: **always dark**, in both themes (as on the homepage): charcoal-2 background, 1px rule, 2px teal top border, kicker `R15 / BAKU GP · RACE · L49`, `{DRIVER} · ΑΠΟΣΤΑΣΗ ΑΠΟ {REF}`, a large numeral (`+0.104s`, teal sign), a sub-line, an S1/S2/S3 row with dividers, then three bar rows `ΑΡΓΕΣ ΣΤΡΟΦΕΣ / ΜΕΣΑΙΕΣ ΣΤΡΟΦΕΣ / ΕΥΘΕΙΕΣ` with time deltas. Source line `ΠΗΓΗ / OPENF1 · CAR_DATA`. For the corner-type split, bucket each sample by the reference driver's speed (<150, 150–250, >250 km/h) and integrate the time difference. Put that in a pure function in `src/components/dashboard/utils.ts` with one unit test.
   Accept: the card numbers add up to within ±0.01s of the lap gap; the test covers a synthetic two-lap input.
 
-- [ ] **R4-03 Tables in THE NUMBERS style**
+- [x] ✅ **R4-03 Tables in THE NUMBERS style**
   Files: `TelemetryTab.tsx` (sector table), `PositionsTab.tsx` (standings list), `StrategyTab.tsx` (strategy rows), `broadcast/TimingTower.tsx`, `IntervalsTab.tsx` (if tabular), `index.css`.
   Change: one shared table look: 2px ink top rule with uppercase header row, 60px rows with 1px rules, a 3px team-colour left bar, a 24px 600 position numeral (P1 in accent), the name as a 14px letter-spaced code plus team in muted text, right-aligned numbers, purple for the personal best sector and green for the second best (existing `--color-sector-*`). A plain CSS class (`.data-table`), not a component, unless three or more tabs need the same markup.
   Accept: every tabular view shares the same header, row and bar treatment in both themes.
 
-- [ ] **R4-04 Chart restyle**
+- [x] ✅ **R4-04 Chart restyle**
   Files: `ChartPanel.tsx`, `chartAxis.ts`, `shared.tsx` (`ChartTip`), `TelemetryTab.tsx`, `EnergyTab.tsx`, `index.css` (`.recharts-*`, `.chart-tooltip`, `.dashboard-chart-legend*`).
   Change: legend **above** the chart as uppercase 12px letter-spaced labels with 22×3px swatches. On distance-based charts, the x-axis shows **corner labels (T1…)** with dotted vertical guides when the circuit's corner positions are known; otherwise keep percentages. Corner positions per circuit are a static map, filled in only for circuits we have data for. The tooltip becomes a paper-2 box with an ink 2px top rule (accent in dark). The source line under each chart reads `Πηγή: OpenF1 …`. The primary chart is 380px tall on desktop and 240px on mobile. Keep dashed/solid styling per driver for colour-blind users.
   Accept: speed trace at 1440 matches `A-data-hub-desktop.png`; no trace falls below 3:1 contrast on paper.
 
 ### Phase 5: Headlines generated from the data
 
-- [ ] **R5-01 `buildHeadline()`**
+- [x] ✅ **R5-01 `buildHeadline()`**
   Files: new `src/components/dashboard/headlines.ts` plus `headlines.test.ts`.
   Change: a pure function `(tab, viewModel) → { title, lede } | null`, with about 6 templates in Greek. Examples: lap winner and gap (`Ο {A} ήταν ταχύτερος κατά {gap}s`); where the time came from (`… κερδίζει στα φρένα, ο {B} στις ευθείες`, using the R4-02 buckets); the sector that decided it; top-speed advantage; positions (`{n} προσπεράσεις στους πρώτους 10 γύρους`); strategy (`Ο {A} σταμάτησε {k} φορές`). Return `null` when there are fewer than 2 loaded drivers or data is missing; the caller then uses the static tab title from `copy.ts`. Greek driver names come from OpenF1 `last_name` as-is, with no declension.
   Accept: the tests cover each template, the null fallback and a tie (|gap| < 0.001s → neutral wording).
 
-- [ ] **R5-02 Wire the headlines into the tab headers**
+- [x] ✅ **R5-02 Wire the headlines into the tab headers**
   Files: every `*Tab.tsx` first panel (R3-02 `title`/`lede` props).
   Accept: switching drivers or laps updates the headline; embeds show the same headline.
 
