@@ -1,12 +1,7 @@
 {
-  "short_name": "f1stories.gr",
-  "name": "f1stories.gr F1 Telemetry Dashboard",
+  "short_name": "F1 Stories",
+  "name": "F1 Stories / Telemetry",
   "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
     {
       "src": "logo192.png",
       "type": "image/png",
@@ -20,6 +15,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#111113",
-  "background_color": "#111113"
+  "theme_color": "#f2eee4",
+  "background_color": "#f2eee4"
 }

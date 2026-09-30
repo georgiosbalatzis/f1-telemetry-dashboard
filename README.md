@@ -18,7 +18,6 @@ Safari / iOS / iPadOS 16.4+, Chrome and Edge 111+, Firefox 128+ (phones, tablets
 - `npm run typecheck` runs the TypeScript project build without emitting a production bundle.
 - `npm run build` runs typecheck and then the Vite production build.
 - `npm run ci` is the local equivalent of the GitHub Actions validation path.
-- `bash check.sh` runs the structural checks and then `npm run ci`.
 
 ## Deployment
 
