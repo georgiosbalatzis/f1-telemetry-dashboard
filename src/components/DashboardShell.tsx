@@ -27,12 +27,12 @@ import { copy } from '../copy';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
-import { TelemetryTab } from './dashboard/TelemetryTab';
-import { TrackMapTab } from './dashboard/TrackMapTab';
 import { ChartSkeleton, Err } from './dashboard/shared';
 
 // ─── Lazy-loaded tab chunks ───────────────────────────────────────────────────
 
+const TelemetryTab = lazy(() => import('./dashboard/TelemetryTab').then((m) => ({ default: m.TelemetryTab })));
+const TrackMapTab  = lazy(() => import('./dashboard/TrackMapTab').then((m)  => ({ default: m.TrackMapTab })));
 const StrategyTab  = lazy(() => import('./dashboard/StrategyTab').then((m)  => ({ default: m.StrategyTab })));
 const EnergyTab    = lazy(() => import('./dashboard/EnergyTab').then((m)    => ({ default: m.EnergyTab })));
 const RadioTab     = lazy(() => import('./dashboard/RadioTab').then((m)     => ({ default: m.RadioTab })));
@@ -42,10 +42,10 @@ const PositionsTab = lazy(() => import('./dashboard/PositionsTab').then((m) => (
 const IntervalsTab = lazy(() => import('./dashboard/IntervalsTab').then((m) => ({ default: m.IntervalsTab })));
 const BroadcastTab = lazy(() => import('./dashboard/BroadcastTab').then((m) => ({ default: m.BroadcastTab })));
 
-function TabLoadingPlaceholder({ label }: { label: string }) {
+function TabLoadingPlaceholder({ label, skeletonClassName = 'h-32' }: { label: string; skeletonClassName?: string }) {
   return (
     <div className="dashboard-panel rounded-[16px] p-6 text-sm text-[color:var(--text-muted)] sm:rounded-[18px] sm:p-8">
-      <ChartSkeleton label={label} className="h-32" />
+      <ChartSkeleton label={label} className={skeletonClassName} />
     </div>
   );
 }
@@ -269,6 +269,7 @@ export function DashboardShell({
             <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
+                <Suspense fallback={<TabLoadingPlaceholder label="Loading telemetry view..." skeletonClassName="h-[240px] sm:h-[380px]" />}>
                 <TelemetryTab
                   lapNum={filters.lapNum}
                   lapsLoading={lapsLoading}
@@ -288,6 +289,7 @@ export function DashboardShell({
                   onEmbedPanel={onEmbedPanel}
                   onTelemetryRetry={primaryTelemetry?.refetch}
                 />
+                </Suspense>
               )}
 
               {filters.tab === 'tires' && (
@@ -356,6 +358,7 @@ export function DashboardShell({
               )}
 
               {filters.tab === 'trackmap' && (
+                <Suspense fallback={<TabLoadingPlaceholder label="Loading track map..." skeletonClassName="h-[260px] sm:h-[360px]" />}>
                 <TrackMapTab
                   lapNum={filters.lapNum}
                   locationByDriver={locationByDriver}
@@ -363,6 +366,7 @@ export function DashboardShell({
                   embedMode={embedMode}
                   onEmbedPanel={onEmbedPanel}
                 />
+                </Suspense>
               )}
 
               {filters.tab === 'positions' && (
