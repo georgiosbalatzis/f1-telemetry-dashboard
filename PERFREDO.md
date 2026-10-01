@@ -527,7 +527,7 @@ The two ⚠️ rows are real mounts and chart repaints, not wasted renders (all 
 
 > **Performance and cross-browser pass (Phases 0–7 of PERFREDO.md)**
 > Initial JS 200 → 83 KB gzip · mobile layout shift 0.198 → 0.0003 · 0 × 429 on cold load (was 5) · 15 rapid lap steps now send 2 telemetry requests (was 32) · `history.replaceState` 12 → 1 on load (Safari could blank the page after ~100 calls) · telemetry tab no longer re-renders on unrelated state (keystrokes, toasts) · lazy charts chunk, preloaded fonts, explicit Safari 16.4 / Chrome 111 / Firefox 128 build target · iPhone: no dead full-screen button · chart SVG export has real colours and fonts · iOS inputs no longer zoom on focus · timing tower keeps table semantics in WebKit · touch devices no longer keep hover colours · 35 dead icon elements, duplicated clipboard/tab-order/sector/URL code, dead CSS and assets removed.
-> No visual change: 120 of 120 Chromium/Firefox screenshots identical (10 tabs, 2 themes, 3 widths); WebKit checked by eye. 106 tests pass.
+> No visual change outside iOS (where the two text inputs go to 16 px): 120 of 120 Chromium/Firefox screenshots identical (10 tabs, 2 themes, 3 widths); WebKit checked by eye. 107 tests pass.
 > Smoke-tested by emulation on iPhone, iPad, Android, desktop Safari, Firefox and Chrome. Left for the owner: a short check on a real iPhone (P5-07 input zoom, P5-05 hover, P5-03 viewport height).
 
 ---
