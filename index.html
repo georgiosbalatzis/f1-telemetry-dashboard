@@ -3,12 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/f1-telemetry-dashboard/logo192.png" />
+    <link rel="apple-touch-icon" href="/f1-telemetry-dashboard/logo192.png" />
+    <link rel="manifest" href="/f1-telemetry-dashboard/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f2eee4" />
     <meta
       name="description"
       content="F1 Stories Telemetry: ανάλυση γύρου με τηλεμετρία, συγκρίσεις οδηγών και ενσωματώσιμα γραφήματα αγώνων."
     />
+    <!-- Fonts the first paint needs (Latin body, Greek body, Barlow display heading); same files the CSS uses, so no double download. -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/f1-telemetry-dashboard/assets/ibm-plex-sans-400-600-BD64o3ke.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/f1-telemetry-dashboard/assets/ibm-plex-sans-400-600-greek-Cuw1d432.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/f1-telemetry-dashboard/assets/barlow-condensed-700-DDMez4TK.woff2" />
+    <link rel="preconnect" href="https://api.openf1.org" crossorigin />
     <title>F1 Stories / Telemetry</title>
     <script>
       // Mirrors f1StoriesPage/scripts/theme-init.js so the page never flashes the wrong theme.
@@ -23,12 +30,10 @@
         document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#181a1c' : '#f2eee4');
       })();
     </script>
-    <script type="module" crossorigin src="/f1-telemetry-dashboard/assets/index-CP16WOR0.js"></script>
+    <script type="module" crossorigin src="/f1-telemetry-dashboard/assets/index-DYLDW3Jj.js"></script>
     <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/react-vendor-B7uZFNFY.js">
-    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/icons-CQM9wo1z.js">
-    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/vendor-BaPJHeyg.js">
-    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/charts-B0TvwG_N.js">
-    <link rel="stylesheet" crossorigin href="/f1-telemetry-dashboard/assets/index-BBMhx0VB.css">
+    <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/icons-2g49ESul.js">
+    <link rel="stylesheet" crossorigin href="/f1-telemetry-dashboard/assets/index-DD4RFB-g.css">
   </head>
   <body>
     <div id="root"></div>
