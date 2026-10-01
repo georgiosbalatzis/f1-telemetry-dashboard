@@ -1,5 +1,5 @@
 import { afterEach, expect, it } from 'vitest';
-import { resolveCssVariables } from '../exportChart';
+import { buildExportMarkup, resolveCssVariables } from '../exportChart';
 
 afterEach(() => document.documentElement.removeAttribute('style'));
 
@@ -21,4 +21,15 @@ it('P5-06: exported charts carry real colours instead of page-only CSS variables
   expect(svg.querySelector('path')?.getAttribute('fill')).toBe('#123456'); // unknown variable falls back
   expect(svg.querySelector('g')?.getAttribute('style')).toBe('color: #a82e1c');
   expect(svg.querySelector('text')?.getAttribute('fill')).toBe('#000'); // plain values untouched
+});
+
+it('P5-06: exported charts carry the page-CSS grid colour and chart font', () => {
+  document.documentElement.style.setProperty('--chart-grid', '#343739');
+  document.documentElement.style.setProperty('--font-body', "'IBM Plex Sans', sans-serif");
+
+  const markup = buildExportMarkup(svgOf('<g class="recharts-cartesian-grid"><line/></g>'), { legend: [], textColor: '#fff', backgroundColor: '#000' });
+
+  expect(markup).toContain('.recharts-cartesian-grid line,.recharts-cartesian-axis-line,.recharts-cartesian-axis-tick-line{stroke:#343739}');
+  expect(markup).toContain(".recharts-text{font-family:'IBM Plex Sans', sans-serif;");
+  expect(markup).not.toContain('var(');
 });

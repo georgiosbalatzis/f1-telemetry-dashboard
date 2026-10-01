@@ -146,6 +146,8 @@ code { font-family: ui-monospace, monospace; }
 .utility-actions .utility-button { justify-content: start; }
 .preset-controls { display: flex; gap: 8px; margin-top: 8px; }
 .preset-controls input { width: 100%; min-width: 0; padding: 8px; font-size: 13px; }
+/* iOS Safari zooms on focus into inputs under 16px and never zooms back. iOS-only, so desktop and Android keep their size. */
+@supports (-webkit-touch-callout: none) { .preset-controls input, #incidents-search { font-size: 16px; } }
 .section-label { font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); }
 .session-status { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 12px; }
 .session-status:empty { display: none; }

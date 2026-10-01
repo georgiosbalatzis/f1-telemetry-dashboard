@@ -374,7 +374,7 @@ Lessons worth keeping:
 
 ---
 
-### Phase 5 status: ✅ DONE except P5-07 (needs the owner's OK, 2026-09-30)
+### Phase 5 status: ✅ DONE (P5-07 and P5-06b added 2026-10-01)
 
 | Task | Result |
 |---|---|
@@ -383,8 +383,8 @@ Lessons worth keeping:
 | P5-03 | `#root` has `min-height: 100dvh` (after the `100vh` fallback); the Shell uses `min-h-dvh`. **Not visible in screenshots** (the capture neutralizes min-heights): verify on a real iPhone. |
 | P5-04 | Timing tower: explicit `table/rowgroup/row/columnheader/rowheader/cell` roles (WebKit drops table semantics from `display:grid` rows). New `TimingTowerRoles.test.tsx`. |
 | P5-05 | All 10 hand-written `:hover` rules are inside `@media (hover: hover)`, same order, so the cascade is unchanged. Desktop pixel-identical; on touch devices the accent colour no longer sticks after a tap. |
-| P5-06 | `resolveCssVariables` replaces `var(--x)` attribute values on the export clone with the current theme's values (unknown variables use their fallback). Unit test. Verify a downloaded SVG in Safari, Chrome and Firefox. |
-| P5-07 ⚠ VISIBLE | **Not done: waiting for the owner's OK** (iOS-only 16px font size for the preset and incidents-search inputs). |
+| P5-06 | `resolveCssVariables` replaces `var(--x)` attribute values on the export clone with the current theme's values (unknown variables use their fallback). **P5-06b:** grid/axis strokes and the chart font come from page CSS (`index.css` `.recharts-*` rules), not attributes, so the export now embeds those rules as a `<style>` with resolved values. Two unit tests. Downloaded SVG checked standalone in Chromium, WebKit and Firefox: grid, axis, ticks and lines coloured like the screen, IBM Plex Sans font stack, no `var(` left. |
+| P5-07 ⚠ VISIBLE | Owner approved. `@supports (-webkit-touch-callout: none) { .preset-controls input, #incidents-search { font-size: 16px } }` in `index.css`. Desktop and Android unchanged (Playwright WebKit doesn't match the `@supports`, so screenshots don't change). Confirm on a real iPhone that focusing no longer zooms. |
 
 Found during execution (not fixed, see §7): exported SVGs have no `font-family` (viewers fall back to a serif for axis text); `.recharts-text { font-family }` lives only in the page CSS.
 
@@ -488,11 +488,12 @@ Decisions and leftovers:
 
 ---
 
-### Phase 7 status: ✅ DONE except the real-device check (P7-04) (2026-09-30)
+### Phase 7 status: ✅ DONE (P7-04 by emulation 2026-10-01; real-device pass still advised)
 
 - **P7-01** the render probe (`usePerfCommit`, `perfProbe.ts`, `render-probe.mjs`) is removed.
 - **P7-02** final metrics: `.perf-baseline/metrics-after.json` (live API, production build, clean run after a quiet period).
 - **P7-03** full screenshot compare, 10 tabs × light/dark × 390/820/1440 × 3 engines = 180 shots: **0 differences in all 120 Chromium and Firefox shots**. 12 WebKit shots differed (advisory): 6 were only the tab-strip band (WebKit's baseline predates the Phase 4 centering fix; refreshed), 6 were the known WebKit height jitter of ±15–18 px that also appears with no code change (Track Map, Weather). No real regression.
+- **P7-04** (emulated, no real devices available): Playwright on the production build with replayed API data, for iPhone 13 (WebKit), iPad gen 7 (WebKit), Pixel 7 (Chromium), desktop Safari, Firefox and Chrome. All passed: no page or console errors, the `?year=2025&circuit=Monza` load renders, 20 rapid lap-strip taps (plus 20 arrow keys on desktop) leave the page intact, all 10 tabs render, the theme toggle works, share and embed reach the clipboard, iPhone and iPad have no "Full screen" menu item (desktop and Android do), no extra scroll below the footer, print preview renders. Emulation cannot check iOS input zoom (P5-07), sticky hover after a real tap (P5-05) or real `dvh` behaviour (P5-03).
 - **P7-05** `npm run ci` green (lint 0 warnings, build, 106 tests); `graphify update .` run.
 
 **Final results against the targets**
@@ -516,20 +517,18 @@ Decisions and leftovers:
 The two ⚠️ rows are real mounts and chart repaints, not wasted renders (all the avoidable re-rendering is gone). Getting them under 50 ms at 6× throttle would mean less chart work per mount, for example replacing Recharts, which is explicitly out of scope (§5). Charts-visible time on a cold load is unchanged (~2.4 s); it is now dominated by the request sequence (9 requests paced 350 ms apart), which keeps us under the rate limit.
 
 **Still open (nothing here blocks shipping)**
-1. **P7-04, real devices** (I could not do this): see the checklist below.
-2. **P5-07** (iOS-only 16 px input font): needs the owner's OK.
-3. **P5-06b** (font-family in exported SVGs), §7.
-4. `public/favicon.svg` is unreferenced (kept on purpose).
-5. The in-memory cache treats data as fresh for 30 min: a live session could lag.
+1. **P7-04 on real devices**: the emulated pass is green. On a real iPhone, still check input zoom (P5-07), hover colours after a tap (P5-05) and that there is no extra scroll at the bottom (P5-03). Checklist below.
+2. `public/favicon.svg` is unreferenced (kept on purpose).
+3. The in-memory cache treats data as fresh for 30 min: a live session could lag.
 
 **P7-04 manual smoke test** (iPhone Safari, iPad Safari, Android Chrome; also desktop Safari and Firefox): load with no query string and with `?year=2025&circuit=Monza`; the page must not jump while loading; step laps with the lap strip (tap, and arrow keys on desktop) 20 times quickly, with no blank page in Safari; open every tab and toggle the theme; Track Map and Broadcast render; share and embed copy (link/snippet reaches the clipboard or the prompt); on iPhone there is no "Full screen" item in a chart's ⋯ menu, and on desktop it works; download a chart SVG and open it in Safari, Chrome and Firefox (grid, ticks and lines coloured, like the screen); on iOS the page has no extra scroll below the footer (P5-03); tapping a tab or button does not leave the accent colour stuck (P5-05); print preview.
 
 **PR description (ready to paste)**
 
 > **Performance and cross-browser pass (Phases 0–7 of PERFREDO.md)**
-> Initial JS 200 → 83 KB gzip · mobile layout shift 0.198 → 0.0003 · 0 × 429 on cold load (was 5) · 15 rapid lap steps now send 2 telemetry requests (was 32) · `history.replaceState` 12 → 1 on load (Safari could blank the page after ~100 calls) · telemetry tab no longer re-renders on unrelated state (keystrokes, toasts) · lazy charts chunk, preloaded fonts, explicit Safari 16.4 / Chrome 111 / Firefox 128 build target · iPhone: no dead full-screen button · chart SVG export has real colours · timing tower keeps table semantics in WebKit · touch devices no longer keep hover colours · 35 dead icon elements, duplicated clipboard/tab-order/sector/URL code, dead CSS and assets removed.
+> Initial JS 200 → 83 KB gzip · mobile layout shift 0.198 → 0.0003 · 0 × 429 on cold load (was 5) · 15 rapid lap steps now send 2 telemetry requests (was 32) · `history.replaceState` 12 → 1 on load (Safari could blank the page after ~100 calls) · telemetry tab no longer re-renders on unrelated state (keystrokes, toasts) · lazy charts chunk, preloaded fonts, explicit Safari 16.4 / Chrome 111 / Firefox 128 build target · iPhone: no dead full-screen button · chart SVG export has real colours and fonts · iOS inputs no longer zoom on focus · timing tower keeps table semantics in WebKit · touch devices no longer keep hover colours · 35 dead icon elements, duplicated clipboard/tab-order/sector/URL code, dead CSS and assets removed.
 > No visual change: 120 of 120 Chromium/Firefox screenshots identical (10 tabs, 2 themes, 3 widths); WebKit checked by eye. 106 tests pass.
-> Left for the owner: P5-07 (visible, iOS-only input font size), real-device smoke test (checklist in PERFREDO.md §4, P7-04).
+> Smoke-tested by emulation on iPhone, iPad, Android, desktop Safari, Firefox and Chrome. Left for the owner: a short check on a real iPhone (P5-07 input zoom, P5-05 hover, P5-03 viewport height).
 
 ---
 
@@ -560,5 +559,5 @@ The two ⚠️ rows are real mounts and chart repaints, not wasted renders (all 
 
 (Sonnet: append new findings here with file:line and a proposed task ID; don't fix them without adding them to a phase first.)
 
-- `src/utils/exportChart.ts`: the exported SVG root has no `font-family`, so axis text renders in the viewer's default serif font. Proposed: set `font-family` on the export root from `getComputedStyle(document.body).fontFamily` (P5-06b, invisible on screen).
+- `src/utils/exportChart.ts`: the exported SVG root has no `font-family`, so axis text renders in the viewer's default serif font. Fixed as P5-06b: the export now embeds the page's `.recharts-*` rules (font and grid stroke) with resolved values.
 - Live-API metrics runs made within about a minute of each other can still draw a single 429 (seen once on a second back-to-back cold load); the pacer retries it. Leave a pause between `perf-metrics.mjs` runs.
