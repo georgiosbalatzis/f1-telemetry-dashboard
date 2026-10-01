@@ -29,6 +29,12 @@ export const copy = {
     presetPlaceholder: 'Όνομα σύγκρισης',
     save: 'Αποθήκευση',
     nextSession: 'Επόμενο GP',
+    presetLoaded: (name: string) => `Φορτώθηκε η σύγκριση ${name}`,
+    presetSaved: (name: string) => `Αποθηκεύτηκε η σύγκριση ${name}`,
+    printing: 'Άνοιγμα διαλόγου εκτύπωσης',
+    splitEnabled: 'Ενεργοποιήθηκε η διπλή προβολή',
+    splitDisabled: 'Απενεργοποιήθηκε η διπλή προβολή',
+    noHistory: 'Δεν υπάρχει προηγούμενη σελίδα στο ιστορικό',
   },
   hero: {
     kickerLeft: 'F1 Stories / Race Desk',
@@ -131,7 +137,7 @@ export const copy = {
   footer: {
     tagline: 'Τεχνική ανάλυση, άποψη και ελληνική F1 κοινότητα.',
     credit: 'Δεδομένα από OpenF1',
-    rights: '© 2026 F1 Stories. Με επιφύλαξη παντός δικαιώματος.',
+    rights: `© ${new Date().getFullYear()} F1 Stories. Με επιφύλαξη παντός δικαιώματος.`,
     privacy: 'Πολιτική Απορρήτου',
     terms: 'Όροι Χρήσης',
   },
@@ -156,5 +162,12 @@ export const SITE_FOOTER_LINKS = [
   { label: 'Συντάκτες', href: `${SITE}/authors/` },
   { label: 'YouTube ↗', href: 'https://www.youtube.com/@f1_stories_original', external: true },
   { label: 'BetCast ↗', href: 'https://georgiosbalatzis.github.io/BetCastVisualisation/', external: true },
+] as const;
+export const SITE_SOCIAL_LINKS = [
+  { label: 'F1 Stories στο YouTube', href: 'https://www.youtube.com/@f1_stories_original', icon: 'fa-youtube' },
+  { label: 'F1 Stories στο Facebook', href: 'https://www.facebook.com/f1storiess', icon: 'fa-facebook-f' },
+  { label: 'F1 Stories στο Instagram', href: 'https://www.instagram.com/myf1stories/', icon: 'fa-instagram' },
+  { label: 'F1 Stories στο TikTok', href: 'https://www.tiktok.com/@f1stories6', icon: 'fa-tiktok' },
+  { label: 'Email στο F1 Stories', href: 'mailto:myf1stories@gmail.com', icon: 'fa-envelope' },
 ] as const;
 export const SITE_LEGAL = { home: `${SITE}/`, privacy: `${SITE}/privacy/privacy.html`, terms: `${SITE}/privacy/terms.html` } as const;
