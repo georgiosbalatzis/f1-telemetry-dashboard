@@ -11,7 +11,6 @@ export type ChartLegendItem = ExportChartLegendItem;
 
 type Props = {
   title: string;
-  icon?: ReactNode;
   sub?: string;
   children: ReactNode;
   className?: string;
@@ -27,7 +26,6 @@ type Props = {
 
 export function ChartPanel({
   title,
-  icon,
   sub,
   children,
   className,
@@ -60,12 +58,11 @@ export function ChartPanel({
     const frame = frameRef.current;
     if (!frame) return;
 
-    if (document.fullscreenElement === frame) {
-      await document.exitFullscreen();
-      return;
-    }
-
-    await frame.requestFullscreen();
+    // Both calls return promises that reject when the browser refuses (iframe without allowfullscreen, no user gesture).
+    try {
+      if (document.fullscreenElement === frame) await document.exitFullscreen();
+      else await frame.requestFullscreen();
+    } catch { /* stay in the normal layout */ }
   };
 
   const handleDownload = () => {
@@ -90,12 +87,15 @@ export function ChartPanel({
         <div className="panel-menu-list" onClick={(event) => event.currentTarget.closest('details')?.removeAttribute('open')}>
           {panelId && onEmbedPanel && <EmbedPanelButton onClick={() => onEmbedPanel(panelId)} />}
           <ToolbarButton icon={<Download size={16} />} label={copy.panel.download} onClick={handleDownload} />
-          <ToolbarButton
-            icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
-            label={isFullscreen ? copy.panel.exitFull : copy.panel.fullScreen}
-            onClick={handleToggleFullscreen}
-            active={isFullscreen}
-          />
+          {/* iPhone Safari has no element fullscreen (fullscreenEnabled is false): hide the item instead of a dead button. */}
+          {document.fullscreenEnabled && (
+            <ToolbarButton
+              icon={isFullscreen ? <Shrink size={16} /> : <Expand size={16} />}
+              label={isFullscreen ? copy.panel.exitFull : copy.panel.fullScreen}
+              onClick={handleToggleFullscreen}
+              active={isFullscreen}
+            />
+          )}
         </div>
       </details>
     </div>
@@ -103,7 +103,7 @@ export function ChartPanel({
 
   return (
     <div ref={frameRef} className="dashboard-chart-frame">
-      <Panel title={title} icon={icon} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
+      <Panel title={title} sub={sub} className={className} headerRight={actions} panelId={panelId} lead={lead}>
         <div className="space-y-3">
           {legend.length > 0 && (
             <div className="dashboard-chart-legend">

@@ -1,157 +1,159 @@
-# Graph Report - f1-telemetry-dashboard  (2026-09-22)
+# Graph Report - f1-telemetry-dashboard  (2026-09-30)
 
 ## Corpus Check
-- 100 files · ~72,974 words
+- 126 files · ~444,438 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 11 file(s) not represented in the graph (top: (none) 4, .woff2 4, .css 2)
 
 ## Summary
-- 779 nodes · 1584 edges · 39 communities (30 shown, 9 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 63 edges (avg confidence: 0.88)
+- 861 nodes · 1927 edges · 45 communities (37 shown, 8 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.92)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9a907991`
+- Built from commit: `c03710f0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- P2Polish.test.tsx
+- Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)
 - openf1.ts
-- F1 Stories / Telemetry Visual Rework
+- TelemetryTab.tsx
 - /graphify skill
-- DESIGN.md
+- types.ts
 - Cookies
 - TrackMapTab.tsx
-- shared.tsx
+- perf-metrics.mjs
 - package.json
 - compilerOptions
 - devDependencies
 - compilerOptions
-- DashboardContainer.tsx
-- positionsUtils.test.ts
 - scripts
-- P2 — Noticeable polish issues
+- dependencies
+- Trace Output Files
+- vite.config.ts
 - manifest.json
 - Browser Automation with playwright-cli
 - 3. Heal
-- dependencies
+- DashboardContainer.tsx
 - Browser Session Management
 - F1 Telemetry Dashboard README
 - favicon.svg (F1 Stories App Icon)
 - F1 Stories App Icon (512px)
-- vite.config.ts
+- shared.tsx
 - F1 Stories App Icon (192px)
 - tsconfig.json
-- check.sh
+- P2Polish.test.tsx
 - Running Custom Playwright Code
-- React Logo SVG
-- Senior AI Collaborator Operating Prompt
+- element-attributes.md
+- DashboardShell.tsx
 - robots.txt (allow all)
+- headlines.ts
 - Tracing
-- exportChart.ts
-- main.tsx
-- openf1.integration.test.ts
-- @testing-library/jest-dom
+- vitest
+- ErrorBoundary
+- react
+- WeatherTab.tsx
+- SKILL.md
+- Video Recording
+- Advanced Mocking with run-code
+- Attaching Screenshots and Videos to Pull Requests
+- Barlow Condensed SIL OFL 1.1 License
+- IBM Plex Sans SIL OFL 1.1 License
 
 ## God Nodes (most connected - your core abstractions)
-1. `F1 Stories / Telemetry Visual Rework` - 31 edges
-2. `react` - 28 edges
-3. `useDashboard()` - 22 edges
-4. `useDriverContext()` - 20 edges
-5. `useFetch()` - 19 edges
-6. `lucide-react` - 18 edges
-7. `compilerOptions` - 18 edges
-8. `/graphify skill` - 18 edges
-9. `fetchJson()` - 17 edges
-10. `DashboardContainer()` - 16 edges
+1. `react` - 38 edges
+2. `vitest` - 25 edges
+3. `useDashboard()` - 24 edges
+4. `copy` - 23 edges
+5. `useDriverContext()` - 22 edges
+6. `useFetch()` - 20 edges
+7. `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)` - 20 edges
+8. `fetchJson()` - 19 edges
+9. `DashboardContainer()` - 19 edges
+10. `Panel()` - 18 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Unboxed shared Panel / chart treatment` --references--> `Panel()`  [INFERRED]
-  TELEMETRY_VISUAL_REWORK.md → src/components/dashboard/shared.tsx
-- `F1 Stories / Telemetry Visual Rework` --references--> `DashboardContainer()`  [INFERRED]
-  TELEMETRY_VISUAL_REWORK.md → src/components/DashboardContainer.tsx
-- `Embed mode treatment` --references--> `DashboardShell()`  [INFERRED]
-  TELEMETRY_VISUAL_REWORK.md → src/components/DashboardShell.tsx
-- `F1 Stories / Telemetry Visual Rework` --references--> `ErrorBoundary`  [INFERRED]
-  TELEMETRY_VISUAL_REWORK.md → src/components/ErrorBoundary.tsx
-- `F1 STORIES. / TELEMETRY masthead with Tools disclosure` --references--> `DashboardHeader()`  [INFERRED]
-  TELEMETRY_VISUAL_REWORK.md → src/components/dashboard/DashboardHeader.tsx
+- `1. Baseline (measured, production build, Chromium)` --references--> `DashboardContainer()`  [INFERRED]
+  PERFREDO.md → src/components/DashboardContainer.tsx
+- `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)` --references--> `CornerMark`  [INFERRED]
+  PERFREDO.md → src/components/dashboard/cornerMarks.ts
+- `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)` --references--> `LapBarState`  [INFERRED]
+  PERFREDO.md → src/components/dashboard/lapStripUtils.ts
+- `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)` --references--> `LapBar`  [INFERRED]
+  PERFREDO.md → src/components/dashboard/lapStripUtils.ts
+- `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)` --references--> `buildUrl()`  [INFERRED]
+  PERFREDO.md → src/api/openf1.ts
 
 ## Import Cycles
 - None detected.
 
 ## Hyperedges (group relationships)
 - **npm run ci validation pipeline gating CI and Pages deploy** — _github_workflows_ci_ci_workflow, _github_workflows_deploy_deploy_to_github_pages, readme_npm_run_ci, readme_github_pages_deployment [EXTRACTED 1.00]
-- **filters -> selectionData -> viewModel composed by useDashboard** — src_hooks_usedashboardfilters_usedashboardfilters, src_hooks_usedashboardselectiondata_usedashboardselectiondata, src_hooks_usedashboardviewmodel_usedashboardviewmodel, src_hooks_usedashboard_usedashboard [EXTRACTED 1.00]
 - **graphify extraction pipeline stages** — _claude_skills_graphify_skill_structural_ast_extraction, _claude_skills_graphify_skill_semantic_subagent_extraction, _claude_skills_graphify_skill_ast_semantic_merge, _claude_skills_graphify_skill_community_labeling, _claude_skills_graphify_skill_shrink_guard, _claude_skills_graphify_skill_graph_health_check, _claude_skills_graphify_skill_manifest_stamping [EXTRACTED 1.00]
 - **Graph rebuild triggers (update, watch, hook, add)** — _claude_skills_graphify_references_update_incremental_update, _claude_skills_graphify_references_add_watch_watch_mode, _claude_skills_graphify_references_hooks_post_commit_hook, _claude_skills_graphify_references_add_watch_graphify_add, claude_graphify_update_after_changes [INFERRED 0.85]
 
-## Communities (39 total, 9 thin omitted)
+## Communities (45 total, 8 thin omitted)
 
-### Community 0 - "P2Polish.test.tsx"
-Cohesion: 0.08
-Nodes (27): react, @testing-library/react, @testing-library/user-event, vitest, OpenF1Driver, OpenF1TeamRadio, formatLapAxis(), formatPedalAxis() (+19 more)
+### Community 0 - "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)"
+Cohesion: 0.09
+Nodes (28): 0. How to use this file (read first, Sonnet), 1. Baseline (measured, production build, Chromium), 2. Support matrix (make it explicit), 4. Phases and tasks, 5. Explicitly out of scope (don't do these), 6. Risk notes for the executor, 7. Found during execution, PERFREDO: performance and cross-browser plan (+20 more)
 
 ### Community 1 - "openf1.ts"
-Cohesion: 0.07
-Nodes (67): buildUrl(), buildUrlWithDateFilters(), combineSignals(), createTimeoutSignal(), fetchJson(), getCarDataForLap(), getDrivers(), getIntervals() (+59 more)
+Cohesion: 0.05
+Nodes (82): 3. Findings by severity, Phase 2: Network (F3), Phase 2 status: ✅ DONE (P2-01..P2-06, 2026-09-30), @testing-library/react, buildUrl(), combineSignals(), createTimeoutSignal(), fetchJson() (+74 more)
 
-### Community 2 - "F1 Stories / Telemetry Visual Rework"
-Cohesion: 0.09
-Nodes (49): Codex Improvement Prompt (8 phases), Container + Presenter split, CSS-var semantic colour tokens (COLORS), Orbitron font loading fix, Phase 1 Critical Bug Fixes, Phase 2 Performance Optimizations, Phase 3 Accessibility, Phase 4 Visual / UI Improvements (+41 more)
+### Community 2 - "TelemetryTab.tsx"
+Cohesion: 0.17
+Nodes (24): recharts, AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks(), formatLapAxis(), formatPedalAxis(), isNarrow() (+16 more)
 
 ### Community 3 - "/graphify skill"
 Cohesion: 0.10
 Nodes (32): Project graphify skill registration (.claude/CLAUDE.md), /graphify add <url> ingestion, --watch folder auto-rebuild, Extra exports (wiki, Neo4j, FalkorDB, SVG, GraphML, MCP), Token reduction benchmark, Extraction subagent prompt spec, GitHub clone and cross-repo merge, graphify claude install (native CLAUDE.md integration) (+24 more)
 
-### Community 4 - "DESIGN.md"
-Cohesion: 0.05
-Nodes (38): Border Radius Scale, Brand & Accent, Breakpoints, Buttons, Cards & Containers, Collapsing Strategy, Colors, Components (+30 more)
+### Community 4 - "types.ts"
+Cohesion: 0.09
+Nodes (31): IndexedSectorTime, SectorAnalysisData, SectorClass, SECTOR_STYLE, DriverCardsProps, SectorAnalysis(), SectorAnalysisProps, SpeedTrap() (+23 more)
 
 ### Community 5 - "Cookies"
 Cohesion: 0.06
 Nodes (35): Advanced: Multiple Cookies or Custom Options, Advanced: Multiple Operations, Authentication State Reuse, Clear All Cookies, Clear All localStorage, Clear sessionStorage, Common Patterns, Cookies (+27 more)
 
 ### Community 6 - "TrackMapTab.tsx"
-Cohesion: 0.23
-Nodes (13): OpenF1Location, DriverMarker, mapPosition(), Props, buildTransform(), fitBox(), MAP_H, MAP_W (+5 more)
+Cohesion: 0.18
+Nodes (19): MINI_SECTORS, Path, stretchPolylines(), stretchWinners(), timesAtPathFractions(), DriverMarker, mapPosition(), Props (+11 more)
 
-### Community 7 - "shared.tsx"
-Cohesion: 0.05
-Nodes (87): lucide-react, recharts, OpenF1Stint, IndexedSectorTime, SectorAnalysisData, SectorClass, buildSectorAnalysis(), classifySectorEntries() (+79 more)
+### Community 7 - "perf-metrics.mjs"
+Cohesion: 0.09
+Nodes (37): ref_node_child_process, ref_node_crypto, ref_node_fs, ref_node_path, ref_node_url, ref_node_zlib, playwright, arg() (+29 more)
 
 ### Community 8 - "package.json"
-Cohesion: 0.12
-Nodes (18): name, packageManager, private, type, version, eslint, @eslint/js, eslint-plugin-react-hooks (+10 more)
+Cohesion: 0.11
+Nodes (19): name, packageManager, private, type, version, eslint, @eslint/js, eslint-plugin-react-hooks (+11 more)
 
 ### Community 9 - "compilerOptions"
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowImportingTsExtensions, isolatedModules, jsx, lib, module, moduleDetection, moduleResolution (+11 more)
 
 ### Community 10 - "devDependencies"
-Cohesion: 0.11
-Nodes (19): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, jsdom, msw (+11 more)
+Cohesion: 0.09
+Nodes (22): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, jsdom, msw (+14 more)
 
 ### Community 11 - "compilerOptions"
 Cohesion: 0.11
 Nodes (17): compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleDetection, moduleResolution, noEmit (+9 more)
 
-### Community 12 - "DashboardContainer.tsx"
-Cohesion: 0.09
-Nodes (34): GROUPS, TAB_LABELS, Tab, buildDashboardUrl(), buildIframeSnippet(), DashboardContainer(), getClipboardErrorMessage(), isShareCancel() (+26 more)
-
-### Community 13 - "positionsUtils.test.ts"
-Cohesion: 0.36
-Nodes (4): OpenF1Position, buildPositionChartData(), MAX_CHART_POINTS, PositionChartResult
-
-### Community 14 - "scripts"
+### Community 12 - "scripts"
 Cohesion: 0.20
 Nodes (10): scripts, build, ci, dev, lint, preview, test, test:ui (+2 more)
 
-### Community 15 - "P2 — Noticeable polish issues"
-Cohesion: 0.07
-Nodes (29): F1 Telemetry Dashboard — TASKS, Final verification checklist, P0 — Visually or functionally broken, P1 — Strongly damages the F1Stories identity, P2 — Noticeable polish issues, [ ] P3-03 — Legend lines look like tiny curved bowls, P3 — Micro-polish, [x] P0-01 — Broadcast contradicts the available analysis (+21 more)
+### Community 13 - "dependencies"
+Cohesion: 0.40
+Nodes (5): dependencies, lucide-react, react, react-dom, recharts
+
+### Community 14 - "Trace Output Files"
+Cohesion: 0.50
+Nodes (4): `resources/`, Trace Output Files, `trace-{timestamp}.network`, `trace-{timestamp}.trace`
 
 ### Community 16 - "manifest.json"
 Cohesion: 0.25
@@ -165,9 +167,9 @@ Nodes (27): Attaching screenshots and videos to pull requests, Browser Automatio
 Cohesion: 0.09
 Nodes (23): 0. How generation works, 1.1 Prerequisite: workspace, 1.2 Prerequisite: seed test, 1.3 Explore the app, 1.4 Write the spec file, 1. Planning, 2.1 Inputs, 2.2 Generate one scenario (+15 more)
 
-### Community 19 - "dependencies"
-Cohesion: 0.29
-Nodes (7): dependencies, lucide-react, react, react-dom, recharts, tailwindcss, @tailwindcss/vite
+### Community 19 - "DashboardContainer.tsx"
+Cohesion: 0.10
+Nodes (36): Phase 1: Render stability (the root cause behind F1 and F2), Phase 0: Foundations, buildDashboardUrl(), buildIframeSnippet(), DashboardContainer(), getClipboardErrorMessage(), isShareCancel(), normalizeThemeMode() (+28 more)
 
 ### Community 20 - "Browser Session Management"
 Cohesion: 0.10
@@ -185,49 +187,81 @@ Nodes (4): favicon.svg (F1 Stories App Icon), Cyan X Accent (#6CCBFF, checkered-
 Cohesion: 0.50
 Nodes (4): F1 Stories App Icon (512px), F1 Stories Brand, PWA Manifest Icon, Red F1 Car Badge Emblem (navy arch, cream text)
 
+### Community 24 - "shared.tsx"
+Cohesion: 0.12
+Nodes (26): lucide-react, Phase 3: Navigation and section framing, Phase 4: Data surfaces, DriverCards(), formatDrsState(), ChartPanel(), Props, DashboardHeader (+18 more)
+
 ### Community 25 - "F1 Stories App Icon (192px)"
 Cohesion: 1.00
 Nodes (3): F1 Stories App Icon (192px), F1 Stories Brand, Red F1 Car Badge Emblem
 
+### Community 27 - "P2Polish.test.tsx"
+Cohesion: 0.10
+Nodes (23): Phase 1 status: ✅ DONE (P1-01..P1-07, 2026-09-30), OpenF1TeamRadio, flagTone(), IncidentsTab, Props, toneOf(), Props, RadioTab (+15 more)
+
 ### Community 28 - "Running Custom Playwright Code"
-Cohesion: 0.04
-Nodes (40): Examples, Inspecting Element Attributes, Debugging Playwright Tests, Running Playwright Tests, Attaching Screenshots and Videos to Pull Requests, From a local session, From CI, Limits (+32 more)
+Cohesion: 0.15
+Nodes (13): Clipboard, Complex Workflows, Error Handling, File Downloads, Frames and Iframes, Geolocation, JavaScript Execution, Media Emulation (+5 more)
+
+### Community 30 - "DashboardShell.tsx"
+Cohesion: 0.15
+Nodes (18): CardBar(), DashboardSelectors, Props, NextViews(), SiteFooter(), TAB_LABELS, TAB_ORDER, SelectOption (+10 more)
+
+### Community 32 - "headlines.ts"
+Cohesion: 0.08
+Nodes (27): 1. Decisions (agreed 2026-09-30), 2. Why it looks disjoint today (diagnosis), 3. Target design spec (A + B card + C strip), 4. Phases and tasks, 5. Suggested PR slicing, 6. Risks and notes, 7. Optional follow-ups in f1StoriesPage (not in scope), F1 Stories Telemetry: Rework Tasks (+19 more)
 
 ### Community 34 - "Tracing"
-Cohesion: 0.12
-Nodes (16): 1. Start Tracing Before the Problem, 2. Clean Up Old Traces, Analyzing Performance, Basic Usage, Best Practices, Capturing Evidence, Debugging Failed Actions, Limitations (+8 more)
+Cohesion: 0.17
+Nodes (12): 1. Start Tracing Before the Problem, 2. Clean Up Old Traces, Analyzing Performance, Basic Usage, Best Practices, Capturing Evidence, Debugging Failed Actions, Limitations (+4 more)
 
-### Community 35 - "exportChart.ts"
-Cohesion: 0.39
-Nodes (7): appendLegend(), buildExportMarkup(), downloadSvg(), exportChartAsSvg(), ExportChartLegendItem, ExportChartOptions, getChartDimensions()
+### Community 35 - "vitest"
+Cohesion: 0.07
+Nodes (27): Phase 5 status: ✅ DONE except P5-07 (needs the owner's OK, 2026-09-30), msw, vitest, OpenF1Meeting, fakeMeeting, server, CornerMark, cornerMarks() (+19 more)
 
-### Community 36 - "main.tsx"
-Cohesion: 0.38
-Nodes (5): Vite HTML entry (F1 Stories / Telemetry), Legacy CRA public/index.html template, react-dom, App(), src_index
+### Community 36 - "ErrorBoundary"
+Cohesion: 0.14
+Nodes (8): Vite HTML entry (F1 Stories / Telemetry), Phase 5: Cross-browser and platform correctness, react-dom, @testing-library/user-event, ErrorBoundary, Props, State, src_index
 
-### Community 37 - "openf1.integration.test.ts"
-Cohesion: 0.50
-Nodes (3): msw, fakeMeeting, server
+### Community 37 - "react"
+Cohesion: 0.21
+Nodes (11): react, DriverSelector, Props, DriverChip(), PitStopCard, Props, stintCountLabel(), StrategyRow (+3 more)
+
+### Community 38 - "WeatherTab.tsx"
+Cohesion: 0.32
+Nodes (6): OpenF1Weather, Err(), AUX_TRACES, Props, WeatherTab, WeatherTab
+
+### Community 41 - "Video Recording"
+Cohesion: 0.20
+Nodes (10): 1. Use Descriptive Filenames, 2. Record entire hero scripts., 3. Attach the recording to the pull request, Basic Recording, Best Practices, Cursor, Target Highlight and Click Point, Limitations, Overlay API Summary (+2 more)
+
+### Community 42 - "Advanced Mocking with run-code"
+Cohesion: 0.22
+Nodes (8): Advanced Mocking with run-code, CLI Route Commands, Conditional Response Based on Request, Delayed Response, Modify Real Response, Request Mocking, Simulate Network Failures, URL Patterns
+
+### Community 45 - "Attaching Screenshots and Videos to Pull Requests"
+Cohesion: 0.40
+Nodes (5): Attaching Screenshots and Videos to Pull Requests, From a local session, From CI, Limits, When to attach
 
 ## Knowledge Gaps
-- **351 isolated node(s):** `check.sh script`, `name`, `private`, `version`, `type` (+346 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 379 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **327 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+322 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 373 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `P2Polish.test.tsx` to `openf1.ts`, `main.tsx`, `TrackMapTab.tsx`, `shared.tsx`, `package.json`, `DashboardContainer.tsx`?**
-  _High betweenness centrality (0.071) - this node is a cross-community bridge._
-- **Why does `devDependencies` connect `devDependencies` to `package.json`?**
-  _High betweenness centrality (0.025) - this node is a cross-community bridge._
-- **Why does `lucide-react` connect `shared.tsx` to `package.json`, `P2Polish.test.tsx`, `TrackMapTab.tsx`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Are the 20 inferred relationships involving `F1 Stories / Telemetry Visual Rework` (e.g. with `DriverCards()` and `TimingTower()`) actually correct?**
-  _`F1 Stories / Telemetry Visual Rework` has 20 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `check.sh script`, `name`, `private` to the rest of the system?**
-  _351 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `P2Polish.test.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07928118393234672 - nodes in this community are weakly interconnected._
+- **Why does `react` connect `react` to `openf1.ts`, `TelemetryTab.tsx`, `vitest`, `types.ts`, `ErrorBoundary`, `TrackMapTab.tsx`, `WeatherTab.tsx`, `package.json`, `DashboardContainer.tsx`, `shared.tsx`, `P2Polish.test.tsx`, `DashboardShell.tsx`?**
+  _High betweenness centrality (0.114) - this node is a cross-community bridge._
+- **Why does `playwright` connect `perf-metrics.mjs` to `package.json`?**
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
+- **Why does `vitest` connect `vitest` to `headlines.ts`, `openf1.ts`, `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)`, `types.ts`, `ErrorBoundary`, `TrackMapTab.tsx`, `WeatherTab.tsx`, `package.json`, `vite.config.ts`, `DashboardContainer.tsx`, `shared.tsx`, `P2Polish.test.tsx`, `DashboardShell.tsx`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Are the 2 inferred relationships involving `useDashboard()` (e.g. with `Phase 1: Render stability (the root cause behind F1 and F2)` and `Phase 4 status: ✅ DONE (P4-01, P4-02; P4-03 skipped, 2026-09-30)`) actually correct?**
+  _`useDashboard()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `name`, `private`, `version` to the rest of the system?**
+  _327 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)` be split into smaller, more focused modules?**
+  _Cohesion score 0.08522727272727272 - nodes in this community are weakly interconnected._
 - **Should `openf1.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.07313738892686261 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05259835893120135 - nodes in this community are weakly interconnected._

@@ -39,7 +39,6 @@ export type DriverLapSummary = {
   lapTime: number | null;
   gapToLeader: number | null;
   topSpeed: number | null;
-  avgSpeed: number | null;
   avgThrottle: number | null;
   avgBrake: number | null;
   peakRpm: number | null;

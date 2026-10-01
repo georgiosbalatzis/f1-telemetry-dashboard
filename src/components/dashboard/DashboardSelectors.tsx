@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { copy } from '../../copy';
@@ -18,7 +19,6 @@ type Props = {
   lapsLoading: boolean;
   canStepBackward: boolean;
   canStepForward: boolean;
-  embedMode?: boolean;
   /** Extra fields for the end of the bar (the driver field). */
   children?: ReactNode;
   onYearChange: (year: number) => void;
@@ -28,13 +28,13 @@ type Props = {
   onStepLap: (direction: -1 | 1) => void;
 };
 
-export function DashboardSelectors({
+export const DashboardSelectors = memo(function DashboardSelectors({
   year, circuit, sessionKey, lapNum, totalLaps, yearOptions, circuitOptions,
   sessionOptions, lapOptions, meetingsLoading, sessionsLoading, lapsLoading,
   canStepBackward, canStepForward, onYearChange, onCircuitChange, onSessionChange,
-  onLapChange, onStepLap, embedMode = false, children,
+  onLapChange, onStepLap, children,
 }: Props) {
-  const controls = (
+  return (
     <section className="session-scope" aria-label={copy.scope.label}>
       <div className="scope-fields">
         <label className="scope-field"><span className="field-label">{copy.scope.season}</span>
@@ -69,5 +69,4 @@ export function DashboardSelectors({
       </div>
     </section>
   );
-  return embedMode ? <details className="embed-scope"><summary className="text-action">Adjust session & lap</summary>{controls}</details> : controls;
-}
+});

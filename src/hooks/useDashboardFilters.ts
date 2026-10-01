@@ -1,5 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { Tab } from '../components/dashboard/types';
+import { TAB_ORDER } from '../components/dashboard/tabLabels';
 
 export type DashboardFilterSnapshot = {
   year: number;
@@ -14,7 +15,6 @@ const VALID_YEAR_RANGE = [2023, new Date().getFullYear()] as const;
 const VALID_DRIVER_RANGE = [1, 99] as const;
 const VALID_LAP_RANGE = [1, 200] as const;
 const VALID_CIRCUIT_PATTERN = /^[A-Za-z0-9 ._'-]{1,80}$/;
-const VALID_TABS: Tab[] = ['telemetry', 'tires', 'energy', 'trackmap', 'positions', 'intervals', 'radio', 'incidents', 'weather', 'broadcast'];
 
 /** @internal exported for unit tests only */
 export function parseBoundedInt(value: string | null, min: number, max: number) {
@@ -58,7 +58,7 @@ function parseDriverNumbers(value: string | null) {
 }
 
 function parseTab(value: string | null): Tab | null {
-  return value && VALID_TABS.includes(value as Tab) ? value as Tab : null;
+  return value && TAB_ORDER.includes(value as Tab) ? value as Tab : null;
 }
 
 function readInitialSnapshot(): Partial<DashboardFilterSnapshot> {
@@ -76,7 +76,7 @@ function readInitialSnapshot(): Partial<DashboardFilterSnapshot> {
 }
 
 export function useDashboardFilters() {
-  const initial = readInitialSnapshot();
+  const [initial] = useState(readInitialSnapshot);
   const hasInitialDrivers = (initial.driverNums?.length ?? 0) > 0;
   const hasInitialLap = initial.lapNum != null;
 
@@ -163,16 +163,13 @@ export function useDashboardFilters() {
     if (snapshot.tab != null) setTab(snapshot.tab);
   }, []);
 
-  const snapshot: DashboardFilterSnapshot = {
-    year,
-    circuit,
-    sessionKey,
-    driverNums,
-    lapNum,
-    tab,
-  };
+  const snapshot = useMemo<DashboardFilterSnapshot>(
+    () => ({ year, circuit, sessionKey, driverNums, lapNum, tab }),
+    [year, circuit, sessionKey, driverNums, lapNum, tab],
+  );
 
-  return {
+  // Stable identity: consumers (effects, memos, memo'd tabs) only see a new object when a value really changed.
+  return useMemo(() => ({
     year,
     circuit,
     sessionKey,
@@ -194,5 +191,11 @@ export function useDashboardFilters() {
     toggleDriver,
     applySnapshot,
     snapshot,
-  };
+  }), [
+    year, circuit, sessionKey, driverNums, lapNum, tab,
+    setDriverNums, setAutoDriverNums, setLapNum, setAutoLapNum,
+    driverSelectionAuto, lapSelectionAuto,
+    handleYearChange, handleCircuitChange, handleSessionChange, toggleDriver, applySnapshot,
+    snapshot,
+  ]);
 }

@@ -8,6 +8,7 @@
 
 import { Suspense, lazy, useMemo } from 'react';
 import type { DashboardData } from '../hooks/useDashboard';
+import type { OpenF1Lap } from '../api/openf1';
 import type { Tab } from './dashboard/types';
 import { TAB_LABELS } from './dashboard/tabLabels';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -26,12 +27,12 @@ import { copy } from '../copy';
 import { DashboardSelectors } from './dashboard/DashboardSelectors';
 import { DashboardTabs } from './dashboard/DashboardTabs';
 import { DriverSelector } from './dashboard/DriverSelector';
-import { TelemetryTab } from './dashboard/TelemetryTab';
-import { TrackMapTab } from './dashboard/TrackMapTab';
 import { ChartSkeleton, Err } from './dashboard/shared';
 
 // ─── Lazy-loaded tab chunks ───────────────────────────────────────────────────
 
+const TelemetryTab = lazy(() => import('./dashboard/TelemetryTab').then((m) => ({ default: m.TelemetryTab })));
+const TrackMapTab  = lazy(() => import('./dashboard/TrackMapTab').then((m)  => ({ default: m.TrackMapTab })));
 const StrategyTab  = lazy(() => import('./dashboard/StrategyTab').then((m)  => ({ default: m.StrategyTab })));
 const EnergyTab    = lazy(() => import('./dashboard/EnergyTab').then((m)    => ({ default: m.EnergyTab })));
 const RadioTab     = lazy(() => import('./dashboard/RadioTab').then((m)     => ({ default: m.RadioTab })));
@@ -41,17 +42,17 @@ const PositionsTab = lazy(() => import('./dashboard/PositionsTab').then((m) => (
 const IntervalsTab = lazy(() => import('./dashboard/IntervalsTab').then((m) => ({ default: m.IntervalsTab })));
 const BroadcastTab = lazy(() => import('./dashboard/BroadcastTab').then((m) => ({ default: m.BroadcastTab })));
 
-function TabLoadingPlaceholder({ label }: { label: string }) {
+function TabLoadingPlaceholder({ label, skeletonClassName = 'h-32' }: { label: string; skeletonClassName?: string }) {
   return (
     <div className="dashboard-panel rounded-[16px] p-6 text-sm text-[color:var(--text-muted)] sm:rounded-[18px] sm:p-8">
-      <ChartSkeleton label={label} className="h-32" />
+      <ChartSkeleton label={label} className={skeletonClassName} />
     </div>
   );
 }
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
-export type DashboardShellProps = {
+type DashboardShellProps = {
   // ── Core data (from useDashboard) ──────────────────────────────────────
   data: DashboardData;
 
@@ -132,6 +133,9 @@ export function DashboardShell({
     canStepBackward,
     canStepForward,
     stepLap,
+    driversPending,
+    lapsPending,
+    expectsDrivers,
   } = data;
 
   const gapCards = useMemo(
@@ -183,7 +187,7 @@ export function DashboardShell({
     <div
       className={[
         'dashboard-app',
-        embedMode ? 'embed-mode' : 'min-h-screen',
+        embedMode ? 'embed-mode' : 'min-h-dvh',
       ].filter(Boolean).join(' ')}
     >
       {!embedMode && (
@@ -195,7 +199,7 @@ export function DashboardShell({
         </a>
       )}
       {!embedMode && header}
-      {!embedMode && <SignalBand loading={anyLoading} feedback={feedback} lapNum={filters.lapNum} totalLaps={totalLaps} drivers={comparisonDrivers} />}
+      {!embedMode && <SignalBand loading={anyLoading} feedback={feedback} lapNum={filters.lapNum} totalLaps={totalLaps} drivers={comparisonDrivers} expectDrivers={expectsDrivers} lapsPending={lapsPending} />}
       <div className={pageShellClass}>
         {embedMode && header}
 
@@ -216,7 +220,6 @@ export function DashboardShell({
             lapsLoading={lapsLoading}
             canStepBackward={canStepBackward}
             canStepForward={canStepForward}
-            embedMode={embedMode}
             onYearChange={filters.handleYearChange}
             onCircuitChange={filters.handleCircuitChange}
             onSessionChange={filters.handleSessionChange}
@@ -226,7 +229,7 @@ export function DashboardShell({
             <DriverSelector
               drivers={selectionData.driverList}
               selectedDrivers={filters.driverNums}
-              embedMode={embedMode}
+              pending={driversPending}
               onToggle={filters.toggleDriver}
             />
           </DashboardSelectors>
@@ -239,26 +242,24 @@ export function DashboardShell({
 
           <LapStrip
             driverName={selectionData.driverMap[stripDriver]?.name_acronym || `#${stripDriver}`}
-            laps={stripLaps ?? []}
+            laps={stripLaps ?? NO_LAPS}
             safetyCar={stripSafetyCar}
             lapNum={filters.lapNum}
             onSelect={filters.setLapNum}
+            pending={lapsPending}
           />
 
           <DashboardTabs
             activeTab={filters.tab}
             onChange={filters.setTab}
-            embedMode={embedMode}
-            onShareTab={onShareTab}
-            onEmbedTab={onEmbedTab}
           />
 
           </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
-            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded') && (
+            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded' && !driver.loading) && (
               <p className="embed-partial" role="status">
                 {copy.band.partial(comparisonDrivers.filter((driver) => driver.status === 'Loaded').length, comparisonDrivers.length)}
-                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded').map((driver) => (
+                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded' && !driver.loading).map((driver) => (
                   <span key={driver.driverNumber} title={driver.status}>
                     {' · '}{driver.retry ? <button className="signal-retry" onClick={driver.retry}>{copy.band.retry(driver.name)}</button> : driver.name}
                   </span>
@@ -268,6 +269,7 @@ export function DashboardShell({
             <TabLeadContext.Provider value={tabLead}>
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
+                <Suspense fallback={<TabLoadingPlaceholder label="Loading telemetry view..." skeletonClassName="h-[240px] sm:h-[380px]" />}>
                 <TelemetryTab
                   lapNum={filters.lapNum}
                   lapsLoading={lapsLoading}
@@ -287,6 +289,7 @@ export function DashboardShell({
                   onEmbedPanel={onEmbedPanel}
                   onTelemetryRetry={primaryTelemetry?.refetch}
                 />
+                </Suspense>
               )}
 
               {filters.tab === 'tires' && (
@@ -355,6 +358,7 @@ export function DashboardShell({
               )}
 
               {filters.tab === 'trackmap' && (
+                <Suspense fallback={<TabLoadingPlaceholder label="Loading track map..." skeletonClassName="h-[260px] sm:h-[360px]" />}>
                 <TrackMapTab
                   lapNum={filters.lapNum}
                   locationByDriver={locationByDriver}
@@ -362,6 +366,7 @@ export function DashboardShell({
                   embedMode={embedMode}
                   onEmbedPanel={onEmbedPanel}
                 />
+                </Suspense>
               )}
 
               {filters.tab === 'positions' && (
@@ -410,6 +415,8 @@ export function DashboardShell({
     </div>
   );
 }
+
+const NO_LAPS: OpenF1Lap[] = [];
 
 // ─── Year options constant (computed once at module load) ─────────────────────
 const LAP_TABS: Tab[] = ['telemetry', 'energy', 'trackmap', 'broadcast'];

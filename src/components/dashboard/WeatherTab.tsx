@@ -1,4 +1,4 @@
-import { Sun } from 'lucide-react';
+import { memo } from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Weather } from '../../api/openf1';
 import { COLORS } from '../../constants/colors';
@@ -26,7 +26,7 @@ type Props = {
   onRetry?: () => void;
 };
 
-export function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
+export const WeatherTab = memo(function WeatherTab({ loading, error, latestWeather, sampleCount, weatherTrend, embedMode = false, onEmbedPanel, onRetry }: Props) {
   const chartGrid = 'var(--chart-grid)';
   const timeTicks = evenTicks(weatherTrend.map((point) => point.time), useXTickCount());
   const weatherLegend = [
@@ -37,7 +37,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
   if (loading) {
     return (
       <PanelSelection embedMode={embedMode}>
-        <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+        <ChartPanel lead title="Conditions Trend" sub="Loading session weather samples" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
           <div className="mb-6"><CardGridSkeleton count={4} label="Loading weather readings..." /></div>
           <ChartSkeleton label="Loading weather chart..." className="h-[180px] sm:h-[260px]" />
         </ChartPanel>
@@ -49,7 +49,7 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
 
   return (
     <PanelSelection embedMode={embedMode}>
-      <ChartPanel lead title="Conditions Trend" icon={<Sun size={14} style={{ color: 'var(--accent-strong)' }} />} sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
+      <ChartPanel lead title="Conditions Trend" sub="Downsampled timeline across the current session" exportName="conditions-trend" legend={weatherLegend} panelId="weather-trend" embedMode={embedMode} onEmbedPanel={onEmbedPanel}>
         <div className="weather-stats">
           {[
             [copy.weather.track, latestWeather.track_temperature.toFixed(1), '°C'],
@@ -98,4 +98,4 @@ export function WeatherTab({ loading, error, latestWeather, sampleCount, weather
       </p>
     </PanelSelection>
   );
-}
+});

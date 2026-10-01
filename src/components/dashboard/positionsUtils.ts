@@ -2,11 +2,27 @@ import type { OpenF1Position } from '../../api/openf1';
 
 export const MAX_CHART_POINTS = 100;
 
-export type PositionChartResult = {
+type PositionChartResult = {
   chartData: Record<string, number | string>[];
   totalLaps: number;
   driverCount: number;
 };
+
+/**
+ * For each bucket time, the sample whose timestamp is closest (ties go to the earlier sample; among samples sharing
+ * one timestamp the last wins). `samples` must be sorted ascending and non-empty. O(samples + buckets).
+ */
+export function nearestPerBucket<S extends { timestamp: number }>(samples: S[], bucketTimes: number[]): S[] {
+  let pointer = 0;
+  return bucketTimes.map((bucketTime) => {
+    while (pointer + 1 < samples.length && samples[pointer + 1].timestamp <= bucketTime) {
+      pointer += 1;
+    }
+    const current = samples[pointer];
+    const next = samples[pointer + 1];
+    return next && Math.abs(next.timestamp - bucketTime) < Math.abs(current.timestamp - bucketTime) ? next : current;
+  });
+}
 
 /**
  * Converts raw OpenF1Position samples into time-bucketed chart data.
@@ -56,16 +72,7 @@ export function buildPositionChartData(positions: OpenF1Position[]): PositionCha
     const samples = byDriver.get(driverNumber);
     if (!samples?.length) return;
 
-    let pointer = 0;
-    bucketTimes.forEach((bucketTime, bucketIndex) => {
-      while (pointer + 1 < samples.length && samples[pointer + 1].timestamp <= bucketTime) {
-        pointer += 1;
-      }
-      const current = samples[pointer];
-      const next = samples[pointer + 1];
-      const best = next && Math.abs(next.timestamp - bucketTime) < Math.abs(current.timestamp - bucketTime)
-        ? next
-        : current;
+    nearestPerBucket(samples, bucketTimes).forEach((best, bucketIndex) => {
       buckets[bucketIndex][`p_${driverNumber}`] = best.position;
     });
   });

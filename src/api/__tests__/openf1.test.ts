@@ -42,3 +42,10 @@ describe('buildUrl', () => {
     expect(url).toContain('circuit_short_name=Abu%20Dhabi');
   });
 });
+
+describe('buildUrl date filters', () => {
+  it('appends operator-keyed date filters after the params, unescaped and sorted', () => {
+    expect(buildUrl('car_data', { session_key: 9, driver_number: 1 }, { 'date>=': '2025-01-01T10:00:00.000Z', 'date<=': '2025-01-01T10:02:00.000Z' }))
+      .toBe('https://api.openf1.org/v1/car_data?driver_number=1&session_key=9&date<=2025-01-01T10:02:00.000Z&date>=2025-01-01T10:00:00.000Z');
+  });
+});

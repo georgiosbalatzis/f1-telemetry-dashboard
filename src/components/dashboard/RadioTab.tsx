@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { Headphones } from 'lucide-react';
+import { useMemo, memo } from 'react';
 import type { OpenF1TeamRadio } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { Err, NoData, Panel, Spinner } from './shared';
@@ -13,7 +12,7 @@ type Props = {
   onRetry?: () => void;
 };
 
-export function RadioTab({ loading, error, messages, onRetry }: Props) {
+export const RadioTab = memo(function RadioTab({ loading, error, messages, onRetry }: Props) {
   const { driverMap } = useDriverContext();
   const radioMessages = useMemo(
     () => messages.map((message, index) => {
@@ -32,7 +31,7 @@ export function RadioTab({ loading, error, messages, onRetry }: Props) {
   );
 
   return (
-    <Panel lead title="Team Radio Recordings" icon={<Headphones size={14} style={{ color: 'var(--accent)' }} />} sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
+    <Panel lead title="Team Radio Recordings" sub={`Click to listen to actual team radio recordings from the session · ${CLOCK_ZONE_NOTE}`}>
       {loading ? <Spinner /> : error ? <Err msg={error} onAction={onRetry} /> : radioMessages.length > 0 ? (
         <div className="radio-list">
           {radioMessages.map((message, index) => (
@@ -46,4 +45,4 @@ export function RadioTab({ loading, error, messages, onRetry }: Props) {
       ) : <NoData msg="No team radio recordings for this session/driver selection." />}
     </Panel>
   );
-}
+});

@@ -1,4 +1,3 @@
-import { Gauge } from 'lucide-react';
 import { COLORS } from '../../../constants/colors';
 import type { SectorRow } from '../types';
 import { EmbedPanelButton, Panel } from '../shared';
@@ -38,7 +37,6 @@ export function SpeedTrap({
   return (
     <Panel
       title="Speed Traps"
-      icon={<Gauge size={14} style={{ color: 'var(--accent-strong)' }} />}
       sub="Intermediate speed measurements and main straight trap — purple = fastest"
       panelId="broadcast-speed-traps"
       headerRight={

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseBoundedInt } from '../useDashboardFilters';
+import { act, renderHook } from '@testing-library/react';
+import { parseBoundedInt, useDashboardFilters } from '../useDashboardFilters';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -63,5 +64,19 @@ describe('driver number validation (via parseBoundedInt with 1-99)', () => {
   it('rejects 0 and 100+', () => {
     expect(parseBoundedInt('0', 1, 99)).toBeNull();
     expect(parseBoundedInt('100', 1, 99)).toBeNull();
+  });
+});
+
+describe('useDashboardFilters identity', () => {
+  it('keeps filters and snapshot referentially stable until a value changes', () => {
+    const { result, rerender } = renderHook(() => useDashboardFilters());
+    const first = result.current;
+    rerender();
+    expect(result.current).toBe(first);
+    expect(result.current.snapshot).toBe(first.snapshot);
+
+    act(() => result.current.setTab('energy'));
+    expect(result.current).not.toBe(first);
+    expect(result.current.snapshot.tab).toBe('energy');
   });
 });

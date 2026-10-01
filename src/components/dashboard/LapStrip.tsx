@@ -1,4 +1,4 @@
-import { useMemo, useRef, type KeyboardEvent } from 'react';
+import { useMemo, useRef, type KeyboardEvent, memo } from 'react';
 import type { OpenF1Lap } from '../../api/openf1';
 import { copy } from '../../copy';
 import { lapBars } from './lapStripUtils';
@@ -10,16 +10,25 @@ const fmt = (seconds: number) => {
 
 /** One bar per lap of the reference driver; taller = quicker. Click or use the arrow keys to pick the lap. */
 // One button per lap: F1 races run at most ~80 laps, which keeps the strip inside the 80-button budget.
-export function LapStrip({ driverName, laps, safetyCar, lapNum, onSelect }: {
+export const LapStrip = memo(function LapStrip({ driverName, laps, safetyCar, lapNum, onSelect, pending = false }: {
   driverName: string;
   laps: OpenF1Lap[];
   safetyCar: Set<number>;
   lapNum: number;
   onSelect: (lap: number) => void;
+  /** Laps are still loading: render an empty strip of the same height so the page below does not jump. */
+  pending?: boolean;
 }) {
   const bars = useMemo(() => lapBars(laps, safetyCar), [laps, safetyCar]);
   const group = useRef<HTMLDivElement>(null);
-  if (bars.length < 2) return null;
+  if (bars.length < 2) {
+    return pending ? (
+      <section className="lap-strip" aria-hidden="true">
+        <div className="lap-strip-head"><span className="section-label">&nbsp;</span><span className="lap-strip-key">&nbsp;</span></div>
+        <div className="lap-strip-bars" />
+      </section>
+    ) : null;
+  }
 
   const move = (event: KeyboardEvent) => {
     const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
@@ -55,4 +64,4 @@ export function LapStrip({ driverName, laps, safetyCar, lapNum, onSelect }: {
       </div>
     </section>
   );
-}
+});

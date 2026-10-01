@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { OpenF1Driver, OpenF1Lap, OpenF1Meeting, OpenF1Session, OpenF1SessionResult } from '../api/openf1';
-import { invalidateOpenF1SessionCache, type FetchState } from './useOpenF1';
 import type { SelectOption } from '../components/dashboard/types';
 
 type Params = {
@@ -9,11 +8,14 @@ type Params = {
   drivers: OpenF1Driver[] | null;
   sessionResults: OpenF1SessionResult[] | null;
   sessionResultsLoading: boolean;
-  lapStates: Array<FetchState<OpenF1Lap[]>>;
+  /** Lap data per driver slot (same order as driverNums); pass a memoized array so loading flips don't rebuild laps. */
+  lapData: Array<OpenF1Lap[] | null>;
   circuit: string | null;
   sessionKey: number | null;
   driverNums: number[];
   lapNum: number;
+  /** Lap the telemetry/location windows follow; lags `lapNum` while the user is stepping quickly. */
+  windowLapNum: number;
   driverSelectionAuto: boolean;
   lapSelectionAuto: boolean;
   setCircuit: (circuit: string) => void;
@@ -50,11 +52,12 @@ export function useDashboardSelectionData({
   drivers,
   sessionResults,
   sessionResultsLoading,
-  lapStates,
+  lapData,
   circuit,
   sessionKey,
   driverNums,
   lapNum,
+  windowLapNum,
   driverSelectionAuto,
   lapSelectionAuto,
   setCircuit,
@@ -62,16 +65,6 @@ export function useDashboardSelectionData({
   setDriverNums,
   setLapNum,
 }: Params) {
-  const previousSessionKeyRef = useRef<number | null>(sessionKey);
-
-  useEffect(() => {
-    const previousSessionKey = previousSessionKeyRef.current;
-    if (previousSessionKey != null && previousSessionKey !== sessionKey) {
-      invalidateOpenF1SessionCache(previousSessionKey);
-    }
-    previousSessionKeyRef.current = sessionKey;
-  }, [sessionKey]);
-
   const circuitOptions = useMemo<SelectOption<string>[]>(() => {
     if (!meetings?.length) return [];
     const seen = new Set<string>();
@@ -104,13 +97,12 @@ export function useDashboardSelectionData({
 
   const allLaps = useMemo(() => {
     const map: Record<number, OpenF1Lap[]> = {};
-    const lapSources = lapStates.map((state) => state.data);
     driverNums.forEach((driverNumber, index) => {
-      const laps = lapSources[index];
+      const laps = lapData[index];
       if (laps?.length) map[driverNumber] = laps;
     });
     return map;
-  }, [driverNums, lapStates]);
+  }, [driverNums, lapData]);
 
   const lapOptions = useMemo(() => {
     const lapSet = new Set<number>();
@@ -143,15 +135,15 @@ export function useDashboardSelectionData({
   const telemetryWindows = useMemo(() => {
     return driverNums.map((driverNumber) => {
       const laps = allLaps[driverNumber] || [];
-      const lap = laps.find((item) => item.lap_number === lapNum) || null;
-      const nextLap = laps.find((item) => item.lap_number === lapNum + 1) || null;
+      const lap = laps.find((item) => item.lap_number === windowLapNum) || null;
+      const nextLap = laps.find((item) => item.lap_number === windowLapNum + 1) || null;
       return {
         driverNumber,
         lapStart: lap?.date_start || null,
         nextLapStart: nextLap?.date_start || null,
       };
     });
-  }, [allLaps, driverNums, lapNum]);
+  }, [allLaps, driverNums, windowLapNum]);
 
   useEffect(() => {
     if (circuitOptions.length > 0 && !circuit) {
@@ -193,13 +185,8 @@ export function useDashboardSelectionData({
     }
   }, [driverSelectionAuto, lapNum, lapOptions, lapSelectionAuto, preferredLapNum, setLapNum]);
 
-  return {
-    circuitOptions,
-    sessionOptions,
-    driverList,
-    driverMap,
-    allLaps,
-    lapOptions,
-    telemetryWindows,
-  };
+  return useMemo(
+    () => ({ circuitOptions, sessionOptions, driverList, driverMap, allLaps, lapOptions, telemetryWindows }),
+    [circuitOptions, sessionOptions, driverList, driverMap, allLaps, lapOptions, telemetryWindows],
+  );
 }

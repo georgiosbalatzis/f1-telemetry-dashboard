@@ -1,4 +1,3 @@
-import { LayoutGrid } from 'lucide-react';
 import { useDriverContext } from '../../../contexts/useDriverContext';
 import type { DriverLapSummary, SectorRow } from '../types';
 import { EmbedPanelButton, Panel } from '../shared';
@@ -31,7 +30,6 @@ export function DriverCards({
   return (
     <Panel
       title="Driver Detail"
-      icon={<LayoutGrid size={14} style={{ color: 'var(--accent)' }} />}
       sub="Selected lap measurements, ranked by lap time"
       panelId="broadcast-driver-cards"
       headerRight={

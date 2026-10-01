@@ -6,10 +6,8 @@ export const COLORS = {
     iframeDark: '#181a1c',
   },
   driverFallback: 'var(--color-driver-fallback)',
-  mutedDot: 'var(--color-muted-dot)',
   danger: 'var(--color-danger)',
   success: 'var(--color-success)',
-  warning: 'var(--color-warning)',
   weather: {
     air: 'var(--color-weather-air)',
     track: 'var(--color-weather-track)',
@@ -24,7 +22,6 @@ export const COLORS = {
     secondBg: 'var(--color-sector-second-bg)',
     slower: 'var(--color-sector-slower)',
     slowerBg: 'var(--color-sector-slower-bg)',
-    three: 'var(--color-sector-three)',
   },
   compound: {
     SOFT: 'var(--color-compound-soft)',
@@ -39,10 +36,6 @@ export const COLORS = {
     TEST_UNKNOWN: 'var(--color-compound-unknown)',
   },
 } as const;
-
-export function withAlpha(color: string, percent: number) {
-  return `color-mix(in srgb, ${color} ${percent}%, transparent)`;
-}
 
 export function teamColor(teamColour?: string | null) {
   const normalized = teamColour?.trim().replace(/^#/, '');

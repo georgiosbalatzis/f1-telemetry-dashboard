@@ -8,13 +8,16 @@ React + TypeScript + Vite app for exploring OpenF1 race telemetry, lap data, wea
 - Install dependencies with `npm ci`.
 - Start the dev server with `npm run dev`.
 
+## Supported browsers
+
+Safari / iOS / iPadOS 16.4+, Chrome and Edge 111+, Firefox 128+ (phones, tablets and desktops). This is Tailwind CSS v4's own floor; the styles also use `color-mix()`, `:has()` and `aspect-ratio`. `vite.config.ts` builds for exactly these targets.
+
 ## Validation
 
 - `npm run lint` fails on warnings.
 - `npm run typecheck` runs the TypeScript project build without emitting a production bundle.
 - `npm run build` runs typecheck and then the Vite production build.
 - `npm run ci` is the local equivalent of the GitHub Actions validation path.
-- `bash check.sh` runs the structural checks and then `npm run ci`.
 
 ## Deployment
 

@@ -1,13 +1,11 @@
 import { copy } from '../../copy';
 import type { Tab } from './types';
-import { TAB_LABELS } from './tabLabels';
-
-const ORDER: Tab[] = ['telemetry', 'energy', 'trackmap', 'positions', 'intervals', 'tires', 'radio', 'incidents', 'weather', 'broadcast'];
+import { TAB_LABELS, TAB_ORDER } from './tabLabels';
 
 /** The five views that follow the current one (wrapping round), like the quick links on the site's homepage. */
 export function NextViews({ activeTab, onChange }: { activeTab: Tab; onChange: (tab: Tab) => void }) {
-  const start = ORDER.indexOf(activeTab);
-  const next = Array.from({ length: 5 }, (_, offset) => ORDER[(start + 1 + offset) % ORDER.length]);
+  const start = TAB_ORDER.indexOf(activeTab);
+  const next = Array.from({ length: 5 }, (_, offset) => TAB_ORDER[(start + 1 + offset) % TAB_ORDER.length]);
   const open = (tab: Tab) => {
     onChange(tab);
     document.querySelector('.analysis-navigation')?.scrollIntoView?.({ block: 'start' });

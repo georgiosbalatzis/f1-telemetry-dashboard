@@ -26,3 +26,7 @@ dist-ssr
 *.sw?
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+
+# Perf audit output
+.perf-baseline/
+.playwright-mcp/

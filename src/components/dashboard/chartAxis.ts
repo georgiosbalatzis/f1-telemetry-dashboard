@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 // Shared axis decisions so tick density, precision, and endpoint clearance follow the
 // measurement and available width instead of Recharts' automatic defaults.
-export const AXIS_FONT_SIZE = 11;
+const AXIS_FONT_SIZE = 11;
 export const AXIS_TICK = { fill: 'var(--chart-axis)', fontSize: AXIS_FONT_SIZE };
 export const AXIS_TICK_SOFT = { fill: 'var(--chart-axis-soft)', fontSize: AXIS_FONT_SIZE };
 /** Right clearance keeps a centred final label (e.g. "L57") inside the SVG. */

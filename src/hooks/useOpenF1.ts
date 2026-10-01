@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
   OpenF1CarData, OpenF1Stint, OpenF1Pit, OpenF1Weather,
@@ -27,8 +27,10 @@ type InflightEntry<T> = {
 
 const cache = new Map<string, CacheEntry>();
 const inflight = new Map<string, InflightEntry<unknown>>();
-const CACHE_TTL = 5 * 60 * 1000;
-const CACHE_STALE_TTL = 30 * 60 * 1000;
+// Finished sessions never change, so data stays fresh for 30 min (shown as a stale fallback for 2 h) and is kept when
+// the user switches session and back. Only a session that is still live could be a little behind.
+const CACHE_TTL = 30 * 60 * 1000;
+const CACHE_STALE_TTL = 2 * 60 * 60 * 1000;
 const MAX_CACHE_ENTRIES = 200;
 
 function isAbortError(error: unknown) {
@@ -82,43 +84,9 @@ function clearExpiredCacheEntries() {
   }
 }
 
-function isSessionScopedCacheKey(key: string, sessionKey: number) {
-  return (
-    key === `drivers:${sessionKey}`
-    || key === `stints:${sessionKey}`
-    || key === `pits:${sessionKey}`
-    || key === `weather:${sessionKey}`
-    || key === `rc:${sessionKey}`
-    || key === `radio:${sessionKey}`
-    || key === `result:${sessionKey}`
-    || key === `positions:${sessionKey}`
-    || key === `intervals:${sessionKey}`
-    || key.startsWith(`laps:${sessionKey}:`)
-    || key.startsWith(`telem:${sessionKey}:`)
-    || key.startsWith(`location:${sessionKey}:`)
-  );
-}
-
-export function invalidateOpenF1SessionCache(sessionKey: number | null | undefined) {
-  if (sessionKey == null) return;
-
-  for (const key of cache.keys()) {
-    if (isSessionScopedCacheKey(key, sessionKey)) {
-      cache.delete(key);
-    }
-  }
-
-  for (const [key, entry] of inflight.entries()) {
-    if (isSessionScopedCacheKey(key, sessionKey)) {
-      entry.controller.abort();
-      inflight.delete(key);
-    }
-  }
-}
-
 // ─── Generic hook ────────────────────────────────────────────────────────────
 
-export interface FetchState<T> {
+interface FetchState<T> {
   data: T | null;
   loading: boolean;
   error: string | null;
@@ -158,7 +126,8 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
 
   useEffect(() => {
     if (!key) {
-      setState({ data: null, loading: false, error: null });
+      // Disabled hooks run this on every mount/key change: keep the same state object when it is already idle.
+      setState((prev) => (prev.data === null && !prev.loading && prev.error === null ? prev : { data: null, loading: false, error: null }));
       return;
     }
 
@@ -216,7 +185,7 @@ function useFetch<T>(key: string | null, fetcher: (signal: AbortSignal) => Promi
     };
   }, [key, refetchToken]); // key/refetchToken drive fetches — fetcher is accessed via ref
 
-  return { ...state, refetch };
+  return useMemo(() => ({ ...state, refetch }), [state, refetch]);
 }
 
 // ─── Typed hooks ─────────────────────────────────────────────────────────────

@@ -9,7 +9,7 @@ export const SECTOR_STYLE: Record<SectorClass, { text: string; bg: string }> = {
   none:   { text: 'var(--text-muted)',     bg: 'transparent' },
 };
 
-export function classifySectorEntries(entries: IndexedSectorTime[], rowCount: number): SectorClass[] {
+function classifySectorEntries(entries: IndexedSectorTime[], rowCount: number): SectorClass[] {
   const classes = Array.from({ length: rowCount }, () => 'none' as SectorClass);
   if (entries.length === 0) return classes;
 

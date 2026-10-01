@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { teamColor } from '../../constants/colors';
-import { Map } from 'lucide-react';
 import type { OpenF1Location } from '../../api/openf1';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import { PanelSelection, ChartSkeleton, EmbedPanelButton, NoData, Panel } from './shared';
@@ -34,7 +33,7 @@ type DriverMarker = {
   label: string;
 };
 
-export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
+export const TrackMapTab = memo(function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverDash } = useDriverContext();
   const { trackPolyline, refPts, driverPaths, driverMarkers, startPt, activeDrivers, box } = useMemo((): {
     trackPolyline: string;
@@ -133,14 +132,14 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
 
   if (locationLoading) {
     return (
-      <Panel lead title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />} sub="Fetching GPS location data">
+      <Panel lead title={`Track Map — Lap ${lapNum}`} sub="Fetching GPS location data">
         <ChartSkeleton label="Fetching GPS location data..." className="h-[260px] sm:h-[360px]" />
       </Panel>
     );
   }
   if (!trackPolyline) {
     return (
-      <Panel lead title={`Track Map — Lap ${lapNum}`} icon={<Map size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title={`Track Map — Lap ${lapNum}`}>
         <NoData msg="No location data for this lap. Location data is available for most sessions from 2023 onwards." />
       </Panel>
     );
@@ -150,7 +149,6 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
     <PanelSelection embedMode={embedMode}>
       <Panel lead
         title={`Track Map — Lap ${lapNum}`}
-        icon={<Map size={14} style={{ color: 'var(--accent)' }} />}
         sub={activeDrivers.length >= 2
           ? `GPS paths for ${activeDrivers.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} overlaid on circuit layout`
           : `Circuit layout from GPS · ${(locationByDriver[driverNums[0]] ?? []).length} samples`}
@@ -235,4 +233,4 @@ export function TrackMapTab({ lapNum, locationByDriver, locationLoading, embedMo
       </div>
     </PanelSelection>
   );
-}
+});

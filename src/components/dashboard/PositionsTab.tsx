@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { TrendingDown } from 'lucide-react';
+import { useMemo, memo } from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Position } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
@@ -17,7 +16,7 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
 };
 
-export function PositionsTab({ positions, positionsLoading, embedMode = false, onEmbedPanel }: Props) {
+export const PositionsTab = memo(function PositionsTab({ positions, positionsLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
@@ -57,14 +56,12 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
       <PanelSelection embedMode={embedMode}>
         <Panel lead
           title="Current Standings"
-          icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest recorded positions"
         >
           <CardGridSkeleton count={10} label="Loading race positions..." />
         </Panel>
         <ChartPanel
           title="Position History"
-          icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
           sub="Loading position history"
           exportName="position-history"
           legend={legend}
@@ -79,7 +76,7 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
   }
   if (!positions || positions.length === 0) {
     return (
-      <Panel lead title="Race Positions" icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Race Positions">
         <NoData msg="No position data for this session. Race positions are available for race and sprint sessions." />
       </Panel>
     );
@@ -90,7 +87,6 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
       {/* Position history chart */}
       <ChartPanel lead
         title="Position History"
-        icon={<TrendingDown size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — position over the session`}
         exportName="position-history"
         legend={legend}
@@ -135,7 +131,6 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
       {/* Current standings */}
       <Panel
         title="Current Standings"
-        icon={<TrendingDown size={14} style={{ color: 'var(--accent)' }} />}
         sub={`Latest recorded positions · ${driverCount} drivers`}
       >
         <div className="standings-tables">
@@ -168,4 +163,4 @@ export function PositionsTab({ positions, positionsLoading, embedMode = false, o
       </div>
     </PanelSelection>
   );
-}
+});

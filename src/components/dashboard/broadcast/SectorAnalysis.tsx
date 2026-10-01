@@ -1,4 +1,3 @@
-import { Timer } from 'lucide-react';
 import { COLORS } from '../../../constants/colors';
 import type { DriverLapSummary, SectorRow } from '../types';
 import { EmbedPanelButton, NoData, Panel, TableSkeleton } from '../shared';
@@ -47,7 +46,6 @@ export function SectorAnalysis({
   return (
     <Panel
       title="Sector Analysis"
-      icon={<Timer size={14} style={{ color: 'var(--accent-strong)' }} />}
       sub="Purple = fastest · Green = 2nd fastest · Yellow = slower"
       panelId="broadcast-sector-analysis"
       headerRight={

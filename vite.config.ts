@@ -14,19 +14,12 @@ export default defineConfig({
   // CRITICAL for GitHub Pages: assets must be loaded relative to /f1-telemetry-dashboard/
   base: '/f1-telemetry-dashboard/',
   build: {
+    // Tailwind v4's floor (Safari 16.4, Chrome/Edge 111, Firefox 128); the CSS also relies on color-mix(), :has() and aspect-ratio.
+    target: ['es2022', 'safari16.4', 'chrome111', 'edge111', 'firefox128'],
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return undefined
-
-          if (
-            id.includes('/node_modules/recharts/')
-            || id.includes('/node_modules/recharts-scale/')
-            || id.includes('/node_modules/victory-vendor/')
-            || id.includes('/node_modules/react-smooth/')
-          ) {
-            return 'charts'
-          }
 
           if (
             id.includes('/node_modules/react/')
@@ -40,7 +33,8 @@ export default defineConfig({
             return 'icons'
           }
 
-          return 'vendor'
+          // Everything else in node_modules is Recharts and its dependencies (lodash, d3-*, ...): one lazy 'charts' chunk.
+          return 'charts'
         },
       },
     },

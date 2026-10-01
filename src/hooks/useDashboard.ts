@@ -13,6 +13,7 @@ import { useCallback, useMemo } from 'react';
 import { useDashboardFilters } from './useDashboardFilters';
 import { useDashboardSelectionData } from './useDashboardSelectionData';
 import { useDashboardViewModel } from './useDashboardViewModel';
+import { useDebouncedValue } from './useDebouncedValue';
 import {
   useDrivers,
   useIntervals,
@@ -29,6 +30,9 @@ import {
   useTeamRadio,
   useWeather,
 } from './useOpenF1';
+
+/** Quiet time before a manually stepped lap starts fetching its telemetry and GPS (auto-picked laps fetch at once). */
+const LAP_FETCH_DEBOUNCE_MS = 200;
 
 /** Maximum number of simultaneously-compared drivers. */
 const MAX_DRIVER_SLOTS = 4;
@@ -54,7 +58,6 @@ export function useDashboard() {
   const stints        = useStints(needsStrategyData  ? filters.sessionKey : null);
   const pits          = usePits(needsStrategyData     ? filters.sessionKey : null);
   const weather       = useWeather(needsWeatherData   ? filters.sessionKey : null);
-  const raceControl   = useRaceControl(filters.sessionKey);
   const teamRadio     = useTeamRadio(needsRadioData   ? filters.sessionKey : null);
   const positions     = usePositions(needsPositionsData ? filters.sessionKey : null);
   const intervals     = useIntervals(needsIntervalsData  ? filters.sessionKey : null);
@@ -70,12 +73,16 @@ export function useDashboard() {
   );
 
   // ── Lap data — one hook per slot, null driver = skip ────────────────────
-  const lapStates = [
-    useLaps(filters.sessionKey, driverSlots[0]),
-    useLaps(filters.sessionKey, driverSlots[1]),
-    useLaps(filters.sessionKey, driverSlots[2]),
-    useLaps(filters.sessionKey, driverSlots[3]),
-  ];
+  // Arrays are memoized so downstream memos/effects only see a change when a slot's state really changed.
+  const laps0 = useLaps(filters.sessionKey, driverSlots[0]);
+  const laps1 = useLaps(filters.sessionKey, driverSlots[1]);
+  const laps2 = useLaps(filters.sessionKey, driverSlots[2]);
+  const laps3 = useLaps(filters.sessionKey, driverSlots[3]);
+  const lapStates = useMemo(() => [laps0, laps1, laps2, laps3], [laps0, laps1, laps2, laps3]);
+  const lapData = useMemo(() => [laps0.data, laps1.data, laps2.data, laps3.data], [laps0.data, laps1.data, laps2.data, laps3.data]);
+
+  // The UI lap updates instantly; heavy per-lap fetches wait until the user stops stepping.
+  const windowLapNum = useDebouncedValue(filters.lapNum, filters.lapSelectionAuto ? 0 : LAP_FETCH_DEBOUNCE_MS);
 
   // ── Selection data: derives circuit/session/driver/lap options ───────────
   const selectionData = useDashboardSelectionData({
@@ -84,11 +91,12 @@ export function useDashboard() {
     drivers:               drivers.data,
     sessionResults:        sessionResults.data,
     sessionResultsLoading: sessionResults.loading,
-    lapStates,
+    lapData,
     circuit:               filters.circuit,
     sessionKey:            filters.sessionKey,
     driverNums:            filters.driverNums,
     lapNum:                filters.lapNum,
+    windowLapNum,
     driverSelectionAuto:   filters.driverSelectionAuto,
     lapSelectionAuto:      filters.lapSelectionAuto,
     setCircuit:            filters.setCircuit,
@@ -98,56 +106,56 @@ export function useDashboard() {
   });
 
   // ── Telemetry — windowed to the selected lap per driver ──────────────────
-  const telemetryStates = [
-    useLapTelemetry(
-      filters.sessionKey, driverSlots[0],
-      needsTelemetryData ? selectionData.telemetryWindows[0]?.lapStart     || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null,
-    ),
-    useLapTelemetry(
-      filters.sessionKey, driverSlots[1],
-      needsTelemetryData ? selectionData.telemetryWindows[1]?.lapStart     || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null,
-    ),
-    useLapTelemetry(
-      filters.sessionKey, driverSlots[2],
-      needsTelemetryData ? selectionData.telemetryWindows[2]?.lapStart     || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null,
-    ),
-    useLapTelemetry(
-      filters.sessionKey, driverSlots[3],
-      needsTelemetryData ? selectionData.telemetryWindows[3]?.lapStart     || null : null,
-      needsTelemetryData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null,
-    ),
-  ];
+  const windows = selectionData.telemetryWindows;
+  const win = (index: number) => ({
+    start: needsTelemetryData ? windows[index]?.lapStart     || null : null,
+    next:  needsTelemetryData ? windows[index]?.nextLapStart || null : null,
+  });
+  const telem0 = useLapTelemetry(filters.sessionKey, driverSlots[0], win(0).start, win(0).next);
+  const telem1 = useLapTelemetry(filters.sessionKey, driverSlots[1], win(1).start, win(1).next);
+  const telem2 = useLapTelemetry(filters.sessionKey, driverSlots[2], win(2).start, win(2).next);
+  const telem3 = useLapTelemetry(filters.sessionKey, driverSlots[3], win(3).start, win(3).next);
+  const telemetryStates = useMemo(() => [telem0, telem1, telem2, telem3], [telem0, telem1, telem2, telem3]);
+
+  // Only the lap-strip safety-car shading and the Race Control tab use this. It waits until laps have arrived and is
+  // declared after the car-data hooks, so in that same commit car data is queued first (effects run in hook order).
+  const lapsArrived = lapData.some((laps) => laps !== null);
+  const raceControl = useRaceControl(filters.tab === 'incidents' || lapsArrived ? filters.sessionKey : null);
 
   // ── GPS location — windowed to the selected lap per driver ───────────────
-  const locationStates = [
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[0], needsLocationData ? selectionData.telemetryWindows[0]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[0]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[1], needsLocationData ? selectionData.telemetryWindows[1]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[1]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[2], needsLocationData ? selectionData.telemetryWindows[2]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[2]?.nextLapStart || null : null),
-    useLapLocation(needsLocationData ? filters.sessionKey : null, driverSlots[3], needsLocationData ? selectionData.telemetryWindows[3]?.lapStart || null : null, needsLocationData ? selectionData.telemetryWindows[3]?.nextLapStart || null : null),
-  ];
+  const locKey = needsLocationData ? filters.sessionKey : null;
+  const locWin = (index: number) => ({
+    start: needsLocationData ? windows[index]?.lapStart     || null : null,
+    next:  needsLocationData ? windows[index]?.nextLapStart || null : null,
+  });
+  const loc0 = useLapLocation(locKey, driverSlots[0], locWin(0).start, locWin(0).next);
+  const loc1 = useLapLocation(locKey, driverSlots[1], locWin(1).start, locWin(1).next);
+  const loc2 = useLapLocation(locKey, driverSlots[2], locWin(2).start, locWin(2).next);
+  const loc3 = useLapLocation(locKey, driverSlots[3], locWin(3).start, locWin(3).next);
+  const locationStates = useMemo(() => [loc0, loc1, loc2, loc3], [loc0, loc1, loc2, loc3]);
 
   // ── Derived data structures ──────────────────────────────────────────────
-  const locationByDriver = Object.fromEntries(
-    filters.driverNums.map((driverNum, index) => [
-      driverNum,
-      locationStates[index]?.data || null,
-    ]),
-  ) as Record<number, ReturnType<typeof useLapLocation>['data']>;
+  const locationData = useMemo(() => [loc0.data, loc1.data, loc2.data, loc3.data], [loc0.data, loc1.data, loc2.data, loc3.data]);
+  const locationByDriver = useMemo(
+    () => Object.fromEntries(
+      filters.driverNums.map((driverNum, index) => [driverNum, locationData[index] || null]),
+    ) as Record<number, ReturnType<typeof useLapLocation>['data']>,
+    [filters.driverNums, locationData],
+  );
 
-  const telemetryByDriver = Object.fromEntries(
-    filters.driverNums.map((driverNumber, index) => [
-      driverNumber,
-      telemetryStates[index]?.data || null,
-    ]),
-  ) as Record<number, ReturnType<typeof useLapTelemetry>['data']>;
+  const telemetryData = useMemo(() => [telem0.data, telem1.data, telem2.data, telem3.data], [telem0.data, telem1.data, telem2.data, telem3.data]);
+  const telemetryByDriver = useMemo(
+    () => Object.fromEntries(
+      filters.driverNums.map((driverNumber, index) => [driverNumber, telemetryData[index] || null]),
+    ) as Record<number, ReturnType<typeof useLapTelemetry>['data']>,
+    [filters.driverNums, telemetryData],
+  );
 
   /** FetchState for the primary (first) driver's telemetry — used for error display. */
-  const primaryTelemetry = telemetryStates[0];
+  const primaryTelemetry = telem0;
 
-  const comparisonDrivers = needsTelemetryData ? filters.driverNums.map((driverNumber, index) => {
+  const driverMap = selectionData.driverMap;
+  const comparisonDrivers = useMemo(() => needsTelemetryData ? filters.driverNums.map((driverNumber, index) => {
     const laps = lapStates[index];
     const telemetry = telemetryStates[index];
     const lap = laps.data?.find((entry) => entry.lap_number === filters.lapNum);
@@ -160,11 +168,17 @@ export function useDashboard() {
       : 'Loaded';
     return {
       driverNumber,
-      name: selectionData.driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
+      name: driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
       status,
+      /** False until the driver roster has loaded (the name is then only a #number). */
+      known: driverMap[driverNumber] !== undefined,
+      /** Still fetching: not a failure, so the band shows no "partial data" line for it. */
+      // Includes "not requested yet" (the render before the fetch effects run), which is not a failure either.
+      loading: laps.loading || (!laps.error && laps.data === null)
+        || (!laps.error && !!lap && (telemetry.loading || (telemetry.data === null && !telemetry.error && !!windows[index]?.lapStart))),
       retry: laps.error ? laps.refetch : telemetry.error ? telemetry.refetch : null,
     };
-  }) : [];
+  }) : [], [driverMap, filters.driverNums, filters.lapNum, lapStates, needsTelemetryData, telemetryStates, windows]);
 
   // ── View model: tab-gated data transformations for charts ────────────────
   const viewModel = useDashboardViewModel({
@@ -181,6 +195,13 @@ export function useDashboard() {
     teamRadio:        teamRadio.data,
     telemetryByDriver,
   });
+
+  // ── Pending flags: the scope bar's driver row and the lap strip reserve their space until data arrives ──────
+  // "Pending" ends as soon as the data is there or it is clear it never will be (empty or failed responses).
+  const nothingToLoad = Boolean(meetings.error || sessions.error || drivers.error)
+    || meetings.data?.length === 0 || sessions.data?.length === 0 || drivers.data?.length === 0;
+  const driversPending = !nothingToLoad && drivers.data === null;
+  const lapsPending = !nothingToLoad && laps0.data === null && laps0.error === null;
 
   // ── Aggregate loading flags ──────────────────────────────────────────────
   const anyLoading       = meetings.loading || sessions.loading || drivers.loading || sessionResults.loading;
@@ -204,11 +225,8 @@ export function useDashboard() {
     [currentLapIndex, filters, selectionData.lapOptions],
   );
 
-  return {
-    // Filter state + controls
+  return useMemo(() => ({
     filters,
-
-    // API fetch states (for error display, loading indicators, refetch)
     meetings,
     sessions,
     drivers,
@@ -221,24 +239,23 @@ export function useDashboard() {
     intervals,
     primaryTelemetry,
     comparisonDrivers,
-
-    // Derived domain data
     selectionData,
     viewModel,
     locationByDriver,
-
-    // Aggregate loading flags
     anyLoading,
     lapsLoading,
     locationLoading,
     telemetryLoading,
-
-    // Lap navigation
     totalLaps,
     canStepBackward,
     canStepForward,
     stepLap,
-  };
+    driversPending,
+    lapsPending,
+    expectsDrivers: needsTelemetryData,
+  }), [
+    filters, meetings, sessions, drivers, stints, pits, weather, raceControl, teamRadio, positions, intervals, primaryTelemetry, comparisonDrivers, selectionData, viewModel, locationByDriver, anyLoading, lapsLoading, locationLoading, telemetryLoading, totalLaps, canStepBackward, canStepForward, stepLap, driversPending, lapsPending, needsTelemetryData,
+  ]);
 }
 
 export type DashboardData = ReturnType<typeof useDashboard>;

@@ -93,9 +93,33 @@ function appendLegend(
   });
 }
 
-function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportChartOptions>) {
+const CSS_VAR = /var\(\s*(--[\w-]+)\s*(?:,\s*([^)]*))?\)/g;
+// Page rules that style Recharts on screen (index.css, `.recharts-*`). A standalone file can't see them, so they ship inline.
+const CHART_PAGE_CSS = '.recharts-text{font-family:var(--font-body);font-variant-numeric:tabular-nums}'
+  + '.recharts-cartesian-grid line,.recharts-cartesian-axis-line,.recharts-cartesian-axis-tick-line{stroke:var(--chart-grid)}';
+
+const resolveVars = (value: string, styles = getComputedStyle(document.documentElement)) =>
+  value.replace(CSS_VAR, (_match, name: string, fallback?: string) => styles.getPropertyValue(name).trim() || fallback?.trim() || '');
+
+/**
+ * Chart attributes use `var(--chart-grid)` and friends, which only exist inside this page: in a downloaded .svg they are
+ * undefined, so grid, ticks and lines turn black or vanish. Replaces them with the values they have right now (current theme).
+ * @internal exported for unit tests only
+ */
+export function resolveCssVariables(root: Element) {
+  const styles = getComputedStyle(document.documentElement);
+  for (const element of [root, ...root.querySelectorAll('*')]) {
+    for (const attribute of Array.from(element.attributes)) {
+      if (attribute.value.includes('var(')) element.setAttribute(attribute.name, resolveVars(attribute.value, styles));
+    }
+  }
+}
+
+/** @internal exported for unit tests only */
+export function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportChartOptions>) {
   const serializer = new XMLSerializer();
   const clonedSvg = svg.cloneNode(true) as SVGSVGElement;
+  resolveCssVariables(clonedSvg);
   const parent = svg.parentElement as HTMLElement | null;
   const { width, height } = getChartDimensions(svg, parent?.clientWidth || DEFAULT_EXPORT_WIDTH, parent?.clientHeight || DEFAULT_EXPORT_HEIGHT);
   const legendRows = options.legend.length > 0 ? Math.ceil(options.legend.length / LEGEND_ITEMS_PER_ROW_ESTIMATE) : 0;
@@ -109,6 +133,10 @@ function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportChartOpti
   exportSvg.setAttribute('viewBox', `0 0 ${width} ${totalHeight}`);
   exportSvg.setAttribute('fill', 'none');
   exportSvg.setAttribute('color', options.textColor);
+
+  const pageCss = document.createElementNS(SVG_NS, 'style');
+  pageCss.textContent = resolveVars(CHART_PAGE_CSS);
+  exportSvg.appendChild(pageCss);
 
   const backgroundRect = document.createElementNS(SVG_NS, 'rect');
   backgroundRect.setAttribute('x', '0');

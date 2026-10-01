@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { Columns2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
 import { copy, SITE_NAV } from '../../copy';
 import { formatCountdown, pickNextMeeting } from './nextMeeting';
@@ -42,7 +42,7 @@ function SiteLinks() {
   ));
 }
 
-export function DashboardHeader({
+export const DashboardHeader = memo(function DashboardHeader({
   presetName, presetNames, splitMode, embedMode, themeMode,
   openDashboardUrl, heroSubtitle, nextMeeting, onPresetNameChange,
   onSavePreset, onPrint, onToggleSplit, onToggleTheme, onBack,
@@ -69,7 +69,7 @@ export function DashboardHeader({
     <header className="site-header">
       <nav className="site-nav" aria-label="F1 Stories">
         <div className="page-shell site-nav-inner">
-          <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo192.png`} alt="" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+          <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo192.png`} alt="" width="36" height="36" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
           <div className="site-nav-links"><SiteLinks /></div>
           <div className="site-nav-right">
             <NavCountdown meeting={nextMeeting} />
@@ -112,4 +112,4 @@ export function DashboardHeader({
       </div>
     </header>
   );
-}
+});

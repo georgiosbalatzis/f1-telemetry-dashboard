@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { Gauge } from 'lucide-react';
+import { useMemo, memo } from 'react';
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { OpenF1Interval } from '../../api/openf1';
 import { teamColor } from '../../constants/colors';
@@ -8,6 +7,7 @@ import { PanelSelection, CardGridSkeleton, ChartSkeleton, ChartTip, NoData, Pane
 import { ChartPanel } from './ChartPanel';
 import type { ChartLegendItem } from './ChartPanel';
 import { AXIS_TICK, CHART_MARGIN, evenTicks, useXTickCount } from './chartAxis';
+import { nearestPerBucket } from './positionsUtils';
 
 type Props = {
   intervals: OpenF1Interval[] | null;
@@ -20,7 +20,7 @@ const DRS_DETECTION_WINDOW_S = 1.0;
 const MAX_CHART_POINTS = 120;
 const MAX_GAP_DISPLAY = 60; // cap gaps at 60s to avoid outliers from safety cars crushing the chart
 
-export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, onEmbedPanel }: Props) {
+export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoading, embedMode = false, onEmbedPanel }: Props) {
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   const chartGrid = 'var(--chart-grid)';
   const chartAxis = 'var(--chart-axis)';
@@ -31,35 +31,38 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
     }
 
     const byDriver: Record<number, OpenF1Interval[]> = {};
+    const timed: Record<number, { timestamp: number; entry: OpenF1Interval }[]> = {};
+    let tMin = Infinity;
+    let tMax = -Infinity;
     for (const entry of intervals) {
+      const timestamp = Date.parse(entry.date);
+      if (!Number.isFinite(timestamp)) continue;
       (byDriver[entry.driver_number] ||= []).push(entry);
+      (timed[entry.driver_number] ||= []).push({ timestamp, entry });
+      if (timestamp < tMin) tMin = timestamp;
+      if (timestamp > tMax) tMax = timestamp;
     }
 
     const activeDrvs = driverNums.filter((n) => byDriver[n]?.length > 0);
 
     // Time-sampled chart
-    const allDates = intervals.map((p) => new Date(p.date).getTime());
-    const tMin = Math.min(...allDates);
-    const tMax = Math.max(...allDates);
     const duration = tMax - tMin || 1;
     const N = MAX_CHART_POINTS;
+    const bucketTimes = Array.from({ length: N }, (_, i) => tMin + (i / (N - 1)) * duration);
+    const nearest: Record<number, OpenF1Interval[]> = {};
+    for (const n of activeDrvs) {
+      nearest[n] = nearestPerBucket(timed[n].sort((a, b) => a.timestamp - b.timestamp), bucketTimes).map((sample) => sample.entry);
+    }
 
-    const data = Array.from({ length: N }, (_, i) => {
-      const t = tMin + (i / (N - 1)) * duration;
+    const data = bucketTimes.map((_, i) => {
       const point: Record<string, number | string> = { t: i + 1 };
       for (const n of activeDrvs) {
-        const samples = byDriver[n];
-        let best: OpenF1Interval | null = null;
-        let bestDiff = Infinity;
-        for (const s of samples) {
-          const diff = Math.abs(new Date(s.date).getTime() - t);
-          if (diff < bestDiff) { bestDiff = diff; best = s; }
-        }
-        if (best?.gap_to_leader != null) {
+        const best = nearest[n][i];
+        if (best.gap_to_leader != null) {
           const gap = Math.min(best.gap_to_leader, MAX_GAP_DISPLAY);
           if (gap >= 0) point[`gap_${n}`] = gap;
         }
-        if (best?.interval != null && best.interval >= 0) {
+        if (best.interval != null && best.interval >= 0) {
           point[`int_${n}`] = Math.min(best.interval, 10);
         }
       }
@@ -99,14 +102,12 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       <PanelSelection embedMode={embedMode}>
         <Panel lead
           title="Current Gaps"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading latest interval samples"
         >
           <CardGridSkeleton count={8} label="Loading interval data..." />
         </Panel>
         <ChartPanel
           title="Gap to Leader"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub="Loading gap history"
           exportName="gap-to-leader"
           legend={legend}
@@ -121,7 +122,7 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
   }
   if (!intervals || intervals.length === 0) {
     return (
-      <Panel lead title="Intervals & Battles" icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}>
+      <Panel lead title="Intervals & Battles">
         <NoData msg="No interval data for this session. Interval data is available for race and sprint race sessions." />
       </Panel>
     );
@@ -132,7 +133,6 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       {/* Gap to leader chart */}
       <ChartPanel lead
         title="Gap to Leader"
-        icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
         sub={`${driverNums.map((n) => driverMap[n]?.name_acronym).filter(Boolean).join(' vs ')} — gaps capped at ${MAX_GAP_DISPLAY}s`}
         exportName="gap-to-leader"
         legend={legend}
@@ -193,7 +193,6 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       {drsWindows.some((w) => w.drsCount > 0) && (
         <Panel
           title="DRS Window Time"
-          icon={<Gauge size={14} style={{ color: 'var(--accent)' }} />}
           sub={`Proportion of session where each driver was within ${DRS_DETECTION_WINDOW_S}s of the car ahead`}
         >
           <div className="lap-comparison">
@@ -213,7 +212,6 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       {/* Interval to car ahead chart */}
       <ChartPanel
         title="Gap to Car Ahead"
-        icon={<Gauge size={14} style={{ color: 'var(--accent-strong)' }} />}
         sub="Time to the next car — below the 1s line means DRS is available"
         exportName="interval-to-ahead"
         legend={legend}
@@ -259,4 +257,4 @@ export function IntervalsTab({ intervals, intervalsLoading, embedMode = false, o
       </div>
     </PanelSelection>
   );
-}
+});
