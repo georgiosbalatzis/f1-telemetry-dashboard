@@ -97,6 +97,7 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   fireEvent.click(screen.getByRole('button', { name: copy.masthead.themeToDark }));
   expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
   expect(window.localStorage.getItem('f1stories-theme')).toBe('dark');
+  expect(params().get('theme')).toBeNull(); // the address bar must not pin a theme over the stored choice on reload
   fireEvent.click(screen.getByRole('button', { name: copy.masthead.themeToLight }));
   expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   expect(window.localStorage.getItem('f1stories-theme')).toBe('light');
@@ -116,6 +117,22 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   expect(print).toHaveBeenCalledOnce();
 });
 
+it('starts from the stored theme and ignores values it does not own', () => {
+  window.localStorage.setItem('f1stories-theme', 'dark');
+  render(<DashboardContainer />);
+  expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+  expect(screen.getByRole('button', { name: copy.masthead.themeToLight })).toBeInTheDocument();
+  cleanup();
+  window.localStorage.setItem('f1stories-theme', 'auto');
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: query === '(prefers-color-scheme: dark)', addEventListener: () => {}, removeEventListener: () => {},
+  }));
+  render(<DashboardContainer />);
+  expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+  expect(window.localStorage.getItem('f1stories-theme')).toBe('auto');
+  vi.unstubAllGlobals();
+});
+
 it('restores a read-only article embed with an open-analysis link', async () => {
   window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=44&lap=3&tab=radio&embed=1&theme=light');
   render(<DashboardContainer />);
@@ -127,6 +144,7 @@ it('restores a read-only article embed with an open-analysis link', async () => 
   expect(screen.queryByRole('button', { name: copy.scope.add })).not.toBeInTheDocument();
   expect(params().get('lap')).toBe('3');
   expect(params().get('embed')).toBe('1');
+  expect(params().get('theme')).toBe('light');
   expect(screen.getByRole('link', { name: copy.embed.open }).getAttribute('href')).not.toContain('embed=1');
 });
 

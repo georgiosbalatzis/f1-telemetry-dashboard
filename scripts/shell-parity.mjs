@@ -89,7 +89,7 @@ try {
             return [style.filter, style.opacity, style.transitionDuration];
           });
           await page.mouse.move(0, 0);
-          assert.deepEqual(await logoStyle(), ['grayscale(1) contrast(1.05)', '0.68', '0s']);
+          assert.deepEqual(await logoStyle(), [theme === 'dark' ? 'grayscale(1) invert(1)' : 'grayscale(1) contrast(1.05)', '0.68', '0s']);
           await sponsors.screenshot({ path: join(dir, `${name}-sponsors.png`) });
           await firstSponsor.hover();
           assert.deepEqual((await logoStyle()).slice(0, 2), ['none', '1']);

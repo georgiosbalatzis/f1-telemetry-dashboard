@@ -92,6 +92,19 @@
       "source_location": "L4"
     },
     {
+      "id": "src_components_dashboard_lapstriputils_lapbarstate",
+      "label": "LapBarState",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lapbarstate",
+      "source_file": "src/components/dashboard/lapStripUtils.ts",
+      "source_location": "L3"
+    },
+    {
       "id": "src_components_dashboard_positionsutils_positionchartresult",
       "label": "PositionChartResult",
       "_callable": true,
@@ -194,6 +207,19 @@
       "norm_label": "openf1location",
       "source_file": "src/api/openf1.ts",
       "source_location": "L315"
+    },
+    {
+      "id": "src_api_openf1_openf1meeting",
+      "label": "OpenF1Meeting",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "code",
+      "norm_label": "openf1meeting",
+      "source_file": "src/api/openf1.ts",
+      "source_location": "L19"
     },
     {
       "id": "src_api_openf1_openf1pit",
@@ -339,19 +365,6 @@
       "source_location": "L4"
     },
     {
-      "id": "src_components_dashboard_lapstriputils_lapbarstate",
-      "label": "LapBarState",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lapbarstate",
-      "source_file": "src/components/dashboard/lapStripUtils.ts",
-      "source_location": "L3"
-    },
-    {
       "id": "src_hooks_usedashboardselectiondata_params",
       "label": "Params",
       "_callable": true,
@@ -430,6 +443,19 @@
       "source_location": "L22"
     },
     {
+      "id": "src_components_dashboard_types_tab",
+      "label": "Tab",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "tab",
+      "source_file": "src/components/dashboard/types.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_dashboardcontainer_savedpreset",
       "label": "SavedPreset",
       "_callable": true,
@@ -469,26 +495,13 @@
       "source_location": "L5"
     },
     {
-      "id": "src_components_dashboard_broadcast_timingtower_timingtowerprops",
-      "label": "TimingTowerProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "timingtowerprops",
-      "source_file": "src/components/dashboard/broadcast/TimingTower.tsx",
-      "source_location": "L6"
-    },
-    {
       "id": "src_components_dashboard_chartpanel_chartlegenditem",
       "label": "ChartLegendItem",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 2,
+      "community_name": "shared.tsx",
       "file_type": "code",
       "norm_label": "chartlegenditem",
       "source_file": "src/components/dashboard/ChartPanel.tsx",
@@ -500,25 +513,38 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 2,
+      "community_name": "shared.tsx",
       "file_type": "code",
       "norm_label": "props",
       "source_file": "src/components/dashboard/ChartPanel.tsx",
       "source_location": "L12"
     },
     {
-      "id": "src_components_dashboard_driverselector_props",
+      "id": "src_components_dashboard_positionstab_props",
       "label": "Props",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 2,
+      "community_name": "shared.tsx",
       "file_type": "code",
       "norm_label": "props",
-      "source_file": "src/components/dashboard/DriverSelector.tsx",
-      "source_location": "L7"
+      "source_file": "src/components/dashboard/PositionsTab.tsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_components_dashboard_shared_charttippayload",
+      "label": "ChartTipPayload",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "charttippayload",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L181"
     },
     {
       "id": "src_components_dashboard_energytab_props",
@@ -532,136 +558,6 @@
       "norm_label": "props",
       "source_file": "src/components/dashboard/EnergyTab.tsx",
       "source_location": "L12"
-    },
-    {
-      "id": "src_components_dashboard_incidentstab_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "src/components/dashboard/IncidentsTab.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_dashboard_intervalstab_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "src/components/dashboard/IntervalsTab.tsx",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_components_dashboard_positionstab_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "src/components/dashboard/PositionsTab.tsx",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_components_dashboard_radiotab_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "src/components/dashboard/RadioTab.tsx",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_components_dashboard_shared_charttippayload",
-      "label": "ChartTipPayload",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "charttippayload",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L181"
-    },
-    {
-      "id": "src_components_dashboard_signalband_comparisondriver",
-      "label": "ComparisonDriver",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "comparisondriver",
-      "source_file": "src/components/dashboard/SignalBand.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_dashboard_strategytab_pitstopcard",
-      "label": "PitStopCard",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "pitstopcard",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_components_dashboard_strategytab_props",
-      "label": "Props",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "props",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_components_dashboard_strategytab_strategyrow",
-      "label": "StrategyRow",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "strategyrow",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_components_dashboard_strategytab_tyrelifecard",
-      "label": "TyreLifeCard",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "tyrelifecard",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L34"
     },
     {
       "id": "src_components_dashboard_telemetrytab_props",
@@ -755,6 +651,19 @@
       "source_location": "L12"
     },
     {
+      "id": "src_components_dashboard_dashboardheader_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "source_location": "L7"
+    },
+    {
       "id": "src_components_dashboard_dashboardselectors_props",
       "label": "Props",
       "_callable": true,
@@ -766,6 +675,19 @@
       "norm_label": "props",
       "source_file": "src/components/dashboard/DashboardSelectors.tsx",
       "source_location": "L7"
+    },
+    {
+      "id": "src_components_dashboard_signalband_comparisondriver",
+      "label": "ComparisonDriver",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "comparisondriver",
+      "source_file": "src/components/dashboard/SignalBand.tsx",
+      "source_location": "L6"
     },
     {
       "id": "src_components_dashboard_types_selectoption",
@@ -794,30 +716,82 @@
       "source_location": "L261"
     },
     {
-      "id": "src_api_openf1_openf1meeting",
-      "label": "OpenF1Meeting",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "DashboardHeader.tsx",
-      "file_type": "code",
-      "norm_label": "openf1meeting",
-      "source_file": "src/api/openf1.ts",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_components_dashboard_dashboardheader_props",
+      "id": "src_components_dashboard_driverselector_props",
       "label": "Props",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
       "norm_label": "props",
-      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "source_file": "src/components/dashboard/DriverSelector.tsx",
       "source_location": "L7"
+    },
+    {
+      "id": "src_components_dashboard_intervalstab_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "src/components/dashboard/IntervalsTab.tsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_components_dashboard_strategytab_pitstopcard",
+      "label": "PitStopCard",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "pitstopcard",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
+      "source_location": "L45"
+    },
+    {
+      "id": "src_components_dashboard_strategytab_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_components_dashboard_strategytab_strategyrow",
+      "label": "StrategyRow",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "strategyrow",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_components_dashboard_strategytab_tyrelifecard",
+      "label": "TyreLifeCard",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "tyrelifecard",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
+      "source_location": "L34"
     },
     {
       "id": "src_components_errorboundary_errorboundary",
@@ -885,17 +859,30 @@
       "source_location": "L9"
     },
     {
-      "id": "src_components_dashboard_types_tab",
-      "label": "Tab",
+      "id": "src_components_dashboard_incidentstab_props",
+      "label": "Props",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
       "file_type": "code",
-      "norm_label": "tab",
-      "source_file": "src/components/dashboard/types.ts",
-      "source_location": "L1"
+      "norm_label": "props",
+      "source_file": "src/components/dashboard/IncidentsTab.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_components_dashboard_radiotab_props",
+      "label": "Props",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "props",
+      "source_file": "src/components/dashboard/RadioTab.tsx",
+      "source_location": "L8"
     },
     {
       "id": "src_components_dashboard_broadcast_broadcasttypes_indexedsectortime",
@@ -974,6 +961,19 @@
       "norm_label": "speedtrapprops",
       "source_file": "src/components/dashboard/broadcast/SpeedTrap.tsx",
       "source_location": "L20"
+    },
+    {
+      "id": "src_components_dashboard_broadcast_timingtower_timingtowerprops",
+      "label": "TimingTowerProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "timingtowerprops",
+      "source_file": "src/components/dashboard/broadcast/TimingTower.tsx",
+      "source_location": "L6"
     },
     {
       "id": "src_components_dashboard_broadcasttab_props",
@@ -1156,6 +1156,42 @@
       "source_location": "L5"
     },
     {
+      "id": "src_components_dashboard_lapstrip_fmt",
+      "label": "fmt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "fmt()",
+      "source_file": "src/components/dashboard/LapStrip.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_dashboard_lapstriputils_lapbars",
+      "label": "lapBars()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lapbars()",
+      "source_file": "src/components/dashboard/lapStripUtils.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_components_dashboard_lapstriputils_safetycarlaps",
+      "label": "safetyCarLaps()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "safetycarlaps()",
+      "source_file": "src/components/dashboard/lapStripUtils.ts",
+      "source_location": "L7"
+    },
+    {
       "id": "src_components_dashboard_positionsutils_buildpositionchartdata",
       "label": "buildPositionChartData()",
       "_callable": true,
@@ -1178,6 +1214,30 @@
       "norm_label": "nearestperbucket()",
       "source_file": "src/components/dashboard/positionsUtils.ts",
       "source_location": "L15"
+    },
+    {
+      "id": "src_components_dashboard_tests_lapstriputils_test_lap",
+      "label": "lap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lap()",
+      "source_file": "src/components/dashboard/__tests__/lapStripUtils.test.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_dashboard_tests_lapstriputils_test_rc",
+      "label": "rc()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "rc()",
+      "source_file": "src/components/dashboard/__tests__/lapStripUtils.test.ts",
+      "source_location": "L5"
     },
     {
       "id": "src_components_dashboard_tests_positionsutils_test_makeposition",
@@ -1516,42 +1576,6 @@
       "source_location": "L12"
     },
     {
-      "id": "src_components_dashboard_lapstrip_fmt",
-      "label": "fmt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "fmt()",
-      "source_file": "src/components/dashboard/LapStrip.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_dashboard_lapstriputils_lapbars",
-      "label": "lapBars()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lapbars()",
-      "source_file": "src/components/dashboard/lapStripUtils.ts",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_components_dashboard_lapstriputils_safetycarlaps",
-      "label": "safetyCarLaps()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "safetycarlaps()",
-      "source_file": "src/components/dashboard/lapStripUtils.ts",
-      "source_location": "L7"
-    },
-    {
       "id": "src_components_dashboard_tests_cornersplits_test_trace",
       "label": "trace()",
       "_callable": true,
@@ -1561,30 +1585,6 @@
       "file_type": "code",
       "norm_label": "trace()",
       "source_file": "src/components/dashboard/__tests__/cornerSplits.test.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_components_dashboard_tests_lapstriputils_test_lap",
-      "label": "lap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lap()",
-      "source_file": "src/components/dashboard/__tests__/lapStripUtils.test.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_dashboard_tests_lapstriputils_test_rc",
-      "label": "rc()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "rc()",
-      "source_file": "src/components/dashboard/__tests__/lapStripUtils.test.ts",
       "source_location": "L5"
     },
     {
@@ -1682,6 +1682,18 @@
       "norm_label": "usedashboardviewmodel()",
       "source_file": "src/hooks/useDashboardViewModel.ts",
       "source_location": "L105"
+    },
+    {
+      "id": "src_hooks_usedebouncedvalue_usedebouncedvalue",
+      "label": "useDebouncedValue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "code",
+      "norm_label": "usedebouncedvalue()",
+      "source_file": "src/hooks/useDebouncedValue.ts",
+      "source_location": "L4"
     },
     {
       "id": "src_hooks_useopenf1_clearexpiredcacheentries",
@@ -1936,6 +1948,18 @@
       "source_location": "L21"
     },
     {
+      "id": "src_components_dashboard_nextviews_nextviews",
+      "label": "NextViews()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "nextviews()",
+      "source_file": "src/components/dashboard/NextViews.tsx",
+      "source_location": "L6"
+    },
+    {
       "id": "src_components_dashboardcontainer_builddashboardurl",
       "label": "buildDashboardUrl()",
       "_callable": true,
@@ -2080,12 +2104,72 @@
       "source_location": "L88"
     },
     {
+      "id": "src_components_tests_visualworkflow_test_params",
+      "label": "params()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "params()",
+      "source_file": "src/components/__tests__/VisualWorkflow.test.tsx",
+      "source_location": "L43"
+    },
+    {
+      "id": "src_constants_colors_chartcolorfortheme",
+      "label": "chartColorForTheme()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "chartcolorfortheme()",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L76"
+    },
+    {
+      "id": "src_constants_colors_contrastratio",
+      "label": "contrastRatio()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "contrastratio()",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L64"
+    },
+    {
+      "id": "src_constants_colors_parsehex",
+      "label": "parseHex()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "parsehex()",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L49"
+    },
+    {
+      "id": "src_constants_colors_relativeluminance",
+      "label": "relativeLuminance()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "relativeluminance()",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L56"
+    },
+    {
       "id": "src_hooks_usedashboardfilters_parseboundedint",
       "label": "parseBoundedInt()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parseboundedint()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2096,8 +2180,8 @@
       "label": "parseCircuit()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parsecircuit()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2108,8 +2192,8 @@
       "label": "parseDriverNumber()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parsedrivernumber()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2120,8 +2204,8 @@
       "label": "parseDriverNumbers()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parsedrivernumbers()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2132,8 +2216,8 @@
       "label": "parseLapNumber()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parselapnumber()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2144,8 +2228,8 @@
       "label": "parseSessionKey()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parsesessionkey()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2156,8 +2240,8 @@
       "label": "parseTab()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parsetab()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2168,8 +2252,8 @@
       "label": "parseYear()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "parseyear()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2180,8 +2264,8 @@
       "label": "readInitialSnapshot()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "readinitialsnapshot()",
       "source_file": "src/hooks/useDashboardFilters.ts",
@@ -2192,24 +2276,120 @@
       "label": "useDashboardFilters()",
       "_callable": true,
       "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
       "file_type": "code",
       "norm_label": "usedashboardfilters()",
       "source_file": "src/hooks/useDashboardFilters.ts",
       "source_location": "L78"
     },
     {
-      "id": "src_components_dashboard_broadcast_timingtower_timingtower",
-      "label": "TimingTower()",
+      "id": "src_components_dashboard_chartpanel_chartpanel",
+      "label": "ChartPanel()",
       "_callable": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 2,
+      "community_name": "shared.tsx",
       "file_type": "code",
-      "norm_label": "timingtower()",
-      "source_file": "src/components/dashboard/broadcast/TimingTower.tsx",
-      "source_location": "L15"
+      "norm_label": "chartpanel()",
+      "source_file": "src/components/dashboard/ChartPanel.tsx",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_components_dashboard_shared_chartskeleton",
+      "label": "ChartSkeleton()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "chartskeleton()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_components_dashboard_shared_charttip",
+      "label": "ChartTip()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "charttip()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L197"
+    },
+    {
+      "id": "src_components_dashboard_shared_fixedvalue",
+      "label": "fixedValue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "fixedvalue()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L192"
+    },
+    {
+      "id": "src_components_dashboard_shared_panel",
+      "label": "Panel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "panel()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L107"
+    },
+    {
+      "id": "src_components_dashboard_shared_skeletonblock",
+      "label": "SkeletonBlock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "skeletonblock()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_components_dashboard_utils_cn",
+      "label": "cn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "cn()",
+      "source_file": "src/components/dashboard/utils.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_utils_exportchart_sanitizefilename",
+      "label": "sanitizeFilename()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "sanitizefilename()",
+      "source_file": "src/utils/exportChart.ts",
+      "source_location": "L191"
+    },
+    {
+      "id": "src_utils_exportchart_stackchartsvgs",
+      "label": "stackChartSvgs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "stackchartsvgs()",
+      "source_file": "src/utils/exportChart.ts",
+      "source_location": "L173"
     },
     {
       "id": "src_components_dashboard_chartaxis_eventicks",
@@ -2296,114 +2476,6 @@
       "source_location": "L37"
     },
     {
-      "id": "src_components_dashboard_chartpanel_chartpanel",
-      "label": "ChartPanel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "chartpanel()",
-      "source_file": "src/components/dashboard/ChartPanel.tsx",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_components_dashboard_gapcard_gapcard",
-      "label": "GapCard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "gapcard()",
-      "source_file": "src/components/dashboard/GapCard.tsx",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_components_dashboard_gapcard_signed",
-      "label": "signed()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "signed()",
-      "source_file": "src/components/dashboard/GapCard.tsx",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_components_dashboard_incidentstab_flagtone",
-      "label": "flagTone()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "flagtone()",
-      "source_file": "src/components/dashboard/IncidentsTab.tsx",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_components_dashboard_incidentstab_toneof",
-      "label": "toneOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "toneof()",
-      "source_file": "src/components/dashboard/IncidentsTab.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_components_dashboard_shared_cardgridskeleton",
-      "label": "CardGridSkeleton()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "cardgridskeleton()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L40"
-    },
-    {
-      "id": "src_components_dashboard_shared_chartskeleton",
-      "label": "ChartSkeleton()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "chartskeleton()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_components_dashboard_shared_charttip",
-      "label": "ChartTip()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "charttip()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L197"
-    },
-    {
-      "id": "src_components_dashboard_shared_driverchip",
-      "label": "DriverChip()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "driverchip()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L142"
-    },
-    {
       "id": "src_components_dashboard_shared_err",
       "label": "Err()",
       "_callable": true,
@@ -2414,150 +2486,6 @@
       "norm_label": "err()",
       "source_file": "src/components/dashboard/shared.tsx",
       "source_location": "L71"
-    },
-    {
-      "id": "src_components_dashboard_shared_fixedvalue",
-      "label": "fixedValue()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "fixedvalue()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L192"
-    },
-    {
-      "id": "src_components_dashboard_shared_nodata",
-      "label": "NoData()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "nodata()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L89"
-    },
-    {
-      "id": "src_components_dashboard_shared_panel",
-      "label": "Panel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "panel()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L107"
-    },
-    {
-      "id": "src_components_dashboard_shared_panelselection",
-      "label": "PanelSelection()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "panelselection()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L219"
-    },
-    {
-      "id": "src_components_dashboard_shared_skeletonblock",
-      "label": "SkeletonBlock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "skeletonblock()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_components_dashboard_shared_spinner",
-      "label": "Spinner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "spinner()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_components_dashboard_shared_stat",
-      "label": "Stat()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "stat()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L93"
-    },
-    {
-      "id": "src_components_dashboard_shared_tableskeleton",
-      "label": "TableSkeleton()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "tableskeleton()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L55"
-    },
-    {
-      "id": "src_components_dashboard_shared_toolbarbutton",
-      "label": "ToolbarButton()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "toolbarbutton()",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L156"
-    },
-    {
-      "id": "src_components_dashboard_signalband_standin",
-      "label": "standIn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "standin()",
-      "source_file": "src/components/dashboard/SignalBand.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_components_dashboard_strategytab_stintcountlabel",
-      "label": "stintCountLabel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "stintcountlabel()",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L54"
-    },
-    {
-      "id": "src_components_dashboard_summarystrip_summarystrip",
-      "label": "SummaryStrip()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "summarystrip()",
-      "source_file": "src/components/dashboard/SummaryStrip.tsx",
-      "source_location": "L6"
     },
     {
       "id": "src_components_dashboard_telemetrytab_pedalhalveslabel",
@@ -2584,160 +2512,40 @@
       "source_location": "L14"
     },
     {
-      "id": "src_components_dashboard_utils_cn",
-      "label": "cn()",
+      "id": "src_components_dashboard_nextmeeting_formatcountdown",
+      "label": "formatCountdown()",
       "_callable": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 27,
+      "community_name": "vitest",
       "file_type": "code",
-      "norm_label": "cn()",
-      "source_file": "src/components/dashboard/utils.ts",
-      "source_location": "L1"
+      "norm_label": "formatcountdown()",
+      "source_file": "src/components/dashboard/nextMeeting.ts",
+      "source_location": "L13"
     },
     {
-      "id": "src_components_dashboard_utils_fmtclock",
-      "label": "fmtClock()",
+      "id": "src_components_dashboard_nextmeeting_picknextmeeting",
+      "label": "pickNextMeeting()",
       "_callable": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 27,
+      "community_name": "vitest",
       "file_type": "code",
-      "norm_label": "fmtclock()",
-      "source_file": "src/components/dashboard/utils.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_components_dashboard_utils_fmtlap",
-      "label": "fmtLap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "fmtlap()",
-      "source_file": "src/components/dashboard/utils.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_components_dashboard_utils_pad2",
-      "label": "pad2()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "pad2()",
-      "source_file": "src/components/dashboard/utils.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_components_tests_p3polish_test_setfullscreenenabled",
-      "label": "setFullscreenEnabled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "setfullscreenenabled()",
-      "source_file": "src/components/__tests__/P3Polish.test.tsx",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_constants_colors_chartcolorfortheme",
-      "label": "chartColorForTheme()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "chartcolorfortheme()",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L76"
-    },
-    {
-      "id": "src_constants_colors_contrastratio",
-      "label": "contrastRatio()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "contrastratio()",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L64"
-    },
-    {
-      "id": "src_constants_colors_parsehex",
-      "label": "parseHex()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "parsehex()",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L49"
-    },
-    {
-      "id": "src_constants_colors_relativeluminance",
-      "label": "relativeLuminance()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "relativeluminance()",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L56"
-    },
-    {
-      "id": "src_constants_colors_teamcolor",
-      "label": "teamColor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "teamcolor()",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L40"
-    },
-    {
-      "id": "src_contexts_usedrivercontext_usedrivercontext",
-      "label": "useDriverContext()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "usedrivercontext()",
-      "source_file": "src/contexts/useDriverContext.ts",
+      "norm_label": "picknextmeeting()",
+      "source_file": "src/components/dashboard/nextMeeting.ts",
       "source_location": "L4"
     },
     {
-      "id": "src_utils_exportchart_sanitizefilename",
-      "label": "sanitizeFilename()",
+      "id": "src_components_dashboard_tests_nextmeeting_test_meeting",
+      "label": "meeting()",
       "_callable": true,
       "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
+      "community": 27,
+      "community_name": "vitest",
       "file_type": "code",
-      "norm_label": "sanitizefilename()",
-      "source_file": "src/utils/exportChart.ts",
-      "source_location": "L181"
-    },
-    {
-      "id": "src_utils_exportchart_stackchartsvgs",
-      "label": "stackChartSvgs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "stackchartsvgs()",
-      "source_file": "src/utils/exportChart.ts",
-      "source_location": "L163"
+      "norm_label": "meeting()",
+      "source_file": "src/components/dashboard/__tests__/nextMeeting.test.ts",
+      "source_location": "L5"
     },
     {
       "id": "src_components_tests_timingtowerroles_test_summary",
@@ -2764,18 +2572,6 @@
       "source_location": "L11"
     },
     {
-      "id": "src_hooks_usedebouncedvalue_usedebouncedvalue",
-      "label": "useDebouncedValue()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "vitest",
-      "file_type": "code",
-      "norm_label": "usedebouncedvalue()",
-      "source_file": "src/hooks/useDebouncedValue.ts",
-      "source_location": "L4"
-    },
-    {
       "id": "src_components_dashboard_cardbar_cardbar",
       "label": "CardBar()",
       "_callable": true,
@@ -2788,16 +2584,52 @@
       "source_location": "L5"
     },
     {
-      "id": "src_components_dashboard_nextviews_nextviews",
-      "label": "NextViews()",
+      "id": "src_components_dashboard_dashboardheader_navcountdown",
+      "label": "NavCountdown()",
       "_callable": true,
       "_origin": "ast",
       "community": 30,
       "community_name": "DashboardShell.tsx",
       "file_type": "code",
-      "norm_label": "nextviews()",
-      "source_file": "src/components/dashboard/NextViews.tsx",
-      "source_location": "L6"
+      "norm_label": "navcountdown()",
+      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_components_dashboard_dashboardheader_sitelinks",
+      "label": "SiteLinks()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "sitelinks()",
+      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_components_dashboard_shared_toolbarbutton",
+      "label": "ToolbarButton()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "toolbarbutton()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L156"
+    },
+    {
+      "id": "src_components_dashboard_signalband_standin",
+      "label": "standIn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "standin()",
+      "source_file": "src/components/dashboard/SignalBand.tsx",
+      "source_location": "L9"
     },
     {
       "id": "src_components_dashboard_sitefooter_sitefooter",
@@ -2812,64 +2644,100 @@
       "source_location": "L4"
     },
     {
-      "id": "src_components_dashboard_dashboardheader_navcountdown",
-      "label": "NavCountdown()",
+      "id": "src_components_tests_p3polish_test_setfullscreenenabled",
+      "label": "setFullscreenEnabled()",
       "_callable": true,
       "_origin": "ast",
-      "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
       "file_type": "code",
-      "norm_label": "navcountdown()",
-      "source_file": "src/components/dashboard/DashboardHeader.tsx",
-      "source_location": "L24"
+      "norm_label": "setfullscreenenabled()",
+      "source_file": "src/components/__tests__/P3Polish.test.tsx",
+      "source_location": "L10"
     },
     {
-      "id": "src_components_dashboard_dashboardheader_sitelinks",
-      "label": "SiteLinks()",
+      "id": "src_components_dashboard_shared_cardgridskeleton",
+      "label": "CardGridSkeleton()",
       "_callable": true,
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "sitelinks()",
-      "source_file": "src/components/dashboard/DashboardHeader.tsx",
-      "source_location": "L39"
+      "norm_label": "cardgridskeleton()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L40"
     },
     {
-      "id": "src_components_dashboard_nextmeeting_formatcountdown",
-      "label": "formatCountdown()",
+      "id": "src_components_dashboard_shared_driverchip",
+      "label": "DriverChip()",
       "_callable": true,
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "formatcountdown()",
-      "source_file": "src/components/dashboard/nextMeeting.ts",
-      "source_location": "L13"
+      "norm_label": "driverchip()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L142"
     },
     {
-      "id": "src_components_dashboard_nextmeeting_picknextmeeting",
-      "label": "pickNextMeeting()",
+      "id": "src_components_dashboard_shared_panelselection",
+      "label": "PanelSelection()",
       "_callable": true,
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "picknextmeeting()",
-      "source_file": "src/components/dashboard/nextMeeting.ts",
+      "norm_label": "panelselection()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L219"
+    },
+    {
+      "id": "src_components_dashboard_shared_stat",
+      "label": "Stat()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "stat()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L93"
+    },
+    {
+      "id": "src_components_dashboard_strategytab_stintcountlabel",
+      "label": "stintCountLabel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "stintcountlabel()",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
+      "source_location": "L54"
+    },
+    {
+      "id": "src_constants_colors_teamcolor",
+      "label": "teamColor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "teamcolor()",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "src_contexts_usedrivercontext_usedrivercontext",
+      "label": "useDriverContext()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "usedrivercontext()",
+      "source_file": "src/contexts/useDriverContext.ts",
       "source_location": "L4"
-    },
-    {
-      "id": "src_components_dashboard_tests_nextmeeting_test_meeting",
-      "label": "meeting()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "DashboardHeader.tsx",
-      "file_type": "code",
-      "norm_label": "meeting()",
-      "source_file": "src/components/dashboard/__tests__/nextMeeting.test.ts",
-      "source_location": "L5"
     },
     {
       "id": "src_components_errorboundary_errorboundary_componentdidcatch",
@@ -2965,7 +2833,7 @@
       "file_type": "code",
       "norm_label": "buildexportmarkup()",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L113"
+      "source_location": "L119"
     },
     {
       "id": "src_utils_exportchart_downloadsvg",
@@ -2977,7 +2845,7 @@
       "file_type": "code",
       "norm_label": "downloadsvg()",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L150"
+      "source_location": "L160"
     },
     {
       "id": "src_utils_exportchart_exportchartassvg",
@@ -2989,7 +2857,7 @@
       "file_type": "code",
       "norm_label": "exportchartassvg()",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L185"
+      "source_location": "L195"
     },
     {
       "id": "src_utils_exportchart_getchartdimensions",
@@ -3013,7 +2881,19 @@
       "file_type": "code",
       "norm_label": "resolvecssvariables()",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L103"
+      "source_location": "L109"
+    },
+    {
+      "id": "src_utils_exportchart_resolvevars",
+      "label": "resolveVars()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "exportChart.ts",
+      "file_type": "code",
+      "norm_label": "resolvevars()",
+      "source_file": "src/utils/exportChart.ts",
+      "source_location": "L101"
     },
     {
       "id": "src_utils_tests_exportchart_test_svgof",
@@ -3028,16 +2908,76 @@
       "source_location": "L6"
     },
     {
-      "id": "src_components_tests_visualworkflow_test_params",
-      "label": "params()",
+      "id": "src_components_dashboard_incidentstab_flagtone",
+      "label": "flagTone()",
       "_callable": true,
       "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
       "file_type": "code",
-      "norm_label": "params()",
-      "source_file": "src/components/__tests__/VisualWorkflow.test.tsx",
-      "source_location": "L43"
+      "norm_label": "flagtone()",
+      "source_file": "src/components/dashboard/IncidentsTab.tsx",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_components_dashboard_incidentstab_toneof",
+      "label": "toneOf()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "toneof()",
+      "source_file": "src/components/dashboard/IncidentsTab.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_components_dashboard_shared_nodata",
+      "label": "NoData()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "nodata()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L89"
+    },
+    {
+      "id": "src_components_dashboard_shared_spinner",
+      "label": "Spinner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "spinner()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_components_dashboard_utils_fmtclock",
+      "label": "fmtClock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "fmtclock()",
+      "source_file": "src/components/dashboard/utils.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_components_dashboard_utils_pad2",
+      "label": "pad2()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "pad2()",
+      "source_file": "src/components/dashboard/utils.ts",
+      "source_location": "L12"
     },
     {
       "id": "src_components_dashboard_broadcast_broadcastutils_buildsectoranalysis",
@@ -3124,6 +3064,42 @@
       "source_location": "L29"
     },
     {
+      "id": "src_components_dashboard_broadcast_timingtower_timingtower",
+      "label": "TimingTower()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "timingtower()",
+      "source_file": "src/components/dashboard/broadcast/TimingTower.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_components_dashboard_gapcard_gapcard",
+      "label": "GapCard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "gapcard()",
+      "source_file": "src/components/dashboard/GapCard.tsx",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_components_dashboard_gapcard_signed",
+      "label": "signed()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "signed()",
+      "source_file": "src/components/dashboard/GapCard.tsx",
+      "source_location": "L5"
+    },
+    {
       "id": "src_components_dashboard_gapcarddata_buildgapcards",
       "label": "buildGapCards()",
       "_callable": true,
@@ -3208,6 +3184,30 @@
       "source_location": "L177"
     },
     {
+      "id": "src_components_dashboard_shared_tableskeleton",
+      "label": "TableSkeleton()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "tableskeleton()",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L55"
+    },
+    {
+      "id": "src_components_dashboard_summarystrip_summarystrip",
+      "label": "SummaryStrip()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "summarystrip()",
+      "source_file": "src/components/dashboard/SummaryStrip.tsx",
+      "source_location": "L6"
+    },
+    {
       "id": "src_components_dashboard_tests_gapcarddata_test_row",
       "label": "row()",
       "_callable": true,
@@ -3266,6 +3266,18 @@
       "norm_label": "stint()",
       "source_file": "src/components/dashboard/__tests__/headlines.test.ts",
       "source_location": "L16"
+    },
+    {
+      "id": "src_components_dashboard_utils_fmtlap",
+      "label": "fmtLap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "fmtlap()",
+      "source_file": "src/components/dashboard/utils.ts",
+      "source_location": "L5"
     },
     {
       "id": "src_components_dashboard_tests_trackdominance_test_path",
@@ -3612,6 +3624,39 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_dashboard_lapstrip",
+      "label": "LapStrip.tsx",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lapstrip.tsx",
+      "source_file": "src/components/dashboard/LapStrip.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_lapstrip_lapstrip",
+      "label": "LapStrip",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lapstrip",
+      "source_file": "src/components/dashboard/LapStrip.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_components_dashboard_lapstriputils",
+      "label": "lapStripUtils.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lapstriputils.ts",
+      "source_file": "src/components/dashboard/lapStripUtils.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_dashboard_positionsutils",
       "label": "positionsUtils.ts",
       "_origin": "ast",
@@ -3656,6 +3701,17 @@
       "source_location": "L5"
     },
     {
+      "id": "src_components_dashboard_tests_lapstriputils_test",
+      "label": "lapStripUtils.test.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "code",
+      "norm_label": "lapstriputils.test.ts",
+      "source_file": "src/components/dashboard/__tests__/lapStripUtils.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_dashboard_tests_positionsutils_test",
       "label": "positionsUtils.test.ts",
       "_origin": "ast",
@@ -3665,6 +3721,54 @@
       "norm_label": "positionsutils.test.ts",
       "source_file": "src/components/dashboard/__tests__/positionsUtils.test.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "perfredo",
+      "label": "PERFREDO.md",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "perfredo.md",
+      "source_file": "PERFREDO.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "perfredo_0_how_to_use_this_file_read_first_sonnet",
+      "label": "0. How to use this file (read first, Sonnet)",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "0. how to use this file (read first, sonnet)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "perfredo_1_baseline_measured_production_build_chromium",
+      "label": "1. Baseline (measured, production build, Chromium)",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1. baseline (measured, production build, chromium)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "perfredo_2_support_matrix_make_it_explicit",
+      "label": "2. Support matrix (make it explicit)",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2. support matrix (make it explicit)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L41"
     },
     {
       "id": "perfredo_4_phases_and_tasks",
@@ -3677,6 +3781,54 @@
       "norm_label": "4. phases and tasks",
       "source_file": "PERFREDO.md",
       "source_location": "L75"
+    },
+    {
+      "id": "perfredo_5_explicitly_out_of_scope_don_t_do_these",
+      "label": "5. Explicitly out of scope (don't do these)",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5. explicitly out of scope (don't do these)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L535"
+    },
+    {
+      "id": "perfredo_6_risk_notes_for_the_executor",
+      "label": "6. Risk notes for the executor",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "6. risk notes for the executor",
+      "source_file": "PERFREDO.md",
+      "source_location": "L546"
+    },
+    {
+      "id": "perfredo_7_found_during_execution",
+      "label": "7. Found during execution",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "7. found during execution",
+      "source_file": "PERFREDO.md",
+      "source_location": "L558"
+    },
+    {
+      "id": "perfredo_perfredo_performance_and_cross_browser_plan",
+      "label": "PERFREDO: performance and cross-browser plan",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "perfredo: performance and cross-browser plan",
+      "source_file": "PERFREDO.md",
+      "source_location": "L1"
     },
     {
       "id": "perfredo_phase_0_safety_net_no_product_code_changes",
@@ -3713,18 +3865,6 @@
       "norm_label": "phase 1 status: \u2705 done (p1-01..p1-07, 2026-09-30)",
       "source_file": "PERFREDO.md",
       "source_location": "L180"
-    },
-    {
-      "id": "perfredo_phase_2_network_f3",
-      "label": "Phase 2: Network (F3)",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 2: network (f3)",
-      "source_file": "PERFREDO.md",
-      "source_location": "L200"
     },
     {
       "id": "perfredo_phase_3_loading_and_bundle_f4_f6_f9",
@@ -3799,14 +3939,14 @@
       "source_location": "L468"
     },
     {
-      "id": "perfredo_phase_7_status_done_except_the_real_device_check_p7_04_2026_09_30",
-      "label": "Phase 7 status: \u2705 DONE except the real-device check (P7-04) (2026-09-30)",
+      "id": "perfredo_phase_7_status_done_p7_04_by_emulation_2026_10_01_real_device_pass_still_advised",
+      "label": "Phase 7 status: \u2705 DONE (P7-04 by emulation 2026-10-01; real-device pass still advised)",
       "_origin": "ast",
       "community": 0,
       "community_name": "Phase 6: Remove redundancy and dead code (F8, F10, F11, F12)",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "phase 7 status: \u2705 done except the real-device check (p7-04) (2026-09-30)",
+      "norm_label": "phase 7 status: \u2705 done (p7-04 by emulation 2026-10-01; real-device pass still advised)",
       "source_file": "PERFREDO.md",
       "source_location": "L491"
     },
@@ -3844,39 +3984,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_lapstrip",
-      "label": "LapStrip.tsx",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lapstrip.tsx",
-      "source_file": "src/components/dashboard/LapStrip.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_lapstrip_lapstrip",
-      "label": "LapStrip",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lapstrip",
-      "source_file": "src/components/dashboard/LapStrip.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_components_dashboard_lapstriputils",
-      "label": "lapStripUtils.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lapstriputils.ts",
-      "source_file": "src/components/dashboard/lapStripUtils.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_dashboard_tests_cornersplits_test",
       "label": "cornerSplits.test.ts",
       "_origin": "ast",
@@ -3888,17 +3995,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_tests_lapstriputils_test",
-      "label": "lapStripUtils.test.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "openf1.ts",
-      "file_type": "code",
-      "norm_label": "lapstriputils.test.ts",
-      "source_file": "src/components/dashboard/__tests__/lapStripUtils.test.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_hooks_tests_usedashboardviewmodel_test",
       "label": "useDashboardViewModel.test.ts",
       "_origin": "ast",
@@ -3907,6 +4003,17 @@
       "file_type": "code",
       "norm_label": "usedashboardviewmodel.test.ts",
       "source_file": "src/hooks/__tests__/useDashboardViewModel.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_hooks_tests_usedebouncedvalue_test",
+      "label": "useDebouncedValue.test.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "code",
+      "norm_label": "usedebouncedvalue.test.ts",
+      "source_file": "src/hooks/__tests__/useDebouncedValue.test.ts",
       "source_location": "L1"
     },
     {
@@ -3943,6 +4050,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_hooks_usedebouncedvalue",
+      "label": "useDebouncedValue.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "code",
+      "norm_label": "usedebouncedvalue.ts",
+      "source_file": "src/hooks/useDebouncedValue.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_hooks_useopenf1",
       "label": "useOpenF1.ts",
       "_origin": "ast",
@@ -3974,6 +4092,42 @@
       "norm_label": "inflight",
       "source_file": "src/hooks/useOpenF1.ts",
       "source_location": "L29"
+    },
+    {
+      "id": "perfredo_3_findings_by_severity",
+      "label": "3. Findings by severity",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3. findings by severity",
+      "source_file": "PERFREDO.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "perfredo_phase_2_network_f3",
+      "label": "Phase 2: Network (F3)",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 2: network (f3)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L200"
+    },
+    {
+      "id": "perfredo_phase_2_status_done_p2_01_p2_06_2026_09_30",
+      "label": "Phase 2 status: \u2705 DONE (P2-01..P2-06, 2026-09-30)",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "openf1.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 2 status: \u2705 done (p2-01..p2-06, 2026-09-30)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L231"
     },
     {
       "id": "src_api_openf1_rationale_4",
@@ -5361,6 +5515,61 @@
       "source_location": "L59"
     },
     {
+      "id": "src_components_dashboard_dashboardtabs",
+      "label": "DashboardTabs.tsx",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "dashboardtabs.tsx",
+      "source_file": "src/components/dashboard/DashboardTabs.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_nextviews",
+      "label": "NextViews.tsx",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "nextviews.tsx",
+      "source_file": "src/components/dashboard/NextViews.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_tablabels",
+      "label": "tabLabels.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "tablabels.ts",
+      "source_file": "src/components/dashboard/tabLabels.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_tablabels_tab_labels",
+      "label": "TAB_LABELS",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "tab_labels",
+      "source_file": "src/components/dashboard/tabLabels.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_components_dashboard_tablabels_tab_order",
+      "label": "TAB_ORDER",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "tab_order",
+      "source_file": "src/components/dashboard/tabLabels.ts",
+      "source_location": "L5"
+    },
+    {
       "id": "src_components_dashboardcontainer",
       "label": "DashboardContainer.tsx",
       "_origin": "ast",
@@ -5370,6 +5579,105 @@
       "norm_label": "dashboardcontainer.tsx",
       "source_file": "src/components/DashboardContainer.tsx",
       "source_location": "L1"
+    },
+    {
+      "id": "src_components_tests_visualworkflow_test",
+      "label": "VisualWorkflow.test.tsx",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "visualworkflow.test.tsx",
+      "source_file": "src/components/__tests__/VisualWorkflow.test.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_constants_colors",
+      "label": "colors.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "colors.ts",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_constants_colors_light_chart_background",
+      "label": "LIGHT_CHART_BACKGROUND",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "light_chart_background",
+      "source_file": "src/constants/colors.ts",
+      "source_location": "L45"
+    },
+    {
+      "id": "src_hooks_tests_usedashboardfilters_test",
+      "label": "useDashboardFilters.test.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "usedashboardfilters.test.ts",
+      "source_file": "src/hooks/__tests__/useDashboardFilters.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_hooks_tests_usedashboardfilters_test_current_year",
+      "label": "CURRENT_YEAR",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "current_year",
+      "source_file": "src/hooks/__tests__/useDashboardFilters.test.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_hooks_usedashboardfilters",
+      "label": "useDashboardFilters.ts",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "usedashboardfilters.ts",
+      "source_file": "src/hooks/useDashboardFilters.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_hooks_usedashboardfilters_valid_driver_range",
+      "label": "VALID_DRIVER_RANGE",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "valid_driver_range",
+      "source_file": "src/hooks/useDashboardFilters.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_hooks_usedashboardfilters_valid_lap_range",
+      "label": "VALID_LAP_RANGE",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "valid_lap_range",
+      "source_file": "src/hooks/useDashboardFilters.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_hooks_usedashboardfilters_valid_year_range",
+      "label": "VALID_YEAR_RANGE",
+      "_origin": "ast",
+      "community": 19,
+      "community_name": "DashboardContainer.tsx",
+      "file_type": "code",
+      "norm_label": "valid_year_range",
+      "source_file": "src/hooks/useDashboardFilters.ts",
+      "source_location": "L14"
     },
     {
       "id": "perfredo_phase_1_render_stability_the_root_cause_behind_f1_and_f2",
@@ -5396,70 +5704,104 @@
       "source_location": "L73"
     },
     {
-      "id": "src_hooks_tests_usedashboardfilters_test",
-      "label": "useDashboardFilters.test.ts",
+      "id": "src_components_dashboard_chartpanel",
+      "label": "ChartPanel.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community_name": "shared.tsx",
       "file_type": "code",
-      "norm_label": "usedashboardfilters.test.ts",
-      "source_file": "src/hooks/__tests__/useDashboardFilters.test.ts",
+      "norm_label": "chartpanel.tsx",
+      "source_file": "src/components/dashboard/ChartPanel.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_hooks_tests_usedashboardfilters_test_current_year",
-      "label": "CURRENT_YEAR",
+      "id": "src_components_dashboard_positionstab",
+      "label": "PositionsTab.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community_name": "shared.tsx",
       "file_type": "code",
-      "norm_label": "current_year",
-      "source_file": "src/hooks/__tests__/useDashboardFilters.test.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_hooks_usedashboardfilters",
-      "label": "useDashboardFilters.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "useDashboardFilters.ts",
-      "file_type": "code",
-      "norm_label": "usedashboardfilters.ts",
-      "source_file": "src/hooks/useDashboardFilters.ts",
+      "norm_label": "positionstab.tsx",
+      "source_file": "src/components/dashboard/PositionsTab.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_hooks_usedashboardfilters_valid_driver_range",
-      "label": "VALID_DRIVER_RANGE",
+      "id": "src_components_dashboard_shared",
+      "label": "shared.tsx",
       "_origin": "ast",
       "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community_name": "shared.tsx",
       "file_type": "code",
-      "norm_label": "valid_driver_range",
-      "source_file": "src/hooks/useDashboardFilters.ts",
-      "source_location": "L15"
+      "norm_label": "shared.tsx",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L1"
     },
     {
-      "id": "src_hooks_usedashboardfilters_valid_lap_range",
-      "label": "VALID_LAP_RANGE",
+      "id": "src_components_dashboard_shared_tip_precision",
+      "label": "TIP_PRECISION",
       "_origin": "ast",
       "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community_name": "shared.tsx",
       "file_type": "code",
-      "norm_label": "valid_lap_range",
-      "source_file": "src/hooks/useDashboardFilters.ts",
-      "source_location": "L16"
+      "norm_label": "tip_precision",
+      "source_file": "src/components/dashboard/shared.tsx",
+      "source_location": "L189"
     },
     {
-      "id": "src_hooks_usedashboardfilters_valid_year_range",
-      "label": "VALID_YEAR_RANGE",
+      "id": "src_components_dashboard_tableadcontext",
+      "label": "tabLeadContext.ts",
       "_origin": "ast",
       "community": 2,
-      "community_name": "useDashboardFilters.ts",
+      "community_name": "shared.tsx",
       "file_type": "code",
-      "norm_label": "valid_year_range",
-      "source_file": "src/hooks/useDashboardFilters.ts",
-      "source_location": "L14"
+      "norm_label": "tableadcontext.ts",
+      "source_file": "src/components/dashboard/tabLeadContext.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_tableadcontext_tableadcontext",
+      "label": "TabLeadContext",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "tableadcontext",
+      "source_file": "src/components/dashboard/tabLeadContext.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_dashboardshell_positionstab",
+      "label": "PositionsTab",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "code",
+      "norm_label": "positionstab",
+      "source_file": "src/components/DashboardShell.tsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "concept",
+      "norm_label": "react",
+      "source_file": "package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "rework_tasks_phase_3_navigation_and_section_framing",
+      "label": "Phase 3: Navigation and section framing",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "shared.tsx",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 3: navigation and section framing",
+      "source_file": "REWORK_TASKS.md",
+      "source_location": "L129"
     },
     {
       "id": "claude_skills_playwright_cli_references_session_management_1_name_browser_sessions_semantically",
@@ -5702,28 +6044,6 @@
       "source_location": "L98"
     },
     {
-      "id": "src_components_dashboard_broadcast_timingtower",
-      "label": "TimingTower.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "timingtower.tsx",
-      "source_file": "src/components/dashboard/broadcast/TimingTower.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_cardbar",
-      "label": "CardBar.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "cardbar.tsx",
-      "source_file": "src/components/dashboard/CardBar.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_dashboard_chartaxis",
       "label": "chartAxis.ts",
       "_origin": "ast",
@@ -5790,39 +6110,6 @@
       "source_location": "L10"
     },
     {
-      "id": "src_components_dashboard_chartpanel",
-      "label": "ChartPanel.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "chartpanel.tsx",
-      "source_file": "src/components/dashboard/ChartPanel.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_driverselector",
-      "label": "DriverSelector.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "driverselector.tsx",
-      "source_file": "src/components/dashboard/DriverSelector.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_driverselector_driverselector",
-      "label": "DriverSelector",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "driverselector",
-      "source_file": "src/components/dashboard/DriverSelector.tsx",
-      "source_location": "L16"
-    },
-    {
       "id": "src_components_dashboard_energytab",
       "label": "EnergyTab.tsx",
       "_origin": "ast",
@@ -5845,72 +6132,6 @@
       "source_location": "L22"
     },
     {
-      "id": "src_components_dashboard_gapcard",
-      "label": "GapCard.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "gapcard.tsx",
-      "source_file": "src/components/dashboard/GapCard.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_incidentstab",
-      "label": "IncidentsTab.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "incidentstab.tsx",
-      "source_file": "src/components/dashboard/IncidentsTab.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_incidentstab_incidentstab",
-      "label": "IncidentsTab",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "incidentstab",
-      "source_file": "src/components/dashboard/IncidentsTab.tsx",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_components_dashboard_intervalstab",
-      "label": "IntervalsTab.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "intervalstab.tsx",
-      "source_file": "src/components/dashboard/IntervalsTab.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_intervalstab_intervalstab",
-      "label": "IntervalsTab",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "intervalstab",
-      "source_file": "src/components/dashboard/IntervalsTab.tsx",
-      "source_location": "L23"
-    },
-    {
-      "id": "src_components_dashboard_positionstab",
-      "label": "PositionsTab.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "positionstab.tsx",
-      "source_file": "src/components/dashboard/PositionsTab.tsx",
-      "source_location": "L1"
-    },
-    {
       "id": "src_components_dashboard_positionstab_positionstab",
       "label": "PositionsTab",
       "_origin": "ast",
@@ -5920,127 +6141,6 @@
       "norm_label": "positionstab",
       "source_file": "src/components/dashboard/PositionsTab.tsx",
       "source_location": "L19"
-    },
-    {
-      "id": "src_components_dashboard_radiotab",
-      "label": "RadioTab.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "radiotab.tsx",
-      "source_file": "src/components/dashboard/RadioTab.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_radiotab_radiotab",
-      "label": "RadioTab",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "radiotab",
-      "source_file": "src/components/dashboard/RadioTab.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_components_dashboard_shared",
-      "label": "shared.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "shared.tsx",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_shared_tip_precision",
-      "label": "TIP_PRECISION",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "tip_precision",
-      "source_file": "src/components/dashboard/shared.tsx",
-      "source_location": "L189"
-    },
-    {
-      "id": "src_components_dashboard_signalband",
-      "label": "SignalBand.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "signalband.tsx",
-      "source_file": "src/components/dashboard/SignalBand.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_signalband_signalband",
-      "label": "SignalBand",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "signalband",
-      "source_file": "src/components/dashboard/SignalBand.tsx",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_components_dashboard_strategytab",
-      "label": "StrategyTab.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "strategytab.tsx",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_strategytab_strategytab",
-      "label": "StrategyTab",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "strategytab",
-      "source_file": "src/components/dashboard/StrategyTab.tsx",
-      "source_location": "L58"
-    },
-    {
-      "id": "src_components_dashboard_summarystrip",
-      "label": "SummaryStrip.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "summarystrip.tsx",
-      "source_file": "src/components/dashboard/SummaryStrip.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_tableadcontext",
-      "label": "tabLeadContext.ts",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "tableadcontext.ts",
-      "source_file": "src/components/dashboard/tabLeadContext.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_tableadcontext_tableadcontext",
-      "label": "TabLeadContext",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "tableadcontext",
-      "source_file": "src/components/dashboard/tabLeadContext.ts",
-      "source_location": "L6"
     },
     {
       "id": "src_components_dashboard_telemetrytab",
@@ -6076,28 +6176,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_utils",
-      "label": "utils.ts",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "utils.ts",
-      "source_file": "src/components/dashboard/utils.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_utils_clock_zone_note",
-      "label": "CLOCK_ZONE_NOTE",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "clock_zone_note",
-      "source_file": "src/components/dashboard/utils.ts",
-      "source_location": "L21"
-    },
-    {
       "id": "src_components_dashboard_weathertab",
       "label": "WeatherTab.tsx",
       "_origin": "ast",
@@ -6131,147 +6209,26 @@
       "source_location": "L29"
     },
     {
-      "id": "src_components_dashboardshell_incidentstab",
-      "label": "IncidentsTab",
+      "id": "src_components_dashboardshell_telemetrytab",
+      "label": "TelemetryTab",
       "_origin": "ast",
       "community": 24,
       "community_name": "TelemetryTab.tsx",
       "file_type": "code",
-      "norm_label": "incidentstab",
+      "norm_label": "telemetrytab",
       "source_file": "src/components/DashboardShell.tsx",
-      "source_location": "L39"
+      "source_location": "L34"
     },
     {
-      "id": "src_components_dashboardshell_strategytab",
-      "label": "StrategyTab",
+      "id": "src_components_dashboardshell_weathertab",
+      "label": "WeatherTab",
       "_origin": "ast",
       "community": 24,
       "community_name": "TelemetryTab.tsx",
       "file_type": "code",
-      "norm_label": "strategytab",
+      "norm_label": "weathertab",
       "source_file": "src/components/DashboardShell.tsx",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_components_tests_p2polish_test",
-      "label": "P2Polish.test.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "p2polish.test.tsx",
-      "source_file": "src/components/__tests__/P2Polish.test.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_tests_p2polish_test_lighttokens",
-      "label": "lightTokens",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "lighttokens",
-      "source_file": "src/components/__tests__/P2Polish.test.tsx",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_components_tests_p2polish_test_team_colours",
-      "label": "TEAM_COLOURS",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "team_colours",
-      "source_file": "src/components/__tests__/P2Polish.test.tsx",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_components_tests_p3polish_test",
-      "label": "P3Polish.test.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "p3polish.test.tsx",
-      "source_file": "src/components/__tests__/P3Polish.test.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_constants_colors",
-      "label": "colors.ts",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "colors.ts",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_constants_colors_light_chart_background",
-      "label": "LIGHT_CHART_BACKGROUND",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "light_chart_background",
-      "source_file": "src/constants/colors.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_contexts_usedrivercontext",
-      "label": "useDriverContext.ts",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "usedrivercontext.ts",
-      "source_file": "src/contexts/useDriverContext.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_copy",
-      "label": "copy.ts",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "copy.ts",
-      "source_file": "src/copy.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_copy_copy",
-      "label": "copy",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "code",
-      "norm_label": "copy",
-      "source_file": "src/copy.ts",
-      "source_location": "L2"
-    },
-    {
-      "id": "ref_lucide_react",
-      "label": "lucide-react",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "concept",
-      "norm_label": "lucide-react",
-      "source_file": "package.json",
-      "source_location": "L18"
-    },
-    {
-      "id": "ref_react",
-      "label": "react",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "concept",
-      "norm_label": "react",
-      "source_file": "package.json",
-      "source_location": "L19"
+      "source_location": "L40"
     },
     {
       "id": "ref_recharts",
@@ -6283,30 +6240,6 @@
       "norm_label": "recharts",
       "source_file": "package.json",
       "source_location": "L21"
-    },
-    {
-      "id": "perfredo_phase_6_status_done_p6_01_p6_11_2026_09_30",
-      "label": "Phase 6 status: \u2705 DONE (P6-01..P6-11, 2026-09-30)",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 6 status: \u2705 done (p6-01..p6-11, 2026-09-30)",
-      "source_file": "PERFREDO.md",
-      "source_location": "L443"
-    },
-    {
-      "id": "rework_tasks_phase_3_navigation_and_section_framing",
-      "label": "Phase 3: Navigation and section framing",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "TelemetryTab.tsx",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 3: navigation and section framing",
-      "source_file": "REWORK_TASKS.md",
-      "source_location": "L129"
     },
     {
       "id": "tsconfig",
@@ -6384,6 +6317,39 @@
       "norm_label": "server",
       "source_file": "src/api/__tests__/openf1.integration.test.ts",
       "source_location": "L18"
+    },
+    {
+      "id": "src_components_dashboard_nextmeeting",
+      "label": "nextMeeting.ts",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "nextmeeting.ts",
+      "source_file": "src/components/dashboard/nextMeeting.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_tests_nextmeeting_test",
+      "label": "nextMeeting.test.ts",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "nextmeeting.test.ts",
+      "source_file": "src/components/dashboard/__tests__/nextMeeting.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_tests_nextmeeting_test_now",
+      "label": "NOW",
+      "_origin": "ast",
+      "community": 27,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "now",
+      "source_file": "src/components/dashboard/__tests__/nextMeeting.test.ts",
+      "source_location": "L6"
     },
     {
       "id": "src_components_tests_p1presentation_test",
@@ -6507,28 +6473,6 @@
       "source_location": "L12"
     },
     {
-      "id": "src_hooks_tests_usedebouncedvalue_test",
-      "label": "useDebouncedValue.test.ts",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "vitest",
-      "file_type": "code",
-      "norm_label": "usedebouncedvalue.test.ts",
-      "source_file": "src/hooks/__tests__/useDebouncedValue.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_hooks_usedebouncedvalue",
-      "label": "useDebouncedValue.ts",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "vitest",
-      "file_type": "code",
-      "norm_label": "usedebouncedvalue.ts",
-      "source_file": "src/hooks/useDebouncedValue.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "ref_msw",
       "label": "msw",
       "_origin": "ast",
@@ -6560,18 +6504,6 @@
       "norm_label": "vitest",
       "source_file": "package.json",
       "source_location": "L44"
-    },
-    {
-      "id": "perfredo_phase_2_status_done_p2_01_p2_06_2026_09_30",
-      "label": "Phase 2 status: \u2705 DONE (P2-01..P2-06, 2026-09-30)",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "vitest",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 2 status: \u2705 done (p2-01..p2-06, 2026-09-30)",
-      "source_file": "PERFREDO.md",
-      "source_location": "L231"
     },
     {
       "id": "claude_skills_playwright_cli_references_running_code_clipboard",
@@ -6766,6 +6698,39 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_dashboard_cardbar",
+      "label": "CardBar.tsx",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "cardbar.tsx",
+      "source_file": "src/components/dashboard/CardBar.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_dashboardheader",
+      "label": "DashboardHeader.tsx",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "dashboardheader.tsx",
+      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_dashboardheader_dashboardheader",
+      "label": "DashboardHeader",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "dashboardheader",
+      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "source_location": "L45"
+    },
+    {
       "id": "src_components_dashboard_dashboardselectors",
       "label": "DashboardSelectors.tsx",
       "_origin": "ast",
@@ -6786,6 +6751,28 @@
       "norm_label": "dashboardselectors",
       "source_file": "src/components/dashboard/DashboardSelectors.tsx",
       "source_location": "L31"
+    },
+    {
+      "id": "src_components_dashboard_signalband",
+      "label": "SignalBand.tsx",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "signalband.tsx",
+      "source_file": "src/components/dashboard/SignalBand.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_signalband_signalband",
+      "label": "SignalBand",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "signalband",
+      "source_file": "src/components/dashboard/SignalBand.tsx",
+      "source_location": "L12"
     },
     {
       "id": "src_components_dashboard_sitefooter",
@@ -6832,6 +6819,17 @@
       "source_location": "L37"
     },
     {
+      "id": "src_components_dashboardshell_incidentstab",
+      "label": "IncidentsTab",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "incidentstab",
+      "source_file": "src/components/DashboardShell.tsx",
+      "source_location": "L39"
+    },
+    {
       "id": "src_components_dashboardshell_intervalstab",
       "label": "IntervalsTab",
       "_origin": "ast",
@@ -6865,50 +6863,6 @@
       "source_location": "L419"
     },
     {
-      "id": "src_components_dashboardshell_positionstab",
-      "label": "PositionsTab",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "DashboardShell.tsx",
-      "file_type": "code",
-      "norm_label": "positionstab",
-      "source_file": "src/components/DashboardShell.tsx",
-      "source_location": "L41"
-    },
-    {
-      "id": "src_components_dashboardshell_radiotab",
-      "label": "RadioTab",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "DashboardShell.tsx",
-      "file_type": "code",
-      "norm_label": "radiotab",
-      "source_file": "src/components/DashboardShell.tsx",
-      "source_location": "L38"
-    },
-    {
-      "id": "src_components_dashboardshell_telemetrytab",
-      "label": "TelemetryTab",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "DashboardShell.tsx",
-      "file_type": "code",
-      "norm_label": "telemetrytab",
-      "source_file": "src/components/DashboardShell.tsx",
-      "source_location": "L34"
-    },
-    {
-      "id": "src_components_dashboardshell_weathertab",
-      "label": "WeatherTab",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "DashboardShell.tsx",
-      "file_type": "code",
-      "norm_label": "weathertab",
-      "source_file": "src/components/DashboardShell.tsx",
-      "source_location": "L40"
-    },
-    {
       "id": "src_components_dashboardshell_year_options",
       "label": "YEAR_OPTIONS",
       "_origin": "ast",
@@ -6918,6 +6872,39 @@
       "norm_label": "year_options",
       "source_file": "src/components/DashboardShell.tsx",
       "source_location": "L423"
+    },
+    {
+      "id": "src_components_tests_p3polish_test",
+      "label": "P3Polish.test.tsx",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "p3polish.test.tsx",
+      "source_file": "src/components/__tests__/P3Polish.test.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_copy",
+      "label": "copy.ts",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "copy.ts",
+      "source_file": "src/copy.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_copy_copy",
+      "label": "copy",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "copy",
+      "source_file": "src/copy.ts",
+      "source_location": "L2"
     },
     {
       "id": "src_copy_site_footer_links",
@@ -6940,6 +6927,28 @@
       "norm_label": "site_legal",
       "source_file": "src/copy.ts",
       "source_location": "L160"
+    },
+    {
+      "id": "src_copy_site_nav",
+      "label": "SITE_NAV",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "code",
+      "norm_label": "site_nav",
+      "source_file": "src/copy.ts",
+      "source_location": "L142"
+    },
+    {
+      "id": "ref_lucide_react",
+      "label": "lucide-react",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "DashboardShell.tsx",
+      "file_type": "concept",
+      "norm_label": "lucide-react",
+      "source_file": "package.json",
+      "source_location": "L18"
     },
     {
       "id": "rework_tasks",
@@ -7289,70 +7298,92 @@
       "source_location": "L51"
     },
     {
-      "id": "src_components_dashboard_dashboardheader",
-      "label": "DashboardHeader.tsx",
+      "id": "src_components_dashboard_driverselector",
+      "label": "DriverSelector.tsx",
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "dashboardheader.tsx",
-      "source_file": "src/components/dashboard/DashboardHeader.tsx",
+      "norm_label": "driverselector.tsx",
+      "source_file": "src/components/dashboard/DriverSelector.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_dashboardheader_dashboardheader",
-      "label": "DashboardHeader",
+      "id": "src_components_dashboard_driverselector_driverselector",
+      "label": "DriverSelector",
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "dashboardheader",
-      "source_file": "src/components/dashboard/DashboardHeader.tsx",
-      "source_location": "L45"
+      "norm_label": "driverselector",
+      "source_file": "src/components/dashboard/DriverSelector.tsx",
+      "source_location": "L16"
     },
     {
-      "id": "src_components_dashboard_nextmeeting",
-      "label": "nextMeeting.ts",
+      "id": "src_components_dashboard_intervalstab",
+      "label": "IntervalsTab.tsx",
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "nextmeeting.ts",
-      "source_file": "src/components/dashboard/nextMeeting.ts",
+      "norm_label": "intervalstab.tsx",
+      "source_file": "src/components/dashboard/IntervalsTab.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_tests_nextmeeting_test",
-      "label": "nextMeeting.test.ts",
+      "id": "src_components_dashboard_intervalstab_intervalstab",
+      "label": "IntervalsTab",
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "nextmeeting.test.ts",
-      "source_file": "src/components/dashboard/__tests__/nextMeeting.test.ts",
+      "norm_label": "intervalstab",
+      "source_file": "src/components/dashboard/IntervalsTab.tsx",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_components_dashboard_strategytab",
+      "label": "StrategyTab.tsx",
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "strategytab.tsx",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_tests_nextmeeting_test_now",
-      "label": "NOW",
+      "id": "src_components_dashboard_strategytab_strategytab",
+      "label": "StrategyTab",
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "now",
-      "source_file": "src/components/dashboard/__tests__/nextMeeting.test.ts",
-      "source_location": "L6"
+      "norm_label": "strategytab",
+      "source_file": "src/components/dashboard/StrategyTab.tsx",
+      "source_location": "L58"
     },
     {
-      "id": "src_copy_site_nav",
-      "label": "SITE_NAV",
+      "id": "src_components_dashboardshell_strategytab",
+      "label": "StrategyTab",
       "_origin": "ast",
       "community": 35,
-      "community_name": "DashboardHeader.tsx",
+      "community_name": "IntervalsTab.tsx",
       "file_type": "code",
-      "norm_label": "site_nav",
-      "source_file": "src/copy.ts",
-      "source_location": "L142"
+      "norm_label": "strategytab",
+      "source_file": "src/components/DashboardShell.tsx",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_contexts_usedrivercontext",
+      "label": "useDriverContext.ts",
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "IntervalsTab.tsx",
+      "file_type": "code",
+      "norm_label": "usedrivercontext.ts",
+      "source_file": "src/contexts/useDriverContext.ts",
+      "source_location": "L1"
     },
     {
       "id": "src_components_errorboundary",
@@ -7444,190 +7475,115 @@
       "source_location": "L345"
     },
     {
-      "id": "perfredo_phase_5_status_done_except_p5_07_needs_the_owner_s_ok_2026_09_30",
-      "label": "Phase 5 status: \u2705 DONE except P5-07 (needs the owner's OK, 2026-09-30)",
+      "id": "perfredo_phase_5_status_done_p5_07_and_p5_06b_added_2026_10_01",
+      "label": "Phase 5 status: \u2705 DONE (P5-07 and P5-06b added 2026-10-01)",
       "_origin": "ast",
       "community": 36,
       "community_name": "exportChart.ts",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "phase 5 status: \u2705 done except p5-07 (needs the owner's ok, 2026-09-30)",
+      "norm_label": "phase 5 status: \u2705 done (p5-07 and p5-06b added 2026-10-01)",
       "source_file": "PERFREDO.md",
       "source_location": "L377"
     },
     {
-      "id": "perfredo",
-      "label": "PERFREDO.md",
+      "id": "src_components_dashboard_incidentstab",
+      "label": "IncidentsTab.tsx",
       "_origin": "ast",
       "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "perfredo.md",
-      "source_file": "PERFREDO.md",
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "incidentstab.tsx",
+      "source_file": "src/components/dashboard/IncidentsTab.tsx",
       "source_location": "L1"
     },
     {
-      "id": "perfredo_0_how_to_use_this_file_read_first_sonnet",
-      "label": "0. How to use this file (read first, Sonnet)",
+      "id": "src_components_dashboard_incidentstab_incidentstab",
+      "label": "IncidentsTab",
       "_origin": "ast",
       "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "0. how to use this file (read first, sonnet)",
-      "source_file": "PERFREDO.md",
-      "source_location": "L10"
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "incidentstab",
+      "source_file": "src/components/dashboard/IncidentsTab.tsx",
+      "source_location": "L33"
     },
     {
-      "id": "perfredo_1_baseline_measured_production_build_chromium",
-      "label": "1. Baseline (measured, production build, Chromium)",
+      "id": "src_components_dashboard_radiotab",
+      "label": "RadioTab.tsx",
       "_origin": "ast",
       "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1. baseline (measured, production build, chromium)",
-      "source_file": "PERFREDO.md",
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "radiotab.tsx",
+      "source_file": "src/components/dashboard/RadioTab.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_dashboard_radiotab_radiotab",
+      "label": "RadioTab",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "radiotab",
+      "source_file": "src/components/dashboard/RadioTab.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_components_dashboard_utils_clock_zone_note",
+      "label": "CLOCK_ZONE_NOTE",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "clock_zone_note",
+      "source_file": "src/components/dashboard/utils.ts",
       "source_location": "L21"
     },
     {
-      "id": "perfredo_2_support_matrix_make_it_explicit",
-      "label": "2. Support matrix (make it explicit)",
+      "id": "src_components_dashboardshell_radiotab",
+      "label": "RadioTab",
       "_origin": "ast",
       "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "2. support matrix (make it explicit)",
-      "source_file": "PERFREDO.md",
-      "source_location": "L41"
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "radiotab",
+      "source_file": "src/components/DashboardShell.tsx",
+      "source_location": "L38"
     },
     {
-      "id": "perfredo_3_findings_by_severity",
-      "label": "3. Findings by severity",
+      "id": "src_components_tests_p2polish_test",
+      "label": "P2Polish.test.tsx",
       "_origin": "ast",
       "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3. findings by severity",
-      "source_file": "PERFREDO.md",
-      "source_location": "L54"
-    },
-    {
-      "id": "perfredo_5_explicitly_out_of_scope_don_t_do_these",
-      "label": "5. Explicitly out of scope (don't do these)",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5. explicitly out of scope (don't do these)",
-      "source_file": "PERFREDO.md",
-      "source_location": "L536"
-    },
-    {
-      "id": "perfredo_6_risk_notes_for_the_executor",
-      "label": "6. Risk notes for the executor",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "6. risk notes for the executor",
-      "source_file": "PERFREDO.md",
-      "source_location": "L547"
-    },
-    {
-      "id": "perfredo_7_found_during_execution",
-      "label": "7. Found during execution",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "7. found during execution",
-      "source_file": "PERFREDO.md",
-      "source_location": "L559"
-    },
-    {
-      "id": "perfredo_perfredo_performance_and_cross_browser_plan",
-      "label": "PERFREDO: performance and cross-browser plan",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "PERFREDO: performance and cross-browser plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "perfredo: performance and cross-browser plan",
-      "source_file": "PERFREDO.md",
+      "community_name": "P2Polish.test.tsx",
+      "file_type": "code",
+      "norm_label": "p2polish.test.tsx",
+      "source_file": "src/components/__tests__/P2Polish.test.tsx",
       "source_location": "L1"
     },
     {
-      "id": "src_components_dashboard_dashboardtabs",
-      "label": "DashboardTabs.tsx",
+      "id": "src_components_tests_p2polish_test_lighttokens",
+      "label": "lightTokens",
       "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
       "file_type": "code",
-      "norm_label": "dashboardtabs.tsx",
-      "source_file": "src/components/dashboard/DashboardTabs.tsx",
-      "source_location": "L1"
+      "norm_label": "lighttokens",
+      "source_file": "src/components/__tests__/P2Polish.test.tsx",
+      "source_location": "L18"
     },
     {
-      "id": "src_components_dashboard_nextviews",
-      "label": "NextViews.tsx",
+      "id": "src_components_tests_p2polish_test_team_colours",
+      "label": "TEAM_COLOURS",
       "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
+      "community": 37,
+      "community_name": "P2Polish.test.tsx",
       "file_type": "code",
-      "norm_label": "nextviews.tsx",
-      "source_file": "src/components/dashboard/NextViews.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_tablabels",
-      "label": "tabLabels.ts",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
-      "file_type": "code",
-      "norm_label": "tablabels.ts",
-      "source_file": "src/components/dashboard/tabLabels.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_dashboard_tablabels_tab_labels",
-      "label": "TAB_LABELS",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
-      "file_type": "code",
-      "norm_label": "tab_labels",
-      "source_file": "src/components/dashboard/tabLabels.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_dashboard_tablabels_tab_order",
-      "label": "TAB_ORDER",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
-      "file_type": "code",
-      "norm_label": "tab_order",
-      "source_file": "src/components/dashboard/tabLabels.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_components_tests_visualworkflow_test",
-      "label": "VisualWorkflow.test.tsx",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "VisualWorkflow.test.tsx",
-      "file_type": "code",
-      "norm_label": "visualworkflow.test.tsx",
-      "source_file": "src/components/__tests__/VisualWorkflow.test.tsx",
-      "source_location": "L1"
+      "norm_label": "team_colours",
+      "source_file": "src/components/__tests__/P2Polish.test.tsx",
+      "source_location": "L27"
     },
     {
       "id": "src_test_setup",
@@ -7718,6 +7674,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_dashboard_broadcast_timingtower",
+      "label": "TimingTower.tsx",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "timingtower.tsx",
+      "source_file": "src/components/dashboard/broadcast/TimingTower.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_dashboard_broadcasttab",
       "label": "BroadcastTab.tsx",
       "_origin": "ast",
@@ -7738,6 +7705,17 @@
       "norm_label": "broadcasttab",
       "source_file": "src/components/dashboard/BroadcastTab.tsx",
       "source_location": "L23"
+    },
+    {
+      "id": "src_components_dashboard_gapcard",
+      "label": "GapCard.tsx",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "gapcard.tsx",
+      "source_file": "src/components/dashboard/GapCard.tsx",
+      "source_location": "L1"
     },
     {
       "id": "src_components_dashboard_gapcarddata",
@@ -7771,6 +7749,17 @@
       "norm_label": "place",
       "source_file": "src/components/dashboard/headlines.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "src_components_dashboard_summarystrip",
+      "label": "SummaryStrip.tsx",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "summarystrip.tsx",
+      "source_file": "src/components/dashboard/SummaryStrip.tsx",
+      "source_location": "L1"
     },
     {
       "id": "src_components_dashboard_tests_gapcarddata_test",
@@ -7817,6 +7806,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_dashboard_utils",
+      "label": "utils.ts",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "code",
+      "norm_label": "utils.ts",
+      "source_file": "src/components/dashboard/utils.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_constants_colors_colors",
       "label": "COLORS",
       "_origin": "ast",
@@ -7826,6 +7826,18 @@
       "norm_label": "colors",
       "source_file": "src/constants/colors.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "perfredo_phase_6_status_done_p6_01_p6_11_2026_09_30",
+      "label": "Phase 6 status: \u2705 DONE (P6-01..P6-11, 2026-09-30)",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "types.ts",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 6 status: \u2705 done (p6-01..p6-11, 2026-09-30)",
+      "source_file": "PERFREDO.md",
+      "source_location": "L443"
     },
     {
       "id": "claude_skills_playwright_cli_skill",
@@ -12843,7 +12855,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L116",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -12855,7 +12867,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L118",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_exportchart_buildexportmarkup",
+      "target": "src_utils_exportchart_resolvevars",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/utils/exportChart.ts",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -12867,7 +12891,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L145",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -12879,7 +12903,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L190",
+      "source_location": "L200",
       "weight": 1.0
     },
     {
@@ -12891,7 +12915,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L195",
+      "source_location": "L205",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_exportchart_resolvecssvariables",
+      "target": "src_utils_exportchart_resolvevars",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/utils/exportChart.ts",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -19192,6 +19228,18 @@
       "context": "import",
       "source_file": "src/main.tsx",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_tests_exportchart_test",
+      "target": "src_utils_exportchart_buildexportmarkup",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/utils/__tests__/exportChart.test.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -25978,7 +26026,7 @@
     },
     {
       "source": "perfredo_4_phases_and_tasks",
-      "target": "perfredo_phase_5_status_done_except_p5_07_needs_the_owner_s_ok_2026_09_30",
+      "target": "perfredo_phase_5_status_done_p5_07_and_p5_06b_added_2026_10_01",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -26022,7 +26070,7 @@
     },
     {
       "source": "perfredo_4_phases_and_tasks",
-      "target": "perfredo_phase_7_status_done_except_the_real_device_check_p7_04_2026_09_30",
+      "target": "perfredo_phase_7_status_done_p7_04_by_emulation_2026_10_01_real_device_pass_still_advised",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -26083,7 +26131,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PERFREDO.md",
-      "source_location": "L536",
+      "source_location": "L535",
       "weight": 1.0
     },
     {
@@ -26105,7 +26153,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PERFREDO.md",
-      "source_location": "L547",
+      "source_location": "L546",
       "weight": 1.0
     },
     {
@@ -26116,7 +26164,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "PERFREDO.md",
-      "source_location": "L559",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -30169,13 +30217,24 @@
     },
     {
       "source": "src_utils_exportchart",
+      "target": "src_utils_exportchart_resolvevars",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/utils/exportChart.ts",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "src_utils_exportchart",
       "target": "src_utils_exportchart_resolvecssvariables",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L103",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -30186,7 +30245,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L113",
+      "source_location": "L119",
       "weight": 1.0
     },
     {
@@ -30197,7 +30256,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L150",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -30208,7 +30267,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L163",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -30219,7 +30278,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L181",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -30230,7 +30289,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/exportChart.ts",
-      "source_location": "L185",
+      "source_location": "L195",
       "weight": 1.0
     },
     {
@@ -31267,7 +31326,7 @@
       "weight": 1.0
     },
     {
-      "source": "perfredo_phase_5_status_done_except_p5_07_needs_the_owner_s_ok_2026_09_30",
+      "source": "perfredo_phase_5_status_done_p5_07_and_p5_06b_added_2026_10_01",
       "target": "src_components_dashboardcontainer_dashboardcontainer",
       "relation": "references",
       "_origin": "ast",
@@ -31411,7 +31470,7 @@
       "weight": 1.0
     },
     {
-      "source": "perfredo_phase_5_status_done_except_p5_07_needs_the_owner_s_ok_2026_09_30",
+      "source": "perfredo_phase_5_status_done_p5_07_and_p5_06b_added_2026_10_01",
       "target": "src_components_errorboundary_errorboundary",
       "relation": "references",
       "_origin": "ast",
@@ -31783,7 +31842,7 @@
       "weight": 1.0
     },
     {
-      "source": "perfredo_phase_5_status_done_except_p5_07_needs_the_owner_s_ok_2026_09_30",
+      "source": "perfredo_phase_5_status_done_p5_07_and_p5_06b_added_2026_10_01",
       "target": "src_utils_exportchart_resolvecssvariables",
       "relation": "references",
       "_origin": "ast",
@@ -32690,5 +32749,5 @@
       "source_file": ".claude/skills/graphify/SKILL.md"
     }
   ],
-  "built_at_commit": "867079ec18cc185fe28bb06a85ef2328a08cfe8f"
+  "built_at_commit": "604ab51f3ebfcc686d11a1edc043c4ab7ac52fdf"
 }

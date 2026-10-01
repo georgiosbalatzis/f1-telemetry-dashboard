@@ -34,8 +34,7 @@ type SavedPreset = {
 // ─── Storage keys ─────────────────────────────────────────────────────────────
 
 const PRESET_STORAGE_KEY = 'f1-telemetry-dashboard:presets';
-const THEME_STORAGE_KEY  = 'f1stories-theme'; // same key as f1stories.gr (theme-init.js)
-const LEGACY_THEME_STORAGE_KEY = 'f1-telemetry-dashboard:theme';
+const THEME_STORAGE_KEY  = 'f1stories-theme'; // same key as f1stories.gr (theme-init.js); index.html migrates the old app key
 
 // ─── One-time readers (called as useState initialisers) ───────────────────────
 
@@ -60,7 +59,7 @@ function readInitialThemeMode(): ThemeMode {
   const fromQuery = normalizeThemeMode(new URLSearchParams(window.location.search).get('theme'));
   if (fromQuery) return fromQuery;
   try {
-    const fromStorage = normalizeThemeMode(window.localStorage.getItem(THEME_STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_THEME_STORAGE_KEY));
+    const fromStorage = normalizeThemeMode(window.localStorage.getItem(THEME_STORAGE_KEY));
     if (fromStorage) return fromStorage;
   } catch { /* storage unavailable */ }
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -80,7 +79,7 @@ function buildDashboardUrl(
   snapshot: DashboardFilterSnapshot,
   splitMode: boolean,
   embedMode = false,
-  themeMode: ThemeMode = 'light',
+  themeMode?: ThemeMode,
   anchorId?: string,
 ) {
   if (typeof window === 'undefined') return '';
@@ -93,7 +92,7 @@ function buildDashboardUrl(
   params.set('tab', snapshot.tab);
   if (splitMode) params.set('layout', 'split');
   if (embedMode) params.set('embed', '1');
-  params.set('theme', themeMode);
+  if (themeMode) params.set('theme', themeMode);
   const query = params.toString();
   const hash  = anchorId ? `#${anchorId}` : window.location.hash;
   return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${hash}`;
@@ -203,10 +202,11 @@ export function DashboardContainer() {
 
   // ── Side effects ───────────────────────────────────────────────────────
 
-  // Sync URL on any filter/layout/theme change
+  // Sync URL on any filter/layout change. The address bar carries ?theme= only for embeds: elsewhere a
+  // reload or bookmark must follow the stored 'f1stories-theme' choice, which ?theme= would override.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, themeMode);
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, embedMode ? themeMode : undefined);
     if (url === window.location.href) return;
     // Safari throws SecurityError past ~100 calls per 10 s; the next real change writes the URL again.
     try { window.history.replaceState({}, '', url); } catch { /* rate limited */ }
