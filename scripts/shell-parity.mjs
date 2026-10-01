@@ -73,6 +73,34 @@ try {
           assert.ok(tools.x >= 0 && tools.x + tools.width <= width, 'tools popup leaves viewport');
           await page.screenshot({ path: join(dir, `${name}-tools.png`) });
           await page.keyboard.press('Escape');
+          const sponsors = page.locator('.sponsor-strip');
+          await sponsors.scrollIntoViewIfNeeded();
+          await page.waitForFunction(() => [...document.querySelectorAll('.sponsor-logo img')].every(img => img.complete && img.naturalWidth > 0));
+          assert.equal(await sponsors.locator('a').count(), 6);
+          assert.equal(await sponsors.evaluate(el => el.nextElementSibling.matches('.colophon')), true);
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'sponsors cause horizontal overflow');
+          for (const logo of await sponsors.locator('a').all()) {
+            const box = await logo.boundingBox();
+            assert.ok(box.height >= 44 && box.x >= 0 && box.x + box.width <= width, 'sponsor target leaves viewport');
+          }
+          const firstSponsor = sponsors.locator('a').first();
+          const logoStyle = () => firstSponsor.locator('img').evaluate(img => {
+            const style = getComputedStyle(img);
+            return [style.filter, style.opacity, style.transitionDuration];
+          });
+          await page.mouse.move(0, 0);
+          assert.deepEqual(await logoStyle(), ['grayscale(1) contrast(1.05)', '0.68', '0s']);
+          await sponsors.screenshot({ path: join(dir, `${name}-sponsors.png`) });
+          await firstSponsor.hover();
+          assert.deepEqual((await logoStyle()).slice(0, 2), ['none', '1']);
+          await page.mouse.move(0, 0);
+          await firstSponsor.focus();
+          await page.keyboard.press(engine === 'webkit' ? 'Alt+Tab' : 'Tab');
+          await page.keyboard.press(engine === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab');
+          assert.equal(await firstSponsor.evaluate(el => el === document.activeElement), true);
+          assert.deepEqual((await logoStyle()).slice(0, 2), ['none', '1']);
+          assert.equal(await firstSponsor.evaluate(el => getComputedStyle(el).outlineStyle), 'solid');
+          await firstSponsor.evaluate(el => el.blur());
           await page.locator('.colophon').screenshot({ path: join(dir, `${name}-footer.png`) });
           assert.equal(await page.locator('.colophon-social a').count(), 5);
           for (const target of await page.locator('.site-nav button, .site-nav summary, .colophon a').all()) {

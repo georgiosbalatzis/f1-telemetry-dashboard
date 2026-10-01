@@ -74,3 +74,24 @@ it('keeps F1 Stories footer hierarchy, legal destinations and product attributio
   expect(footer).toHaveTextContent(`© ${new Date().getFullYear()} F1 Stories.`);
   expect(footer).not.toHaveTextContent('TELEMETRY');
 });
+
+it('places the canonical homepage sponsors directly above the footer', () => {
+  const { container } = render(<SiteFooter />);
+  const sponsors = within(container).getByRole('region', { name: 'ΜΑΖΙ ΣΤΗΝ ΕΚΚΙΝΗΣΗ' });
+  expect(sponsors.nextElementSibling).toBe(container.querySelector('footer'));
+  expect([...sponsors.querySelectorAll('a')].map(a => a.getAttribute('href'))).toEqual([
+    'https://balatzis.gr/', 'https://pourtsidisgenerators.gr/', 'https://balatzis.gr/#domika',
+    'https://ambrosiadis.gr/', 'https://www.bedandhome.gr/', 'https://www.grandrealm.gr/',
+  ]);
+  expect(within(sponsors).getAllByRole('img').map(img => img.getAttribute('alt'))).toEqual([
+    'Μπαλατζής Χωματουργικά', 'Πουρτσίδης Γεννήτριες', 'Μπαλατζής Δομικά',
+    'Αμβροσιάδης', 'Bed and Home', 'Grand Realm',
+  ]);
+  for (const link of sponsors.querySelectorAll('a')) {
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener sponsored');
+    const img = link.querySelector('img')!;
+    expect(img).toHaveAttribute('loading', 'lazy');
+    expect(img.getAttribute('srcset')).toMatch(/-1x\.webp 1x, .*\.webp 2x$/);
+  }
+});
