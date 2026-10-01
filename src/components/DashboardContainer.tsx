@@ -16,6 +16,7 @@ import { COLORS, chartColorForTheme } from '../constants/colors';
 import { DriverProvider } from '../contexts/DriverContext';
 import { DashboardShell } from './DashboardShell';
 import { TAB_LABELS } from './dashboard/tabLabels';
+import { copy } from '../copy';
 import type { Tab } from './dashboard/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -262,7 +263,7 @@ export function DashboardContainer() {
     filters.applySnapshot(preset.snapshot);
     setSplitMode(preset.splitMode);
     if (preset.themeMode) setThemeMode(preset.themeMode);
-    setFeedback(`Loaded preset ${preset.name}`);
+    setFeedback(copy.masthead.presetLoaded(preset.name));
   }, [filters, savedPresets]);
 
   const handleSavePreset = useCallback(() => {
@@ -276,7 +277,7 @@ export function DashboardContainer() {
     };
     setSavedPresets((prev) => ({ ...prev, [name]: preset }));
     setPresetName(name);
-    setFeedback(`Saved preset ${name}`);
+    setFeedback(copy.masthead.presetSaved(name));
   }, [defaultPresetName, filters.snapshot, presetName, splitMode, themeMode]);
 
   const shareSnapshot = useCallback(async (snapshot: DashboardFilterSnapshot, label: string) => {
@@ -318,15 +319,15 @@ export function DashboardContainer() {
     [copySnippet, filters.snapshot, themeMode],
   );
 
-  const handlePrint       = useCallback(() => { setFeedback('Opening print dialog'); window.print(); }, []);
-  const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? 'Split layout disabled' : 'Split layout enabled'); }, [splitMode]);
+  const handlePrint       = useCallback(() => { setFeedback(copy.masthead.printing); window.print(); }, []);
+  const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? copy.masthead.splitDisabled : copy.masthead.splitEnabled); }, [splitMode]);
   const handleToggleTheme = useCallback(() => {
     const next = themeMode === 'light' ? 'dark' : 'light';
     setThemeMode(next);
     try { window.localStorage.setItem(THEME_STORAGE_KEY, next); } // only an explicit choice is stored, so the OS preference keeps applying until then
     catch { /* storage unavailable */ }
   }, [themeMode]);
-  const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback('No previous page in history'); } }, []);
+  const handleBack        = useCallback(() => { if (window.history.length > 1) { window.history.back(); } else { setFeedback(copy.masthead.noHistory); } }, []);
 
   // ── Driver colours (shared with all tab components via DriverProvider) ─
   // Chart traces use theme-adjusted team colours; markers elsewhere keep the raw colour.

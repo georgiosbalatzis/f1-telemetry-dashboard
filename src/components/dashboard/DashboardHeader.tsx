@@ -38,7 +38,7 @@ function NavCountdown({ meeting }: { meeting: Props['nextMeeting'] }) {
 
 function SiteLinks() {
   return SITE_NAV.map((link) => (
-    <a key={link.label} href={link.href} className={'current' in link ? 'is-current' : undefined} {...('external' in link ? { target: '_blank', rel: 'noopener' } : {})}>{link.label}</a>
+    <a key={link.label} href={link.href} className={'current' in link ? 'is-current' : undefined} aria-current={'current' in link ? 'page' : undefined} {...('external' in link ? { target: '_blank', rel: 'noopener' } : {})}>{link.label}</a>
   ));
 }
 
@@ -49,6 +49,7 @@ export const DashboardHeader = memo(function DashboardHeader({
 }: Props) {
   // Theme is a visual preference: announce it to assistive tech without adding a visible line that moves the page.
   const [themeAnnouncement, setThemeAnnouncement] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const toggleTheme = () => {
     setThemeAnnouncement(themeMode === 'light' ? copy.masthead.themeOnDark : copy.masthead.themeOnLight);
     onToggleTheme();
@@ -67,15 +68,19 @@ export const DashboardHeader = memo(function DashboardHeader({
 
   return (
     <header className="site-header">
-      <nav className="site-nav" aria-label="F1 Stories">
+      <nav className="site-nav" aria-label="F1 Stories" onKeyDown={(event) => {
+        if (event.key !== 'Escape') return;
+        const menu = event.currentTarget.querySelector<HTMLDetailsElement>('details[open]');
+        if (menu) { menu.open = false; menu.querySelector('summary')?.focus(); }
+      }}>
         <div className="page-shell site-nav-inner">
-          <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo192.png`} alt="" width="36" height="36" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+          <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo-nav.webp`} alt="" width="38" height="38" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
           <div className="site-nav-links"><SiteLinks /></div>
           <div className="site-nav-right">
             <NavCountdown meeting={nextMeeting} />
             <button className="theme-toggle" aria-label={themeMode === 'light' ? copy.masthead.themeToDark : copy.masthead.themeToLight} onClick={toggleTheme}>{themeMode === 'light' ? <MoonStar size={17} /> : <SunMedium size={17} />}</button>
             <span className="sr-only" role="status">{themeAnnouncement}</span>
-            <details className="utility-menu">
+            <details className="utility-menu" name="site-header-menu">
               <summary><span aria-hidden="true">⋯</span><span className="sr-only">{copy.masthead.tools}</span></summary>
               <div className="utility-content">
                 <div className="utility-actions">
@@ -91,9 +96,11 @@ export const DashboardHeader = memo(function DashboardHeader({
                 </div>
               </div>
             </details>
-            <details className="nav-mobile">
-              <summary aria-label={copy.masthead.menu}><Menu size={20} aria-hidden="true" /></summary>
-              <div className="nav-mobile-panel"><SiteLinks /></div>
+            <details className="nav-mobile" name="site-header-menu" onToggle={(event) => setMobileMenuOpen(event.currentTarget.open)}>
+              <summary aria-label={copy.masthead.menu} aria-controls="site-mobile-links" aria-expanded={mobileMenuOpen}><Menu size={20} aria-hidden="true" /></summary>
+              <div className="nav-mobile-panel" id="site-mobile-links" onClick={(event) => {
+                if ((event.target as HTMLElement).closest('a')) event.currentTarget.closest('details')?.removeAttribute('open');
+              }}><SiteLinks /></div>
             </details>
           </div>
         </div>
