@@ -1,6 +1,6 @@
 import { useEffect, useState, memo } from 'react';
 import { Columns2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
-import { copy, SITE_NAV } from '../../copy';
+import { copy, RACE_DESK_NAV, SITE_NAV } from '../../copy';
 import { formatCountdown, pickNextMeeting } from './nextMeeting';
 import { ToolbarButton } from './shared';
 
@@ -107,10 +107,15 @@ export const DashboardHeader = memo(function DashboardHeader({
       </nav>
       <div className="hero">
         <div className="page-shell">
-          <div className="kicker-row"><span className="kicker">{copy.hero.kickerLeft}</span><span className="kicker">{copy.hero.kickerRight}</span></div>
+          <div className="kicker-row">
+            <span className="kicker">{copy.hero.kicker}</span>
+            <nav className="race-desk-nav" aria-label="Race Desk" lang="en">
+              {RACE_DESK_NAV.map((link) => <a key={link.label} href={link.href} aria-current={'current' in link ? 'page' : undefined}>{link.label}</a>)}
+            </nav>
+          </div>
           <div className="hero-grid">
             <div>
-              <h1 className="display">{copy.hero.title}<span className="dot">.</span></h1>
+              <h1 className="display"><span lang="en">{copy.hero.title}<span className="dot">.</span></span><span className="display-descriptor">{copy.hero.descriptor}</span></h1>
               <h2 className="hero-subtitle">{heroSubtitle}</h2>
             </div>
             <aside className="hero-aside"><strong>{copy.hero.tagline}</strong><p>{copy.hero.taglineBody}</p></aside>

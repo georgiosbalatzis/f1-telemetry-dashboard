@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { DashboardHeader } from '../dashboard/DashboardHeader';
 import { SiteFooter } from '../dashboard/SiteFooter';
 import { copy } from '../../copy';
@@ -41,6 +41,30 @@ it('keeps canonical destinations and Data as the sole current item in both menus
   mobile.open = true;
   fireEvent.click(within(mobile).getByText('YouTube'));
   expect(mobile.open).toBe(false);
+});
+
+it('links the three Race Desk products in canonical order with Telemetry as the sole current one', () => {
+  const noop = () => {};
+  render(<DashboardHeader
+    presetName="" presetNames={[]} splitMode={false} embedMode={false} themeMode="light"
+    openDashboardUrl="/" heroSubtitle="Monza · Γύρος 52" nextMeeting={null}
+    onPresetNameChange={noop} onSavePreset={noop} onPrint={noop}
+    onToggleSplit={noop} onToggleTheme={noop} onBack={noop}
+  />);
+  const raceDesk = screen.getByRole('navigation', { name: 'Race Desk' });
+  const links = within(raceDesk).getAllByRole('link');
+  expect(links.map(a => [a.textContent, a.getAttribute('href')])).toEqual([
+    ['THE GRID', 'https://f1stories.gr/standings/'],
+    ['TELEMETRY', import.meta.env.BASE_URL],
+    ['GHOST CAR', 'https://georgiosbalatzis.github.io/ghostcar/'],
+  ]);
+  expect(raceDesk.querySelectorAll('[aria-current]')).toHaveLength(1);
+  expect(within(raceDesk).getByRole('link', { current: 'page' })).toHaveTextContent('TELEMETRY');
+  for (const link of links) expect(link).not.toHaveAttribute('target');
+  expect(raceDesk).not.toHaveTextContent(/BetCast/i);
+  // Two current items at different levels: Δεδομένα in the global nav, TELEMETRY in Race Desk.
+  expect(within(screen.getByRole('navigation', { name: 'F1 Stories' })).getAllByRole('link', { current: 'page' }).map(a => a.textContent)).toEqual(['Δεδομένα', 'Δεδομένα']);
+  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/^Telemetry\.Τηλεμετρία & ανάλυση γύρου$/);
 });
 
 it('retains the live countdown update and hides an elapsed meeting', () => {

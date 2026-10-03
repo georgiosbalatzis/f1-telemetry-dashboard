@@ -907,7 +907,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
 /* ── Site chrome: masthead, hero, signal band, colophon (mirrors f1stories.gr) ── */
 .site-header { position: relative; z-index: 40; padding-top: 76px; }
 :root:has(.site-nav) { scroll-padding-top: 76px; }
-.site-nav { position: fixed; inset: 0 0 auto; background: var(--surface); background-image: radial-gradient(ellipse at 5% 0%, #ffffff4d, transparent 65%); border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+.site-nav { position: fixed; inset: 0 0 auto; z-index: 1; background: var(--surface); background-image: radial-gradient(ellipse at 5% 0%, #ffffff4d, transparent 65%); border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
 :root[data-theme="dark"] .site-nav { background: #242321; background-image: linear-gradient(180deg, #ffffff08, transparent 75%); border-color: #4b5146; color: #eee8db; }
 .site-nav-inner, .sponsor-strip > .page-shell, .colophon > .page-shell { max-width: 1476px; padding-inline: 48px; }
 .site-nav-inner { display: flex; align-items: center; gap: 28px; min-height: 75px; }
@@ -963,8 +963,19 @@ option, optgroup { background: var(--surface); color: var(--text); }
 
 .hero { padding: 24px 0 32px; background: linear-gradient(180deg, var(--surface), var(--bg)); }
 .kicker-row { display: flex; justify-content: space-between; gap: 16px; padding-top: 12px; border-top: 1px solid var(--ink); }
-.kicker { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
-.kicker-row .kicker:last-child { display: none; }
+.kicker, .display-descriptor { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+/* Race Desk product switcher, as on f1stories.gr/standings: hangs off the kicker rule with a signal bar *above* the
+   current product (the dashboard tabs underline *below*). Below 768px it wraps onto its own sub-rule. */
+.race-desk-nav { display: flex; gap: 24px; margin-top: -12px; }
+.race-desk-nav a { position: relative; display: flex; align-items: center; min-height: 44px; font: 700 15px/1 var(--font-brand); letter-spacing: .06em; white-space: nowrap; color: var(--text-muted); }
+.race-desk-nav a::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: var(--signal); transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.22, .68, 0, 1.02); }
+.race-desk-nav a:is(:hover, [aria-current="page"]) { color: var(--text); }
+.race-desk-nav a[aria-current="page"]::before { transform: scaleX(1); }
+@media (max-width: 767px) {
+  .kicker-row { flex-wrap: wrap; gap: 0; }
+  .race-desk-nav { flex: 1 0 100%; margin-top: 10px; border-top: 1px solid var(--line); }
+}
+.display-descriptor { display: block; margin-top: 14px; color: var(--text-muted); font-family: var(--font-body); line-height: 1.5; }
 .hero-grid { display: grid; gap: 24px; align-items: end; margin-top: 22px; }
 .display { margin: 0; font: 700 clamp(64px, 10vw, 150px)/.84 var(--font-display); letter-spacing: -.01em; text-transform: uppercase; }
 .display .dot { color: var(--signal); }
@@ -1029,9 +1040,6 @@ option, optgroup { background: var(--surface); color: var(--text); }
 @media (max-width: 767px) {
   .colophon > .page-shell { grid-template-columns: minmax(0, 1fr); gap: 19.2px; }
   .colophon-social { justify-content: flex-start; gap: 8px; }
-}
-@media (min-width: 640px) {
-  .kicker-row .kicker:last-child { display: inline; }
 }
 @media (min-width: 1024px) {
   .hero { padding: 28px 0 40px; }

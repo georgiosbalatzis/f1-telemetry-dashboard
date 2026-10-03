@@ -45,6 +45,29 @@ try {
             assert.ok(links.x + links.width <= controls.x, 'navigation collides with countdown/controls');
           }
           assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'horizontal overflow');
+          const raceDesk = page.getByRole('navigation', { name: 'Race Desk' });
+          assert.deepEqual(await raceDesk.locator('a').allTextContents(), ['THE GRID', 'TELEMETRY', 'GHOST CAR']);
+          assert.deepEqual(await raceDesk.locator('[aria-current="page"]').allTextContents(), ['TELEMETRY']);
+          const kicker = await page.locator('.kicker-row .kicker').boundingBox();
+          let previous = null;
+          for (const link of await raceDesk.locator('a').all()) {
+            const box = await link.boundingBox();
+            assert.ok(box.height >= 44 && box.x >= 0 && box.x + box.width <= width, 'Race Desk target clipped or under 44px');
+            assert.ok(!previous || box.x >= previous.x + previous.width || box.y >= previous.y + previous.height, 'Race Desk labels overlap');
+            assert.ok(box.y >= kicker.y + kicker.height || box.x >= kicker.x + kicker.width, 'Race Desk overlaps the kicker');
+            previous = box;
+          }
+          const current = raceDesk.locator('[aria-current="page"]');
+          assert.equal(await current.evaluate(el => getComputedStyle(el, '::before').transform), 'matrix(1, 0, 0, 1, 0, 0)', 'current bar hidden');
+          await current.focus();
+          assert.equal(await current.evaluate(el => getComputedStyle(el).outlineStyle), 'solid');
+          // Nothing between the link and the page may clip its focus ring or bar.
+          assert.equal(await current.evaluate(el => { const clips = []; for (let n = el.parentElement; n; n = n.parentElement) if (getComputedStyle(n).overflow !== 'visible') clips.push(n.className || n.tagName); return clips.filter(c => !['HTML', 'BODY'].includes(c)).join(); }), '', 'Race Desk focus ring can be clipped');
+          await current.evaluate(el => el.blur());
+          // The fixed masthead must cover the Race Desk links once they scroll under it.
+          const underMasthead = () => current.evaluate(el => { const r = el.getBoundingClientRect(); return !!document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest(window.__cover); });
+          await page.evaluate(([y]) => { window.__cover = '.site-nav'; scrollTo(0, y); }, [await current.evaluate(el => el.getBoundingClientRect().top - 20)]);
+          assert.equal(await underMasthead(), true, 'Race Desk paints over the masthead');
           await page.evaluate(() => scrollTo(0, 500));
           assert.equal((await page.locator('.site-nav').boundingBox()).y, 0, 'masthead scrolls away');
           await page.locator('.skip-link').focus();
@@ -62,6 +85,8 @@ try {
             // Safari uses Option-Tab to include links with its default keyboard preferences.
             await page.keyboard.press(engine === 'webkit' ? 'Alt+Tab' : 'Tab');
             assert.equal(await menu.locator('a').first().evaluate(el => el === document.activeElement), true);
+            await page.evaluate(() => { window.__cover = '.nav-mobile-panel'; });
+            assert.equal(await underMasthead(), true, 'Race Desk paints over the open menu');
             await page.screenshot({ path: join(dir, `${name}-menu.png`) });
             await page.keyboard.press('Escape');
             await page.waitForFunction(() => document.querySelector('.nav-mobile > summary').getAttribute('aria-expanded') === 'false');

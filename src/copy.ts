@@ -37,8 +37,8 @@ export const copy = {
     noHistory: 'Δεν υπάρχει προηγούμενη σελίδα στο ιστορικό',
   },
   hero: {
-    kickerLeft: 'F1 Stories / Race Desk',
-    kickerRight: 'Τηλεμετρία & ανάλυση γύρου',
+    kicker: 'F1 Stories / Race Desk',
+    descriptor: 'Τηλεμετρία & ανάλυση γύρου',
     title: 'Telemetry',
     tagline: 'Κάθε γύρος, μια ιστορία.',
     taglineBody: 'Ταχύτητα, φρένα, sectors και στρατηγική για κάθε οδηγό. Σύγκρινε έως τέσσερις.',
@@ -150,9 +150,17 @@ export const SITE_NAV = [
   { label: 'Άρθρα', href: `${SITE}/blog-module/blog/index.html` },
   { label: 'YouTube', href: 'https://www.youtube.com/@f1_stories_original', external: true },
   { label: 'Βαθμολογία', href: `${SITE}/standings/` },
-  { label: 'Δεδομένα', href: `${SITE}/standings/?tab=tyre-pace`, current: true }, // Telemetry is part of the Data Hub
+  { label: 'Δεδομένα', href: `${SITE}/standings/?tab=tyre-pace`, current: true }, // Telemetry is part of Race Desk
   { label: 'Συντάκτες', href: `${SITE}/authors/` },
   { label: 'BetCast', href: 'https://georgiosbalatzis.github.io/BetCastVisualisation/', external: true },
+] as const;
+
+// Race Desk product switcher, per f1StoriesPage/docs/race-desk-architecture.md: same order and same-tab links on every
+// product. The github.io hosts are deployment boundaries, not separate brands, so they get no ↗ or new tab.
+export const RACE_DESK_NAV = [
+  { label: 'THE GRID', href: `${SITE}/standings/` },
+  { label: 'TELEMETRY', href: import.meta.env.BASE_URL, current: true },
+  { label: 'GHOST CAR', href: 'https://georgiosbalatzis.github.io/ghostcar/' },
 ] as const;
 
 // Footer links from f1StoriesPage/partials/footer.html.

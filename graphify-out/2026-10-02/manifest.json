@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardHeader.tsx": {
-    "mtime": 1790951544.147759,
-    "seen": 1790957108.33142,
-    "ast_hash": "aabfbd72dd11e9e8910d2d1dd81ffeca",
+    "mtime": 1790862876.4487739,
+    "seen": 1790863422.725536,
+    "ast_hash": "f6fa92a3e54771907c7ded4151b4ccb0",
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardSelectors.tsx": {
@@ -486,9 +486,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1790951544.1470232,
-    "seen": 1790957108.331469,
-    "ast_hash": "56762721bb76470408689ff8de1a9e8c",
+    "mtime": 1790863044.691634,
+    "seen": 1790863422.725589,
+    "ast_hash": "cdf1d3c3c1b47ff66e2b4bfab4142c10",
     "semantic_hash": ""
   },
   "public/fonts/barlowcondensed-OFL.txt": {
@@ -738,9 +738,9 @@
     "semantic_hash": ""
   },
   "src/copy.ts": {
-    "mtime": 1790951544.147936,
-    "seen": 1790957108.331445,
-    "ast_hash": "fa82a6d4d7c77d3d5f4d38ec47e80b4d",
+    "mtime": 1790862876.4489825,
+    "seen": 1790863422.725564,
+    "ast_hash": "7c373e3bf3c01e8214e2321bbd22f9b3",
     "semantic_hash": ""
   },
   "REWORK_TASKS.md": {
@@ -1092,15 +1092,15 @@
     "semantic_hash": ""
   },
   "scripts/shell-parity.mjs": {
-    "mtime": 1790951544.1472635,
-    "seen": 1790957108.331409,
-    "ast_hash": "9414cccc957ed90ee83adbe0af6ae047",
+    "mtime": 1790872317.2433622,
+    "seen": 1790872655.3911018,
+    "ast_hash": "2ce7d4f48e50a5df240b5629729de73a",
     "semantic_hash": ""
   },
   "src/components/__tests__/SiteShell.test.tsx": {
-    "mtime": 1790951544.1474936,
-    "seen": 1790957108.3314161,
-    "ast_hash": "392a466b929406a44632ff7b7edbeaf3",
+    "mtime": 1790862876.4486668,
+    "seen": 1790863422.725533,
+    "ast_hash": "82ff2506ff688d0bf9e638a04f67755f",
     "semantic_hash": ""
   },
   "src/components/__tests__/ThemeInit.test.ts": {
@@ -1203,12 +1203,6 @@
     "mtime": 1790862876.4483624,
     "seen": 1790863422.725622,
     "ast_hash": "a8e2eae4ce4d563dff9e10f7d542cae5",
-    "semantic_hash": ""
-  },
-  "docs/RACE_DESK.md": {
-    "mtime": 1790948397.6701643,
-    "seen": 1790957108.331467,
-    "ast_hash": "890140e37d5300ebee006046e207b0c0",
     "semantic_hash": ""
   }
 }
