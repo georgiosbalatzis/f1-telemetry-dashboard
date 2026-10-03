@@ -16,24 +16,37 @@
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/f1-telemetry-dashboard/assets/ibm-plex-sans-400-600-greek-Cuw1d432.woff2" />
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/f1-telemetry-dashboard/assets/barlow-condensed-700-DDMez4TK.woff2" />
     <link rel="preconnect" href="https://api.openf1.org" crossorigin />
-    <title>F1 Stories / Telemetry</title>
+    <title>TELEMETRY — Τηλεμετρία &amp; ανάλυση γύρου Formula 1 | F1 Stories</title>
     <script>
       // Mirrors f1StoriesPage/scripts/theme-init.js so the page never flashes the wrong theme.
-      // Order: ?theme= → stored choice (site key, then the app's legacy key) → OS preference → light.
+      // Order: ?theme= → stored choice ('f1stories-theme') → OS preference → light.
+      // Any other stored value (e.g. a sibling app's 'auto') means "follow the OS" and is left in place.
       (function () {
+        var KEY = 'f1stories-theme';
+        var LEGACY_KEY = 'f1-telemetry-dashboard:theme'; // pre-rework key: copied once if KEY is absent, then removed
         var t = new URLSearchParams(location.search).get('theme');
+        var stored = null;
         try {
-          if (t !== 'light' && t !== 'dark') t = localStorage.getItem('f1stories-theme') || localStorage.getItem('f1-telemetry-dashboard:theme');
+          stored = localStorage.getItem(KEY);
+          var legacy = localStorage.getItem(LEGACY_KEY);
+          if (legacy !== null) {
+            if (stored === null && (legacy === 'light' || legacy === 'dark')) {
+              localStorage.setItem(KEY, legacy);
+              stored = legacy;
+            }
+            localStorage.removeItem(LEGACY_KEY);
+          }
         } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = stored;
         if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', t);
         document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#181a1c' : '#f2eee4');
       })();
     </script>
-    <script type="module" crossorigin src="/f1-telemetry-dashboard/assets/index-B576RSZ6.js"></script>
+    <script type="module" crossorigin src="/f1-telemetry-dashboard/assets/index-BOMpC0R-.js"></script>
     <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/react-vendor-B7uZFNFY.js">
     <link rel="modulepreload" crossorigin href="/f1-telemetry-dashboard/assets/icons-2g49ESul.js">
-    <link rel="stylesheet" crossorigin href="/f1-telemetry-dashboard/assets/index-CZMnugdR.css">
+    <link rel="stylesheet" crossorigin href="/f1-telemetry-dashboard/assets/index-DOvbF6fE.css">
   </head>
   <body>
     <div id="root"></div>
