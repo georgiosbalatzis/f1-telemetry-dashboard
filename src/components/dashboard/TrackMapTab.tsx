@@ -169,7 +169,7 @@ export const TrackMapTab = memo(function TrackMapTab({ lapNum, locationByDriver,
             {/* Track base */}
             <polyline points={trackPolyline} fill="none" stroke="var(--surface-track)" strokeWidth={10} strokeLinecap="round" strokeLinejoin="round" />
             {/* Centre dashes */}
-            <polyline points={trackPolyline} fill="none" stroke="var(--line-strong)" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="8 5" />
+            <polyline points={trackPolyline} fill="none" stroke="var(--track-reference)" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="8 5" />
 
             {/* Who was quicker through each stretch (two or more drivers), else each driver's own path */}
             {winners.length > 0 && stretches.map((points, k) => winners[k] != null && (
@@ -192,13 +192,13 @@ export const TrackMapTab = memo(function TrackMapTab({ lapNum, locationByDriver,
           {/* Annotations sit outside the scaled SVG so they keep their pixel size at any map width. */}
           <div aria-hidden="true">
             {startPt && (
-              <span className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--bg)] bg-[color:var(--accent)]" style={mapPosition(startPt, box)} />
+              <span className="absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--track-halo)] bg-[color:var(--color-track-start)]" style={mapPosition(startPt, box)} />
             )}
             {labelledMarkers.map(({ n, marker, stack, flip }) => (
               <span key={n} className="absolute" style={mapPosition(marker, box)}>
-                <span className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--bg)]" style={{ background: colourOf(n) }} />
+                <span className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[color:var(--track-halo)]" style={{ background: colourOf(n) }} />
                 <span
-                  className="absolute whitespace-nowrap text-[12px] font-medium leading-none text-[color:var(--text-strong)] [text-shadow:0_0_3px_var(--bg),0_0_3px_var(--bg)]"
+                  className="absolute whitespace-nowrap text-[12px] font-medium leading-none text-[color:var(--text-strong)] [text-shadow:0_0_3px_var(--track-halo),0_0_3px_var(--track-halo)]"
                   style={{ [flip ? 'right' : 'left']: 9, top: -6 + stack * 14 }}
                 >
                   {marker.label}
@@ -210,7 +210,7 @@ export const TrackMapTab = memo(function TrackMapTab({ lapNum, locationByDriver,
 
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.1em] text-[color:var(--text-dim)]">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[color:var(--accent)]" />
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[color:var(--color-track-start)]" />
             Start / Finish
           </div>
           {activeDrivers.map((n, index) => (

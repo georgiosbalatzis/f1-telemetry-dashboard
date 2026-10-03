@@ -60,7 +60,7 @@ export const EnergyTab = memo(function EnergyTab({
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum} · DRS values ≥ 10 = active`}
         exportName={`drs-activation-lap-${lapNum}`}
-        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'DRS', color: 'var(--accent)', variant: 'area' }] : []}
+        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'DRS', color: 'var(--color-drs)', variant: 'area' }] : []}
         source={copy.chart.sourceCarData}
         panelId="energy-drs-activation"
         embedMode={embedMode}
@@ -106,7 +106,7 @@ export const EnergyTab = memo(function EnergyTab({
                 <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
                 <YAxis domain={[0, 1.2]} ticks={[0, 1]} tickFormatter={formatDrsState} tick={AXIS_TICK} stroke={chartGrid} />
                 <Tooltip content={<ChartTip format={formatDrsState} labelPrefix="Sample · " />} />
-                <Area type="stepAfter" dataKey="drs" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.14} strokeWidth={2} isAnimationActive={false} name="DRS" />
+                <Area type="stepAfter" dataKey="drs" stroke="var(--color-drs)" fill="var(--color-drs)" fillOpacity={0.14} strokeWidth={2} isAnimationActive={false} name="DRS" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -119,7 +119,7 @@ export const EnergyTab = memo(function EnergyTab({
           ? `${comparisonDriverNums.map((driverNumber) => driverMap[driverNumber]?.name_acronym || `#${driverNumber}`).join(' vs ')} — shift map normalized by lap progress`
           : `${primaryDriverLabel} — Lap ${lapNum}`}
         exportName={`gear-trace-lap-${lapNum}`}
-        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'Gear', color: 'var(--accent-strong)' }] : []}
+        legend={comparisonMode ? energyLegend : speedData.length > 0 ? [{ label: 'Gear', color: 'var(--chart-gear)' }] : []}
         source={copy.chart.sourceCarData}
         panelId="energy-gear-trace"
         embedMode={embedMode}
@@ -148,7 +148,7 @@ export const EnergyTab = memo(function EnergyTab({
                 <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
                 <YAxis domain={[0, 9]} ticks={[1, 2, 3, 4, 5, 6, 7, 8]} tick={AXIS_TICK} stroke={chartGrid} />
                 <Tooltip content={<ChartTip discrete labelPrefix="Sample · " />} />
-                <Line type="stepAfter" dataKey="gear" stroke="var(--accent-strong)" strokeWidth={2} dot={false} isAnimationActive={false} name="Gear" />
+                <Line type="stepAfter" dataKey="gear" stroke="var(--chart-gear)" strokeWidth={2} dot={false} isAnimationActive={false} name="Gear" />
               </LineChart>
             </ResponsiveContainer>
           </div>

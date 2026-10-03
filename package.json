@@ -11,8 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "ci": "npm run lint && npm run build && npm run test",
-    "preview": "vite preview"
+    "ci": "npm run check:tokens && npm run lint && npm run build && npm run test",
+    "preview": "vite preview",
+    "check:tokens": "node scripts/check-design-tokens.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.503.0",

@@ -1,9 +1,9 @@
 export const COLORS = {
   fallback: {
-    exportText: '#f2eee4',
-    exportBackground: '#181a1c',
+    exportText: '#eee8db',
+    exportBackground: '#1b1a19',
     iframeLight: '#f2eee4',
-    iframeDark: '#181a1c',
+    iframeDark: '#1b1a19',
   },
   driverFallback: 'var(--color-driver-fallback)',
   danger: 'var(--color-danger)',

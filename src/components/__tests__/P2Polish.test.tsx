@@ -20,9 +20,15 @@ let css = '';
 beforeAll(async () => {
   const { readFileSync } = await import(/* @vite-ignore */ NODE_FS);
   css = readFileSync('src/index.css', 'utf8');
-  lightTokens = Object.fromEntries(
-    [...(css.match(/^:root \{([^}]*)\}/m)?.[1] ?? '').matchAll(/(--[\w-]+):\s*(#[0-9a-f]{6})/gi)].map(([, k, v]) => [k, v]),
+  const declarations = Object.fromEntries(
+    [...(css.match(/^:root \{([^}]*)\}/m)?.[1] ?? '').matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, k, v]) => [k, v.trim()]),
   );
+  const resolve = (name: string): string => {
+    const value = declarations[name];
+    const alias = value?.match(/^var\((--[\w-]+)\)$/);
+    return alias ? resolve(alias[1]) : value;
+  };
+  lightTokens = Object.fromEntries(Object.keys(declarations).map(name => [name, resolve(name)]));
 });
 const TEAM_COLOURS = ['#27F4D2', '#FF8000', '#3671C6', '#E8002D', '#229971', '#0093CC', '#64C4FF', '#B6BABD', '#6692FF', '#52E252', '#00D2BE'];
 

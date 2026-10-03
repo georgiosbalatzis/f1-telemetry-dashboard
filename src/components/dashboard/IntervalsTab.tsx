@@ -154,7 +154,7 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
                     <td>{driverMap[entry.driver_number]?.name_acronym ?? `#${entry.driver_number}`}</td>
                     <td className="total">{gap != null && gap > 0 ? `+${gap.toFixed(3)}s` : gap === 0 ? 'Leader' : '—'}</td>
                     <td>{!isLeader && interval != null && interval >= 0 ? `+${interval.toFixed(3)}s` : '—'}</td>
-                    <td style={{ color: inDrs ? 'var(--accent)' : undefined }}>{inDrs ? '● DRS' : '—'}</td>
+                    <td style={{ color: inDrs ? 'var(--color-drs)' : undefined }}>{inDrs ? '● DRS' : '—'}</td>
                   </tr>
                 );
               })}</tbody>
@@ -169,7 +169,7 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
                 <XAxis dataKey="t" ticks={sessionTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'Session progress →', position: 'insideBottomRight', offset: -4, fill: chartAxis, fontSize: 10 }} />
                 <YAxis tick={AXIS_TICK} stroke={chartGrid} tickFormatter={(v: number) => `+${v.toFixed(0)}s`} />
                 <Tooltip content={<ChartTip unit="s" labelPrefix="Session sample · " />} />
-                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS 1s', fill: 'var(--accent)', fontSize: 11, position: 'insideTopRight' }} />
+                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--color-drs)" strokeDasharray="5 4" label={{ value: 'DRS 1s', fill: 'var(--color-drs)', fontSize: 11, position: 'insideTopRight' }} />
                 {driverNums.map((n) => (
                   <Line
                     key={n}
@@ -227,7 +227,7 @@ export const IntervalsTab = memo(function IntervalsTab({ intervals, intervalsLoa
                 <XAxis dataKey="t" ticks={sessionTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
                 <YAxis tick={AXIS_TICK} stroke={chartGrid} domain={[0, 5]} tickFormatter={(v: number) => `${v.toFixed(1)}s`} />
                 <Tooltip content={<ChartTip unit="s" labelPrefix="Session sample · " />} />
-                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--accent)" strokeDasharray="5 4" label={{ value: 'DRS', fill: 'var(--accent)', fontSize: 11, position: 'insideTopRight' }} />
+                <ReferenceLine y={DRS_DETECTION_WINDOW_S} stroke="var(--color-drs)" strokeDasharray="5 4" label={{ value: 'DRS', fill: 'var(--color-drs)', fontSize: 11, position: 'insideTopRight' }} />
                 {driverNums.map((n) => (
                   <Line
                     key={n}

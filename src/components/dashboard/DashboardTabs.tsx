@@ -24,7 +24,10 @@ export function DashboardTabs({ activeTab, onChange }: {
 
   return (
     <nav className="analysis-navigation" aria-label="Analysis views">
-      <div className="tab-strip" ref={strip}>
+      <div className="tab-strip" ref={strip} onFocus={(event) => {
+        // Native focus can leave a partially visible tab clipped in the horizontal strip.
+        if (event.target instanceof HTMLButtonElement) event.target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }}>
         {TAB_ORDER.map((tab) => <button key={tab} aria-current={activeTab === tab ? 'page' : undefined} aria-controls="analysis-content" onClick={() => onChange(tab)}>{TAB_LABELS[tab]}</button>)}
       </div>
     </nav>
