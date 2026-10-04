@@ -67,6 +67,29 @@ it('links the three Race Desk products in canonical order with Telemetry as the 
   expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/^Telemetry\.Τηλεμετρία & ανάλυση γύρου$/);
 });
 
+it('closes an open header menu once focus moves outside it, so the focused item is not hidden beneath it', () => {
+  const noop = () => {};
+  const { container } = render(<DashboardHeader
+    presetName="" presetNames={[]} splitMode={false} embedMode={false} themeMode="light"
+    openDashboardUrl="/" heroSubtitle="Monza · Γύρος 52" nextMeeting={null}
+    onPresetNameChange={noop} onSavePreset={noop} onPrint={noop}
+    onToggleSplit={noop} onToggleTheme={noop} onBack={noop}
+  />);
+  const raceDeskLink = within(screen.getByRole('navigation', { name: 'Race Desk' })).getAllByRole('link')[0];
+  for (const selector of ['.nav-mobile', '.utility-menu']) {
+    const menu = container.querySelector<HTMLDetailsElement>(selector)!;
+    const summary = menu.querySelector('summary')!;
+    menu.open = true;
+    fireEvent.focusOut(summary, { relatedTarget: menu.querySelector('a, input') });
+    expect(menu.open).toBe(true);
+    // A pointer press on non-focusable content has no next target: keep the native disclosure behaviour.
+    fireEvent.focusOut(summary, { relatedTarget: null });
+    expect(menu.open).toBe(true);
+    fireEvent.focusOut(menu.querySelector('a, input')!, { relatedTarget: raceDeskLink });
+    expect(menu.open).toBe(false);
+  }
+});
+
 it('retains the live countdown update and hides an elapsed meeting', () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date('2026-10-01T00:00:00Z'));

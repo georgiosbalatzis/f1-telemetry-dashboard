@@ -72,6 +72,10 @@ export const DashboardHeader = memo(function DashboardHeader({
         if (event.key !== 'Escape') return;
         const menu = event.currentTarget.querySelector<HTMLDetailsElement>('details[open]');
         if (menu) { menu.open = false; menu.querySelector('summary')?.focus(); }
+      }} onBlur={(event) => {
+        // Open menus cover the Race Desk links: close one once focus moves elsewhere, so the focused item stays visible.
+        const menu = (event.target as HTMLElement).closest<HTMLDetailsElement>('details[open]');
+        if (menu && event.relatedTarget instanceof Node && !menu.contains(event.relatedTarget)) menu.open = false;
       }}>
         <div className="page-shell site-nav-inner">
           <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo-nav.webp`} alt="" width="38" height="38" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>

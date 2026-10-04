@@ -44,7 +44,7 @@ const BroadcastTab = lazy(() => import('./dashboard/BroadcastTab').then((m) => (
 
 function TabLoadingPlaceholder({ label, skeletonClassName = 'h-32' }: { label: string; skeletonClassName?: string }) {
   return (
-    <div className="dashboard-panel rounded-[16px] p-6 text-sm text-[color:var(--text-muted)] sm:rounded-[18px] sm:p-8">
+    <div className="dashboard-panel p-6 text-sm text-[color:var(--text-muted)] sm:p-8">
       <ChartSkeleton label={label} className={skeletonClassName} />
     </div>
   );

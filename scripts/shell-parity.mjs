@@ -28,6 +28,9 @@ try {
             await route.fulfill({ json: meetings });
           });
           const page = await context.newPage();
+          // Safari uses Option-Tab to include links and buttons with its default keyboard preferences.
+          const tabKey = engine === 'webkit' ? 'Alt+Tab' : 'Tab';
+          const focusUncovered = () => page.evaluate(() => { const el = document.activeElement, r = el.getBoundingClientRect(); return el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)); });
           const errors = [];
           page.on('pageerror', error => errors.push(error.message));
           await page.goto(dashboardUrl(server.url, { theme }));
@@ -92,12 +95,35 @@ try {
             await page.waitForFunction(() => document.querySelector('.nav-mobile > summary').getAttribute('aria-expanded') === 'false');
             assert.equal(await page.locator('.nav-mobile').getAttribute('open'), null);
             assert.equal(await summary.evaluate(el => el === document.activeElement), true);
+            // Tabbing past the last link closes the menu, so the next focus target is not hidden beneath it.
+            await page.keyboard.press('Enter');
+            await menu.locator('a').last().focus();
+            await page.keyboard.press(tabKey);
+            assert.equal(await page.locator('.nav-mobile').getAttribute('open'), null, 'menu stays open after focus leaves it');
+            assert.equal(await focusUncovered(), true, 'focus hidden after leaving the menu');
           }
           await page.locator('.utility-menu > summary').click();
           const tools = await page.locator('.utility-content').boundingBox();
           assert.ok(tools.x >= 0 && tools.x + tools.width <= width, 'tools popup leaves viewport');
           await page.screenshot({ path: join(dir, `${name}-tools.png`) });
+          await page.locator('.utility-content button').last().focus();
+          await page.keyboard.press(tabKey);
+          assert.equal(await page.locator('.utility-menu').getAttribute('open'), null, 'tools stay open after focus leaves them');
+          assert.equal(await focusUncovered(), true, 'focus hidden after leaving the tools');
           await page.keyboard.press('Escape');
+          // Keyboard focus reveals every analysis tab inside the sideways-scrolling strip, below the masthead.
+          const tabs = page.locator('.tab-strip button');
+          await tabs.first().focus();
+          for (let i = 1; i < await tabs.count(); i += 1) {
+            await page.keyboard.press(tabKey);
+            const [inStrip, belowMasthead, ring] = await page.evaluate(() => {
+              const el = document.activeElement, a = el.getBoundingClientRect(), s = el.parentElement.getBoundingClientRect();
+              return [el.parentElement.matches('.tab-strip') && a.left >= s.left - 0.5 && a.right <= s.right + 0.5, a.top >= document.querySelector('.site-nav').getBoundingClientRect().bottom, getComputedStyle(el).outlineStyle];
+            });
+            assert.ok(inStrip && belowMasthead && ring === 'solid', `analysis tab ${i} not fully revealed`);
+          }
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'tab focus causes horizontal overflow');
+          await page.evaluate(() => { document.activeElement.blur(); scrollTo(0, 0); });
           const sponsors = page.locator('.sponsor-strip');
           await sponsors.scrollIntoViewIfNeeded();
           await page.waitForFunction(() => [...document.querySelectorAll('.sponsor-logo img')].every(img => img.complete && img.naturalWidth > 0));
