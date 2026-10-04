@@ -37,7 +37,7 @@ afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 it('applies a stored explicit choice over the OS preference', () => {
   localStorage.setItem(KEY, 'dark');
   expect(boot()).toBe('dark');
-  expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute('content', '#181a1c');
+  expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute('content', '#1b1a19');
   localStorage.setItem(KEY, 'light');
   expect(boot({ osDark: true })).toBe('light');
 });
