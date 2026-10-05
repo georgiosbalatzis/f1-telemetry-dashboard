@@ -133,6 +133,25 @@ it('starts from the stored theme and ignores values it does not own', () => {
   vi.unstubAllGlobals();
 });
 
+it('generates a whole-tab embed without treating the tab navigation hash as a panel selector', async () => {
+  window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=1&lap=2&tab=telemetry#telemetry');
+  const clipboard = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: clipboard } });
+  render(<DashboardContainer />);
+  fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
+  await waitFor(() => expect(clipboard).toHaveBeenCalled());
+  const snippet = clipboard.mock.calls[0][0] as string;
+  const src = new URL(snippet.match(/src="([^"]+)"/)![1]);
+  expect(src.searchParams.get('embed')).toBe('1');
+  expect(src.searchParams.get('lap')).toBe('2');
+  expect(src.hash).toBe('');
+  cleanup();
+  window.history.replaceState({}, '', src.pathname + src.search);
+  render(<DashboardContainer />);
+  expect(screen.getByRole('heading', { name: 'Speed Trace' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Sector Comparison' })).toBeInTheDocument();
+});
+
 it('restores a read-only article embed with an open-analysis link', async () => {
   window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=44&lap=3&tab=radio&embed=1&theme=light');
   render(<DashboardContainer />);

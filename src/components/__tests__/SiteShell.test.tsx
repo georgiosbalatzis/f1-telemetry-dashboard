@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { DashboardHeader } from '../dashboard/DashboardHeader';
 import { SiteFooter } from '../dashboard/SiteFooter';
+vi.hoisted(() => { vi.stubEnv('VITE_F1STORIES_BUILD', 'true'); });
 import { copy } from '../../copy';
 
 afterEach(() => { cleanup(); vi.useRealTimers(); });
@@ -15,13 +16,13 @@ it('keeps canonical destinations and Data as the sole current item in both menus
     onToggleSplit={noop} onToggleTheme={noop} onBack={noop}
   />);
   const destinations = [
-    ['Αρχική', 'https://f1stories.gr/'],
-    ['Άρθρα', 'https://f1stories.gr/blog-module/blog/index.html'],
+    ['Αρχική', '/'],
+    ['Άρθρα', '/blog-module/blog/index.html'],
     ['YouTube', 'https://www.youtube.com/@f1_stories_original'],
-    ['Βαθμολογία', 'https://f1stories.gr/standings/'],
-    ['Δεδομένα', 'https://f1stories.gr/standings/?tab=tyre-pace'],
-    ['Συντάκτες', 'https://f1stories.gr/authors/'],
-    ['BetCast', 'https://georgiosbalatzis.github.io/BetCastVisualisation/'],
+    ['Βαθμολογία', '/standings/'],
+    ['Δεδομένα', '/standings/?tab=tyre-pace'],
+    ['Συντάκτες', '/authors/'],
+    ['BetCast', '/betcast/'],
   ];
   for (const selector of ['.site-nav-links', '.nav-mobile-panel']) {
     const menu = container.querySelector(selector)!;
@@ -54,9 +55,9 @@ it('links the three Race Desk products in canonical order with Telemetry as the 
   const raceDesk = screen.getByRole('navigation', { name: 'Race Desk' });
   const links = within(raceDesk).getAllByRole('link');
   expect(links.map(a => [a.textContent, a.getAttribute('href')])).toEqual([
-    ['THE GRID', 'https://f1stories.gr/standings/'],
+    ['THE GRID', '/standings/'],
     ['TELEMETRY', import.meta.env.BASE_URL],
-    ['GHOST CAR', 'https://georgiosbalatzis.github.io/ghostcar/'],
+    ['GHOST CAR', '/ghostcar/'],
   ]);
   expect(raceDesk.querySelectorAll('[aria-current]')).toHaveLength(1);
   expect(within(raceDesk).getByRole('link', { current: 'page' })).toHaveTextContent('TELEMETRY');
@@ -110,10 +111,10 @@ it('retains the live countdown update and hides an elapsed meeting', () => {
 it('keeps F1 Stories footer hierarchy, legal destinations and product attribution', () => {
   const { container } = render(<SiteFooter />);
   const footer = container.querySelector('footer')!;
-  expect(within(footer).getByRole('link', { name: copy.masthead.homeAria })).toHaveAttribute('href', 'https://f1stories.gr/');
+  expect(within(footer).getByRole('link', { name: copy.masthead.homeAria })).toHaveAttribute('href', '/');
   expect(within(footer).getByRole('navigation', { name: 'Ενότητες' })).toHaveTextContent('ΆρθραΒαθμολογίαΣυντάκτεςYouTube ↗BetCast ↗');
-  expect(within(footer).getByRole('link', { name: 'Πολιτική Απορρήτου' })).toHaveAttribute('href', 'https://f1stories.gr/privacy/privacy.html');
-  expect(within(footer).getByRole('link', { name: 'Όροι Χρήσης' })).toHaveAttribute('href', 'https://f1stories.gr/privacy/terms.html');
+  expect(within(footer).getByRole('link', { name: 'Πολιτική Απορρήτου' })).toHaveAttribute('href', '/privacy/privacy.html');
+  expect(within(footer).getByRole('link', { name: 'Όροι Χρήσης' })).toHaveAttribute('href', '/privacy/terms.html');
   expect(within(footer).getByRole('link', { name: /Δεδομένα από OpenF1/ })).toHaveAttribute('href', 'https://openf1.org/');
   expect(container.querySelectorAll('.colophon-social a')).toHaveLength(5);
   expect(within(footer).getByRole('link', { name: 'Email στο F1 Stories' })).toHaveAttribute('href', 'mailto:myf1stories@gmail.com');

@@ -94,7 +94,7 @@ function buildDashboardUrl(
   if (embedMode) params.set('embed', '1');
   if (themeMode) params.set('theme', themeMode);
   const query = params.toString();
-  const hash  = anchorId ? `#${anchorId}` : window.location.hash;
+  const hash  = anchorId ? `#${anchorId}` : embedMode ? '' : window.location.hash;
   return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${hash}`;
 }
 

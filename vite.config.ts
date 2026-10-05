@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config'
+import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
@@ -11,8 +12,8 @@ export default defineConfig({
     css: false,
   },
   plugins: [tailwindcss(), react()],
-  // CRITICAL for GitHub Pages: assets must be loaded relative to /f1-telemetry-dashboard/
-  base: '/f1-telemetry-dashboard/',
+  // Keep the standalone Pages target; aggregation sets APP_BASE=/telemetry/.
+  base: loadEnv('production', '.', '').APP_BASE || '/f1-telemetry-dashboard/',
   build: {
     // Tailwind v4's floor (Safari 16.4, Chrome/Edge 111, Firefox 128); the CSS also relies on color-mix(), :has() and aspect-ratio.
     target: ['es2022', 'safari16.4', 'chrome111', 'edge111', 'firefox128'],

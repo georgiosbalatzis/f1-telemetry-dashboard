@@ -144,7 +144,9 @@ export const copy = {
 } as const;
 
 // Mirrors f1StoriesPage/partials/nav.html. If the site nav changes, update this list too.
-const SITE = 'https://f1stories.gr';
+const AGGREGATED = import.meta.env.VITE_F1STORIES_BUILD === 'true';
+export const SITE = AGGREGATED ? '' : 'https://f1stories.gr';
+const BETCAST = AGGREGATED ? '/betcast/' : 'https://georgiosbalatzis.github.io/BetCastVisualisation/';
 export const SITE_NAV = [
   { label: 'Αρχική', href: `${SITE}/` },
   { label: 'Άρθρα', href: `${SITE}/blog-module/blog/index.html` },
@@ -152,15 +154,15 @@ export const SITE_NAV = [
   { label: 'Βαθμολογία', href: `${SITE}/standings/` },
   { label: 'Δεδομένα', href: `${SITE}/standings/?tab=tyre-pace`, current: true }, // Telemetry is part of Race Desk
   { label: 'Συντάκτες', href: `${SITE}/authors/` },
-  { label: 'BetCast', href: 'https://georgiosbalatzis.github.io/BetCastVisualisation/', external: true },
+  { label: 'BetCast', href: BETCAST, external: !AGGREGATED },
 ] as const;
 
 // Race Desk product switcher, per f1StoriesPage/docs/race-desk-architecture.md: same order and same-tab links on every
-// product. The github.io hosts are deployment boundaries, not separate brands, so they get no ↗ or new tab.
+// product. All Race Desk products share the canonical origin.
 export const RACE_DESK_NAV = [
   { label: 'THE GRID', href: `${SITE}/standings/` },
   { label: 'TELEMETRY', href: import.meta.env.BASE_URL, current: true },
-  { label: 'GHOST CAR', href: 'https://georgiosbalatzis.github.io/ghostcar/' },
+  { label: 'GHOST CAR', href: AGGREGATED ? '/ghostcar/' : 'https://georgiosbalatzis.github.io/ghostcar/' },
 ] as const;
 
 // Footer links from f1StoriesPage/partials/footer.html.
@@ -169,7 +171,7 @@ export const SITE_FOOTER_LINKS = [
   { label: 'Βαθμολογία', href: `${SITE}/standings/` },
   { label: 'Συντάκτες', href: `${SITE}/authors/` },
   { label: 'YouTube ↗', href: 'https://www.youtube.com/@f1_stories_original', external: true },
-  { label: 'BetCast ↗', href: 'https://georgiosbalatzis.github.io/BetCastVisualisation/', external: true },
+  { label: 'BetCast ↗', href: BETCAST, external: !AGGREGATED },
 ] as const;
 export const SITE_SOCIAL_LINKS = [
   { label: 'F1 Stories στο YouTube', href: 'https://www.youtube.com/@f1_stories_original', icon: 'fa-youtube' },

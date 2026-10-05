@@ -1,6 +1,6 @@
 import { useEffect, useState, memo } from 'react';
 import { Columns2, Menu, MoonStar, Printer, Save, SunMedium, Undo2 } from 'lucide-react';
-import { copy, RACE_DESK_NAV, SITE_NAV } from '../../copy';
+import { copy, RACE_DESK_NAV, SITE_NAV, SITE } from '../../copy';
 import { formatCountdown, pickNextMeeting } from './nextMeeting';
 import { ToolbarButton } from './shared';
 
@@ -38,7 +38,7 @@ function NavCountdown({ meeting }: { meeting: Props['nextMeeting'] }) {
 
 function SiteLinks() {
   return SITE_NAV.map((link) => (
-    <a key={link.label} href={link.href} className={'current' in link ? 'is-current' : undefined} aria-current={'current' in link ? 'page' : undefined} {...('external' in link ? { target: '_blank', rel: 'noopener' } : {})}>{link.label}</a>
+    <a key={link.label} href={link.href} className={'current' in link ? 'is-current' : undefined} aria-current={'current' in link ? 'page' : undefined} {...('external' in link && link.external ? { target: '_blank', rel: 'noopener' } : {})}>{link.label}</a>
   ));
 }
 
@@ -59,7 +59,7 @@ export const DashboardHeader = memo(function DashboardHeader({
   if (embedMode) {
     return (
       <header className="embed-bar">
-        <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+        <a href={`${SITE}/`} className="brand" aria-label={copy.masthead.homeAria}><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
         <h1 className="embed-bar-title">{heroSubtitle}</h1>
         <a className="embed-bar-open" href={openDashboardUrl} target="_blank" rel="noreferrer">{copy.embed.open}</a>
       </header>
@@ -78,7 +78,7 @@ export const DashboardHeader = memo(function DashboardHeader({
         if (menu && event.relatedTarget instanceof Node && !menu.contains(event.relatedTarget)) menu.open = false;
       }}>
         <div className="page-shell site-nav-inner">
-          <a href="https://f1stories.gr/" className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo-nav.webp`} alt="" width="38" height="38" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+          <a href={`${SITE}/`} className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo-nav.webp`} alt="" width="38" height="38" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
           <div className="site-nav-links"><SiteLinks /></div>
           <div className="site-nav-right">
             <NavCountdown meeting={nextMeeting} />
