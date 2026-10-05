@@ -1,0 +1,1 @@
+import{r as t}from"./react-vendor-BwQuba0_.js";import{D as e}from"./index-DVc6sXf6.js";function n(){const r=t.useContext(e);if(!r)throw new Error("useDriverContext must be used within DriverProvider");return r}export{n as u};
