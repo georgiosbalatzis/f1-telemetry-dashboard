@@ -28,5 +28,5 @@ export function useProgressAxis(data: ComparisonPoint[], driverNums: number[]) {
     tickFormatter: named ? (value: number) => marks.find((mark) => mark.progress === value)?.label ?? '' : undefined,
   };
   const guides = marks.map((mark) => <ReferenceLine key={mark.progress} x={mark.progress} stroke={GRID} strokeDasharray="2 4" />);
-  return { axis, guides };
+  return { axis, guides, marks };
 }

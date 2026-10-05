@@ -1127,6 +1127,35 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .weather-stat span { display: block; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); }
 .weather-stat b { display: block; margin-top: 8px; font: 700 clamp(44px, 6vw, 72px)/1 var(--font-display); }
 .weather-stat small { margin-left: 6px; font: 600 16px var(--font-body); color: var(--text-muted); }
+
+/* Article-figure authoring dialog */
+.embed-composer { width: min(760px, calc(100vw - 24px)); max-height: min(92dvh, 1000px); padding: 0; border: 1px solid var(--line-strong); border-radius: 3px; color: var(--text); background: var(--bg); box-shadow: 0 24px 90px #0008; }
+.embed-composer::backdrop { background: #111a; backdrop-filter: blur(3px); }
+.embed-composer-header, .embed-composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.embed-composer-header h2 { margin: 4px 0 0; font: 700 25px/1.1 var(--font-brand); }
+.embed-composer-kicker { color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: .14em; }
+.embed-composer-header button { width: 42px; height: 42px; border: 1px solid var(--line); background: transparent; color: inherit; font-size: 25px; }
+.embed-composer-body { max-height: calc(92dvh - 160px); overflow: auto; padding: 20px 22px; display: grid; gap: 14px; }
+.embed-composer-body > label { display: grid; gap: 6px; font-size: 13px; font-weight: 650; }
+.embed-composer-body input:not([type=checkbox]), .embed-composer-body textarea, .embed-composer-body select { width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 2px; padding: 9px 11px; color: var(--text); background: var(--surface); font: 400 15px/1.45 var(--font-body); }
+.embed-composer-body textarea { resize: vertical; }
+.embed-composer-context, .embed-composer-scope, .embed-composer-body p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+.embed-composer-context b, .embed-composer-scope b { color: var(--text); }
+.embed-composer-body a { width: fit-content; color: var(--accent); font-weight: 700; }
+.embed-composer-ack { padding: 12px; border: 1px solid var(--color-warning); background: color-mix(in srgb, var(--color-warning) 9%, var(--bg)); }
+.embed-composer-ack input { margin-right: 8px; accent-color: var(--accent); }
+.embed-composer-preview { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); background: var(--surface); }
+.embed-composer-preview img { display: block; width: 100%; height: auto; }
+.embed-composer-legacy { border-top: 1px solid var(--line); padding-top: 12px; }
+.embed-composer-legacy summary { min-height: 42px; display: flex; align-items: center; font-weight: 700; cursor: pointer; }
+.embed-composer-legacy button, .embed-composer-footer button { min-height: 42px; border: 1px solid var(--line-strong); padding: 8px 13px; color: inherit; background: transparent; font-weight: 700; }
+.embed-composer-marker { display: grid; gap: 6px; font-weight: 700; }
+.embed-composer-help { font-size: 12px !important; }
+.embed-composer-error { padding: 11px; border-left: 3px solid var(--color-danger); background: color-mix(in srgb, var(--color-danger) 10%, var(--bg)); color: var(--text) !important; }
+.embed-composer-footer { justify-content: flex-end; border-top: 1px solid var(--line); border-bottom: 0; }
+.embed-composer-footer .embed-composer-primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+.embed-composer-footer button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 520px) { .embed-composer-header,.embed-composer-footer { padding: 14px; } .embed-composer-body { padding: 14px; } .embed-composer-footer { flex-wrap: wrap; } .embed-composer-footer button { flex: 1 1 100%; } }
 .bc-sector-cell, .bc-speed-cell, .bc-sector-gap { font-size: 14px; }
 .bc-sector-laptime { font-size: 18px; font-weight: 600; }
 .next-views { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 8px; border-top: 1px solid var(--ink); }

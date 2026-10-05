@@ -1,0 +1,187 @@
+{
+  "phase": "before",
+  "fixture": "Recorded OpenF1 Monza race 2025, session 9912, lap 52. Copied from the existing performance record/replay cache; no live requests required.",
+  "pilotSource": "blog-module/blog-entries/20260927G/source.txt",
+  "measurements": [
+    {
+      "name": "telemetry-speed-trace-390",
+      "articleViewport": 390,
+      "iframe": {
+        "x": 22,
+        "y": 90.40625,
+        "width": 346,
+        "height": 720
+      },
+      "contentHeight": 3017,
+      "viewportHeight": 720,
+      "viewportWidth": 346,
+      "panelCount": 7,
+      "theme": "light",
+      "bars": 1,
+      "overflowX": false,
+      "nestedVerticalScroll": true,
+      "apiRequests": 9,
+      "requests": [
+        "/v1/meetings?year=2025",
+        "/v1/sessions?circuit_short_name=Monza&year=2025",
+        "/v1/drivers?session_key=9912",
+        "/v1/session_result?session_key=9912",
+        "/v1/laps?driver_number=1&session_key=9912",
+        "/v1/laps?driver_number=4&session_key=9912",
+        "/v1/car_data?driver_number=1&session_key=9912&date%3C=2025-09-07T14:15:38.620000+00:00&date%3E=2025-09-07T14:14:17.467000+00:00",
+        "/v1/race_control?session_key=9912",
+        "/v1/car_data?driver_number=4&session_key=9912&date%3C=2025-09-07T14:15:57.846000+00:00&date%3E=2025-09-07T14:14:36.655000+00:00"
+      ]
+    },
+    {
+      "name": "telemetry-throttle-brake-390",
+      "articleViewport": 390,
+      "iframe": {
+        "x": 22,
+        "y": 90.40625,
+        "width": 346,
+        "height": 720
+      },
+      "contentHeight": 3017,
+      "viewportHeight": 720,
+      "viewportWidth": 346,
+      "panelCount": 7,
+      "theme": "light",
+      "bars": 1,
+      "overflowX": false,
+      "nestedVerticalScroll": true,
+      "apiRequests": 9,
+      "requests": [
+        "/v1/meetings?year=2025",
+        "/v1/sessions?circuit_short_name=Monza&year=2025",
+        "/v1/drivers?session_key=9912",
+        "/v1/session_result?session_key=9912",
+        "/v1/laps?driver_number=1&session_key=9912",
+        "/v1/laps?driver_number=4&session_key=9912",
+        "/v1/car_data?driver_number=1&session_key=9912&date%3C=2025-09-07T14:15:38.620000+00:00&date%3E=2025-09-07T14:14:17.467000+00:00",
+        "/v1/race_control?session_key=9912",
+        "/v1/car_data?driver_number=4&session_key=9912&date%3C=2025-09-07T14:15:57.846000+00:00&date%3E=2025-09-07T14:14:36.655000+00:00"
+      ]
+    },
+    {
+      "name": "whole-tab-390",
+      "articleViewport": 390,
+      "iframe": {
+        "x": 22,
+        "y": -9.59375,
+        "width": 346,
+        "height": 920
+      },
+      "contentHeight": 3017,
+      "viewportHeight": 920,
+      "viewportWidth": 346,
+      "panelCount": 7,
+      "theme": "light",
+      "bars": 1,
+      "overflowX": false,
+      "nestedVerticalScroll": true,
+      "apiRequests": 9,
+      "requests": [
+        "/v1/meetings?year=2025",
+        "/v1/sessions?circuit_short_name=Monza&year=2025",
+        "/v1/drivers?session_key=9912",
+        "/v1/session_result?session_key=9912",
+        "/v1/laps?driver_number=1&session_key=9912",
+        "/v1/laps?driver_number=4&session_key=9912",
+        "/v1/car_data?driver_number=1&session_key=9912&date%3C=2025-09-07T14:15:38.620000+00:00&date%3E=2025-09-07T14:14:17.467000+00:00",
+        "/v1/race_control?session_key=9912",
+        "/v1/car_data?driver_number=4&session_key=9912&date%3C=2025-09-07T14:15:57.846000+00:00&date%3E=2025-09-07T14:14:36.655000+00:00"
+      ]
+    },
+    {
+      "name": "telemetry-speed-trace-1440",
+      "articleViewport": 1440,
+      "iframe": {
+        "x": 236,
+        "y": 89.640625,
+        "width": 680,
+        "height": 720
+      },
+      "contentHeight": 3109,
+      "viewportHeight": 720,
+      "viewportWidth": 680,
+      "panelCount": 7,
+      "theme": "light",
+      "bars": 1,
+      "overflowX": false,
+      "nestedVerticalScroll": true,
+      "apiRequests": 9,
+      "requests": [
+        "/v1/meetings?year=2025",
+        "/v1/sessions?circuit_short_name=Monza&year=2025",
+        "/v1/drivers?session_key=9912",
+        "/v1/session_result?session_key=9912",
+        "/v1/laps?driver_number=1&session_key=9912",
+        "/v1/laps?driver_number=4&session_key=9912",
+        "/v1/car_data?driver_number=1&session_key=9912&date%3C=2025-09-07T14:15:38.620000+00:00&date%3E=2025-09-07T14:14:17.467000+00:00",
+        "/v1/race_control?session_key=9912",
+        "/v1/car_data?driver_number=4&session_key=9912&date%3C=2025-09-07T14:15:57.846000+00:00&date%3E=2025-09-07T14:14:36.655000+00:00"
+      ]
+    },
+    {
+      "name": "telemetry-throttle-brake-1440",
+      "articleViewport": 1440,
+      "iframe": {
+        "x": 236,
+        "y": 89.640625,
+        "width": 680,
+        "height": 720
+      },
+      "contentHeight": 3109,
+      "viewportHeight": 720,
+      "viewportWidth": 680,
+      "panelCount": 7,
+      "theme": "light",
+      "bars": 1,
+      "overflowX": false,
+      "nestedVerticalScroll": true,
+      "apiRequests": 9,
+      "requests": [
+        "/v1/meetings?year=2025",
+        "/v1/sessions?circuit_short_name=Monza&year=2025",
+        "/v1/drivers?session_key=9912",
+        "/v1/session_result?session_key=9912",
+        "/v1/laps?driver_number=1&session_key=9912",
+        "/v1/laps?driver_number=4&session_key=9912",
+        "/v1/car_data?driver_number=1&session_key=9912&date%3C=2025-09-07T14:15:38.620000+00:00&date%3E=2025-09-07T14:14:17.467000+00:00",
+        "/v1/race_control?session_key=9912",
+        "/v1/car_data?driver_number=4&session_key=9912&date%3C=2025-09-07T14:15:57.846000+00:00&date%3E=2025-09-07T14:14:36.655000+00:00"
+      ]
+    },
+    {
+      "name": "whole-tab-1440",
+      "articleViewport": 1440,
+      "iframe": {
+        "x": 236,
+        "y": -10.359375,
+        "width": 680,
+        "height": 920
+      },
+      "contentHeight": 3109,
+      "viewportHeight": 920,
+      "viewportWidth": 680,
+      "panelCount": 7,
+      "theme": "light",
+      "bars": 1,
+      "overflowX": false,
+      "nestedVerticalScroll": true,
+      "apiRequests": 9,
+      "requests": [
+        "/v1/meetings?year=2025",
+        "/v1/sessions?circuit_short_name=Monza&year=2025",
+        "/v1/drivers?session_key=9912",
+        "/v1/session_result?session_key=9912",
+        "/v1/laps?driver_number=1&session_key=9912",
+        "/v1/laps?driver_number=4&session_key=9912",
+        "/v1/car_data?driver_number=1&session_key=9912&date%3C=2025-09-07T14:15:38.620000+00:00&date%3E=2025-09-07T14:14:17.467000+00:00",
+        "/v1/race_control?session_key=9912",
+        "/v1/car_data?driver_number=4&session_key=9912&date%3C=2025-09-07T14:15:57.846000+00:00&date%3E=2025-09-07T14:14:36.655000+00:00"
+      ]
+    }
+  ]
+}

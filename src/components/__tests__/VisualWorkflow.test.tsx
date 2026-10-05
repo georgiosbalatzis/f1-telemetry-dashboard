@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { DashboardContainer } from '../DashboardContainer';
 import { ChartTip, ChartSkeleton, Err } from '../dashboard/shared';
 import { TAB_LABELS } from '../dashboard/tabLabels';
@@ -22,18 +22,23 @@ vi.mock('../../hooks/useDashboard', async () => {
       selectionData: {
         circuitOptions: [{ v: 'Bahrain', l: 'Bahrain' }, { v: 'Monza', l: 'Monza' }],
         sessionOptions: [{ v: 9472, l: 'Race' }, { v: 9471, l: 'Qualifying' }],
-        lapOptions: [1, 2, 3], driverList: drivers, allLaps: {},
+        lapOptions: [1, 2, 3], driverList: drivers,
+        allLaps: Object.fromEntries(drivers.map((driver) => [driver.driver_number, [1, 2, 3].map((lap_number) => ({ lap_number, date_start: `2024-03-02T00:0${lap_number}:00Z`, lap_duration: 90 }))])),
         driverMap: Object.fromEntries(drivers.map((driver) => [driver.driver_number, driver])),
+        telemetryWindows: filters.driverNums.map((driverNumber) => ({ driverNumber, lapStart: `2024-03-02T00:0${filters.lapNum}:00Z`, nextLapStart: null })),
       },
       viewModel: {
-        driverColor: () => '#3671C6', lapSummaries: [], sectorRows: [], speedData: [],
-        comparisonSpeedData: [], comparisonControlData: [], comparisonEnergyData: [],
+        driverColor: () => '#3671C6', lapSummaries: [], sectorRows: [],
+        speedData: [{ idx: 0, speed: 205, throttle: 80, brake: -20 }, { idx: 1, speed: 220, throttle: 100, brake: 0 }],
+        comparisonSpeedData: [{ progress: 0, speed_1: 205 }, { progress: 100, speed_1: 220 }],
+        comparisonControlData: [{ progress: 0, throttle_1: 80, brake_1: -20 }, { progress: 100, throttle_1: 100, brake_1: 0 }], comparisonEnergyData: [],
         lapTimeData: [], lapDeltaData: [], stintsByDriver: {}, filteredPits: [],
         filteredRadio: [], raceControlMessages: [], latestWeather: null,
         weatherTrend: [],
       },
       comparisonDrivers: [], locationByDriver: {}, anyLoading: false, lapsLoading: false,
       locationLoading: false, telemetryLoading: false, totalLaps: 3,
+      telemetryByDriver: Object.fromEntries(filters.driverNums.map((number) => [number, [{ speed: 200, throttle: 80, brake: 20 }, { speed: 220, throttle: 100, brake: 0 }]])),
       canStepBackward: filters.lapNum > 1, canStepForward: filters.lapNum < 3,
       stepLap: (direction: number) => filters.setLapNum(filters.lapNum + direction),
     };
@@ -42,6 +47,15 @@ vi.mock('../../hooks/useDashboard', async () => {
 
 const params = () => new URLSearchParams(window.location.search);
 beforeEach(() => {
+  if (!HTMLDialogElement.prototype.showModal) HTMLDialogElement.prototype.showModal = function showModal() { this.setAttribute('open', ''); };
+  if (!HTMLDialogElement.prototype.close) HTMLDialogElement.prototype.close = function close() { this.removeAttribute('open'); };
+  vi.stubGlobal('ResizeObserver', class {
+    callback: ResizeObserverCallback;
+    constructor(callback: ResizeObserverCallback) { this.callback = callback; }
+    observe(target: Element) { this.callback([{ contentRect: { width: 600, height: 300 }, target } as ResizeObserverEntry], this as unknown as ResizeObserver); }
+    unobserve() {}
+    disconnect() {}
+  });
   const storage = new Map<string, string>();
   Object.defineProperty(window, 'localStorage', { configurable: true, value: {
     getItem: (key: string) => storage.get(key) ?? null,
@@ -112,6 +126,9 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   fireEvent.click(screen.getByRole('button', { name: copy.cardBar.share }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('layout=split&theme=light')));
   fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
+  expect(screen.getByRole('dialog', { name: copy.embed.title })).toBeInTheDocument();
+  fireEvent.click(screen.getByText(copy.embed.legacy));
+  fireEvent.click(screen.getByRole('button', { name: copy.embed.legacyCopy }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('embed=1&theme=light')));
   fireEvent.click(screen.getByRole('button', { name: copy.masthead.print }));
   expect(print).toHaveBeenCalledOnce();
@@ -133,12 +150,16 @@ it('starts from the stored theme and ignores values it does not own', () => {
   vi.unstubAllGlobals();
 });
 
-it('generates a whole-tab embed without treating the tab navigation hash as a panel selector', async () => {
+it('opens the author composer for a whole tab and keeps the legacy iframe hash empty', async () => {
   window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=1&lap=2&tab=telemetry#telemetry');
   const clipboard = vi.fn().mockResolvedValue(undefined);
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: clipboard } });
   render(<DashboardContainer />);
   fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
+  expect(screen.getByRole('dialog', { name: copy.embed.title })).toBeInTheDocument();
+  expect(screen.getByLabelText(copy.embed.panel)).toHaveValue('');
+  fireEvent.click(screen.getByText(copy.embed.legacy));
+  fireEvent.click(screen.getByRole('button', { name: copy.embed.legacyCopy }));
   await waitFor(() => expect(clipboard).toHaveBeenCalled());
   const snippet = clipboard.mock.calls[0][0] as string;
   const src = new URL(snippet.match(/src="([^"]+)"/)![1]);
@@ -150,6 +171,31 @@ it('generates a whole-tab embed without treating the tab navigation hash as a pa
   render(<DashboardContainer />);
   expect(screen.getByRole('heading', { name: 'Speed Trace' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Sector Comparison' })).toBeInTheDocument();
+});
+
+it('preselects a supported panel and freezes its scope when the dashboard lap changes', async () => {
+  render(<DashboardContainer />);
+  fireEvent.click((await screen.findAllByRole('button', { name: copy.panel.embed }))[0]);
+  const dialog = screen.getByRole('dialog', { name: copy.embed.title });
+  expect(screen.getByLabelText(copy.embed.panel)).toHaveValue('telemetry-speed-trace');
+  expect(dialog).toHaveTextContent('L2');
+  fireEvent.click(screen.getByRole('button', { name: copy.scope.nextLap }));
+  expect(params().get('lap')).toBe('3');
+  expect(dialog).toHaveTextContent('L2');
+  expect(screen.getByRole('link', { name: copy.embed.open })).toHaveAttribute('href', expect.stringContaining('lap=2'));
+});
+
+it('keeps the publication marker selectable when clipboard permission is denied', async () => {
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: vi.fn().mockRejectedValue(new DOMException('denied', 'NotAllowedError')) } });
+  render(<DashboardContainer />);
+  fireEvent.click((await screen.findAllByRole('button', { name: copy.panel.embed }))[0]);
+  fireEvent.change(screen.getByLabelText(copy.embed.titleLabel), { target: { value: 'Bahrain pedal trace' } });
+  fireEvent.click(screen.getByRole('button', { name: copy.embed.marker }));
+  expect(await screen.findByRole('alert')).toHaveTextContent(copy.embed.copyFailed);
+  const marker = screen.getByLabelText(copy.embed.marker);
+  expect(marker).toHaveValue('TELEMETRY:bahrain-pedal-trace.f1embed.json');
+  expect(marker).toHaveFocus();
+  expect((marker as HTMLInputElement).selectionEnd).toBe(marker.getAttribute('value')?.length);
 });
 
 it('restores a read-only article embed with an open-analysis link', async () => {
@@ -168,10 +214,10 @@ it('restores a read-only article embed with an open-analysis link', async () => 
 });
 
 it('formats chart annotations with units, timing precision and unsigned brake percentages', () => {
-  const { rerender } = render(<ChartTip active label={2} labelPrefix="Lap " unit="s" payload={[{ name: 'VER', value: 90.123, color: '#3671C6' }]} />);
-  expect(screen.getByText('90.123 s')).toBeInTheDocument();
+  const { container, rerender } = render(<ChartTip active label={2} labelPrefix="Lap " unit="s" payload={[{ name: 'VER', value: 90.123, color: '#3671C6' }]} />);
+  expect(within(container).getByText('90.123 s')).toBeInTheDocument();
   rerender(<ChartTip active label={50} unit="%" absolute payload={[{ name: 'Brake', value: -100 }]} />);
-  expect(screen.getByText('100%')).toBeInTheDocument();
+  expect(within(container).getByText('100%')).toBeInTheDocument();
 });
 
 it('exposes loading status and an accessible error retry', () => {
@@ -192,6 +238,8 @@ it('renders only the requested embed panel and its legend without authoring cont
   expect(document.querySelectorAll('.dashboard-panel')).toHaveLength(1);
   expect(screen.queryByRole('button', { name: copy.panel.download })).not.toBeInTheDocument();
   expect(screen.queryByRole('button', { name: copy.panel.embed })).not.toBeInTheDocument();
+  expect(window.location.hash).toBe('#telemetry-speed-trace');
+  expect(screen.getByRole('link', { name: copy.embed.open })).toHaveAttribute('href', expect.stringContaining('#telemetry-speed-trace'));
 });
 
 it.each([

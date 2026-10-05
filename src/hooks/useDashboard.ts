@@ -238,6 +238,7 @@ export function useDashboard() {
     positions,
     intervals,
     primaryTelemetry,
+    telemetryByDriver,
     comparisonDrivers,
     selectionData,
     viewModel,
@@ -254,7 +255,7 @@ export function useDashboard() {
     lapsPending,
     expectsDrivers: needsTelemetryData,
   }), [
-    filters, meetings, sessions, drivers, stints, pits, weather, raceControl, teamRadio, positions, intervals, primaryTelemetry, comparisonDrivers, selectionData, viewModel, locationByDriver, anyLoading, lapsLoading, locationLoading, telemetryLoading, totalLaps, canStepBackward, canStepForward, stepLap, driversPending, lapsPending, needsTelemetryData,
+    filters, meetings, sessions, drivers, stints, pits, weather, raceControl, teamRadio, positions, intervals, primaryTelemetry, telemetryByDriver, comparisonDrivers, selectionData, viewModel, locationByDriver, anyLoading, lapsLoading, locationLoading, telemetryLoading, totalLaps, canStepBackward, canStepForward, stepLap, driversPending, lapsPending, needsTelemetryData,
   ]);
 }
 

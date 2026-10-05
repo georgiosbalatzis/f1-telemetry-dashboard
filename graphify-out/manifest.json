@@ -24,15 +24,15 @@
     "semantic_hash": "2683e26e70707841590ff4ad24253919"
   },
   "package.json": {
-    "mtime": 1791060139.566421,
-    "seen": 1791133044.816424,
-    "ast_hash": "253b543e51e19a9cb55e8a91dac810bf",
+    "mtime": 1791182866.516324,
+    "seen": 1791188214.983526,
+    "ast_hash": "82328fa363612420f5bd76a14f4974b3",
     "semantic_hash": ""
   },
   "public/manifest.json": {
-    "mtime": 1790837125.7506855,
-    "seen": 1790863422.7255218,
-    "ast_hash": "2f46bca8efbdf00d37ec8249c045c08d",
+    "mtime": 1791182505.3117046,
+    "seen": 1791188214.983526,
+    "ast_hash": "e6ac0ca3a1bdf376be8075a8445d8d25",
     "semantic_hash": ""
   },
   "src/api/__tests__/openf1.integration.test.ts": {
@@ -54,14 +54,14 @@
     "semantic_hash": ""
   },
   "src/components/DashboardContainer.tsx": {
-    "mtime": 1790863285.4208179,
-    "seen": 1790863422.725528,
-    "ast_hash": "a2debe532d2c3180a46fc587595e4bfb",
+    "mtime": 1791187841.4069195,
+    "seen": 1791188214.983534,
+    "ast_hash": "353128e86c4e0d8dffd4e2c5d065b35c",
     "semantic_hash": ""
   },
   "src/components/DashboardShell.tsx": {
-    "mtime": 1791132121.0848167,
-    "seen": 1791133044.816431,
+    "mtime": 1791135090.4350731,
+    "seen": 1791188214.983534,
     "ast_hash": "49d477e83cdbf1c487e70379cfc8a316",
     "semantic_hash": ""
   },
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/components/__tests__/VisualWorkflow.test.tsx": {
-    "mtime": 1790863298.736708,
-    "seen": 1790863422.725534,
-    "ast_hash": "b89a55e37df72ab6fec84c1006af8a9a",
+    "mtime": 1791187984.2464838,
+    "seen": 1791188214.98354,
+    "ast_hash": "fcf431b88374f046d3296c318318a3c0",
     "semantic_hash": ""
   },
   "src/components/dashboard/BroadcastTab.tsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardHeader.tsx": {
-    "mtime": 1791132121.0850344,
-    "seen": 1791133044.81644,
-    "ast_hash": "2243100e4326b901a13f64dd328561ae",
+    "mtime": 1791182866.5176682,
+    "seen": 1791188214.983542,
+    "ast_hash": "bcf31cfc525e9773215d04c7c6c23d97",
     "semantic_hash": ""
   },
   "src/components/dashboard/DashboardSelectors.tsx": {
@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/TelemetryTab.tsx": {
-    "mtime": 1790837125.7536607,
-    "seen": 1790863422.725545,
-    "ast_hash": "2290e2fba03971aa316db0b4d0ee8d77",
+    "mtime": 1791187577.3917227,
+    "seen": 1791188214.9835498,
+    "ast_hash": "39380fa4e206c09cdc7b3ecd2da44005",
     "semantic_hash": ""
   },
   "src/components/dashboard/TrackMapTab.tsx": {
@@ -396,9 +396,9 @@
     "semantic_hash": "b39b0c04c8b06a94fa53e598a344f2b4"
   },
   "vite.config.ts": {
-    "mtime": 1790837125.757931,
-    "seen": 1790863422.725573,
-    "ast_hash": "990462ba79c25048cf04adcee93c6da7",
+    "mtime": 1791182866.517328,
+    "seen": 1791188214.983582,
+    "ast_hash": "268447e763314e50985b0c1ccb40dcbb",
     "semantic_hash": ""
   },
   ".claude/CLAUDE.md": {
@@ -486,9 +486,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1791103209.1948955,
-    "seen": 1791133044.8164952,
-    "ast_hash": "51a0716ae2faf1b82e6353b071789f15",
+    "mtime": 1791185360.4200833,
+    "seen": 1791188214.983598,
+    "ast_hash": "931021b1f548b40a9a9cbc9c718cfb16",
     "semantic_hash": ""
   },
   "public/fonts/barlowcondensed-OFL.txt": {
@@ -630,9 +630,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/SiteFooter.tsx": {
-    "mtime": 1790862876.4488697,
-    "seen": 1790863422.725543,
-    "ast_hash": "39a35124d1f8568ea70d8f7b64c6a671",
+    "mtime": 1791182656.278341,
+    "seen": 1791188214.983548,
+    "ast_hash": "6d8779c3eefbfb9e39cb85ff8e98606b",
     "semantic_hash": ""
   },
   "src/components/dashboard/SummaryStrip.tsx": {
@@ -732,15 +732,15 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/useProgressAxis.tsx": {
-    "mtime": 1790755305.511108,
-    "seen": 1790758649.746927,
-    "ast_hash": "7ed48f409536832f749f987711f4a08b",
+    "mtime": 1791187577.3158853,
+    "seen": 1791188214.983566,
+    "ast_hash": "18668b18d54d66bedc794ba6cd4455d3",
     "semantic_hash": ""
   },
   "src/copy.ts": {
-    "mtime": 1790951544.147936,
-    "seen": 1790957108.331445,
-    "ast_hash": "fa82a6d4d7c77d3d5f4d38ec47e80b4d",
+    "mtime": 1791182866.5175188,
+    "seen": 1791188214.983569,
+    "ast_hash": "6a3b56f4d993545a1642ac7bcf3cb4d7",
     "semantic_hash": ""
   },
   "REWORK_TASKS.md": {
@@ -1098,9 +1098,9 @@
     "semantic_hash": ""
   },
   "src/components/__tests__/SiteShell.test.tsx": {
-    "mtime": 1791130017.0371954,
-    "seen": 1791133044.816436,
-    "ast_hash": "1164ec81fcf067248db6275f83928bfd",
+    "mtime": 1791183024.4391742,
+    "seen": 1791188214.983538,
+    "ast_hash": "a877c0a363b4168fcca9550680b5bb67",
     "semantic_hash": ""
   },
   "src/components/__tests__/ThemeInit.test.ts": {
@@ -1221,6 +1221,222 @@
     "mtime": 1791062474.4811988,
     "seen": 1791133044.816493,
     "ast_hash": "3c7be7a40de52dc4f4cb99793db8a342",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/measurements.json": {
+    "mtime": 1791188069.3957102,
+    "seen": 1791188214.9835231,
+    "ast_hash": "1b2e4be1f9ae267c93610b1a32f20cb3",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/measurements.json": {
+    "mtime": 1791187689.4421253,
+    "seen": 1791188214.983524,
+    "ast_hash": "613565388d907385b7bcb63a6cce7c3d",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots/results.json": {
+    "mtime": 1791188175.696588,
+    "seen": 1791188214.983525,
+    "ast_hash": "a73cc44104686a3d198f4f3d1406dc5b",
+    "semantic_hash": ""
+  },
+  "scripts/build-f1stories.mjs": {
+    "mtime": 1791182426.9558775,
+    "seen": 1791188214.983527,
+    "ast_hash": "fc5968c53772626c82dacfad70dd90f1",
+    "semantic_hash": ""
+  },
+  "scripts/embed-baseline.mjs": {
+    "mtime": 1791188389.6658046,
+    "seen": 1791188436.216371,
+    "ast_hash": "79d45537a8aea1bdd76425f56593e367",
+    "semantic_hash": ""
+  },
+  "scripts/embed-plots-check.mjs": {
+    "mtime": 1791188125.1820767,
+    "seen": 1791188214.9835289,
+    "ast_hash": "179f6959eb1817b5e682d72a11fcf2a3",
+    "semantic_hash": ""
+  },
+  "scripts/fixtures/telemetry-plots.tsx": {
+    "mtime": 1791188172.3277557,
+    "seen": 1791188214.9835289,
+    "ast_hash": "23807898f62e1ad396e0c4121a4de3b7",
+    "semantic_hash": ""
+  },
+  "src/embeds/TelemetryPlot.tsx": {
+    "mtime": 1791187500.2254984,
+    "seen": 1791188214.983569,
+    "ast_hash": "ecefc8cb0f66bd022b927a3f15fbff84",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/TelemetryPlot.test.tsx": {
+    "mtime": 1791187984.2458827,
+    "seen": 1791188214.9835699,
+    "ast_hash": "c8c2bb3343e36c3ee2c81cec6eef811a",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/contract.test.ts": {
+    "mtime": 1791187944.3830345,
+    "seen": 1791188214.9835699,
+    "ast_hash": "841587bc808c347fe66145d4a8a854de",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/fixtures.ts": {
+    "mtime": 1791187944.383513,
+    "seen": 1791188214.9835699,
+    "ast_hash": "11ea221411e1f1273d64215d6c3e62d5",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/fixtures/openf1-monza.json": {
+    "mtime": 1791187078.6324902,
+    "seen": 1791188214.983571,
+    "ast_hash": "e6fcc514e1b7f6428ef578de1b07a4fd",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/fixtures/publication-v1.json": {
+    "mtime": 1791187796.9319456,
+    "seen": 1791188214.983571,
+    "ast_hash": "36575cd39efa866534f4a1ae587b6238",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/links.test.ts": {
+    "mtime": 1791187796.9621599,
+    "seen": 1791188214.983572,
+    "ast_hash": "78592d21c5289b80b55338c0a597e8c3",
+    "semantic_hash": ""
+  },
+  "src/embeds/contract.ts": {
+    "mtime": 1791188001.7568061,
+    "seen": 1791188214.983572,
+    "ast_hash": "089ae8909ece29513dcc274fa384c376",
+    "semantic_hash": ""
+  },
+  "src/embeds/links.ts": {
+    "mtime": 1791187324.0065808,
+    "seen": 1791188214.983572,
+    "ast_hash": "82b300a1304d9ceb19b5495c18cebc61",
+    "semantic_hash": ""
+  },
+  "src/embeds/plotModel.ts": {
+    "mtime": 1791187577.315278,
+    "seen": 1791188214.983573,
+    "ast_hash": "8d89ebf7068d37a01662e75d4b0ff94d",
+    "semantic_hash": ""
+  },
+  "EMBED.md": {
+    "mtime": 1791188389.6651525,
+    "seen": 1791188436.2164469,
+    "ast_hash": "9647d9099bbd699b4aafaef2c65807d5",
+    "semantic_hash": ""
+  },
+  "docs/same-origin-deployment.md": {
+    "mtime": 1791182426.9568226,
+    "seen": 1791188214.983598,
+    "ast_hash": "d28a7d99c877e03927b46d06520178bf",
+    "semantic_hash": ""
+  },
+  "scripts/fixtures/telemetry-plots.html": {
+    "mtime": 1791188125.1811855,
+    "seen": 1791188214.9836001,
+    "ast_hash": "01615f988423e8e47ba3090f3eba2914",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/telemetry-speed-trace-1440.png": {
+    "mtime": 1791188059.4704435,
+    "seen": 1791188214.9836001,
+    "ast_hash": "7282566ff86b757765a1a0cf3bd7acdc",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/telemetry-speed-trace-390.png": {
+    "mtime": 1791188429.8104541,
+    "seen": 1791188436.216457,
+    "ast_hash": "464de7377d36c2502cc984eea50ec50c",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/telemetry-throttle-brake-1440.png": {
+    "mtime": 1791188064.3837645,
+    "seen": 1791188214.9836009,
+    "ast_hash": "388114d62ac97fe9cb96171ad460f3fb",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/telemetry-throttle-brake-390.png": {
+    "mtime": 1791188434.6903553,
+    "seen": 1791188436.216458,
+    "ast_hash": "53fb3fc8da2390a0a866bdfecddaf4ad",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/whole-tab-1440.png": {
+    "mtime": 1791188069.3885221,
+    "seen": 1791188214.9836018,
+    "ast_hash": "cef3adea934c19b3b0dd71d197a8867c",
+    "semantic_hash": ""
+  },
+  "docs/embeds/after/whole-tab-390.png": {
+    "mtime": 1791188054.582614,
+    "seen": 1791188214.9836018,
+    "ast_hash": "c96968bd12db0350378c4eaa39adf6f9",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/telemetry-speed-trace-1440.png": {
+    "mtime": 1791187679.4977689,
+    "seen": 1791188214.9836018,
+    "ast_hash": "5ab0becf201e0aa671feaef1d140f409",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/telemetry-speed-trace-390.png": {
+    "mtime": 1791187664.891015,
+    "seen": 1791188214.983603,
+    "ast_hash": "d0ce050918df0455c8fedb3f64b493ca",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/telemetry-throttle-brake-1440.png": {
+    "mtime": 1791187684.4302,
+    "seen": 1791188214.983603,
+    "ast_hash": "5ab0becf201e0aa671feaef1d140f409",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/telemetry-throttle-brake-390.png": {
+    "mtime": 1791187669.7306917,
+    "seen": 1791188214.983604,
+    "ast_hash": "d0ce050918df0455c8fedb3f64b493ca",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/whole-tab-1440.png": {
+    "mtime": 1791187689.4361088,
+    "seen": 1791188214.983604,
+    "ast_hash": "3c790f74b07396e7c28d311a9f8f6e2c",
+    "semantic_hash": ""
+  },
+  "docs/embeds/before/whole-tab-390.png": {
+    "mtime": 1791187674.5875566,
+    "seen": 1791188214.983605,
+    "ast_hash": "c96968bd12db0350378c4eaa39adf6f9",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots/chromium.png": {
+    "mtime": 1791188173.0220568,
+    "seen": 1791188214.983605,
+    "ast_hash": "4d4b021a46c0ed036b1ca694ad7d0a4c",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots/firefox.png": {
+    "mtime": 1791188174.5301194,
+    "seen": 1791188214.983605,
+    "ast_hash": "d74e7d510ce77485cfa80a47e7a86bce",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots/webkit.png": {
+    "mtime": 1791188175.6849103,
+    "seen": 1791188214.983606,
+    "ast_hash": "d8eab28ee8eb4ddb2f40f04fe4bad47f",
+    "semantic_hash": ""
+  },
+  "docs/embeds/E01-E03.md": {
+    "mtime": 1791188348.3603554,
+    "seen": 1791188436.2164521,
+    "ast_hash": "675450c5da8b5f56d505ee0f232420c8",
     "semantic_hash": ""
   }
 }

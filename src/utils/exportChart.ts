@@ -10,6 +10,7 @@ type ExportChartOptions = {
   legend?: ExportChartLegendItem[];
   textColor: string;
   backgroundColor: string;
+  legendFontSize?: number;
 };
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -21,8 +22,7 @@ const LEGEND_MARKER_WIDTH_PX = 18;
 const LEGEND_MARKER_GAP_PX = 10;
 const LEGEND_ITEM_GAP_PX = 16;
 const LEGEND_TOP_PADDING_PX = 26;
-const LEGEND_ITEMS_PER_ROW_ESTIMATE = 4;
-const APPROX_CHAR_WIDTH_PX = 7;
+const PORTABLE_FONT = "Arial, 'DejaVu Sans', sans-serif";
 
 function getChartDimensions(svg: SVGSVGElement, fallbackWidth: number, fallbackHeight: number) {
   const widthAttr = Number(svg.getAttribute('width'));
@@ -40,17 +40,28 @@ function appendLegend(
   legend: ExportChartLegendItem[],
   chartHeight: number,
   chartWidth: number,
+  fontSize = 12,
+  rowHeight = LEGEND_ROW_HEIGHT_PX,
 ) {
   if (legend.length === 0) return;
 
   let cursorX = LEGEND_PADDING_X_PX;
   let cursorY = chartHeight + LEGEND_ROW_HEIGHT_PX;
+  let rows = 1;
+  const measure = document.createElementNS(SVG_NS, 'text');
+  measure.setAttribute('font-size', String(fontSize));
+  measure.setAttribute('font-family', PORTABLE_FONT);
+  measure.setAttribute('visibility', 'hidden');
+  root.appendChild(measure);
 
   legend.forEach((item) => {
-    const itemWidth = LEGEND_MARKER_WIDTH_PX + LEGEND_MARKER_GAP_PX + item.label.length * APPROX_CHAR_WIDTH_PX;
+    measure.textContent = item.label;
+    const textWidth = measure.getComputedTextLength?.() || item.label.length * fontSize * 0.62;
+    const itemWidth = LEGEND_MARKER_WIDTH_PX + LEGEND_MARKER_GAP_PX + textWidth;
     if (cursorX + itemWidth > chartWidth - LEGEND_PADDING_X_PX) {
       cursorX = LEGEND_PADDING_X_PX;
-      cursorY += LEGEND_ROW_HEIGHT_PX;
+      cursorY += rowHeight;
+      rows += 1;
     }
 
     if (item.variant === 'bar') {
@@ -84,13 +95,15 @@ function appendLegend(
     label.setAttribute('x', String(cursorX + LEGEND_MARKER_WIDTH_PX + 8));
     label.setAttribute('y', String(cursorY + 2));
     label.setAttribute('fill', 'currentColor');
-    label.setAttribute('font-size', '12');
-    label.setAttribute('font-family', 'system-ui, sans-serif');
+    label.setAttribute('font-size', String(fontSize));
+    label.setAttribute('font-family', PORTABLE_FONT);
     label.textContent = item.label;
     root.appendChild(label);
 
     cursorX += itemWidth + LEGEND_ITEM_GAP_PX;
   });
+  measure.remove();
+  return rows;
 }
 
 const CSS_VAR = /var\(\s*(--[\w-]+)\s*(?:,\s*([^)]*))?\)/g;
@@ -106,8 +119,8 @@ const resolveVars = (value: string, styles = getComputedStyle(document.documentE
  * undefined, so grid, ticks and lines turn black or vanish. Replaces them with the values they have right now (current theme).
  * @internal exported for unit tests only
  */
-export function resolveCssVariables(root: Element) {
-  const styles = getComputedStyle(document.documentElement);
+export function resolveCssVariables(root: Element, styleSource: Element = document.documentElement) {
+  const styles = getComputedStyle(styleSource);
   for (const element of [root, ...root.querySelectorAll('*')]) {
     for (const attribute of Array.from(element.attributes)) {
       if (attribute.value.includes('var(')) element.setAttribute(attribute.name, resolveVars(attribute.value, styles));
@@ -116,18 +129,23 @@ export function resolveCssVariables(root: Element) {
 }
 
 /** @internal exported for unit tests only */
-export function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportChartOptions>) {
+export function buildExportMarkup(svg: SVGSVGElement, options: Required<Pick<ExportChartOptions, 'legend' | 'textColor' | 'backgroundColor'>> & Pick<ExportChartOptions, 'legendFontSize'>, styleSource: Element = document.documentElement) {
   const serializer = new XMLSerializer();
   const clonedSvg = svg.cloneNode(true) as SVGSVGElement;
-  resolveCssVariables(clonedSvg);
+  resolveCssVariables(clonedSvg, styleSource);
   const parent = svg.parentElement as HTMLElement | null;
   const { width, height } = getChartDimensions(svg, parent?.clientWidth || DEFAULT_EXPORT_WIDTH, parent?.clientHeight || DEFAULT_EXPORT_HEIGHT);
-  const legendRows = options.legend.length > 0 ? Math.ceil(options.legend.length / LEGEND_ITEMS_PER_ROW_ESTIMATE) : 0;
-  const legendHeight = legendRows > 0 ? LEGEND_TOP_PADDING_PX + legendRows * LEGEND_ROW_HEIGHT_PX : 0;
+  const computed = getComputedStyle(styleSource);
+  const legendFontSize = options.legendFontSize ?? 12;
+  const legendRowHeight = legendFontSize > 12 ? 28 : LEGEND_ROW_HEIGHT_PX;
+  const legendProbe = document.createElementNS(SVG_NS, 'svg');
+  legendProbe.setAttribute('width', String(width));
+  legendProbe.setAttribute('height', '1');
+  const legendRows = appendLegend(legendProbe, options.legend, 0, width, legendFontSize, legendRowHeight) ?? 0;
+  const legendHeight = legendRows > 0 ? Math.max(LEGEND_TOP_PADDING_PX, legendFontSize + 14) + legendRows * legendRowHeight : 0;
   const totalHeight = height + legendHeight;
 
   const exportSvg = document.createElementNS(SVG_NS, 'svg');
-  exportSvg.setAttribute('xmlns', SVG_NS);
   exportSvg.setAttribute('width', String(width));
   exportSvg.setAttribute('height', String(totalHeight));
   exportSvg.setAttribute('viewBox', `0 0 ${width} ${totalHeight}`);
@@ -135,7 +153,7 @@ export function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportCh
   exportSvg.setAttribute('color', options.textColor);
 
   const pageCss = document.createElementNS(SVG_NS, 'style');
-  pageCss.textContent = resolveVars(CHART_PAGE_CSS);
+  pageCss.textContent = resolveVars(CHART_PAGE_CSS, computed);
   exportSvg.appendChild(pageCss);
 
   const backgroundRect = document.createElementNS(SVG_NS, 'rect');
@@ -152,7 +170,7 @@ export function buildExportMarkup(svg: SVGSVGElement, options: Required<ExportCh
   clonedSvg.setAttribute('height', String(height));
   exportSvg.appendChild(clonedSvg);
 
-  appendLegend(exportSvg, options.legend, height, width);
+  appendLegend(exportSvg, options.legend, height, width, legendFontSize, legendRowHeight);
 
   return serializer.serializeToString(exportSvg);
 }
@@ -201,6 +219,7 @@ export async function exportChartAsSvg(
     legend: options.legend ?? [],
     textColor: options.textColor,
     backgroundColor: options.backgroundColor,
+    legendFontSize: options.legendFontSize ?? 12,
   });
   downloadSvg(filename, markup);
 }

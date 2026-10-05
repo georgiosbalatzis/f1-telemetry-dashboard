@@ -18,6 +18,11 @@ import { DashboardShell } from './DashboardShell';
 import { TAB_LABELS } from './dashboard/tabLabels';
 import { copy } from '../copy';
 import type { Tab } from './dashboard/types';
+import { buildDashboardLink } from '../embeds/links';
+import { EmbedComposer, type FigureDraft } from '../embeds/EmbedComposer';
+import { figurePlotData, omitUnavailableFigureDrivers } from '../embeds/plotModel';
+import { cornerMarks } from './dashboard/cornerMarks';
+import type { EmbedPanelId } from '../embeds/contract';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -83,19 +88,10 @@ function buildDashboardUrl(
   anchorId?: string,
 ) {
   if (typeof window === 'undefined') return '';
-  const params = new URLSearchParams();
-  params.set('year', String(snapshot.year));
-  if (snapshot.circuit) params.set('circuit', snapshot.circuit);
-  if (snapshot.sessionKey != null) params.set('session', String(snapshot.sessionKey));
-  if (snapshot.driverNums.length > 0) params.set('drivers', snapshot.driverNums.join(','));
-  params.set('lap', String(snapshot.lapNum));
-  params.set('tab', snapshot.tab);
-  if (splitMode) params.set('layout', 'split');
-  if (embedMode) params.set('embed', '1');
-  if (themeMode) params.set('theme', themeMode);
-  const query = params.toString();
-  const hash  = anchorId ? `#${anchorId}` : embedMode ? '' : window.location.hash;
-  return `${window.location.origin}${window.location.pathname}${query ? `?${query}` : ''}${hash}`;
+  return buildDashboardLink(window.location.origin + window.location.pathname, snapshot, {
+    split: splitMode, embed: embedMode, theme: themeMode,
+    anchor: anchorId ?? (embedMode ? '' : window.location.hash),
+  });
 }
 
 function buildIframeSnippet(
@@ -155,6 +151,9 @@ export function DashboardContainer() {
   // ── Local UI state ─────────────────────────────────────────────────────
   const [splitMode,    setSplitMode]    = useState(readInitialSplitMode);
   const [embedMode]                     = useState(readInitialEmbedMode);
+  const [composer, setComposer] = useState<{ panel: string | null; drafts: Partial<Record<EmbedPanelId, FigureDraft>>; emptyMessage: string; legacy: (panel: EmbedPanelId | null) => string } | null>(null);
+  // Publication URLs keep their requested panel while API loading triggers rerenders.
+  const [embedPanel]                    = useState(() => readInitialEmbedMode() ? window.location.hash.slice(1) : undefined);
   const [themeMode,    setThemeMode]    = useState<ThemeMode>(readInitialThemeMode);
   const [presetName,   setPresetName]   = useState('');
   const [feedback,     setFeedback]     = useState<string | null>(null);
@@ -196,8 +195,8 @@ export function DashboardContainer() {
   }, [filters.circuit, sessionLabel]);
 
   const openDashboardUrl = useMemo(
-    () => buildDashboardUrl(filters.snapshot, splitMode, false, themeMode),
-    [filters.snapshot, splitMode, themeMode],
+    () => buildDashboardUrl(filters.snapshot, splitMode, false, themeMode, embedPanel),
+    [filters.snapshot, splitMode, themeMode, embedPanel],
   );
 
   // ── Side effects ───────────────────────────────────────────────────────
@@ -206,11 +205,11 @@ export function DashboardContainer() {
   // reload or bookmark must follow the stored 'f1stories-theme' choice, which ?theme= would override.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, embedMode ? themeMode : undefined);
+    const url = buildDashboardUrl(filters.snapshot, splitMode, embedMode, embedMode ? themeMode : undefined, embedPanel);
     if (url === window.location.href) return;
     // Safari throws SecurityError past ~100 calls per 10 s; the next real change writes the URL again.
     try { window.history.replaceState({}, '', url); } catch { /* rate limited */ }
-  }, [embedMode, filters.snapshot, splitMode, themeMode]);
+  }, [embedMode, embedPanel, filters.snapshot, splitMode, themeMode]);
 
   // Smooth-scroll to hash fragment on tab change
   useEffect(() => {
@@ -306,18 +305,77 @@ export function DashboardContainer() {
     setFeedback(error ?? `${label} ready`);
   }, []);
 
-  const embedSnapshot = useCallback(
-    (snapshot: DashboardFilterSnapshot, label: string) => copySnippet(buildIframeSnippet(snapshot, splitMode, themeMode), label),
-    [copySnippet, splitMode, themeMode],
-  );
-
   const handleShareTab = useCallback(async (tab: Tab) => shareSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} link`), [filters.snapshot, shareSnapshot]);
-  const handleEmbedTab = useCallback(async (tab: Tab) => embedSnapshot({ ...filters.snapshot, tab }, `${TAB_LABELS[tab]} embed`), [embedSnapshot, filters.snapshot]);
+  const handleOpenComposer = useCallback((tab: Tab, initialPanel: string | null) => {
+    const snapshot = Object.freeze({ ...filters.snapshot, tab, driverNums: [...filters.driverNums] });
+    const drafts: Partial<Record<EmbedPanelId, FigureDraft>> = {};
+    const scopeResolved = Boolean(snapshot.circuit && snapshot.sessionKey != null && snapshot.driverNums.length > 0);
+    const lapWindowsMatch = data.selectionData.telemetryWindows.length === snapshot.driverNums.length
+      && data.selectionData.telemetryWindows.every((window) => data.selectionData.allLaps[window.driverNumber]
+        ?.find((lap) => lap.lap_number === snapshot.lapNum)?.date_start === window.lapStart);
+    const pending = data.anyLoading || data.driversPending || data.lapsPending || data.telemetryLoading || data.lapsLoading || !lapWindowsMatch
+      || !data.comparisonDrivers.every((driver) => !driver.loading && driver.known);
+    if (tab === 'telemetry' && snapshot.circuit && snapshot.sessionKey != null && snapshot.driverNums.length > 0
+      && !pending) {
+      const map = data.selectionData.driverMap;
+      const byColour = new Map<string, number[]>();
+      for (const driver of Object.values(map)) byColour.set(driver.team_colour, [...(byColour.get(driver.team_colour) ?? []), driver.driver_number]);
+      byColour.forEach((numbers) => numbers.sort((a, b) => a - b));
+      const lineDashes = [undefined, '10 4', '2 4', '10 4 2 4'];
+      const brakeDashes = ['6 4', '10 3 2 3', '2 3', '10 3 2 3 2 3'];
+      const drivers = snapshot.driverNums.map((number) => {
+        const driver = map[number];
+        const index = (byColour.get(driver.team_colour)?.indexOf(number) ?? 0) % 4;
+        return {
+          number, fullName: driver.full_name, acronym: driver.name_acronym, teamColour: `#${driver.team_colour}`,
+          lineDash: lineDashes[index], brakeDash: brakeDashes[index],
+        };
+      });
+      const speed = figurePlotData('speed', drivers, data.viewModel.speedData, data.viewModel.comparisonSpeedData, cornerMarks(data.viewModel.comparisonSpeedData, snapshot.driverNums[0], (n) => `C${n}`));
+      const pedals = figurePlotData('pedals', drivers, data.viewModel.speedData, data.viewModel.comparisonControlData, cornerMarks(data.viewModel.comparisonSpeedData, snapshot.driverNums[0], (n) => `C${n}`));
+      const session = data.selectionData.sessionOptions.find((option) => option.v === snapshot.sessionKey)?.l ?? `Session ${snapshot.sessionKey}`;
+      const makeDraft = (plot: typeof speed): FigureDraft | undefined => {
+        if (plot.points.length < 2) return undefined;
+        const completeNumbers = new Set(plot.drivers.filter((driver) => {
+          const lap = data.selectionData.allLaps[driver.number]?.find((item) => item.lap_number === snapshot.lapNum);
+          return Boolean(lap?.lap_duration && lap.lap_duration > 0 && data.telemetryByDriver[driver.number]?.length);
+        }).map((driver) => driver.number));
+        const publishedPlot = omitUnavailableFigureDrivers(plot, completeNumbers);
+        const provenanceDrivers = publishedPlot.drivers.map((driver, index) => {
+          const values = publishedPlot.points.filter((point) => Object.entries(point).some(([key, value]) => key !== 'progress' && key !== 'idx' && key.endsWith(`_${driver.number}`) && typeof value === 'number')
+            || publishedPlot.axis === 'sample' && index === 0 && publishedPlot.points.some((point) => Object.entries(point).some(([key, value]) => ['speed', 'throttle', 'brake'].includes(key) && typeof value === 'number')));
+          const status = values.length > 0 && completeNumbers.has(driver.number) && !(publishedPlot.axis === 'sample' && index > 0) ? 'complete' as const : 'missing' as const;
+          return { driverNumber: driver.number, status, sampleCount: status === 'complete' ? data.telemetryByDriver[driver.number]?.length ?? 0 : 0 };
+        });
+        if (!provenanceDrivers.some((driver) => driver.status === 'complete')) return undefined;
+        return {
+          scope: { year: snapshot.year, circuit: snapshot.circuit as string, sessionKey: snapshot.sessionKey as number, driverNums: [...snapshot.driverNums], lapNum: snapshot.lapNum, tab: 'telemetry' },
+          context: { grandPrix: `${snapshot.circuit} Grand Prix`, session }, data: publishedPlot,
+          provenance: {
+            source: 'OpenF1', method: `${plot.kind === 'speed' ? 'Speed' : 'Throttle and brake'} car data plotted on the ${publishedPlot.axis === 'progress' ? 'normalized lap-progress axis' : 'sample axis'}.`,
+            guideExplanation: publishedPlot.guides.length ? 'Vertical guides identify the slow-corner marks inferred by the telemetry repository from the comparison speed trace.' : '',
+            partialAcknowledged: false, drivers: provenanceDrivers,
+          },
+        };
+      };
+      const speedDraft = makeDraft(speed);
+      const pedalDraft = makeDraft(pedals);
+      if (speedDraft) drafts['telemetry-speed-trace'] = structuredClone(speedDraft);
+      if (pedalDraft) drafts['telemetry-throttle-brake'] = structuredClone(pedalDraft);
+    }
+    const legacySnapshot = { ...snapshot };
+    setComposer({
+      panel: initialPanel,
+      drafts,
+      emptyMessage: tab !== 'telemetry' || initialPanel && !['telemetry-speed-trace', 'telemetry-throttle-brake'].includes(initialPanel)
+        ? copy.embed.unsupported
+        : !scopeResolved ? copy.embed.missingScope : pending ? copy.embed.waiting : copy.embed.noPlot,
+      legacy: (panel) => buildIframeSnippet(legacySnapshot, false, themeMode, panel ?? undefined, panel ? 720 : 920),
+    });
+  }, [data, filters.driverNums, filters.snapshot, themeMode]);
 
-  const handleEmbedPanel = useCallback(
-    (panelId: string) => copySnippet(buildIframeSnippet(filters.snapshot, false, themeMode, panelId, 720), 'Panel embed'),
-    [copySnippet, filters.snapshot, themeMode],
-  );
+  const handleEmbedTab = useCallback((tab: Tab) => handleOpenComposer(tab, null), [handleOpenComposer]);
+  const handleEmbedPanel = useCallback((panelId: string) => handleOpenComposer('telemetry', panelId), [handleOpenComposer]);
 
   const handlePrint       = useCallback(() => { setFeedback(copy.masthead.printing); window.print(); }, []);
   const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? copy.masthead.splitDisabled : copy.masthead.splitEnabled); }, [splitMode]);
@@ -369,6 +427,16 @@ export function DashboardContainer() {
       onToggleTheme={handleToggleTheme}
       onBack={handleBack}
     />
+    {composer && <EmbedComposer
+      initialPanel={composer.panel}
+      drafts={composer.drafts}
+      emptyMessage={composer.emptyMessage}
+      theme={themeMode}
+      analysisBase={window.location.origin + (import.meta.env.VITE_F1STORIES_BUILD === 'true' ? '/telemetry/' : window.location.pathname)}
+      legacySnippet={(panel) => composer.legacy(panel)}
+      onClose={() => setComposer(null)}
+      onLegacy={(snippet) => void copySnippet(snippet, 'Legacy iframe')}
+    />}
     </DriverProvider>
   );
 }

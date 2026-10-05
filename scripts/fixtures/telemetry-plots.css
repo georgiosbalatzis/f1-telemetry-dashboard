@@ -1,0 +1,7 @@
+body { margin: 24px; font-family: system-ui, sans-serif; background: #e3e0d8; }
+.plot-host { display: inline-block; vertical-align: top; width: 340px; margin: 12px; padding: 12px; font-size: 12px; background: #f2eee4; color: #20251f; --chart-grid: #d4d0c5; --chart-axis: #5b6256; --chart-axis-soft: #5b6256; --chart-reference: #858779; --color-success: #276846; --color-danger: #ad322c; }
+.plot-host[data-theme="dark"] { color: #eee8db; background: #1b1a19; --chart-grid: #4d4a43; --chart-axis: #d5cfc3; --chart-axis-soft: #b5afa4; --chart-reference: #777975; --color-success: #70bd91; --color-danger: #f17b75; }
+.plot-host h2 { font-size: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 12px; }
+.chart-tooltip { padding: 8px; background: #f2eee4; color: #20251f; border: 1px solid #858779; }
+.tooltip-row { display: flex; gap: 8px; }

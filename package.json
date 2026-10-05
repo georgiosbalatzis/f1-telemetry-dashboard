@@ -14,7 +14,8 @@
     "ci": "npm run check:tokens && npm run lint && npm run build && npm run test",
     "preview": "vite preview",
     "check:tokens": "node scripts/check-design-tokens.mjs",
-    "build:f1stories": "node scripts/build-f1stories.mjs"
+    "build:f1stories": "node scripts/build-f1stories.mjs",
+    "build:interactive": "vite build --config vite.interactive.config.ts"
   },
   "dependencies": {
     "lucide-react": "^0.503.0",

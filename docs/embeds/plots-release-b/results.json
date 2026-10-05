@@ -1,0 +1,200 @@
+[
+  {
+    "engine": "chromium",
+    "theme": null,
+    "storage": null,
+    "ticks": 5,
+    "width": "340",
+    "plots": 13,
+    "traceCounts": [
+      {
+        "scenario": "single-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "single-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "two-speed",
+        "lines": 2
+      },
+      {
+        "scenario": "two-pedals",
+        "lines": 4
+      },
+      {
+        "scenario": "four-speed",
+        "lines": 4
+      },
+      {
+        "scenario": "four-pedals",
+        "lines": 8
+      },
+      {
+        "scenario": "teammates-speed",
+        "lines": 2
+      },
+      {
+        "scenario": "teammates-pedals",
+        "lines": 4
+      },
+      {
+        "scenario": "missing-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "missing-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "sample-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "sample-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "resize",
+        "lines": 1
+      }
+    ],
+    "wideTicks": 10,
+    "uniqueIds": true,
+    "pageErrors": [],
+    "apiRequests": []
+  },
+  {
+    "engine": "firefox",
+    "theme": null,
+    "storage": null,
+    "ticks": 5,
+    "width": "340",
+    "plots": 13,
+    "traceCounts": [
+      {
+        "scenario": "single-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "single-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "two-speed",
+        "lines": 2
+      },
+      {
+        "scenario": "two-pedals",
+        "lines": 4
+      },
+      {
+        "scenario": "four-speed",
+        "lines": 4
+      },
+      {
+        "scenario": "four-pedals",
+        "lines": 8
+      },
+      {
+        "scenario": "teammates-speed",
+        "lines": 2
+      },
+      {
+        "scenario": "teammates-pedals",
+        "lines": 4
+      },
+      {
+        "scenario": "missing-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "missing-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "sample-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "sample-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "resize",
+        "lines": 1
+      }
+    ],
+    "wideTicks": 10,
+    "uniqueIds": true,
+    "pageErrors": [],
+    "apiRequests": []
+  },
+  {
+    "engine": "webkit",
+    "theme": null,
+    "storage": null,
+    "ticks": 5,
+    "width": "340",
+    "plots": 13,
+    "traceCounts": [
+      {
+        "scenario": "single-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "single-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "two-speed",
+        "lines": 2
+      },
+      {
+        "scenario": "two-pedals",
+        "lines": 4
+      },
+      {
+        "scenario": "four-speed",
+        "lines": 4
+      },
+      {
+        "scenario": "four-pedals",
+        "lines": 8
+      },
+      {
+        "scenario": "teammates-speed",
+        "lines": 2
+      },
+      {
+        "scenario": "teammates-pedals",
+        "lines": 4
+      },
+      {
+        "scenario": "missing-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "missing-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "sample-speed",
+        "lines": 1
+      },
+      {
+        "scenario": "sample-pedals",
+        "lines": 2
+      },
+      {
+        "scenario": "resize",
+        "lines": 1
+      }
+    ],
+    "wideTicks": 10,
+    "uniqueIds": true,
+    "pageErrors": [],
+    "apiRequests": []
+  }
+]

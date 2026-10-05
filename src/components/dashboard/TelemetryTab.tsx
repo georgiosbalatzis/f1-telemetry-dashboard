@@ -1,6 +1,8 @@
 import { useMemo, memo } from 'react';
-import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { COLORS } from '../../constants/colors';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { teamColor } from '../../constants/colors';
+import { ResponsiveTelemetryPlot } from '../../embeds/TelemetryPlot';
+import { figureLegend, figurePlotData } from '../../embeds/plotModel';
 import { copy } from '../../copy';
 import { useDriverContext } from '../../contexts/useDriverContext';
 import type { ComparisonPoint, DriverLapSummary, SectorRow, SpeedPoint } from './types';
@@ -12,7 +14,7 @@ import { SummaryStrip } from './SummaryStrip';
 import { useProgressAxis } from './useProgressAxis';
 import { SECTOR_STYLE, buildSectorAnalysis } from './broadcast/broadcastUtils';
 import type { GapCardData } from './gapCardData';
-import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, PEDAL_TICKS, evenTicks, formatLapAxis, formatPedalAxis, useXTickCount } from './chartAxis';
+import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks, formatLapAxis, useXTickCount } from './chartAxis';
 
 type Props = {
   lapNum: number;
@@ -33,20 +35,6 @@ type Props = {
   onEmbedPanel?: (panelId: string) => void;
   onTelemetryRetry?: () => void;
 };
-
-/** Names each half of the mirrored pedal axis: throttle above zero, brake below. */
-function PedalHalvesLabel({ viewBox }: { viewBox?: { x: number; y: number; height: number } }) {
-  if (!viewBox) return null;
-  const x = viewBox.x + AXIS_TICK_SOFT.fontSize;
-  return (
-    <g fill={AXIS_TICK_SOFT.fill} fontSize={AXIS_TICK_SOFT.fontSize} textAnchor="middle">
-      {[['Throttle', 0.25], ['Brake', 0.75]].map(([text, share]) => {
-        const y = viewBox.y + viewBox.height * (share as number);
-        return <text key={text} x={x} y={y} transform={`rotate(-90 ${x} ${y})`}>{text}</text>;
-      })}
-    </g>
-  );
-}
 
 export const TelemetryTab = memo(function TelemetryTab({
   lapNum,
@@ -73,9 +61,7 @@ export const TelemetryTab = memo(function TelemetryTab({
   const sectorClasses = [s1Classes, s2Classes, s3Classes];
   const chartGrid = 'var(--chart-grid)';
   const xTickCount = useXTickCount();
-  const sampleTicks = evenTicks(speedData.map((point) => point.idx), xTickCount);
   const lapTicks = evenTicks(lapTimeData.map((point) => point.lap), xTickCount);
-  const chartReference = 'var(--chart-reference)';
   const driverLegend = useMemo<ChartLegendItem[]>(
     () => driverNums.filter((driverNumber) => lapTimeData.some((point) => typeof point[`t_${driverNumber}`] === 'number')).map((driverNumber) => ({
       label: driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
@@ -83,27 +69,6 @@ export const TelemetryTab = memo(function TelemetryTab({
     })),
     [driverColor, driverDash, driverMap, driverNums, lapTimeData],
   );
-  const speedTraceLegend = comparisonSpeedData.length > 0
-    ? driverNums.filter((driverNumber) => comparisonSpeedData.some((point) => point[`speed_${driverNumber}`] != null)).map((driverNumber) => ({
-      label: driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,
-      strokeDasharray: driverDash(driverNumber), color: driverColor(driverNumber),
-    }))
-    : speedData.length > 0 && driverNums[0] != null
-      ? [{ label: driverMap[driverNums[0]]?.name_acronym || `#${driverNums[0]}`, strokeDasharray: driverDash(driverNums[0]), color: driverColor(driverNums[0]) }]
-      : [];
-  const controlLegend: ChartLegendItem[] = comparisonControlData.length > 0
-    ? driverNums.filter((driverNumber) => comparisonControlData.some((point) => point[`throttle_${driverNumber}`] != null)).flatMap<ChartLegendItem>((driverNumber) => {
-      const label = driverMap[driverNumber]?.name_acronym || `#${driverNumber}`;
-      const color = driverColor(driverNumber);
-      return [
-        { label: `${label} Throttle`, color, strokeDasharray: driverDash(driverNumber) },
-        { label: `${label} Brake`, color, strokeDasharray: driverDash(driverNumber, 'brake') },
-      ];
-    })
-    : [
-      { label: 'Throttle', color: COLORS.success, variant: 'area' as const },
-      { label: 'Brake', color: COLORS.danger, variant: 'area' as const },
-    ];
   const speedDeltaData = useMemo(() => {
     if (comparisonSpeedData.length === 0) return [];
     return comparisonSpeedData.map((point) => {
@@ -122,7 +87,18 @@ export const TelemetryTab = memo(function TelemetryTab({
     });
   }, [comparisonSpeedData, driverNums]);
 
-  const { axis: progressAxis, guides: cornerGuides } = useProgressAxis(comparisonSpeedData, driverNums);
+  const { axis: progressAxis, guides: cornerGuides, marks } = useProgressAxis(comparisonSpeedData, driverNums);
+  const plotDrivers = driverNums.map((number) => ({
+    number, fullName: driverMap[number]?.full_name || `#${number}`,
+    acronym: driverMap[number]?.name_acronym || `#${number}`,
+    teamColour: teamColor(driverMap[number]?.team_colour),
+    lineDash: driverDash(number), brakeDash: driverDash(number, 'brake') ?? '6 4',
+  }));
+  const colours = Object.fromEntries(driverNums.map((number) => [number, driverColor(number)]));
+  const speedPlot = figurePlotData('speed', plotDrivers, speedData, comparisonSpeedData, marks);
+  const pedalPlot = figurePlotData('pedals', plotDrivers, speedData, comparisonControlData, marks);
+  const speedTraceLegend = figureLegend(speedPlot, 'light', colours);
+  const controlLegend = figureLegend(pedalPlot, 'light', colours);
 
   return (
     <PanelSelection embedMode={embedMode}>
@@ -140,33 +116,8 @@ export const TelemetryTab = memo(function TelemetryTab({
         onEmbedPanel={onEmbedPanel}
       >
         <SummaryStrip title={sessionTitle} subtitle={copy.scope.lapOption(lapNum)} summaries={lapSummaries} />
-        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[240px] sm:h-[380px]" /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : comparisonSpeedData.length > 0 ? (
-          <div className="h-[240px] sm:h-[380px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={comparisonSpeedData} margin={CHART_MARGIN}>
-                <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="progress" {...progressAxis} />
-                <YAxis domain={[0, 370]} ticks={[0, 100, 200, 300]} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
-                {cornerGuides}
-                <Tooltip content={<ChartTip unit="km/h" labelPrefix="Lap progress · " labelSuffix="%" />} />
-                {driverNums.map((driverNumber) => (
-                  <Line key={driverNumber} type="monotone" dataKey={`speed_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ) : speedData.length > 0 ? (
-          <div className="h-[240px] sm:h-[380px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={speedData} margin={CHART_MARGIN}>
-                <CartesianGrid vertical={false} stroke={chartGrid} />
-                <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
-                <YAxis domain={[0, 370]} ticks={[0, 100, 200, 300]} tick={AXIS_TICK} stroke={chartGrid} label={{ value: 'km/h', angle: -90, position: 'insideLeft', ...AXIS_TICK_SOFT }} />
-                <Tooltip content={<ChartTip unit="km/h" labelPrefix="Sample · " />} />
-                <Line type="monotone" dataKey="speed" stroke={driverColor(driverNums[0])} strokeDasharray={driverDash(driverNums[0])} strokeWidth={1.8} dot={false} isAnimationActive={false} name="Speed (km/h)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[240px] sm:h-[380px]" /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : (comparisonSpeedData.length > 0 || speedData.length > 0) ? (
+          <ResponsiveTelemetryPlot data={speedPlot} colours={colours} />
         ) : <NoData msg="No telemetry data. The API may not have car data for this session/lap. Try a race session." />}
       </ChartPanel>
 
@@ -240,40 +191,7 @@ export const TelemetryTab = memo(function TelemetryTab({
           embedMode={embedMode}
           onEmbedPanel={onEmbedPanel}
         >
-          {comparisonControlData.length > 0 ? (
-            <div className="h-[160px] sm:h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={comparisonControlData} margin={CHART_MARGIN}>
-                  <CartesianGrid vertical={false} stroke={chartGrid} />
-                  <XAxis dataKey="progress" {...progressAxis} />
-                  <YAxis domain={[-105, 105]} ticks={PEDAL_TICKS} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={formatPedalAxis} label={<PedalHalvesLabel />} />
-                  <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
-                  {cornerGuides}
-                  <Tooltip content={<ChartTip unit="%" absolute labelPrefix="Lap progress · " labelSuffix="%" />} />
-                  {driverNums.map((driverNumber) => (
-                    <Line key={`throttle-${driverNumber}`} type="monotone" dataKey={`throttle_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber)} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Throttle`} />
-                  ))}
-                  {driverNums.map((driverNumber) => (
-                    <Line key={`brake-${driverNumber}`} type="monotone" dataKey={`brake_${driverNumber}`} stroke={driverColor(driverNumber)} strokeDasharray={driverDash(driverNumber, 'brake')} strokeWidth={1.6} dot={false} connectNulls isAnimationActive={false} name={`${driverMap[driverNumber]?.name_acronym || `#${driverNumber}`} Brake`} />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-[140px] sm:h-[180px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={speedData} margin={CHART_MARGIN}>
-                  <CartesianGrid vertical={false} stroke={chartGrid} />
-                  <XAxis dataKey="idx" ticks={sampleTicks} interval={0} tick={AXIS_TICK} stroke={chartGrid} />
-                  <YAxis domain={[-105, 105]} ticks={PEDAL_TICKS} tick={AXIS_TICK} stroke={chartGrid} tickFormatter={formatPedalAxis} label={<PedalHalvesLabel />} />
-                  <ReferenceLine y={0} stroke={chartReference} strokeDasharray="4 4" />
-                  <Tooltip content={<ChartTip unit="%" absolute labelPrefix="Sample · " />} />
-                  <Area type="monotone" dataKey="throttle" stroke={COLORS.success} fill={COLORS.success} fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Throttle %" />
-                  <Area type="monotone" dataKey="brake" stroke={COLORS.danger} fill={COLORS.danger} fillOpacity={0.08} strokeWidth={1.5} isAnimationActive={false} name="Brake" />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
-          )}
+          <ResponsiveTelemetryPlot data={pedalPlot} colours={colours} />
         </ChartPanel>
       )}
 
