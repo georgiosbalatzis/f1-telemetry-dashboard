@@ -183,6 +183,7 @@ export const RACE_DESK_NAV = [
   { label: 'THE GRID', href: `${SITE}/standings/` },
   { label: 'TELEMETRY', href: import.meta.env.BASE_URL, current: true },
   { label: 'GHOST CAR', href: AGGREGATED ? '/ghostcar/' : 'https://georgiosbalatzis.github.io/ghostcar/' },
+  { label: 'TYRES', href: AGGREGATED ? '/tyres/' : 'https://georgiosbalatzis.github.io/Tyres/' },
 ] as const;
 
 // Footer links from f1StoriesPage/partials/footer.html.
