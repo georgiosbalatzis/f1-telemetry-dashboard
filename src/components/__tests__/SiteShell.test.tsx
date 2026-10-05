@@ -58,6 +58,7 @@ it('links the three Race Desk products in canonical order with Telemetry as the 
     ['THE GRID', '/standings/'],
     ['TELEMETRY', import.meta.env.BASE_URL],
     ['GHOST CAR', '/ghostcar/'],
+    ['TYRES', '/tyres/'],
   ]);
   expect(raceDesk.querySelectorAll('[aria-current]')).toHaveLength(1);
   expect(within(raceDesk).getByRole('link', { current: 'page' })).toHaveTextContent('TELEMETRY');

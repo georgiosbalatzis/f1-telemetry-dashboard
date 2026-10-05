@@ -65,6 +65,8 @@ beforeEach(() => {
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
+// Walks every lazily loaded tab in one test: on a cold CI runner that exceeds vitest's default 5 s (it has timed out on
+// main and on pull-request runs while passing locally), so it gets an explicit budget.
 it('preserves scope, driver selection, both navigation controls, and URL state', async () => {
   render(<DashboardContainer />);
   expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(copy.hero.title);
@@ -99,7 +101,7 @@ it('preserves scope, driver selection, both navigation controls, and URL state',
   expect(params().get('circuit')).toBe('Monza');
   fireEvent.change(screen.getByLabelText(copy.scope.season), { target: { value: '2023' } });
   expect(params().get('year')).toBe('2023');
-});
+}, 20_000);
 
 it('keeps share, embed, print, split, theme persistence and saved presets wired', async () => {
   const clipboard = vi.fn().mockResolvedValue(undefined);

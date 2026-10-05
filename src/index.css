@@ -990,6 +990,8 @@ option, optgroup { background: var(--surface); color: var(--text); }
   .kicker-row { flex-wrap: wrap; gap: 0; }
   .race-desk-nav { flex: 1 0 100%; margin-top: 10px; border-top: 1px solid var(--line); }
 }
+/* Four products must fit 320px without wrapping or clipping. */
+@media (max-width: 400px) { .race-desk-nav { gap: 8px; justify-content: space-between; } .race-desk-nav a { letter-spacing: .03em; } }
 .display-descriptor { display: block; margin-top: 14px; color: var(--text-muted); font-family: var(--font-body); line-height: 1.5; }
 .hero-grid { display: grid; gap: 24px; align-items: end; margin-top: 22px; }
 .display { margin: 0; font: 700 clamp(64px, 10vw, 150px)/.84 var(--font-display); letter-spacing: -.01em; text-transform: uppercase; }

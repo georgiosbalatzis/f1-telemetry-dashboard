@@ -49,7 +49,7 @@ try {
           }
           assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'horizontal overflow');
           const raceDesk = page.getByRole('navigation', { name: 'Race Desk' });
-          assert.deepEqual(await raceDesk.locator('a').allTextContents(), ['THE GRID', 'TELEMETRY', 'GHOST CAR']);
+          assert.deepEqual(await raceDesk.locator('a').allTextContents(), ['THE GRID', 'TELEMETRY', 'GHOST CAR', 'TYRES']);
           assert.deepEqual(await raceDesk.locator('[aria-current="page"]').allTextContents(), ['TELEMETRY']);
           const kicker = await page.locator('.kicker-row .kicker').boundingBox();
           let previous = null;
