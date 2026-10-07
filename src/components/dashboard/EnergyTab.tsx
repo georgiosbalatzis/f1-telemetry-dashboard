@@ -40,7 +40,7 @@ export const EnergyTab = memo(function EnergyTab({
     ))),
     [comparisonEnergyData, driverNums],
   );
-  const comparisonMode = comparisonDriverNums.length >= 2;
+  const comparisonMode = comparisonDriverNums.length > 0;
   const energyLegend = useMemo<ChartLegendItem[]>(
     () => (comparisonMode ? comparisonDriverNums : driverNums.slice(0, 1)).map((driverNumber) => ({
       label: driverMap[driverNumber]?.name_acronym || `#${driverNumber}`,

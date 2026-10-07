@@ -131,6 +131,7 @@
 html, body { background: var(--bg); color: var(--text); }
 body { margin: 0; font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 #root { min-height: 100vh; min-height: 100dvh; } /* dvh: on iOS 100vh is taller than the visible viewport */
+#root:has(.embed-mode) { min-height: 0; }
 button, input, select { font-family: inherit; }
 button, select, summary { cursor: pointer; }
 button:disabled, select:disabled { cursor: not-allowed; opacity: .5; }
@@ -270,8 +271,13 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .recharts-text { font-family: var(--font-body); font-variant-numeric: tabular-nums; }
 .recharts-cartesian-grid line { stroke: var(--chart-grid); }
 .recharts-cartesian-axis-line, .recharts-cartesian-axis-tick-line { stroke: var(--chart-grid); }
-.error-state { padding: 24px 0; border-block: 1px solid var(--line); color: var(--color-danger); font-size: 14px; }
-.error-state p { margin-block: 8px; overflow-wrap: anywhere; }
+.error-state { display: grid; justify-items: start; gap: 12px; padding: 24px; border: 1px solid var(--line); border-left: 3px solid var(--accent); background: var(--surface); color: var(--text); font-size: 14px; line-height: 1.6; }
+.error-state > svg { color: var(--accent); }
+.error-state h3 { margin: 0; font: 600 18px/1.3 var(--font-body); }
+.error-state p { margin: 0; max-width: 54ch; color: var(--text-muted); overflow-wrap: anywhere; }
+.error-retry { min-height: 44px; padding: 10px 16px; border: 1px solid var(--line-strong); background: var(--surface-soft); color: var(--text); font: 600 14px/1.3 var(--font-body); cursor: pointer; }
+.error-retry:hover { border-color: var(--accent); }
+.error-retry:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .lap-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; }
 .lap-comparison > div { padding: 0 0 14px; border-bottom: 1px solid var(--line); }
 .data-note { font-size: 12px; line-height: 1.6; color: var(--text-muted); }
@@ -1173,7 +1179,6 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .embed-bar .brand { font-size: 22px; }
 .embed-bar-title { flex: 1; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 400; color: var(--text-muted); }
 .embed-bar-open { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; font-weight: 600; letter-spacing: .04em; white-space: nowrap; }
-.embed-partial { margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
 .embed-mode .analysis-content { gap: 24px; padding-bottom: 16px; }
 .embed-mode .dashboard-chart-actions { display: none; }
 .embed-mode .panel-lead .panel-heading h2 { margin: 14px 0 8px; font-size: clamp(20px, 3vw, 30px); }

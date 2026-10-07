@@ -1,6 +1,14 @@
 // UI strings live here (Greek; F1 terms stay English, as on f1stories.gr). Components migrate in as each rework phase touches them.
 export const copy = {
   locale: 'el-GR',
+  errors: {
+    title: 'Τα δεδομένα δεν είναι διαθέσιμα',
+    partialTitle: 'Η σύγκριση είναι μερική',
+    unavailable: 'Δεν ήταν δυνατή η φόρτωση των δεδομένων. Δοκίμασε ξανά σε λίγο.',
+    rateLimited: 'Η υπηρεσία δεδομένων δέχεται πολλά αιτήματα. Περίμενε λίγο και δοκίμασε ξανά.',
+    retry: 'Νέα προσπάθεια',
+    comparison: (loaded: number, total: number, missing: string) => `Διαθέσιμα δεδομένα για ${loaded} από ${total} οδηγούς. Δεν φορτώθηκαν: ${missing}.`,
+  },
   tabs: {
     telemetry: 'Τηλεμετρία',
     tires: 'Ελαστικά',

@@ -138,6 +138,11 @@ export function DashboardShell({
     expectsDrivers,
   } = data;
 
+  const failedEmbedDrivers = embedMode ? comparisonDrivers.filter((driver) => driver.status !== 'Loaded' && !driver.loading) : [];
+  const loadedEmbedDrivers = comparisonDrivers.filter((driver) => driver.status === 'Loaded').length;
+  const hideFailedEmbedContent = failedEmbedDrivers.length > 0 && loadedEmbedDrivers === 0 && !comparisonDrivers.some((driver) => driver.loading);
+  const embedRetries = [...new Set(failedEmbedDrivers.flatMap((driver) => driver.retry ? [driver.retry] : []))];
+
   const gapCards = useMemo(
     () => buildGapCards(viewModel.lapSummaries, viewModel.sectorRows, viewModel.cornerSplits),
     [viewModel.cornerSplits, viewModel.lapSummaries, viewModel.sectorRows],
@@ -256,17 +261,16 @@ export function DashboardShell({
 
           </>}
           <ErrorBoundary label={TAB_LABELS[filters.tab]} resetKey={tabBoundaryResetKey}>
-            {embedMode && comparisonDrivers.some((driver) => driver.status !== 'Loaded' && !driver.loading) && (
-              <p className="embed-partial" role="status">
-                {copy.band.partial(comparisonDrivers.filter((driver) => driver.status === 'Loaded').length, comparisonDrivers.length)}
-                {comparisonDrivers.filter((driver) => driver.status !== 'Loaded' && !driver.loading).map((driver) => (
-                  <span key={driver.driverNumber} title={driver.status}>
-                    {' · '}{driver.retry ? <button className="signal-retry" onClick={driver.retry}>{copy.band.retry(driver.name)}</button> : driver.name}
-                  </span>
-                ))}
-              </p>
+            {failedEmbedDrivers.length > 0 && (
+              <Err
+                msg={primaryTelemetry?.error || ''}
+                title={loadedEmbedDrivers > 0 ? copy.errors.partialTitle : copy.errors.title}
+                details={copy.errors.comparison(loadedEmbedDrivers, comparisonDrivers.length, failedEmbedDrivers.map((driver) => driver.name).join(', '))}
+                onAction={embedRetries.length ? () => embedRetries.forEach((retry) => retry()) : undefined}
+              />
             )}
             <TabLeadContext.Provider value={tabLead}>
+            {!hideFailedEmbedContent && (
             <div id="analysis-content" aria-label={TAB_LABELS[filters.tab]} className={contentLayoutClass}>
               {filters.tab === 'telemetry' && (
                 <Suspense fallback={<TabLoadingPlaceholder label="Loading telemetry view..." skeletonClassName="h-[240px] sm:h-[380px]" />}>
@@ -275,7 +279,7 @@ export function DashboardShell({
                   lapsLoading={lapsLoading}
                   sectorRows={viewModel.sectorRows}
                   telemetryLoading={telemetryLoading}
-                  telemetryError={primaryTelemetry?.error || null}
+                  telemetryError={embedMode ? null : primaryTelemetry?.error || null}
                   telemetryPoints={primaryTelemetry?.data?.length || 0}
                   speedData={viewModel.speedData}
                   comparisonSpeedData={viewModel.comparisonSpeedData}
@@ -406,6 +410,7 @@ export function DashboardShell({
                 </Suspense>
               )}
             </div>
+            )}
             </TabLeadContext.Provider>
           </ErrorBoundary>
           {!embedMode && <NextViews activeTab={filters.tab} onChange={filters.setTab} />}

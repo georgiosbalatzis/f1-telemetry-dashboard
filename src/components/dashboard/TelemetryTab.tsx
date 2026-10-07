@@ -116,7 +116,7 @@ export const TelemetryTab = memo(function TelemetryTab({
         onEmbedPanel={onEmbedPanel}
       >
         <SummaryStrip title={sessionTitle} subtitle={copy.scope.lapOption(lapNum)} summaries={lapSummaries} />
-        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[240px] sm:h-[380px]" /> : telemetryError ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : (comparisonSpeedData.length > 0 || speedData.length > 0) ? (
+        {telemetryLoading ? <ChartSkeleton label="Fetching car telemetry..." className="h-[240px] sm:h-[380px]" /> : telemetryError && !comparisonSpeedData.length && !speedData.length ? <Err msg={telemetryError} onAction={onTelemetryRetry} /> : (comparisonSpeedData.length > 0 || speedData.length > 0) ? (
           <ResponsiveTelemetryPlot data={speedPlot} colours={colours} />
         ) : <NoData msg="No telemetry data. The API may not have car data for this session/lap. Try a race session." />}
       </ChartPanel>
@@ -152,16 +152,16 @@ export const TelemetryTab = memo(function TelemetryTab({
 
       <ChartPanel
         title="Speed Delta"
-        sub={comparisonSpeedData.length > 0 ? 'Per-sample delta to the fastest selected driver at the same point of the lap' : 'Select at least two drivers with telemetry on this lap'}
+        sub={speedTraceLegend.length >= 2 ? 'Per-sample delta to the fastest selected driver at the same point of the lap' : 'Select at least two drivers with telemetry on this lap'}
         className="overflow-hidden"
         exportName={`speed-delta-lap-${lapNum}`}
-        legend={comparisonSpeedData.length > 0 ? speedTraceLegend : []}
+        legend={speedTraceLegend.length >= 2 ? speedTraceLegend : []}
         source={copy.chart.sourceCarData}
         panelId="telemetry-speed-delta"
         embedMode={embedMode}
         onEmbedPanel={onEmbedPanel}
       >
-        {comparisonSpeedData.length > 0 ? (
+        {speedTraceLegend.length >= 2 ? (
           <div className="h-[160px] sm:h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={speedDeltaData} margin={CHART_MARGIN}>

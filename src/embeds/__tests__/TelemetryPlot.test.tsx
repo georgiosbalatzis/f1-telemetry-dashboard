@@ -42,11 +42,11 @@ describe('shared telemetry plots', () => {
     expect(figureLegend(data).map((item) => item.strokeDasharray)).toEqual([undefined, '6 4', '10 4', '10 3 2 3']);
   });
 
-  it('does not include a missing secondary driver in the sample fallback legend', () => {
+  it('keeps a partial comparison on the progress axis and omits the missing driver from the legend', () => {
     const data = plotFixture('speed', 'missing');
-    expect(data.axis).toBe('sample');
+    expect(data.axis).toBe('progress');
     expect(figureLegend(data).map((item) => item.label)).toEqual(['VER']);
-    expect(data.points.every((point) => !('progress' in point))).toBe(true);
+    expect(data.points.every((point) => typeof point.progress === 'number' && point.speed_4 === null)).toBe(true);
   });
 
   it('omits a selected driver whose requested lap is incomplete without mutating the live plot', () => {

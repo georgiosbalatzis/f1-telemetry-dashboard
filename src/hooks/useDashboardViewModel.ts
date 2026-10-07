@@ -50,7 +50,8 @@ export function buildNormalizedComparisonData(
   assignSample: (point: ComparisonPoint, driverNumber: number, sample: OpenF1CarData | undefined) => void,
 ) {
   const activeDrivers = driverNums.filter((driverNumber) => (telemetryByDriver[driverNumber] || []).length > 0);
-  if (activeDrivers.length < 2) return [];
+  // Keep a surviving driver's trace when a multi-driver request is partial.
+  if (driverNums.length < 2 || !activeDrivers.length) return [];
 
   return Array.from({ length: NORMALIZED_TELEMETRY_POINTS }, (_, index) => {
     const progress = Math.round((index / (NORMALIZED_TELEMETRY_POINTS - 1)) * 100);

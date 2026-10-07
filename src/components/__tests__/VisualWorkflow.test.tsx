@@ -6,6 +6,8 @@ import { TAB_LABELS } from '../dashboard/tabLabels';
 import type { Tab } from '../dashboard/types';
 import { copy } from '../../copy';
 
+const failures = vi.hoisted(() => ({ mode: 'none' as 'none' | 'all' | 'partial', retry: vi.fn() }));
+
 // Exercise the real shell, URL filters and handlers without a live OpenF1 service.
 vi.mock('../../hooks/useDashboard', async () => {
   const { useDashboardFilters } = await import('../../hooks/useDashboardFilters');
@@ -19,6 +21,7 @@ vi.mock('../../hooks/useDashboard', async () => {
     return {
       filters,
       ...Object.fromEntries(['meetings', 'sessions', 'drivers', 'stints', 'pits', 'weather', 'raceControl', 'teamRadio', 'positions', 'intervals', 'primaryTelemetry'].map((name) => [name, state])),
+      primaryTelemetry: { ...state, error: failures.mode === 'none' ? null : 'HTTP 429: Too Many Requests', refetch: failures.retry },
       selectionData: {
         circuitOptions: [{ v: 'Bahrain', l: 'Bahrain' }, { v: 'Monza', l: 'Monza' }],
         sessionOptions: [{ v: 9472, l: 'Race' }, { v: 9471, l: 'Qualifying' }],
@@ -36,7 +39,10 @@ vi.mock('../../hooks/useDashboard', async () => {
         filteredRadio: [], raceControlMessages: [], latestWeather: null,
         weatherTrend: [],
       },
-      comparisonDrivers: [], locationByDriver: {}, anyLoading: false, lapsLoading: false,
+      comparisonDrivers: failures.mode === 'none' ? [] : [
+        { driverNumber: 1, name: 'VER', status: 'Telemetry request failed', loading: false, retry: failures.retry },
+        { driverNumber: 44, name: 'HAM', status: failures.mode === 'partial' ? 'Loaded' : 'Telemetry request failed', loading: false, retry: failures.mode === 'partial' ? null : failures.retry },
+      ], locationByDriver: {}, anyLoading: false, lapsLoading: false,
       locationLoading: false, telemetryLoading: false, totalLaps: 3,
       telemetryByDriver: Object.fromEntries(filters.driverNums.map((number) => [number, [{ speed: 200, throttle: 80, brake: 20 }, { speed: 220, throttle: 100, brake: 0 }]])),
       canStepBackward: filters.lapNum > 1, canStepForward: filters.lapNum < 3,
@@ -47,6 +53,8 @@ vi.mock('../../hooks/useDashboard', async () => {
 
 const params = () => new URLSearchParams(window.location.search);
 beforeEach(() => {
+  failures.mode = 'none';
+  failures.retry.mockClear();
   if (!HTMLDialogElement.prototype.showModal) HTMLDialogElement.prototype.showModal = function showModal() { this.setAttribute('open', ''); };
   if (!HTMLDialogElement.prototype.close) HTMLDialogElement.prototype.close = function close() { this.removeAttribute('open'); };
   vi.stubGlobal('ResizeObserver', class {
@@ -227,9 +235,38 @@ it('exposes loading status and an accessible error retry', () => {
   const { rerender } = render(<ChartSkeleton label="Fetching car telemetry…" />);
   expect(screen.getByRole('status')).toHaveAccessibleName('Fetching car telemetry…');
   rerender(<Err msg="Telemetry unavailable" onAction={retry} />);
-  expect(screen.getByRole('alert')).toHaveTextContent('Telemetry unavailable');
-  fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+  expect(screen.getByRole('alert')).toHaveTextContent(copy.errors.unavailable);
+  expect(screen.getByRole('alert')).not.toHaveTextContent('Telemetry unavailable');
+  fireEvent.click(screen.getByRole('button', { name: copy.errors.retry }));
   expect(retry).toHaveBeenCalledOnce();
+});
+
+it('replaces a failed telemetry embed with one localized, retryable card and recovers', async () => {
+  failures.mode = 'all';
+  window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=1,44&lap=2&tab=telemetry&embed=1#telemetry-speed-trace');
+  const { container, rerender } = render(<DashboardContainer />);
+  expect(screen.getAllByRole('alert')).toHaveLength(1);
+  expect(screen.getByRole('alert')).toHaveTextContent(copy.errors.rateLimited);
+  expect(screen.getByRole('alert')).toHaveTextContent(copy.errors.comparison(0, 2, 'VER, HAM'));
+  expect(container).not.toHaveTextContent('HTTP 429');
+  expect(container).not.toHaveTextContent('Telemetry request failed');
+  expect(container.querySelector('.embed-partial')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: copy.errors.retry }));
+  expect(failures.retry).toHaveBeenCalledOnce();
+  failures.mode = 'none';
+  rerender(<DashboardContainer />);
+  await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument());
+  expect(await screen.findByRole('heading', { name: 'Speed Trace' })).toBeInTheDocument();
+});
+
+it('keeps a partial telemetry comparison visible with one error card and driver context', async () => {
+  failures.mode = 'partial';
+  window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=1,44&lap=2&tab=telemetry&embed=1#telemetry-speed-trace');
+  render(<DashboardContainer />);
+  expect(screen.getByRole('alert')).toHaveTextContent(copy.errors.partialTitle);
+  expect(screen.getByRole('alert')).toHaveTextContent(copy.errors.comparison(1, 2, 'VER'));
+  expect(await screen.findByRole('heading', { name: 'Speed Trace' })).toBeInTheDocument();
+  expect(screen.getAllByRole('alert')).toHaveLength(1);
 });
 
 it('renders only the requested embed panel and its legend without authoring controls', () => {

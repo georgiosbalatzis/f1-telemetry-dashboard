@@ -68,16 +68,18 @@ export function TableSkeleton({ rows = 5, label = 'Loading rows…' }: { rows?: 
   );
 }
 
-export function Err({ msg, actionLabel = 'Try again', onAction }: { msg: string; actionLabel?: string; onAction?: () => void }) {
+export function Err({ msg, title = copy.errors.title, details, actionLabel = copy.errors.retry, onAction }: { msg: string; title?: string; details?: ReactNode; actionLabel?: string; onAction?: () => void }) {
   return (
     <div role="alert" className="error-state">
-      <AlertTriangle size={18} className="mx-auto mb-2 opacity-60" />
-      <p>{msg}</p>
+      <AlertTriangle size={20} aria-hidden="true" />
+      <h3>{title}</h3>
+      <p>{/429|rate.?limit/i.test(msg) ? copy.errors.rateLimited : copy.errors.unavailable}</p>
+      {details && <p>{details}</p>}
       {onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="text-action"
+          className="error-retry"
         >
           {actionLabel}
         </button>

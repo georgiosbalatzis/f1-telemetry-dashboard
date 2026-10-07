@@ -11,6 +11,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDashboard } from '../hooks/useDashboard';
+import { useEmbedHeightReporter } from '../hooks/useEmbedHeightReporter';
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 import { COLORS, chartColorForTheme } from '../constants/colors';
 import { DriverProvider } from '../contexts/DriverContext';
@@ -151,6 +152,7 @@ export function DashboardContainer() {
   // ── Local UI state ─────────────────────────────────────────────────────
   const [splitMode,    setSplitMode]    = useState(readInitialSplitMode);
   const [embedMode]                     = useState(readInitialEmbedMode);
+  useEmbedHeightReporter(embedMode);
   const [composer, setComposer] = useState<{ panel: string | null; drafts: Partial<Record<EmbedPanelId, FigureDraft>>; emptyMessage: string; legacy: (panel: EmbedPanelId | null) => string } | null>(null);
   // Publication URLs keep their requested panel while API loading triggers rerenders.
   const [embedPanel]                    = useState(() => readInitialEmbedMode() ? window.location.hash.slice(1) : undefined);

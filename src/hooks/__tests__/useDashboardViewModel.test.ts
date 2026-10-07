@@ -18,7 +18,7 @@ function makeSamples(count: number, driverNumber: number): OpenF1CarData[] {
 }
 
 describe('buildNormalizedComparisonData', () => {
-  it('returns empty array when fewer than 2 active drivers', () => {
+  it('uses the sample-based trace when only one driver is selected', () => {
     const telemetry = { 44: makeSamples(50, 44) };
     const result = buildNormalizedComparisonData([44], telemetry, () => {});
     expect(result).toHaveLength(0);
@@ -29,9 +29,18 @@ describe('buildNormalizedComparisonData', () => {
     expect(result).toHaveLength(0);
   });
 
-  it('returns empty array when a driver has no telemetry samples', () => {
-    const telemetry = { 44: makeSamples(50, 44), 1: [] };
-    const result = buildNormalizedComparisonData([44, 1], telemetry, () => {});
+  it('keeps the second driver when the primary driver has no telemetry samples', () => {
+    const telemetry = { 44: [], 1: makeSamples(50, 1) };
+    const result = buildNormalizedComparisonData([44, 1], telemetry, (point, number, sample) => {
+      point[`speed_${number}`] = sample?.speed;
+    });
+    expect(result).toHaveLength(120);
+    expect(result[0]).toEqual({ progress: 0, speed_1: 200 });
+    expect(result[119]).toEqual({ progress: 100, speed_1: 249 });
+  });
+
+  it('returns no comparison when every driver is unavailable', () => {
+    const result = buildNormalizedComparisonData([44, 1], { 44: [], 1: null }, () => {});
     expect(result).toHaveLength(0);
   });
 
