@@ -153,12 +153,12 @@ export function DashboardContainer() {
   // ── Local UI state ─────────────────────────────────────────────────────
   const [splitMode,    setSplitMode]    = useState(readInitialSplitMode);
   const [embedMode]                     = useState(readInitialEmbedMode);
-  useEmbedHeightReporter(embedMode);
   const [composer, setComposer] = useState<{ panel: string | null; drafts: Partial<Record<EmbedPanelId, FigureDraft>>; emptyMessage: string; legacy: (panel: EmbedPanelId | null) => string } | null>(null);
   const [embedDialog, setEmbedDialog] = useState<{ snapshot: DashboardFilterSnapshot; panel: string | null; context: string } | null>(null);
   // Publication URLs keep their requested panel while API loading triggers rerenders.
   const [embedPanel]                    = useState(() => readInitialEmbedMode() ? window.location.hash.slice(1) : undefined);
   const [themeMode,    setThemeMode]    = useState<ThemeMode>(readInitialThemeMode);
+  useEmbedHeightReporter(embedMode, setThemeMode);
   const [presetName,   setPresetName]   = useState('');
   const [feedback,     setFeedback]     = useState<string | null>(null);
   const [savedPresets, setSavedPresets] = useState<Record<string, SavedPreset>>(readSavedPresets);

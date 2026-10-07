@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 /** Report the natural content height, including loading, error and recovered states. */
-export function useEmbedHeightReporter(embedMode: boolean) {
+export function useEmbedHeightReporter(embedMode: boolean, onTheme?: (theme: 'light' | 'dark') => void) {
   useEffect(() => {
     if (!embedMode || window.parent === window) return;
     const content = document.querySelector('.embed-mode');
@@ -28,11 +28,18 @@ export function useEmbedHeightReporter(embedMode: boolean) {
     };
     const onResize = () => schedule();
     const onMessage = (event: MessageEvent) => {
-      if (event.source !== window.parent || event.data?.type !== 'f1s-telemetry:measure') return;
+      const type = event.data?.type;
+      if (event.source !== window.parent || (type !== 'f1s-telemetry:measure' && type !== 'f1s-telemetry:theme')) return;
       // A reload can make document.referrer point to this frame itself. In that
       // case the hosting window's measurement request supplies its exact origin.
       if (event.origin !== parentOrigin && parentOrigin !== window.location.origin) return;
       parentOrigin = event.origin;
+      if (type === 'f1s-telemetry:theme') {
+        // The article owns the theme: its choice lives in f1stories.gr storage, unreadable from this origin.
+        const theme = event.data.theme;
+        if (theme === 'light' || theme === 'dark') onTheme?.(theme);
+        return;
+      }
       schedule(true);
     };
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize);
@@ -48,5 +55,5 @@ export function useEmbedHeightReporter(embedMode: boolean) {
       window.removeEventListener('message', onMessage);
       window.removeEventListener('resize', onResize);
     };
-  }, [embedMode]);
+  }, [embedMode, onTheme]);
 }

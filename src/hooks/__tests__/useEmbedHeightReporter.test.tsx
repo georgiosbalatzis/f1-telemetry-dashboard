@@ -81,3 +81,16 @@ it('finds the host again when a reloaded frame refers to itself', () => {
   flush();
   expect(postMessage).toHaveBeenLastCalledWith({ type: 'f1s-telemetry:resize', height: 960 }, 'https://f1stories.gr');
 });
+
+it('applies the hosting article theme only from the parent frame and origin', () => {
+  const onTheme = vi.fn();
+  renderHook(() => useEmbedHeightReporter(true, onTheme));
+  const send = (data: unknown, source: unknown = parent, origin = 'https://f1stories.gr') =>
+    act(() => { window.dispatchEvent(new MessageEvent('message', { data, source: source as MessageEventSource, origin })); });
+  send({ type: 'f1s-telemetry:theme', theme: 'dark' }, {});
+  send({ type: 'f1s-telemetry:theme', theme: 'dark' }, parent, 'https://evil.example');
+  send({ type: 'f1s-telemetry:theme', theme: 'purple' });
+  expect(onTheme).not.toHaveBeenCalled();
+  send({ type: 'f1s-telemetry:theme', theme: 'dark' });
+  expect(onTheme).toHaveBeenCalledWith('dark');
+});
