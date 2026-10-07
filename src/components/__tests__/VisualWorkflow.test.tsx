@@ -52,6 +52,13 @@ vi.mock('../../hooks/useDashboard', async () => {
 });
 
 const params = () => new URLSearchParams(window.location.search);
+const resizePreview = (height = 500, origin?: string, source?: MessageEventSource) => {
+  const frame = screen.getByTitle(copy.iframe.previewTitle) as HTMLIFrameElement;
+  fireEvent(window, new MessageEvent('message', {
+    source: source ?? frame.contentWindow, origin: origin ?? new URL(frame.src).origin,
+    data: { type: 'f1s-telemetry:resize', height },
+  }));
+};
 beforeEach(() => {
   failures.mode = 'none';
   failures.retry.mockClear();
@@ -136,10 +143,10 @@ it('keeps share, embed, print, split, theme persistence and saved presets wired'
   fireEvent.click(screen.getByRole('button', { name: copy.cardBar.share }));
   await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('layout=split&theme=light')));
   fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
-  expect(screen.getByRole('dialog', { name: copy.embed.title })).toBeInTheDocument();
-  fireEvent.click(screen.getByText(copy.embed.legacy));
-  fireEvent.click(screen.getByRole('button', { name: copy.embed.legacyCopy }));
-  await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('embed=1&theme=light')));
+  expect(screen.getByRole('dialog', { name: copy.iframe.title })).toBeInTheDocument();
+  resizePreview();
+  fireEvent.click(screen.getByRole('button', { name: copy.iframe.copy }));
+  await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('embed=1&amp;theme=light')));
   fireEvent.click(screen.getByRole('button', { name: copy.masthead.print }));
   expect(print).toHaveBeenCalledOnce();
 });
@@ -160,22 +167,27 @@ it('starts from the stored theme and ignores values it does not own', () => {
   vi.unstubAllGlobals();
 });
 
-it('opens the author composer for a whole tab and keeps the legacy iframe hash empty', async () => {
+it('opens a ready-to-copy chooser and preserves a deliberate whole-tab choice without a navigation hash', async () => {
   window.history.replaceState({}, '', '/?year=2024&circuit=Bahrain&session=9472&drivers=1&lap=2&tab=telemetry#telemetry');
   const clipboard = vi.fn().mockResolvedValue(undefined);
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: clipboard } });
   render(<DashboardContainer />);
   fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
-  expect(screen.getByRole('dialog', { name: copy.embed.title })).toBeInTheDocument();
-  expect(screen.getByLabelText(copy.embed.panel)).toHaveValue('');
-  fireEvent.click(screen.getByText(copy.embed.legacy));
-  fireEvent.click(screen.getByRole('button', { name: copy.embed.legacyCopy }));
+  expect(screen.getByRole('dialog', { name: copy.iframe.title })).toBeInTheDocument();
+  expect(screen.getByRole('radio', { name: copy.embed.speed })).toBeChecked();
+  expect(screen.queryByLabelText(copy.embed.titleLabel)).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('radio', { name: copy.iframe.wholeTab }));
+  resizePreview(2400);
+  fireEvent.click(screen.getByRole('button', { name: copy.iframe.copy }));
   await waitFor(() => expect(clipboard).toHaveBeenCalled());
   const snippet = clipboard.mock.calls[0][0] as string;
-  const src = new URL(snippet.match(/src="([^"]+)"/)![1]);
+  const template = document.createElement('template');
+  template.innerHTML = snippet;
+  const src = new URL(template.content.querySelector('iframe')!.src);
   expect(src.searchParams.get('embed')).toBe('1');
   expect(src.searchParams.get('lap')).toBe('2');
   expect(src.hash).toBe('');
+  expect(template.content.querySelector('iframe')!.getAttribute('height')).toBe('2400');
   cleanup();
   window.history.replaceState({}, '', src.pathname + src.search);
   render(<DashboardContainer />);
@@ -186,19 +198,20 @@ it('opens the author composer for a whole tab and keeps the legacy iframe hash e
 it('preselects a supported panel and freezes its scope when the dashboard lap changes', async () => {
   render(<DashboardContainer />);
   fireEvent.click((await screen.findAllByRole('button', { name: copy.panel.embed }))[0]);
-  const dialog = screen.getByRole('dialog', { name: copy.embed.title });
-  expect(screen.getByLabelText(copy.embed.panel)).toHaveValue('telemetry-speed-trace');
+  const dialog = screen.getByRole('dialog', { name: copy.iframe.title });
+  expect(screen.getByRole('radio', { name: copy.embed.speed })).toBeChecked();
   expect(dialog).toHaveTextContent('L2');
   fireEvent.click(screen.getByRole('button', { name: copy.scope.nextLap }));
   expect(params().get('lap')).toBe('3');
   expect(dialog).toHaveTextContent('L2');
-  expect(screen.getByRole('link', { name: copy.embed.open })).toHaveAttribute('href', expect.stringContaining('lap=2'));
+  expect((screen.getByLabelText(copy.iframe.code) as HTMLTextAreaElement).value).toContain('lap=2');
 });
 
 it('keeps the publication marker selectable when clipboard permission is denied', async () => {
   Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: vi.fn().mockRejectedValue(new DOMException('denied', 'NotAllowedError')) } });
   render(<DashboardContainer />);
   fireEvent.click((await screen.findAllByRole('button', { name: copy.panel.embed }))[0]);
+  fireEvent.click(screen.getByRole('button', { name: `${copy.iframe.savedFigure} ↗` }));
   fireEvent.change(screen.getByLabelText(copy.embed.titleLabel), { target: { value: 'Bahrain pedal trace' } });
   fireEvent.click(screen.getByRole('button', { name: copy.embed.marker }));
   expect(await screen.findByRole('alert')).toHaveTextContent(copy.embed.copyFailed);
@@ -206,6 +219,41 @@ it('keeps the publication marker selectable when clipboard permission is denied'
   expect(marker).toHaveValue('TELEMETRY:bahrain-pedal-trace.f1embed.json');
   expect(marker).toHaveFocus();
   expect((marker as HTMLInputElement).selectionEnd).toBe(marker.getAttribute('value')?.length);
+});
+
+it('accepts only preview measurements and copies the selected panel, theme and natural height', async () => {
+  const clipboard = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: clipboard } });
+  render(<DashboardContainer />);
+  fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
+  const copyButton = screen.getByRole('button', { name: copy.iframe.copy });
+  expect(copyButton).toBeDisabled();
+  resizePreview(500, 'https://evil.example');
+  resizePreview(500, undefined, window);
+  resizePreview(99);
+  expect(copyButton).toBeDisabled();
+  resizePreview(533);
+  expect(copyButton).toBeEnabled();
+  fireEvent.click(screen.getByRole('radio', { name: copy.embed.pedals }));
+  fireEvent.click(screen.getByRole('radio', { name: copy.iframe.dark }));
+  expect(copyButton).toBeDisabled();
+  resizePreview(372);
+  fireEvent.click(copyButton);
+  await waitFor(() => expect(clipboard).toHaveBeenCalledWith(expect.stringContaining('theme=dark#telemetry-throttle-brake')));
+  expect(clipboard.mock.calls[0][0]).toContain('height="372"');
+  expect(await screen.findByText(copy.iframe.copied)).toBeInTheDocument();
+});
+
+it('selects the iframe code for manual copying when clipboard permission is denied', async () => {
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: vi.fn().mockRejectedValue(new DOMException('denied', 'NotAllowedError')) } });
+  render(<DashboardContainer />);
+  fireEvent.click(screen.getByRole('button', { name: copy.cardBar.embed }));
+  resizePreview();
+  fireEvent.click(screen.getByRole('button', { name: copy.iframe.copy }));
+  expect(await screen.findByText(copy.iframe.copyBlocked)).toBeInTheDocument();
+  const code = screen.getByLabelText(copy.iframe.code) as HTMLTextAreaElement;
+  expect(code).toHaveFocus();
+  expect(code.selectionEnd - code.selectionStart).toBe(code.value.length);
 });
 
 it('restores a read-only article embed with an open-analysis link', async () => {

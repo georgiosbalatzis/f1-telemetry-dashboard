@@ -120,7 +120,9 @@ export function EmbedComposer({ initialPanel, drafts, emptyMessage, theme, analy
     }
   };
 
-  return createPortal(<dialog ref={dialog} className="embed-composer" aria-labelledby="embed-composer-title" onClose={onClose}>
+  return createPortal(<dialog ref={dialog} className="embed-composer" aria-labelledby="embed-composer-title" onClose={() => {
+    if (!dialog.current?.open) onClose();
+  }}>
     <header className="embed-composer-header">
       <div><span className="embed-composer-kicker">F1 STORIES / AUTHORING</span><h2 id="embed-composer-title">{copy.embed.title}</h2></div>
       <button type="button" aria-label={copy.embed.close} onClick={close}>×</button>

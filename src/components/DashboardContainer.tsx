@@ -21,6 +21,7 @@ import { copy } from '../copy';
 import type { Tab } from './dashboard/types';
 import { buildDashboardLink } from '../embeds/links';
 import { EmbedComposer, type FigureDraft } from '../embeds/EmbedComposer';
+import { EmbedDialog } from '../embeds/EmbedDialog';
 import { figurePlotData, omitUnavailableFigureDrivers } from '../embeds/plotModel';
 import { cornerMarks } from './dashboard/cornerMarks';
 import type { EmbedPanelId } from '../embeds/contract';
@@ -154,6 +155,7 @@ export function DashboardContainer() {
   const [embedMode]                     = useState(readInitialEmbedMode);
   useEmbedHeightReporter(embedMode);
   const [composer, setComposer] = useState<{ panel: string | null; drafts: Partial<Record<EmbedPanelId, FigureDraft>>; emptyMessage: string; legacy: (panel: EmbedPanelId | null) => string } | null>(null);
+  const [embedDialog, setEmbedDialog] = useState<{ snapshot: DashboardFilterSnapshot; panel: string | null; context: string } | null>(null);
   // Publication URLs keep their requested panel while API loading triggers rerenders.
   const [embedPanel]                    = useState(() => readInitialEmbedMode() ? window.location.hash.slice(1) : undefined);
   const [themeMode,    setThemeMode]    = useState<ThemeMode>(readInitialThemeMode);
@@ -376,8 +378,14 @@ export function DashboardContainer() {
     });
   }, [data, filters.driverNums, filters.snapshot, themeMode]);
 
-  const handleEmbedTab = useCallback((tab: Tab) => handleOpenComposer(tab, null), [handleOpenComposer]);
-  const handleEmbedPanel = useCallback((panelId: string) => handleOpenComposer('telemetry', panelId), [handleOpenComposer]);
+  const handleOpenEmbed = useCallback((tab: Tab, panel: string | null) => {
+    setEmbedDialog({
+      snapshot: { ...filters.snapshot, tab, driverNums: [...filters.driverNums] }, panel,
+      context: `${filters.snapshot.year} · ${filters.snapshot.circuit ?? ''} · ${sessionLabel} · ${filters.driverNums.map(number => data.selectionData.driverMap[number]?.name_acronym ?? `#${number}`).join(' / ')} · L${filters.snapshot.lapNum}`,
+    });
+  }, [data.selectionData.driverMap, filters.driverNums, filters.snapshot, sessionLabel]);
+  const handleEmbedTab = useCallback((tab: Tab) => handleOpenEmbed(tab, null), [handleOpenEmbed]);
+  const handleEmbedPanel = useCallback((panelId: string) => handleOpenEmbed('telemetry', panelId), [handleOpenEmbed]);
 
   const handlePrint       = useCallback(() => { setFeedback(copy.masthead.printing); window.print(); }, []);
   const handleToggleSplit = useCallback(() => { setSplitMode((p) => !p); setFeedback(splitMode ? copy.masthead.splitDisabled : copy.masthead.splitEnabled); }, [splitMode]);
@@ -429,6 +437,15 @@ export function DashboardContainer() {
       onToggleTheme={handleToggleTheme}
       onBack={handleBack}
     />
+    {embedDialog && <EmbedDialog
+      snapshot={embedDialog.snapshot}
+      initialPanel={embedDialog.panel}
+      context={embedDialog.context}
+      theme={themeMode}
+      baseUrl={window.location.origin + window.location.pathname}
+      onClose={() => setEmbedDialog(null)}
+      onExport={(panel) => { setEmbedDialog(null); handleOpenComposer(embedDialog.snapshot.tab, panel); }}
+    />}
     {composer && <EmbedComposer
       initialPanel={composer.panel}
       drafts={composer.drafts}
