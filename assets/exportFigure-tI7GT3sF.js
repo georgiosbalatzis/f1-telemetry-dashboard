@@ -1,4 +1,4 @@
-import{b as h,j as x}from"./react-vendor-BwQuba0_.js";import{T as p}from"./TelemetryPlot-DH6Nrl27.js";import{b as w}from"./index-DVc6sXf6.js";import{g as y}from"./exportChart-B0KOKSNY.js";import"./charts-D9uDyXIZ.js";import"./icons-BmoFMPaM.js";const v=`
+import{b as h,j as x}from"./react-vendor-BwQuba0_.js";import{T as p}from"./TelemetryPlot-DNi2oSRw.js";import{b as w}from"./index-DHpghKPP.js";import{g as y}from"./exportChart-B0KOKSNY.js";import"./charts-D9uDyXIZ.js";import"./icons-BmoFMPaM.js";const v=`
 .surface{box-sizing:border-box;font-family:Arial,'DejaVu Sans',sans-serif;font-variant-numeric:tabular-nums;color:var(--text);background:var(--bg)}
 .recharts-text{font-family:Arial,'DejaVu Sans',sans-serif;font-variant-numeric:tabular-nums}
 .recharts-cartesian-grid line,.recharts-cartesian-axis-line,.recharts-cartesian-axis-tick-line{stroke:var(--chart-grid)}
