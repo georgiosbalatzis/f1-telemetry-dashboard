@@ -1,3 +1,4 @@
+import { plotId } from './plotModel';
 /* eslint react-refresh/only-export-components: off -- library entry exports mount() alongside its internal React view. */
 import { createRoot, type Root } from 'react-dom/client';
 import { useMemo, useRef, useState } from 'react';
@@ -17,13 +18,13 @@ function InteractiveFigure({ bundle, theme, width }: { bundle: InteractiveFigure
   const { data, editorial, provenance, scope } = bundle;
   const [selected, setSelected] = useState(0);
   const active = data.points[selected] ?? data.points[0];
-  const axisKey = data.axis === 'progress' ? 'progress' : 'idx';
+  const axisKey = data.axis === 'distance' ? 'distance' : data.axis === 'progress' ? 'progress' : 'idx';
   const selectedX = active?.[axisKey] ?? 0;
   const selectedValue = useMemo(() => {
     const values = data.kind === 'speed'
-      ? data.drivers.map(driver => [`${driver.acronym} speed`, active?.[data.axis === 'sample' ? 'speed' : `speed_${driver.number}`] as number | null | undefined])
-      : data.drivers.flatMap(driver => ['throttle', 'brake'].map(channel => [`${driver.acronym} ${channel === 'brake' ? 'brake' : 'throttle'}`, active?.[data.axis === 'sample' ? channel : `${channel}_${driver.number}`] as number | null | undefined]));
-    return values.filter(([, value]) => typeof value === 'number').map(([name, value]) => `${name}: ${data.kind === 'pedals' && String(name).endsWith('brake') ? Math.abs(value as number).toFixed(1) : (value as number).toFixed(1)}${data.kind === 'speed' ? ' km/h' : '%'}`).join(' · ');
+      ? data.drivers.map(driver => [`${driver.acronym} speed`, active?.[data.axis === 'sample' ? 'speed' : `speed_${plotId(driver)}`] as number | null | undefined])
+      : data.drivers.flatMap(driver => ['throttle', 'brake'].map(channel => [`${driver.acronym} ${channel === 'brake' ? 'brake' : 'throttle'}`, active?.[data.axis === 'sample' ? channel : `${channel}_${plotId(driver)}`] as number | null | undefined]));
+    return values.filter(([, value]) => typeof value === 'number').map(([name, value]) => `${name}: ${data.kind === 'pedals' && String(name).endsWith('brake') ? Math.abs(value as number).toFixed(1) : (value as number).toFixed(1)}${data.kind === 'speed' ? ' km/h' : data.axis === 'distance' && String(name).endsWith('brake') ? ' (application state, 0=off / 100=on)' : '%'}`).join(' · ');
   }, [active, data]);
   const pointer = useRef<{ x: number; y: number; touch: boolean } | null>(null);
   const pointFromPointer = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -34,7 +35,7 @@ function InteractiveFigure({ bundle, theme, width }: { bundle: InteractiveFigure
     const share = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
     setSelected(Math.round(share * (data.points.length - 1)));
   };
-  const label = data.axis === 'progress' ? `Lap progress ${Number(selectedX).toFixed(1)}%` : `Sample ${selectedX}`;
+  const label = data.axis === 'distance' ? `Distance ${Number(selectedX).toFixed(0)} m` : data.axis === 'progress' ? `Lap progress ${Number(selectedX).toFixed(1)}%` : `Sample ${selectedX}`;
   const source = `OpenF1 · ${provenance.method} · ${scope.year} ${scope.circuit} · lap ${scope.lapNum}`;
   return <section className="surface" data-theme={theme} aria-label={`Interactive telemetry: ${editorial.title}`}>
     <h4>{editorial.title}</h4><p className="meta">{scope.year} · {scope.circuit} · lap {scope.lapNum} · {data.drivers.map(driver => driver.acronym).join(', ')}</p>
@@ -43,7 +44,7 @@ function InteractiveFigure({ bundle, theme, width }: { bundle: InteractiveFigure
     </div>
     <div className="control"><label htmlFor={`sample-${scope.sessionKey}-${scope.lapNum}`}>Inspect a saved value</label><input id={`sample-${scope.sessionKey}-${scope.lapNum}`} type="range" min="0" max={data.points.length - 1} step="1" value={selected} aria-label={`Inspect telemetry point: ${label}`} aria-valuetext={`${label}. ${selectedValue}`} onChange={event => setSelected(Number(event.currentTarget.value))} /></div>
     <p className="readout" role="status" aria-live="polite"><strong>{label}:</strong> {selectedValue || 'No measurement at this point'}</p>
-    <details><summary>View all saved values</summary><div className="table-wrap"><table><caption>{editorial.description}</caption><thead><tr><th scope="col">{data.axis === 'progress' ? 'Progress (%)' : 'Sample'}</th>{data.kind === 'speed' ? data.drivers.map(driver => <th scope="col" key={driver.number}>{driver.acronym} (km/h)</th>) : data.drivers.flatMap(driver => [<th scope="col" key={`${driver.number}-t`}>{driver.acronym} throttle (%)</th>, <th scope="col" key={`${driver.number}-b`}>{driver.acronym} brake (%)</th>])}</tr></thead><tbody>{data.points.map((point, index) => <tr key={index}><th scope="row">{point[axisKey]}</th>{data.kind === 'speed' ? data.drivers.map(driver => <td key={driver.number}>{format(point[data.axis === 'sample' ? 'speed' : `speed_${driver.number}`], ' km/h')}</td>) : data.drivers.flatMap(driver => ['throttle', 'brake'].map(channel => <td key={`${driver.number}-${channel}`}>{format(point[data.axis === 'sample' ? channel : `${channel}_${driver.number}`], '%', channel === 'brake')}</td>))}</tr>)}</tbody></table></div></details>
+    <details><summary>View all saved values</summary><div className="table-wrap"><table><caption>{editorial.description}</caption><thead><tr><th scope="col">{data.axis === 'distance' ? 'Distance (m)' : data.axis === 'progress' ? 'Progress (%)' : 'Sample'}</th>{data.kind === 'speed' ? data.drivers.map(driver => <th scope="col" key={plotId(driver)}>{driver.acronym} (km/h)</th>) : data.drivers.flatMap(driver => [<th scope="col" key={`${plotId(driver)}-t`}>{driver.acronym} throttle (%)</th>, <th scope="col" key={`${plotId(driver)}-b`}>{driver.acronym} brake {data.axis === 'distance' ? '(on/off)' : '(%)'}</th>])}</tr></thead><tbody>{data.points.map((point, index) => <tr key={index}><th scope="row">{point[axisKey]}</th>{data.kind === 'speed' ? data.drivers.map(driver => <td key={plotId(driver)}>{format(point[data.axis === 'sample' ? 'speed' : `speed_${plotId(driver)}`], ' km/h')}</td>) : data.drivers.flatMap(driver => ['throttle', 'brake'].map(channel => <td key={`${plotId(driver)}-${channel}`}>{data.axis === 'distance' && channel === 'brake' ? point[`${channel}_${plotId(driver)}`] == null ? '—' : point[`${channel}_${plotId(driver)}`] === 0 ? 'OFF' : 'ON' : format(point[data.axis === 'sample' ? channel : `${channel}_${plotId(driver)}`], '%', channel === 'brake')}</td>))}</tr>)}</tbody></table></div></details>
     <p className="description">{editorial.description}</p><p className="source">{source}</p>
   </section>;
 }

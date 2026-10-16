@@ -1,0 +1,140 @@
+{
+  "generatedAt": "2026-10-16T12:36:30.424Z",
+  "sessionKey": 11384,
+  "sourceRequests": [
+    "https://api.openf1.org/v1/sessions?year=2026&circuit_short_name=Singapore",
+    "https://api.openf1.org/v1/laps?session_key=11384&driver_number=44",
+    "https://api.openf1.org/v1/race_control?session_key=11384",
+    "https://api.openf1.org/v1/session_result?session_key=11384",
+    "https://api.openf1.org/v1/car_data?session_key=11384&driver_number=44&date>=2026-10-10T14:20:19.045Z&date<=2026-10-10T14:21:50.541Z",
+    "https://api.openf1.org/v1/location?session_key=11384&driver_number=44&date>=2026-10-10T14:20:19.045Z&date<=2026-10-10T14:21:50.541Z",
+    "https://api.openf1.org/v1/car_data?session_key=11384&driver_number=44&date>=2026-10-10T14:28:42.974Z&date<=2026-10-10T14:30:14.622Z",
+    "https://api.openf1.org/v1/location?session_key=11384&driver_number=44&date>=2026-10-10T14:28:42.974Z&date<=2026-10-10T14:30:14.622Z"
+  ],
+  "rawFiles": [
+    {
+      "file": "raw/sessions.json",
+      "sha256": "18b7d6691a910ce4addffe48d9efc4078e6c9d2ecc1d7e1a4d53999e20390395"
+    },
+    {
+      "file": "raw/laps.json",
+      "sha256": "1d7b10af686fd261167996a4eb4cf574c1aba8033b9ae1c661e999077306c764"
+    },
+    {
+      "file": "raw/race-control.json",
+      "sha256": "254ef3fdf7c566cf4f1a4cb886510e718429e48deee2bb32566a8464ed4d439b"
+    },
+    {
+      "file": "raw/results.json",
+      "sha256": "59a19fc10943a47ca7e8d9ff3167201b37199ce4059a8876783df43e0a945634"
+    },
+    {
+      "file": "raw/circuit.json",
+      "sha256": "1797b25b150581a50932b675400042d79d30f213dd890a43c99d8c77fc074243"
+    },
+    {
+      "file": "raw/car_data-lap-21.json",
+      "sha256": "2b403b1315f9edb2624517a0ed68855514c3c5cc2c70e0dfc8972c14fad826eb"
+    },
+    {
+      "file": "raw/car_data-lap-24.json",
+      "sha256": "2c9a8847d83f416902569b18f17f49df1362f3c853a42ad864603f5aeac2b1f1"
+    },
+    {
+      "file": "raw/location-lap-21.json",
+      "sha256": "f9cb16ed91e900acd0d0b86acf7c7616e118da4d263b55d25efd282098602573"
+    },
+    {
+      "file": "raw/location-lap-24.json",
+      "sha256": "09189510a14f5383e92fd26ff569d37805b80ebb86ce73f45ff51ab4c0abc8df"
+    }
+  ],
+  "outputFiles": [
+    "A-lap-a-speed-narrowLight.svg",
+    "A-lap-a-speed-narrowLight.png",
+    "A-lap-a-speed-wideLight.svg",
+    "A-lap-a-speed-wideLight.png",
+    "A-lap-a-speed-narrowDark.svg",
+    "A-lap-a-speed-narrowDark.png",
+    "A-lap-a-speed-wideDark.svg",
+    "A-lap-a-speed-wideDark.png",
+    "B-lap-b-speed-narrowLight.svg",
+    "B-lap-b-speed-narrowLight.png",
+    "B-lap-b-speed-wideLight.svg",
+    "B-lap-b-speed-wideLight.png",
+    "B-lap-b-speed-narrowDark.svg",
+    "B-lap-b-speed-narrowDark.png",
+    "B-lap-b-speed-wideDark.svg",
+    "B-lap-b-speed-wideDark.png",
+    "C-combined-speed-narrowLight.svg",
+    "C-combined-speed-narrowLight.png",
+    "C-combined-speed-wideLight.svg",
+    "C-combined-speed-wideLight.png",
+    "C-combined-speed-narrowDark.svg",
+    "C-combined-speed-narrowDark.png",
+    "C-combined-speed-wideDark.svg",
+    "C-combined-speed-wideDark.png",
+    "D-throttle-brake-narrowLight.svg",
+    "D-throttle-brake-narrowLight.png",
+    "D-throttle-brake-wideLight.svg",
+    "D-throttle-brake-wideLight.png",
+    "D-throttle-brake-narrowDark.svg",
+    "D-throttle-brake-narrowDark.png",
+    "D-throttle-brake-wideDark.svg",
+    "D-throttle-brake-wideDark.png",
+    "E-T1-speed-narrowLight.svg",
+    "E-T1-speed-narrowLight.png",
+    "E-T1-speed-wideLight.svg",
+    "E-T1-speed-wideLight.png",
+    "E-T1-speed-narrowDark.svg",
+    "E-T1-speed-narrowDark.png",
+    "E-T1-speed-wideDark.svg",
+    "E-T1-speed-wideDark.png",
+    "E-T1-pedals-narrowLight.svg",
+    "E-T1-pedals-narrowLight.png",
+    "E-T1-pedals-wideLight.svg",
+    "E-T1-pedals-wideLight.png",
+    "E-T1-pedals-narrowDark.svg",
+    "E-T1-pedals-narrowDark.png",
+    "E-T1-pedals-wideDark.svg",
+    "E-T1-pedals-wideDark.png",
+    "E-T3-speed-narrowLight.svg",
+    "E-T3-speed-narrowLight.png",
+    "E-T3-speed-wideLight.svg",
+    "E-T3-speed-wideLight.png",
+    "E-T3-speed-narrowDark.svg",
+    "E-T3-speed-narrowDark.png",
+    "E-T3-speed-wideDark.svg",
+    "E-T3-speed-wideDark.png",
+    "E-T3-pedals-narrowLight.svg",
+    "E-T3-pedals-narrowLight.png",
+    "E-T3-pedals-wideLight.svg",
+    "E-T3-pedals-wideLight.png",
+    "E-T3-pedals-narrowDark.svg",
+    "E-T3-pedals-narrowDark.png",
+    "E-T3-pedals-wideDark.svg",
+    "E-T3-pedals-wideDark.png",
+    "E-T1-detail-narrowLight.svg",
+    "E-T1-detail-narrowLight.png",
+    "E-T1-detail-wideLight.svg",
+    "E-T1-detail-wideLight.png",
+    "E-T1-detail-narrowDark.svg",
+    "E-T1-detail-narrowDark.png",
+    "E-T1-detail-wideDark.svg",
+    "E-T1-detail-wideDark.png",
+    "E-T3-detail-narrowLight.svg",
+    "E-T3-detail-narrowLight.png",
+    "E-T3-detail-wideLight.svg",
+    "E-T3-detail-wideLight.png",
+    "E-T3-detail-narrowDark.svg",
+    "E-T3-detail-narrowDark.png",
+    "E-T3-detail-wideDark.svg",
+    "E-T3-detail-wideDark.png"
+  ],
+  "limitations": [
+    "Qualified: reconstructed physical distance, approximately ±20 m; gaps preserved. Unsuitable for metre-level onset claims or validated corner time losses.",
+    "FIA final classification verifies Lap A; Lap B duration and individual sectors are OpenF1 timing records, not independently verified against a complete FIA per-lap timing sheet.",
+    "OpenF1 date_start is approximate; end is start plus recorded duration.",
+    "The cumulative finish delta is unavailable; no corner time gains are claimed."
+  ]
+}

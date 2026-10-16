@@ -1,4 +1,5 @@
-import { useMemo, memo } from 'react';
+import { SameDriverComparison } from './SameDriverComparison';
+import { useMemo, useState, memo } from 'react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { teamColor } from '../../constants/colors';
 import { ResponsiveTelemetryPlot } from '../../embeds/TelemetryPlot';
@@ -17,6 +18,9 @@ import type { GapCardData } from './gapCardData';
 import { AXIS_TICK, AXIS_TICK_SOFT, CHART_MARGIN, evenTicks, formatLapAxis, useXTickCount } from './chartAxis';
 
 type Props = {
+  sessionKey?: number | null;
+  year?: number;
+  circuit?: string | null;
   lapNum: number;
   lapsLoading: boolean;
   sectorRows: SectorRow[];
@@ -37,6 +41,7 @@ type Props = {
 };
 
 export const TelemetryTab = memo(function TelemetryTab({
+  sessionKey, year = 2026, circuit,
   lapNum,
   lapsLoading,
   sectorRows,
@@ -55,6 +60,8 @@ export const TelemetryTab = memo(function TelemetryTab({
   onEmbedPanel,
   onTelemetryRetry,
 }: Props) {
+  const [comparisonMode, setComparisonMode] = useState('drivers');
+  const modeControl = !embedMode && sessionKey ? <label className="scope-field"><span className="field-label">Compare</span><select className="dashboard-select" value={comparisonMode} onChange={event => setComparisonMode(event.target.value)}><option value="drivers">Drivers · same lap</option><option value="laps">Same driver · different laps</option></select></label> : null;
   const { driverNums, driverMap, driverColor, driverDash } = useDriverContext();
   // Purple = quickest of the selected drivers in that sector, green = second quickest.
   const { s1Classes, s2Classes, s3Classes } = useMemo(() => buildSectorAnalysis(sectorRows), [sectorRows]);
@@ -100,8 +107,11 @@ export const TelemetryTab = memo(function TelemetryTab({
   const speedTraceLegend = figureLegend(speedPlot, 'light', colours);
   const controlLegend = figureLegend(pedalPlot, 'light', colours);
 
+  if (comparisonMode === 'laps' && sessionKey && !embedMode) return <PanelSelection embedMode={false}>{modeControl}<SameDriverComparison key={sessionKey} sessionKey={sessionKey} year={year} circuit={circuit ?? ''} sessionTitle={sessionTitle} /></PanelSelection>;
+
   return (
     <PanelSelection embedMode={embedMode}>
+      {modeControl}
       <ChartPanel lead
         title="Speed Trace"
         sub={comparisonSpeedData.length > 0

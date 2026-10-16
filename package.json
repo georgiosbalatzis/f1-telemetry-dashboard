@@ -15,7 +15,8 @@
     "preview": "vite preview",
     "check:tokens": "node scripts/check-design-tokens.mjs",
     "build:f1stories": "node scripts/build-f1stories.mjs",
-    "build:interactive": "vite build --config vite.interactive.config.ts"
+    "build:interactive": "vite build --config vite.interactive.config.ts",
+    "postbuild": "node scripts/copy-publication-analysis.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.503.0",

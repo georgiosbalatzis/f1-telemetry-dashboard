@@ -24,9 +24,9 @@
     "semantic_hash": "2683e26e70707841590ff4ad24253919"
   },
   "package.json": {
-    "mtime": 1791182866.516324,
-    "seen": 1791188214.983526,
-    "ast_hash": "82328fa363612420f5bd76a14f4974b3",
+    "mtime": 1792154763.3600476,
+    "seen": 1792154770.291306,
+    "ast_hash": "597a5252e8606f02455c9b7da8446ba5",
     "semantic_hash": ""
   },
   "public/manifest.json": {
@@ -54,15 +54,15 @@
     "semantic_hash": ""
   },
   "src/components/DashboardContainer.tsx": {
-    "mtime": 1791187841.4069195,
-    "seen": 1791188214.983534,
-    "ast_hash": "353128e86c4e0d8dffd4e2c5d065b35c",
+    "mtime": 1791407093.5266736,
+    "seen": 1792153496.5735621,
+    "ast_hash": "625f45c780fd580cd5c10955be09f8ad",
     "semantic_hash": ""
   },
   "src/components/DashboardShell.tsx": {
-    "mtime": 1791135090.4350731,
-    "seen": 1791188214.983534,
-    "ast_hash": "49d477e83cdbf1c487e70379cfc8a316",
+    "mtime": 1792152747.6006947,
+    "seen": 1792153496.5735621,
+    "ast_hash": "60b6836e67c6f51c82c3c81826274045",
     "semantic_hash": ""
   },
   "src/components/ErrorBoundary.tsx": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "src/components/__tests__/VisualWorkflow.test.tsx": {
-    "mtime": 1791187984.2464838,
-    "seen": 1791188214.98354,
-    "ast_hash": "fcf431b88374f046d3296c318318a3c0",
+    "mtime": 1791382282.7858193,
+    "seen": 1792153496.5737112,
+    "ast_hash": "95fdaf221ec7e6209128d0060e90b666",
     "semantic_hash": ""
   },
   "src/components/dashboard/BroadcastTab.tsx": {
@@ -138,56 +138,56 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/EnergyTab.tsx": {
-    "mtime": 1791060054.5511112,
-    "seen": 1791133044.816442,
-    "ast_hash": "069b4d9bc7041fcec567616f9bcaed52",
+    "mtime": 1791381239.92,
+    "seen": 1792153496.57384,
+    "ast_hash": "3faa4f4ea822959c8c1dc0daf9bc98a1",
     "semantic_hash": ""
   },
   "src/components/dashboard/IncidentsTab.tsx": {
-    "mtime": 1790837125.752734,
-    "seen": 1790863422.725539,
+    "mtime": 1792144487.3400967,
+    "seen": 1792153496.573859,
     "ast_hash": "087949d49363e4fbe1df0ad3bd99b774",
     "semantic_hash": ""
   },
   "src/components/dashboard/IntervalsTab.tsx": {
-    "mtime": 1791060054.551836,
-    "seen": 1791133044.816444,
+    "mtime": 1792144487.3406153,
+    "seen": 1792153496.5738602,
     "ast_hash": "6268e6dc0aa4e48a1d404d2df6112644",
     "semantic_hash": ""
   },
   "src/components/dashboard/PositionsTab.tsx": {
-    "mtime": 1790837125.753109,
-    "seen": 1790863422.7255418,
+    "mtime": 1792144487.340846,
+    "seen": 1792153496.573896,
     "ast_hash": "902c5206e55fa764fcfc14f50e1555fe",
     "semantic_hash": ""
   },
   "src/components/dashboard/RadioTab.tsx": {
-    "mtime": 1790837125.7532032,
-    "seen": 1790863422.7255418,
+    "mtime": 1792144487.3410914,
+    "seen": 1792153496.573896,
     "ast_hash": "deb027e09e277b26508c56d07b01b3f3",
     "semantic_hash": ""
   },
   "src/components/dashboard/StrategyTab.tsx": {
-    "mtime": 1790837125.7533927,
-    "seen": 1790863422.725544,
+    "mtime": 1792144487.341845,
+    "seen": 1792153496.573899,
     "ast_hash": "3c53814bc5497c49723a9f7d4a6ed7c9",
     "semantic_hash": ""
   },
   "src/components/dashboard/TelemetryTab.tsx": {
-    "mtime": 1791187577.3917227,
-    "seen": 1791188214.9835498,
-    "ast_hash": "39380fa4e206c09cdc7b3ecd2da44005",
+    "mtime": 1792152747.6001284,
+    "seen": 1792153496.5739179,
+    "ast_hash": "58f97b2f7ce4768eef920ffe061e3441",
     "semantic_hash": ""
   },
   "src/components/dashboard/TrackMapTab.tsx": {
-    "mtime": 1791060054.5524004,
-    "seen": 1791133044.816449,
+    "mtime": 1792144487.34258,
+    "seen": 1792153496.5739179,
     "ast_hash": "32e1bd6c2a4cae41db08b73756775adb",
     "semantic_hash": ""
   },
   "src/components/dashboard/WeatherTab.tsx": {
-    "mtime": 1790837125.7539027,
-    "seen": 1790863422.725546,
+    "mtime": 1792144487.3432238,
+    "seen": 1792153496.573919,
     "ast_hash": "27da372d6cb86622fbdae33b4a20114d",
     "semantic_hash": ""
   },
@@ -204,26 +204,26 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/broadcast/DriverCards.tsx": {
-    "mtime": 1790837125.7540905,
-    "seen": 1790863422.7255511,
+    "mtime": 1792144487.3433409,
+    "seen": 1792153496.5740979,
     "ast_hash": "9500a5cb344122109b68e14338838c30",
     "semantic_hash": ""
   },
   "src/components/dashboard/broadcast/SectorAnalysis.tsx": {
-    "mtime": 1790837125.7541854,
-    "seen": 1790863422.7255511,
+    "mtime": 1792144487.3435636,
+    "seen": 1792153496.5740979,
     "ast_hash": "431f8e51bb4351e83516075274b34735",
     "semantic_hash": ""
   },
   "src/components/dashboard/broadcast/SpeedTrap.tsx": {
-    "mtime": 1790837125.7543087,
-    "seen": 1790863422.725552,
+    "mtime": 1792144487.3436801,
+    "seen": 1792153496.5740988,
     "ast_hash": "b910b9d22aad939e385bf620cba33500",
     "semantic_hash": ""
   },
   "src/components/dashboard/broadcast/TimingTower.tsx": {
-    "mtime": 1790837125.7544038,
-    "seen": 1790863422.7255528,
+    "mtime": 1792144487.3437986,
+    "seen": 1792153496.5740988,
     "ast_hash": "b9e0b06f22a1eb57ca56df0f5367c402",
     "semantic_hash": ""
   },
@@ -252,9 +252,9 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/shared.tsx": {
-    "mtime": 1790837125.754991,
-    "seen": 1790863422.725558,
-    "ast_hash": "dc9580cfc7eadee2f172759c1a266140",
+    "mtime": 1791381239.795,
+    "seen": 1792153496.574285,
+    "ast_hash": "d277c7c6e75a6ca1969dbf20abe41d7d",
     "semantic_hash": ""
   },
   "src/components/dashboard/tabLabels.ts": {
@@ -276,8 +276,8 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/utils.ts": {
-    "mtime": 1790061912.0346959,
-    "seen": 1790064303.233702,
+    "mtime": 1792144487.3440392,
+    "seen": 1792153496.5743942,
     "ast_hash": "af3e3a7f39c67495a43b764acc62addd",
     "semantic_hash": ""
   },
@@ -318,15 +318,15 @@
     "semantic_hash": ""
   },
   "src/hooks/__tests__/useDashboardViewModel.test.ts": {
-    "mtime": 1790837125.7562652,
-    "seen": 1790863422.725565,
-    "ast_hash": "d5d8868bcd6a4aeb18e5e7e54f014ff2",
+    "mtime": 1791381239.858,
+    "seen": 1792153496.5746078,
+    "ast_hash": "9cfcad52462a146834f661ac76d827fb",
     "semantic_hash": ""
   },
   "src/hooks/useDashboard.ts": {
-    "mtime": 1790837125.7564623,
-    "seen": 1790863422.725566,
-    "ast_hash": "57f107040cce26b230e8bd73b4948561",
+    "mtime": 1791192591.0654354,
+    "seen": 1792153496.5746272,
+    "ast_hash": "8fa8016e914fe74b200a5a99b407dc5a",
     "semantic_hash": ""
   },
   "src/hooks/useDashboardFilters.ts": {
@@ -342,15 +342,15 @@
     "semantic_hash": ""
   },
   "src/hooks/useDashboardViewModel.ts": {
-    "mtime": 1790837125.756806,
-    "seen": 1790863422.725568,
-    "ast_hash": "d79bdcce8b570c1a45a55354c458b92f",
+    "mtime": 1791381239.826,
+    "seen": 1792153496.574661,
+    "ast_hash": "16567729994a2dff1805ad324ab7a65e",
     "semantic_hash": ""
   },
   "src/hooks/useOpenF1.ts": {
-    "mtime": 1790837125.7569954,
-    "seen": 1790863422.725569,
-    "ast_hash": "ca6e3ff43141a7ed64b75ca2a5629338",
+    "mtime": 1792152747.570487,
+    "seen": 1792153496.5746791,
+    "ast_hash": "37bce8d900f035d928a5ef9f11bbae42",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -366,9 +366,9 @@
     "semantic_hash": "00e47f7b9836e8f731101981fa2bb2de"
   },
   "src/utils/exportChart.ts": {
-    "mtime": 1790837125.757832,
-    "seen": 1790863422.72557,
-    "ast_hash": "ccaf40e709b7cd5296159a79832abea3",
+    "mtime": 1791190405.9041367,
+    "seen": 1792153496.5747359,
+    "ast_hash": "16268e49d6167f4e40ea54bec0cf004b",
     "semantic_hash": ""
   },
   "src/vite-env.d.ts": {
@@ -396,8 +396,8 @@
     "semantic_hash": "b39b0c04c8b06a94fa53e598a344f2b4"
   },
   "vite.config.ts": {
-    "mtime": 1791182866.517328,
-    "seen": 1791188214.983582,
+    "mtime": 1792152227.5360649,
+    "seen": 1792153496.574794,
     "ast_hash": "268447e763314e50985b0c1ccb40dcbb",
     "semantic_hash": ""
   },
@@ -480,9 +480,9 @@
     "semantic_hash": "82efb97a359f5c7290bf2513d14686be"
   },
   "README.md": {
-    "mtime": 1790837125.7372594,
-    "seen": 1790863422.725587,
-    "ast_hash": "d90b941fd3ecddce968f6f7a23fa4b2f",
+    "mtime": 1792154763.3602169,
+    "seen": 1792154770.294345,
+    "ast_hash": "bbdd2e5c9471f16cef1a7178e8b2fcd8",
     "semantic_hash": ""
   },
   "index.html": {
@@ -624,14 +624,14 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/SignalBand.tsx": {
-    "mtime": 1790837125.753287,
-    "seen": 1790863422.725543,
+    "mtime": 1792144487.341617,
+    "seen": 1792153496.573898,
     "ast_hash": "6510f90754070c35943bd1ea2a72be0c",
     "semantic_hash": ""
   },
   "src/components/dashboard/SiteFooter.tsx": {
-    "mtime": 1791182656.278341,
-    "seen": 1791188214.983548,
+    "mtime": 1792152227.5359359,
+    "seen": 1792153496.573898,
     "ast_hash": "6d8779c3eefbfb9e39cb85ff8e98606b",
     "semantic_hash": ""
   },
@@ -738,9 +738,9 @@
     "semantic_hash": ""
   },
   "src/copy.ts": {
-    "mtime": 1791182866.5175188,
-    "seen": 1791188214.983569,
-    "ast_hash": "6a3b56f4d993545a1642ac7bcf3cb4d7",
+    "mtime": 1792144487.3444176,
+    "seen": 1792153496.574464,
+    "ast_hash": "26939a859db74ad1f0cea7af96587364",
     "semantic_hash": ""
   },
   "REWORK_TASKS.md": {
@@ -1092,15 +1092,15 @@
     "semantic_hash": ""
   },
   "scripts/shell-parity.mjs": {
-    "mtime": 1791130048.8278923,
-    "seen": 1791133044.816428,
-    "ast_hash": "960d92766c9195711d3ac67292278df8",
+    "mtime": 1791381239.5593,
+    "seen": 1792153496.57349,
+    "ast_hash": "f4c9bc2a413594b4a20e87df93133b07",
     "semantic_hash": ""
   },
   "src/components/__tests__/SiteShell.test.tsx": {
-    "mtime": 1791183024.4391742,
-    "seen": 1791188214.983538,
-    "ast_hash": "a877c0a363b4168fcca9550680b5bb67",
+    "mtime": 1791381239.5596976,
+    "seen": 1792153496.573673,
+    "ast_hash": "2d8693b23f513310ec7d18c1b697097d",
     "semantic_hash": ""
   },
   "src/components/__tests__/ThemeInit.test.ts": {
@@ -1206,9 +1206,9 @@
     "semantic_hash": ""
   },
   "docs/RACE_DESK.md": {
-    "mtime": 1790957121.3804681,
-    "seen": 1791133044.816493,
-    "ast_hash": "82bbacd80fd6054c07bbd2f57a01fca3",
+    "mtime": 1791381239.5589929,
+    "seen": 1792153496.575317,
+    "ast_hash": "c384b28b76cc538336c70e3fba41a5cd",
     "semantic_hash": ""
   },
   "scripts/check-design-tokens.mjs": {
@@ -1224,8 +1224,8 @@
     "semantic_hash": ""
   },
   "docs/embeds/after/measurements.json": {
-    "mtime": 1791188069.3957102,
-    "seen": 1791188214.9835231,
+    "mtime": 1791381635.4161806,
+    "seen": 1792153496.573348,
     "ast_hash": "1b2e4be1f9ae267c93610b1a32f20cb3",
     "semantic_hash": ""
   },
@@ -1236,15 +1236,15 @@
     "semantic_hash": ""
   },
   "docs/embeds/plots/results.json": {
-    "mtime": 1791188175.696588,
-    "seen": 1791188214.983525,
+    "mtime": 1791194027.032879,
+    "seen": 1792153496.5733728,
     "ast_hash": "a73cc44104686a3d198f4f3d1406dc5b",
     "semantic_hash": ""
   },
   "scripts/build-f1stories.mjs": {
-    "mtime": 1791182426.9558775,
-    "seen": 1791188214.983527,
-    "ast_hash": "fc5968c53772626c82dacfad70dd90f1",
+    "mtime": 1791194613.5864508,
+    "seen": 1792153496.573406,
+    "ast_hash": "376753e5e4a4562e2feb975e9e039829",
     "semantic_hash": ""
   },
   "scripts/embed-baseline.mjs": {
@@ -1254,9 +1254,9 @@
     "semantic_hash": ""
   },
   "scripts/embed-plots-check.mjs": {
-    "mtime": 1791188125.1820767,
-    "seen": 1791188214.9835289,
-    "ast_hash": "179f6959eb1817b5e682d72a11fcf2a3",
+    "mtime": 1791196226.3441203,
+    "seen": 1792153496.57344,
+    "ast_hash": "32b9c64ebfe2373544b8c199dbc4f377",
     "semantic_hash": ""
   },
   "scripts/fixtures/telemetry-plots.tsx": {
@@ -1266,21 +1266,21 @@
     "semantic_hash": ""
   },
   "src/embeds/TelemetryPlot.tsx": {
-    "mtime": 1791187500.2254984,
-    "seen": 1791188214.983569,
-    "ast_hash": "ecefc8cb0f66bd022b927a3f15fbff84",
+    "mtime": 1792153680.3560674,
+    "seen": 1792154131.172373,
+    "ast_hash": "5dffdb97edb5adbd9159d869b1b8c9d4",
     "semantic_hash": ""
   },
   "src/embeds/__tests__/TelemetryPlot.test.tsx": {
-    "mtime": 1791187984.2458827,
-    "seen": 1791188214.9835699,
-    "ast_hash": "c8c2bb3343e36c3ee2c81cec6eef811a",
+    "mtime": 1791381239.808,
+    "seen": 1792153496.574466,
+    "ast_hash": "f48af747ca886e659cf745c1e893130b",
     "semantic_hash": ""
   },
   "src/embeds/__tests__/contract.test.ts": {
-    "mtime": 1791187944.3830345,
-    "seen": 1791188214.9835699,
-    "ast_hash": "841587bc808c347fe66145d4a8a854de",
+    "mtime": 1791195646.5280519,
+    "seen": 1792153496.574466,
+    "ast_hash": "84f96a6d4c4ddc223b72e676bcfeb525",
     "semantic_hash": ""
   },
   "src/embeds/__tests__/fixtures.ts": {
@@ -1308,9 +1308,9 @@
     "semantic_hash": ""
   },
   "src/embeds/contract.ts": {
-    "mtime": 1791188001.7568061,
-    "seen": 1791188214.983572,
-    "ast_hash": "089ae8909ece29513dcc274fa384c376",
+    "mtime": 1792153859.0796118,
+    "seen": 1792154131.1725261,
+    "ast_hash": "02a1583ee05d1c1281249c0b76989053",
     "semantic_hash": ""
   },
   "src/embeds/links.ts": {
@@ -1320,15 +1320,15 @@
     "semantic_hash": ""
   },
   "src/embeds/plotModel.ts": {
-    "mtime": 1791187577.315278,
-    "seen": 1791188214.983573,
-    "ast_hash": "8d89ebf7068d37a01662e75d4b0ff94d",
+    "mtime": 1792152841.380537,
+    "seen": 1792153496.5745652,
+    "ast_hash": "808b19f55c5650cf3163f88c0079ca71",
     "semantic_hash": ""
   },
   "EMBED.md": {
-    "mtime": 1791188389.6651525,
-    "seen": 1791188436.2164469,
-    "ast_hash": "9647d9099bbd699b4aafaef2c65807d5",
+    "mtime": 1792154018.0494008,
+    "seen": 1792154131.1734889,
+    "ast_hash": "b5fa4f56e9eba3dabbd1cb1bb4f3695e",
     "semantic_hash": ""
   },
   "docs/same-origin-deployment.md": {
@@ -1344,38 +1344,38 @@
     "semantic_hash": ""
   },
   "docs/embeds/after/telemetry-speed-trace-1440.png": {
-    "mtime": 1791188059.4704435,
-    "seen": 1791188214.9836001,
+    "mtime": 1791381635.4174485,
+    "seen": 1792153496.575495,
     "ast_hash": "7282566ff86b757765a1a0cf3bd7acdc",
     "semantic_hash": ""
   },
   "docs/embeds/after/telemetry-speed-trace-390.png": {
-    "mtime": 1791188429.8104541,
-    "seen": 1791188436.216457,
+    "mtime": 1791381635.417801,
+    "seen": 1792153496.575496,
     "ast_hash": "464de7377d36c2502cc984eea50ec50c",
     "semantic_hash": ""
   },
   "docs/embeds/after/telemetry-throttle-brake-1440.png": {
-    "mtime": 1791188064.3837645,
-    "seen": 1791188214.9836009,
+    "mtime": 1791381635.418096,
+    "seen": 1792153496.575496,
     "ast_hash": "388114d62ac97fe9cb96171ad460f3fb",
     "semantic_hash": ""
   },
   "docs/embeds/after/telemetry-throttle-brake-390.png": {
-    "mtime": 1791188434.6903553,
-    "seen": 1791188436.216458,
+    "mtime": 1791381635.418323,
+    "seen": 1792153496.575497,
     "ast_hash": "53fb3fc8da2390a0a866bdfecddaf4ad",
     "semantic_hash": ""
   },
   "docs/embeds/after/whole-tab-1440.png": {
-    "mtime": 1791188069.3885221,
-    "seen": 1791188214.9836018,
+    "mtime": 1791381635.4187808,
+    "seen": 1792153496.575497,
     "ast_hash": "cef3adea934c19b3b0dd71d197a8867c",
     "semantic_hash": ""
   },
   "docs/embeds/after/whole-tab-390.png": {
-    "mtime": 1791188054.582614,
-    "seen": 1791188214.9836018,
+    "mtime": 1791381635.4190974,
+    "seen": 1792153496.5754979,
     "ast_hash": "c96968bd12db0350378c4eaa39adf6f9",
     "semantic_hash": ""
   },
@@ -1416,27 +1416,897 @@
     "semantic_hash": ""
   },
   "docs/embeds/plots/chromium.png": {
-    "mtime": 1791188173.0220568,
-    "seen": 1791188214.983605,
+    "mtime": 1791194024.583218,
+    "seen": 1792153496.5756311,
     "ast_hash": "4d4b021a46c0ed036b1ca694ad7d0a4c",
     "semantic_hash": ""
   },
   "docs/embeds/plots/firefox.png": {
-    "mtime": 1791188174.5301194,
-    "seen": 1791188214.983605,
+    "mtime": 1791194026.0126183,
+    "seen": 1792153496.5756311,
     "ast_hash": "d74e7d510ce77485cfa80a47e7a86bce",
     "semantic_hash": ""
   },
   "docs/embeds/plots/webkit.png": {
-    "mtime": 1791188175.6849103,
-    "seen": 1791188214.983606,
+    "mtime": 1791194027.0228143,
+    "seen": 1792153496.5756319,
     "ast_hash": "d8eab28ee8eb4ddb2f40f04fe4bad47f",
     "semantic_hash": ""
   },
   "docs/embeds/E01-E03.md": {
-    "mtime": 1791188348.3603554,
-    "seen": 1791188436.2164521,
-    "ast_hash": "675450c5da8b5f56d505ee0f232420c8",
+    "mtime": 1791191510.2319143,
+    "seen": 1792153496.57535,
+    "ast_hash": "47b1836633cd1f4e6ca96a3986a44fef",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed.f1embed.json": {
+    "mtime": 1792154189.1682353,
+    "seen": 1792154257.341123,
+    "ast_hash": "9884d23587d51b8fa31e6e9c310c7b3c",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed.f1embed.json": {
+    "mtime": 1792154189.3274205,
+    "seen": 1792154257.341125,
+    "ast_hash": "4ace6ffeb8dcf92004f71a402906ca68",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed.f1embed.json": {
+    "mtime": 1792154189.490297,
+    "seen": 1792154257.341125,
+    "ast_hash": "aeedeed70e649a6b85132414f9d232fd",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake.f1embed.json": {
+    "mtime": 1792154189.706378,
+    "seen": 1792154257.341126,
+    "ast_hash": "2a156350e8845cb28693ea3390ac99a0",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals.f1embed.json": {
+    "mtime": 1792154189.9353075,
+    "seen": 1792154257.341127,
+    "ast_hash": "ef4afcb90e6c6274943dc59b8edc3f12",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed.f1embed.json": {
+    "mtime": 1792154189.822478,
+    "seen": 1792154257.341127,
+    "ast_hash": "80358cde67ebf1e78fdcb469622684cf",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals.f1embed.json": {
+    "mtime": 1792154190.1630557,
+    "seen": 1792154257.341127,
+    "ast_hash": "030a0ad7eef5848823acde33760d5951",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed.f1embed.json": {
+    "mtime": 1792154190.043146,
+    "seen": 1792154257.3411279,
+    "ast_hash": "3993d276dc03ac2f259cf9c5e0c6a253",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/manifest.json": {
+    "mtime": 1792154190.4250705,
+    "seen": 1792154257.3411279,
+    "ast_hash": "f7d169796906371308256e476663ff0d",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/car_data-lap-21.json": {
+    "mtime": 1792152385.949513,
+    "seen": 1792153496.573344,
+    "ast_hash": "1096b6cf5443f186ac62f94852f6f2d2",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/car_data-lap-24.json": {
+    "mtime": 1792152387.567494,
+    "seen": 1792153496.573345,
+    "ast_hash": "8be1ec7ecc81654ca1cc7918d350c918",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/circuit.json": {
+    "mtime": 1792152543.1103709,
+    "seen": 1792153496.573345,
+    "ast_hash": "dbb1667d81977d48a6a25b09c72bca2c",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/laps.json": {
+    "mtime": 1792152366.3779855,
+    "seen": 1792153496.573345,
+    "ast_hash": "600e1aaed6fb6aaf8b9b10772e8ca549",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/location-lap-21.json": {
+    "mtime": 1792152386.764618,
+    "seen": 1792153496.5733461,
+    "ast_hash": "271ee79f405c6148a93381335011b5b5",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/location-lap-24.json": {
+    "mtime": 1792152388.5191262,
+    "seen": 1792153496.5733461,
+    "ast_hash": "55ce20108e082388f3b2926fb02a3536",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/race-control.json": {
+    "mtime": 1792152367.086543,
+    "seen": 1792153496.573347,
+    "ast_hash": "6e78de62ef2bec16d9e811b69e2c96b3",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/results.json": {
+    "mtime": 1792152367.7480338,
+    "seen": 1792153496.573347,
+    "ast_hash": "0cb341001aa5d6cf910547a2341c8114",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/raw/sessions.json": {
+    "mtime": 1792152365.561278,
+    "seen": 1792153496.573348,
+    "ast_hash": "5becbaab1448f116e848bdb80e8bbdf8",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/baku-scope-review.f1embed.json": {
+    "mtime": 1791193523.1298785,
+    "seen": 1792153496.5733492,
+    "ast_hash": "079740d4d7b09b3e9da59621aaaf6735",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/results.json": {
+    "mtime": 1791193826.6287637,
+    "seen": 1792153496.57335,
+    "ast_hash": "df9a0f46afca68afd8d13305ddb0774d",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots-release-b/results.json": {
+    "mtime": 1791196245.2010674,
+    "seen": 1792153496.5733728,
+    "ast_hash": "a73cc44104686a3d198f4f3d1406dc5b",
+    "semantic_hash": ""
+  },
+  "scripts/article-figure-check.mjs": {
+    "mtime": 1791193816.0203502,
+    "seen": 1792153496.573406,
+    "ast_hash": "dc6c9ed158228854e321cb39c13c029f",
+    "semantic_hash": ""
+  },
+  "scripts/check-lap-comparison-browser.mjs": {
+    "mtime": 1792154018.069724,
+    "seen": 1792154131.170809,
+    "ast_hash": "9876c0e66fa6c16dd640895ff82213a7",
+    "semantic_hash": ""
+  },
+  "scripts/embed-interactive-check.mjs": {
+    "mtime": 1791196662.702251,
+    "seen": 1792153496.57344,
+    "ast_hash": "1249500273030ac8df085cb79966e584",
+    "semantic_hash": ""
+  },
+  "scripts/generate-singapore-figures.mjs": {
+    "mtime": 1792154188.3301992,
+    "seen": 1792154257.341614,
+    "ast_hash": "811bdb040f12637536f9069113428baa",
+    "semantic_hash": ""
+  },
+  "src/components/dashboard/SameDriverComparison.tsx": {
+    "mtime": 1792154188.3300343,
+    "seen": 1792154257.342219,
+    "ast_hash": "489aeba3e10bee3a5cf993f13e6eb9b2",
+    "semantic_hash": ""
+  },
+  "src/embeds/EmbedComposer.tsx": {
+    "mtime": 1791382565.5658693,
+    "seen": 1792153496.574464,
+    "ast_hash": "101ddfd7541df9c19bc9f330160782f5",
+    "semantic_hash": ""
+  },
+  "src/embeds/EmbedDialog.tsx": {
+    "mtime": 1791382492.7508311,
+    "seen": 1792153496.574465,
+    "ast_hash": "b0d7c043adbd856f97a3eb5fe6ae7935",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/exportFigure.test.tsx": {
+    "mtime": 1791191033.5778103,
+    "seen": 1792153496.5744672,
+    "ast_hash": "14c6a90e0ec0da034c0512d53fd4599b",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/interactive-entry.test.tsx": {
+    "mtime": 1791195703.5265174,
+    "seen": 1792153496.574527,
+    "ast_hash": "3c82780266a4ca4736a07d3a387cad74",
+    "semantic_hash": ""
+  },
+  "src/embeds/__tests__/lapFigures.test.tsx": {
+    "mtime": 1792154018.043305,
+    "seen": 1792154131.1725068,
+    "ast_hash": "65b46ba47208c86e0611ed1f73f01c0d",
+    "semantic_hash": ""
+  },
+  "src/embeds/exportFigure.tsx": {
+    "mtime": 1792153341.6600113,
+    "seen": 1792153496.574547,
+    "ast_hash": "996e8e99371663d3d3532da22295113c",
+    "semantic_hash": ""
+  },
+  "src/embeds/interactive-entry.tsx": {
+    "mtime": 1792152841.3807704,
+    "seen": 1792153496.574547,
+    "ast_hash": "8e0b3003335600b8b90b106b10e6ee62",
+    "semantic_hash": ""
+  },
+  "src/embeds/lapFigures.ts": {
+    "mtime": 1792154188.3298185,
+    "seen": 1792154257.343275,
+    "ast_hash": "cfb904acb7be6abf8f832c36f09a4bf6",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useComparisonLap.test.ts": {
+    "mtime": 1792152998.602757,
+    "seen": 1792153496.574589,
+    "ast_hash": "064945853c5cff7841e5799c4f110b11",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useEmbedHeightReporter.test.tsx": {
+    "mtime": 1791407146.0213401,
+    "seen": 1792153496.5746272,
+    "ast_hash": "459520de847cbb8e0b43cdd120b7248b",
+    "semantic_hash": ""
+  },
+  "src/hooks/useEmbedHeightReporter.ts": {
+    "mtime": 1791407093.5260792,
+    "seen": 1792153496.574678,
+    "ast_hash": "17842b638df448c8dd344c7bd2a865f0",
+    "semantic_hash": ""
+  },
+  "src/telemetry/__tests__/fixtures.ts": {
+    "mtime": 1792152998.5965095,
+    "seen": 1792153496.5746949,
+    "ast_hash": "35223788040e1cc098617a1143e5bd26",
+    "semantic_hash": ""
+  },
+  "src/telemetry/__tests__/lapComparison.test.ts": {
+    "mtime": 1792153797.8229287,
+    "seen": 1792154131.1728692,
+    "ast_hash": "fbdde8af61797767d8f47d6aa1636dda",
+    "semantic_hash": ""
+  },
+  "src/telemetry/lapComparison.ts": {
+    "mtime": 1792153859.079372,
+    "seen": 1792154131.17287,
+    "ast_hash": "a5e81495a7202fdef61e1f04769e1c6b",
+    "semantic_hash": ""
+  },
+  "vite.interactive.config.ts": {
+    "mtime": 1791195724.2676024,
+    "seen": 1792153496.574794,
+    "ast_hash": "ffbcd3d784d3f15f28841f9108d2efa9",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/README.md": {
+    "mtime": 1792154129.3696856,
+    "seen": 1792154131.1735349,
+    "ast_hash": "7aeddc684db09fe1b537f5fe61d70233",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/index.html": {
+    "mtime": 1792154190.4252043,
+    "seen": 1792154257.344296,
+    "ast_hash": "c35bd575ad721eb5164c8187d87fa1e3",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/report.el.md": {
+    "mtime": 1792153797.8232923,
+    "seen": 1792154131.173536,
+    "ast_hash": "e50e36b8e17fb1e3ae20bf15f50d9b6d",
+    "semantic_hash": ""
+  },
+  "docs/embeds/E04-E06.md": {
+    "mtime": 1791191492.7439206,
+    "seen": 1792153496.575351,
+    "ast_hash": "edfc1c7bd69e4c8ced887ce755268871",
+    "semantic_hash": ""
+  },
+  "docs/embeds/E07-E08-E12.md": {
+    "mtime": 1791194076.5932302,
+    "seen": 1792153496.575352,
+    "ast_hash": "f36d61c434b3cf12f9ce7ef8f93c563e",
+    "semantic_hash": ""
+  },
+  "docs/embeds/E09-E11-E12.md": {
+    "mtime": 1791196941.676312,
+    "seen": 1792153496.575352,
+    "ast_hash": "c5036b2358825b58869c0e84e203a94c",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-narrowDark.png": {
+    "mtime": 1792154189.169004,
+    "seen": 1792154257.344537,
+    "ast_hash": "da8270aaaeeaabd2029b3a0d5e6bfebf",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-narrowDark.svg": {
+    "mtime": 1792154189.1689,
+    "seen": 1792154257.344537,
+    "ast_hash": "cd3211e3029c40e386397c0c927c512c",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-narrowLight.png": {
+    "mtime": 1792154189.1685407,
+    "seen": 1792154257.3445382,
+    "ast_hash": "f56ca6eaa13625e037d71e60cde4a82f",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-narrowLight.svg": {
+    "mtime": 1792154189.1683953,
+    "seen": 1792154257.3445382,
+    "ast_hash": "a137de71fb9ad4a2365add784e5a836f",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-wideDark.png": {
+    "mtime": 1792154189.1691573,
+    "seen": 1792154257.3445382,
+    "ast_hash": "aa3597f0017b7b7eb1d1906fc2f1b65f",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-wideDark.svg": {
+    "mtime": 1792154189.1690533,
+    "seen": 1792154257.344539,
+    "ast_hash": "1ebf1d80fc2663092710484be91c84de",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-wideLight.png": {
+    "mtime": 1792154189.168839,
+    "seen": 1792154257.344539,
+    "ast_hash": "a0dcaef707b45116c0d35c873e2d1218",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/A-lap-a-speed-wideLight.svg": {
+    "mtime": 1792154189.1687062,
+    "seen": 1792154257.3445399,
+    "ast_hash": "a5f3e98a0ea4eb497e6d7c4fb311e86a",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-narrowDark.png": {
+    "mtime": 1792154189.3280118,
+    "seen": 1792154257.3445399,
+    "ast_hash": "2e19602206416eed6daa3ca29601e4e2",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-narrowDark.svg": {
+    "mtime": 1792154189.3279238,
+    "seen": 1792154257.3445408,
+    "ast_hash": "35d893e27b0f003455c1b1502f3762d4",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-narrowLight.png": {
+    "mtime": 1792154189.3276784,
+    "seen": 1792154257.3445408,
+    "ast_hash": "b6f2d1dfb58eb1ce49d345f199d7b42d",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-narrowLight.svg": {
+    "mtime": 1792154189.3275497,
+    "seen": 1792154257.3445408,
+    "ast_hash": "c2ddfc67be065888048a54b4d1e084b1",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-wideDark.png": {
+    "mtime": 1792154189.3281734,
+    "seen": 1792154257.344542,
+    "ast_hash": "97bfc0bc8fbaf246f3cca3f6ce1c4f46",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-wideDark.svg": {
+    "mtime": 1792154189.3280637,
+    "seen": 1792154257.344542,
+    "ast_hash": "9b2bde2a5a9998760b7d46cf29def8d9",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-wideLight.png": {
+    "mtime": 1792154189.327863,
+    "seen": 1792154257.344543,
+    "ast_hash": "75d4abdb9887925435d2b1839a50b5ce",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/B-lap-b-speed-wideLight.svg": {
+    "mtime": 1792154189.327753,
+    "seen": 1792154257.344543,
+    "ast_hash": "98a20831e87d5f590294f3122cc8fa72",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-narrowDark.png": {
+    "mtime": 1792154189.491116,
+    "seen": 1792154257.344544,
+    "ast_hash": "d16c605d4508eb6cce40a70d1cb6b995",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-narrowDark.svg": {
+    "mtime": 1792154189.4910252,
+    "seen": 1792154257.344544,
+    "ast_hash": "f37f154cae346354d5a52788f8417260",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-narrowLight.png": {
+    "mtime": 1792154189.490558,
+    "seen": 1792154257.3445451,
+    "ast_hash": "449a4ff7653408bf93ff27b110f5b620",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-narrowLight.svg": {
+    "mtime": 1792154189.4904208,
+    "seen": 1792154257.3445451,
+    "ast_hash": "3030151f9195fefcde2934f2ed69f6af",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-wideDark.png": {
+    "mtime": 1792154189.4912877,
+    "seen": 1792154257.344546,
+    "ast_hash": "e685c435beb1be6b16b820d53c9e3cbe",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-wideDark.svg": {
+    "mtime": 1792154189.4911666,
+    "seen": 1792154257.344546,
+    "ast_hash": "880cb143982dab923315271786ec8a7c",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-wideLight.png": {
+    "mtime": 1792154189.490959,
+    "seen": 1792154257.344547,
+    "ast_hash": "89969f14c849d5fcfb86ce73ccf975e7",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/C-combined-speed-wideLight.svg": {
+    "mtime": 1792154189.4906273,
+    "seen": 1792154257.344547,
+    "ast_hash": "33072fec9b049184e8cb8b1ba202c273",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-narrowDark.png": {
+    "mtime": 1792154189.7070537,
+    "seen": 1792154257.344547,
+    "ast_hash": "cad36688a7dec76265a13c3282c7eb9d",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-narrowDark.svg": {
+    "mtime": 1792154189.7069392,
+    "seen": 1792154257.344548,
+    "ast_hash": "6b117c04f83be94e6708af3a20f6aafd",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-narrowLight.png": {
+    "mtime": 1792154189.7066567,
+    "seen": 1792154257.344548,
+    "ast_hash": "a9c7fbb4ed0e0abfe2d725f89fe080d1",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-narrowLight.svg": {
+    "mtime": 1792154189.7065115,
+    "seen": 1792154257.3445492,
+    "ast_hash": "a6113a4681fed2390cd0b07c37f5a742",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-wideDark.png": {
+    "mtime": 1792154189.707259,
+    "seen": 1792154257.3445492,
+    "ast_hash": "fc736d7c3ed283ab0bba68599d0aaa34",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-wideDark.svg": {
+    "mtime": 1792154189.707132,
+    "seen": 1792154257.34455,
+    "ast_hash": "2ed78908ffc96e3cbeec8cf0af1c06b7",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-wideLight.png": {
+    "mtime": 1792154189.7068753,
+    "seen": 1792154257.34455,
+    "ast_hash": "577aa53ed48977fddcc98612cba6cf67",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/D-throttle-brake-wideLight.svg": {
+    "mtime": 1792154189.7067578,
+    "seen": 1792154257.3445508,
+    "ast_hash": "0fb2bfaaf1aa2b4872ebf5d3e1e652de",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-narrowDark.png": {
+    "mtime": 1792154190.2314663,
+    "seen": 1792154257.3445508,
+    "ast_hash": "3da7633c4e6035721c72c09db17085eb",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-narrowDark.svg": {
+    "mtime": 1792154190.2312152,
+    "seen": 1792154257.3445508,
+    "ast_hash": "3b55dff2a64ad34fba8417aa2a71c182",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-narrowLight.png": {
+    "mtime": 1792154190.1843865,
+    "seen": 1792154257.344552,
+    "ast_hash": "60035351c5c9059ae54cfb2cb45d7980",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-narrowLight.svg": {
+    "mtime": 1792154190.1840925,
+    "seen": 1792154257.344552,
+    "ast_hash": "32b4144d65690411f9d506a1e387eafd",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-wideDark.png": {
+    "mtime": 1792154190.2890694,
+    "seen": 1792154257.344553,
+    "ast_hash": "ba89b5c9528c55ecb530b395d532c76e",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-wideDark.svg": {
+    "mtime": 1792154190.2888095,
+    "seen": 1792154257.344553,
+    "ast_hash": "9c64e04c91e57872f33b22897740b3cc",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-wideLight.png": {
+    "mtime": 1792154190.2110763,
+    "seen": 1792154257.344554,
+    "ast_hash": "f25c3be33e7ca402c06831b1b21cca75",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-detail-wideLight.svg": {
+    "mtime": 1792154190.2107859,
+    "seen": 1792154257.344554,
+    "ast_hash": "3107809ee2b726e32825a23164932a35",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-narrowDark.png": {
+    "mtime": 1792154189.9359217,
+    "seen": 1792154257.344554,
+    "ast_hash": "067040c6ad529adb814aac3d9540930b",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-narrowDark.svg": {
+    "mtime": 1792154189.935828,
+    "seen": 1792154257.344555,
+    "ast_hash": "be03fbd3fe7d40e6d9a616fa66336178",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-narrowLight.png": {
+    "mtime": 1792154189.9355848,
+    "seen": 1792154257.344555,
+    "ast_hash": "f7931d4bbe8f67e0fa3647f8611a53e4",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-narrowLight.svg": {
+    "mtime": 1792154189.9354496,
+    "seen": 1792154257.344556,
+    "ast_hash": "cb8a00089c9faae8ee73c8623a3f00da",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-wideDark.png": {
+    "mtime": 1792154189.9360726,
+    "seen": 1792154257.344556,
+    "ast_hash": "496b058ec2ee6f90d165d12cfafd9f7a",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-wideDark.svg": {
+    "mtime": 1792154189.9359725,
+    "seen": 1792154257.344557,
+    "ast_hash": "c0e39c2e2f5bb99c38e8d3e5b1bb4a4b",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-wideLight.png": {
+    "mtime": 1792154189.9357753,
+    "seen": 1792154257.344557,
+    "ast_hash": "9c6936586e2f6b89dc0c6e59e4b647ec",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-pedals-wideLight.svg": {
+    "mtime": 1792154189.9356596,
+    "seen": 1792154257.344557,
+    "ast_hash": "66cf59ab291b1c5152344af12377db23",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-narrowDark.png": {
+    "mtime": 1792154189.8230538,
+    "seen": 1792154257.344558,
+    "ast_hash": "114d7ed623a3cb5c50302fbbfd163d9d",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-narrowDark.svg": {
+    "mtime": 1792154189.8229642,
+    "seen": 1792154257.344558,
+    "ast_hash": "51d4350e241ed9c84d2322dcbae610ea",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-narrowLight.png": {
+    "mtime": 1792154189.8227165,
+    "seen": 1792154257.344558,
+    "ast_hash": "b9c133f561400fa8a9b21e1242b0fddf",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-narrowLight.svg": {
+    "mtime": 1792154189.8226016,
+    "seen": 1792154257.3445592,
+    "ast_hash": "922654600b72a4d8554f077aff4b367e",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-wideDark.png": {
+    "mtime": 1792154189.8232107,
+    "seen": 1792154257.3445592,
+    "ast_hash": "3f4ea16f5bf1b76f4ae73595d507c0a1",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-wideDark.svg": {
+    "mtime": 1792154189.8231058,
+    "seen": 1792154257.3445601,
+    "ast_hash": "3015fbc9e8d93c54839cd439b5970e8a",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-wideLight.png": {
+    "mtime": 1792154189.8229055,
+    "seen": 1792154257.3445601,
+    "ast_hash": "a4e1032387c21ed856bac4e7f2e6ffde",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T1-speed-wideLight.svg": {
+    "mtime": 1792154189.8227932,
+    "seen": 1792154257.3445601,
+    "ast_hash": "bd1530c8b3b067c8a170ecdd60d70a7b",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-narrowDark.png": {
+    "mtime": 1792154190.3840532,
+    "seen": 1792154257.3445609,
+    "ast_hash": "b72f1704b172f9cff1420d4de0d8978e",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-narrowDark.svg": {
+    "mtime": 1792154190.3838031,
+    "seen": 1792154257.3445609,
+    "ast_hash": "c714283611b4ce36cd8baea274894eba",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-narrowLight.png": {
+    "mtime": 1792154190.3180664,
+    "seen": 1792154257.3445618,
+    "ast_hash": "5cc10c5517f1d4e890759ffac94f31b3",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-narrowLight.svg": {
+    "mtime": 1792154190.3178113,
+    "seen": 1792154257.3445618,
+    "ast_hash": "6fb8f314ef4e66cf415a9b030b07cea3",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-wideDark.png": {
+    "mtime": 1792154190.4224935,
+    "seen": 1792154257.3445618,
+    "ast_hash": "15bbe173419aa8ec3916876eba80602f",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-wideDark.svg": {
+    "mtime": 1792154190.4222395,
+    "seen": 1792154257.344563,
+    "ast_hash": "55d37e5d29988ef1fd2cd62b95612c93",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-wideLight.png": {
+    "mtime": 1792154190.3558803,
+    "seen": 1792154257.344563,
+    "ast_hash": "fc40d45855819633a59007111bde22dc",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-detail-wideLight.svg": {
+    "mtime": 1792154190.3556416,
+    "seen": 1792154257.344564,
+    "ast_hash": "2bb12cf903508463f70e28c038f71361",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-narrowDark.png": {
+    "mtime": 1792154190.163828,
+    "seen": 1792154257.344564,
+    "ast_hash": "69e1556fb361ac4ce106b1c7c979d9d4",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-narrowDark.svg": {
+    "mtime": 1792154190.1637323,
+    "seen": 1792154257.344564,
+    "ast_hash": "3d73b58722cbbd13a767aaccee77277f",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-narrowLight.png": {
+    "mtime": 1792154190.1634336,
+    "seen": 1792154257.344565,
+    "ast_hash": "05670c679133ef031aae002f01cc7492",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-narrowLight.svg": {
+    "mtime": 1792154190.163203,
+    "seen": 1792154257.344565,
+    "ast_hash": "5af66f5dd812f3bb0b55948125d95266",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-wideDark.png": {
+    "mtime": 1792154190.1639678,
+    "seen": 1792154257.344566,
+    "ast_hash": "246cddaabfc7d3751d9bb8c54a056dcb",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-wideDark.svg": {
+    "mtime": 1792154190.163877,
+    "seen": 1792154257.344566,
+    "ast_hash": "1940de2802e9ff40a2da7a6d033b84b1",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-wideLight.png": {
+    "mtime": 1792154190.16367,
+    "seen": 1792154257.344566,
+    "ast_hash": "0b1414bfdcf2a67b4c24a847a38dca8d",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-pedals-wideLight.svg": {
+    "mtime": 1792154190.1635456,
+    "seen": 1792154257.344567,
+    "ast_hash": "9755206ad9b39eaa3410840d068be1a1",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-narrowDark.png": {
+    "mtime": 1792154190.0437653,
+    "seen": 1792154257.344567,
+    "ast_hash": "43b33ce91c79f5734c75a2e4250fd0b7",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-narrowDark.svg": {
+    "mtime": 1792154190.0436773,
+    "seen": 1792154257.344567,
+    "ast_hash": "b9870375623ae661c8f206a102127160",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-narrowLight.png": {
+    "mtime": 1792154190.0433974,
+    "seen": 1792154257.344568,
+    "ast_hash": "d9af795d35c1cfead06a9ffde69e0a73",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-narrowLight.svg": {
+    "mtime": 1792154190.0432844,
+    "seen": 1792154257.344568,
+    "ast_hash": "b7ecf40874638bc411ae476ec888b19f",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-wideDark.png": {
+    "mtime": 1792154190.043921,
+    "seen": 1792154257.344568,
+    "ast_hash": "79bcb1bdae96f84881d4f09e001df0f8",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-wideDark.svg": {
+    "mtime": 1792154190.0438163,
+    "seen": 1792154257.3445692,
+    "ast_hash": "fc6d52ed8e6cd74d05268af0c4b82674",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-wideLight.png": {
+    "mtime": 1792154190.0436113,
+    "seen": 1792154257.3445692,
+    "ast_hash": "99369dd5c15fd22789fb0c27f582465d",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/figures/E-T3-speed-wideLight.svg": {
+    "mtime": 1792154190.04348,
+    "seen": 1792154257.3445702,
+    "ast_hash": "0507b5a1878d504341cf6870a798211b",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/1440-dark.png": {
+    "mtime": 1791193823.9153318,
+    "seen": 1792153496.5754979,
+    "ast_hash": "8c76270bf92e80baef79bb15e8826120",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/1440-light.png": {
+    "mtime": 1791193823.8367126,
+    "seen": 1792153496.575499,
+    "ast_hash": "e7e5dc9ff5c2c7e9c4f64a7318a5edda",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/320-dark.png": {
+    "mtime": 1791193823.2782202,
+    "seen": 1792153496.575499,
+    "ast_hash": "0636a68bb4f238ebe31fe6ffa0f46afe",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/320-light.png": {
+    "mtime": 1791193823.200735,
+    "seen": 1792153496.5755,
+    "ast_hash": "b9d67f83936f1c3d6650568718e67b90",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/390-dark.png": {
+    "mtime": 1791193823.4837558,
+    "seen": 1792153496.5755,
+    "ast_hash": "eafcf9079c753ecd2cca03c33d064c13",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/390-light.png": {
+    "mtime": 1791193823.3948832,
+    "seen": 1792153496.5755,
+    "ast_hash": "efdf6b800a3befb9d197a1cd6ac3e3ea",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/768-dark.png": {
+    "mtime": 1791193823.7011335,
+    "seen": 1792153496.575501,
+    "ast_hash": "191f8d4f3faa51e2ad7cf24931bc6f80",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-a/768-light.png": {
+    "mtime": 1791193823.6160934,
+    "seen": 1792153496.575501,
+    "ast_hash": "d783f89c766019041326de8597b954dd",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-b/interactive.png": {
+    "mtime": 1791196824.4468126,
+    "seen": 1792153496.5755022,
+    "ast_hash": "3a10b145b84f988ab42cc9dc2396d2b0",
+    "semantic_hash": ""
+  },
+  "docs/embeds/article-release-b/static-no-js.png": {
+    "mtime": 1791196824.572105,
+    "seen": 1792153496.5755022,
+    "ast_hash": "339ca4e33d5d74e602d73b281981640e",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots-release-b/chromium.png": {
+    "mtime": 1791196243.1193295,
+    "seen": 1792153496.575629,
+    "ast_hash": "4d4b021a46c0ed036b1ca694ad7d0a4c",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots-release-b/firefox.png": {
+    "mtime": 1791196244.4075346,
+    "seen": 1792153496.5756302,
+    "ast_hash": "d74e7d510ce77485cfa80a47e7a86bce",
+    "semantic_hash": ""
+  },
+  "docs/embeds/plots-release-b/webkit.png": {
+    "mtime": 1791196245.1907256,
+    "seen": 1792153496.5756302,
+    "ast_hash": "d8eab28ee8eb4ddb2f40f04fe4bad47f",
+    "semantic_hash": ""
+  },
+  "src/telemetry/singapore2026.ts": {
+    "mtime": 1792153961.1873863,
+    "seen": 1792154131.1728709,
+    "ast_hash": "9e8c374dc92e97ea2fd68fcf7bff91e9",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/validation/dashboard-desktop.png": {
+    "mtime": 1792154027.9046798,
+    "seen": 1792154131.173816,
+    "ast_hash": "ce49b5270e0dcb8604e85ac38d692293",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/validation/dashboard-mobile.png": {
+    "mtime": 1792154027.9976714,
+    "seen": 1792154131.1738172,
+    "ast_hash": "a459a217fb96a6dbcaa282b13601d815",
+    "semantic_hash": ""
+  },
+  "analysis/hamilton-singapore-2026/validation/RESULTS.md": {
+    "mtime": 1792154255.6037238,
+    "seen": 1792154257.344314,
+    "ast_hash": "8737744a69b8704e37d951bca551ea51",
+    "semantic_hash": ""
+  },
+  "scripts/copy-publication-analysis.mjs": {
+    "mtime": 1792154763.3343544,
+    "seen": 1792154770.2913861,
+    "ast_hash": "a5b3637af28fcb34d88a01a9b380ff0f",
     "semantic_hash": ""
   }
 }

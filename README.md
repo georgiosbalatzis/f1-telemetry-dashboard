@@ -23,6 +23,7 @@ Safari / iOS / iPadOS 16.4+, Chrome and Edge 111+, Firefox 128+ (phones, tablets
 
 - Production deploys are triggered by pushes to `main` or manual runs of [`.github/workflows/deploy.yml`](/Users/giorgos/WebstormProjects/f1-telemetry-dashboard/.github/workflows/deploy.yml).
 - GitHub Actions builds the site with `npm ci` and `npm run ci`, then uploads `dist/` as the Pages artifact.
+- The build includes the frozen Singapore 2026 Q3 figures, Greek report and datasets at `analysis/hamilton-singapore-2026/`.
 - `vite.config.ts` is configured with the `/f1-telemetry-dashboard/` base path required for GitHub Pages.
 
 ## Branch discipline

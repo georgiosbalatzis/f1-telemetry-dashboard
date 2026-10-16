@@ -275,6 +275,7 @@ export function DashboardShell({
               {filters.tab === 'telemetry' && (
                 <Suspense fallback={<TabLoadingPlaceholder label="Loading telemetry view..." skeletonClassName="h-[240px] sm:h-[380px]" />}>
                 <TelemetryTab
+                  sessionKey={filters.sessionKey} year={filters.year} circuit={filters.circuit}
                   lapNum={filters.lapNum}
                   lapsLoading={lapsLoading}
                   sectorRows={viewModel.sectorRows}

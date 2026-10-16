@@ -1,0 +1,22 @@
+import { afterEach, expect, it, vi } from 'vitest';
+import { cleanup, renderHook, waitFor } from '@testing-library/react';
+import * as api from '../../api/openf1';
+import { useComparisonLap } from '../useOpenF1';
+import { testLap } from '../../telemetry/__tests__/fixtures';
+import { lapIdentity } from '../../telemetry/lapComparison';
+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+it('retrieves and caches two laps from #44 independently, using both verified boundaries', async () => {
+  const a = { ...testLap, session_key: 88113 }, b = { ...a, lap_number: 24, date_start: '2026-10-10T14:28:00Z' };
+  const car = vi.spyOn(api, 'getCarDataForLap').mockResolvedValue([]);
+  const location = vi.spyOn(api, 'getLocationForLap').mockResolvedValue([]);
+  const { result, rerender } = renderHook(({ lap }) => ({ a: useComparisonLap(a), b: useComparisonLap(lap) }), { initialProps: { lap: b } });
+  await waitFor(() => expect(result.current.b.data?.id).toBe(lapIdentity(b).id));
+  expect(result.current.a.data?.id).toBe(lapIdentity(a).id);
+  expect(car).toHaveBeenCalledTimes(2); expect(location).toHaveBeenCalledTimes(2);
+  for (const lap of [a,b]) expect(car).toHaveBeenCalledWith(lap.session_key,44,lapIdentity(lap).start,lapIdentity(lap).end,expect.any(Object));
+  rerender({ lap: { ...b, lap_duration: 101 } });
+  await waitFor(() => expect(result.current.b.data?.id).toBe(lapIdentity({ ...b, lap_duration:101 }).id));
+  expect(car).toHaveBeenCalledTimes(3);
+  rerender({lap:b}); await waitFor(() => expect(result.current.b.data?.id).toBe(lapIdentity(b).id));
+  expect(car).toHaveBeenCalledTimes(3);
+});

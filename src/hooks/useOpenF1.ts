@@ -1,3 +1,4 @@
+import { lapIdentity } from '../telemetry/lapComparison';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import type {
   OpenF1Meeting, OpenF1Session, OpenF1Driver, OpenF1Lap,
@@ -229,7 +230,7 @@ export function useLapTelemetry(
 ) {
   const ok = sessionKey != null && driverNumber != null && driverNumber > 0 && !!lapDateStart;
   return useFetch<OpenF1CarData[]>(
-    ok ? `telem:${sessionKey}:${driverNumber}:${lapDateStart}` : null,
+    ok ? `telem:${sessionKey}:${driverNumber}:${lapDateStart}:${nextLapDateStart ?? "fallback"}` : null,
     (signal) => getCarDataForLap(sessionKey!, driverNumber!, lapDateStart!, nextLapDateStart || undefined, { signal, timeoutMs: 20_000 }),
   );
 }
@@ -298,7 +299,22 @@ export function useLapLocation(
 ) {
   const ok = sessionKey != null && driverNumber != null && driverNumber > 0 && !!lapDateStart;
   return useFetch<OpenF1Location[]>(
-    ok ? `location:${sessionKey}:${driverNumber}:${lapDateStart}` : null,
+    ok ? `location:${sessionKey}:${driverNumber}:${lapDateStart}:${nextLapDateStart ?? "fallback"}` : null,
     (signal) => getLocationForLap(sessionKey!, driverNumber!, lapDateStart!, nextLapDateStart || undefined, { signal, timeoutMs: 20_000 }),
+  );
+}
+
+/** Both raw streams share a stable lap identity; no driver-number map can overwrite a second lap. */
+export function useComparisonLap(lap: OpenF1Lap | null) {
+  const identity = lap ? lapIdentity(lap) : null;
+  return useFetch<{ id: string; car: OpenF1CarData[]; location: OpenF1Location[] }>(
+    identity ? `comparison:${identity.id}` : null,
+    async (signal) => {
+      const [car, location] = await Promise.all([
+        getCarDataForLap(identity!.sessionKey, identity!.driverNumber, identity!.start, identity!.end, { signal, timeoutMs: 30000 }),
+        getLocationForLap(identity!.sessionKey, identity!.driverNumber, identity!.start, identity!.end, { signal, timeoutMs: 30000 }),
+      ]);
+      return { id: identity!.id, car, location };
+    },
   );
 }

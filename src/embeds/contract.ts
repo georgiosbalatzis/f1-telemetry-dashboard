@@ -1,3 +1,4 @@
+import type { LapIdentity, CornerMarker, AlignedLap } from '../telemetry/lapComparison';
 /** The publication boundary: JSON-only, bounded and independent of the dashboard runtime. */
 import type { DashboardFilterSnapshot } from '../hooks/useDashboardFilters';
 
@@ -7,6 +8,7 @@ export type FigureTheme = 'light' | 'dark';
 export type FigureGuide = { progress: number; label: string };
 export type FigureDriver = {
   number: number;
+  lap?: LapIdentity;
   fullName: string;
   acronym: string;
   teamColour: string;
@@ -14,12 +16,13 @@ export type FigureDriver = {
   brakeDash: string;
 };
 export type FigurePoint = Record<string, number | null>;
-type PlotData = { axis: 'progress' | 'sample'; drivers: FigureDriver[]; points: FigurePoint[]; guides: FigureGuide[] };
+export type DistanceAxis = { domain: [number, number]; speedDomain: [number, number]; speedTicks: number[]; referenceSource: string; origin: string; method: 'location-projection'; corners: CornerMarker[]; maxTelemetryGapMs: number; maxLocationGapMs: number; metresPerUnit: number };
+type PlotData = { distanceAxis?: DistanceAxis; axis: 'progress' | 'sample' | 'distance'; drivers: FigureDriver[]; points: FigurePoint[]; guides: FigureGuide[] };
 export type FigureData = (PlotData & { kind: 'speed' }) | (PlotData & { kind: 'pedals' });
 export type PublicationScope = DashboardFilterSnapshot & { circuit: string; sessionKey: number; tab: 'telemetry' };
 export type FigureImage = { svg: string; width: number; height: number };
 export type FigureBundle = {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   panelId: EmbedPanelId;
   capturedAt: string;
   scope: PublicationScope;
@@ -27,6 +30,7 @@ export type FigureBundle = {
   editorial: { title: string; caption: string; description: string };
   provenance: {
     source: 'OpenF1';
+    validation?: { lapStreams: { lapId: string; quality: AlignedLap['quality'] }[]; timing: { officialDelta: number | null; reconstructedDelta: number | null; toleranceSeconds: number; agrees: boolean; reason: string } };
     method: string;
     guideExplanation: string;
     partialAcknowledged: boolean;
@@ -83,6 +87,7 @@ export function validatePublicationScope(value: unknown): asserts value is Publi
 
 /** Validates semantics and sizes. SVG XML allowlisting is additionally required by the article publisher (E06). */
 export function validateFigureBundle(value: unknown): asserts value is FigureBundle {
+  if (value && typeof value === 'object' && 'schemaVersion' in value && value.schemaVersion === 2) { validateDistanceBundle(value); return; }
   const root = object(value, ['schemaVersion', 'panelId', 'capturedAt', 'scope', 'context', 'editorial', 'provenance', 'data', 'images'], 'bundle');
   if (root.schemaVersion !== 1) fail('schemaVersion');
   if (!isEmbedPanelId(root.panelId)) fail('panelId');
@@ -197,4 +202,102 @@ export function parseFigureBundle(json: string): FigureBundle {
 export function serializeFigureBundle(bundle: FigureBundle): string {
   validateFigureBundle(bundle);
   return JSON.stringify(bundle);
+}
+
+/** V2 distance data is checked before adapting its common fields through the unchanged V1 validator. */
+function validateDistanceBundle(value: unknown) {
+  if (bytes(JSON.stringify(value)) > MAX_BUNDLE_BYTES) fail('bundle: size limit');
+  const root = object(value, ['schemaVersion', 'panelId', 'capturedAt', 'scope', 'context', 'editorial', 'provenance', 'data', 'images'], 'bundle');
+  const data = object(root.data, ['kind', 'axis', 'drivers', 'points', 'guides', 'distanceAxis'], 'data');
+  if (data.axis !== 'distance') fail('v2 requires distance');
+  const axis = object(data.distanceAxis, ['domain', 'speedDomain', 'speedTicks', 'referenceSource', 'origin', 'method', 'corners', 'maxTelemetryGapMs', 'maxLocationGapMs', 'metresPerUnit'], 'distanceAxis');
+  if (axis.method !== 'location-projection') fail('alignment method');
+  text(axis.referenceSource, 1000, 'referenceSource'); text(axis.origin, 500, 'origin');
+  for (const key of ['domain', 'speedDomain']) {
+    array(axis[key], 2, 2, key); axis[key].forEach(n => finite(n, 0, key === 'domain' ? 10000 : 600, key));
+    if (Number(axis[key][0]) >= Number(axis[key][1])) fail(key);
+  }
+  const domain = axis.domain as number[], speedDomain = axis.speedDomain as number[];
+  array(axis.speedTicks, 2, 30, 'speedTicks'); axis.speedTicks.forEach(n => finite(n, speedDomain[0], speedDomain[1], 'speedTicks'));
+  finite(axis.metresPerUnit, .0001, 1000, 'metresPerUnit');
+  finite(axis.maxTelemetryGapMs, 1, 2000, 'maxTelemetryGapMs'); finite(axis.maxLocationGapMs, 1, 2000, 'maxLocationGapMs');
+  array(axis.corners, 0, 100, 'corners');
+  axis.corners.forEach(value => {
+    const c = object(value, ['label', 'distance', 'start', 'end', 'source', 'uncertaintyMetres'], 'corner');
+    text(c.label, 40, 'corner.label'); text(c.source, 1000, 'corner.source');
+    for (const key of ['distance', 'start', 'end']) finite(c[key], 0, 10000, `corner.${key}`);
+    finite(c.uncertaintyMetres, 0, 500, 'corner.uncertaintyMetres');
+    if (!(Number(c.start) <= Number(c.distance) && Number(c.distance) <= Number(c.end))) fail('corner bounds');
+  });
+  array(data.drivers, 1, 2, 'drivers');
+  const identities = new Set<string>();
+  const drivers = data.drivers.map((value, i) => {
+    const d = object(value, ['number', 'fullName', 'acronym', 'teamColour', 'lineDash', 'brakeDash', 'lap'], 'driver');
+    const lap = object(d.lap, ['id', 'sessionKey', 'driverNumber', 'lapNumber', 'start', 'end', 'duration'], 'lap');
+    text(lap.id, 180, 'lap.id'); text(lap.start, 40, 'lap.start'); text(lap.end, 40, 'lap.end');
+    integer(lap.sessionKey, 1, Number.MAX_SAFE_INTEGER, 'lap.sessionKey'); integer(lap.driverNumber, 1, 99, 'lap.driverNumber'); integer(lap.lapNumber, 1, 200, 'lap.lapNumber'); finite(lap.duration, 1, 2000, 'lap.duration');
+    const scope = root.scope as PublicationScope;
+    if (!scope || lap.sessionKey !== scope.sessionKey || lap.driverNumber !== d.number || !scope.driverNums?.includes(d.number as number)) fail('lap scope');
+    if (!Number.isFinite(Date.parse(lap.start)) || !Number.isFinite(Date.parse(lap.end)) || new Date(lap.start).toISOString() !== lap.start || new Date(lap.end).toISOString() !== lap.end || Math.abs(Date.parse(lap.end) - Date.parse(lap.start) - lap.duration * 1000) > 1) fail('lap boundaries');
+    if (lap.id !== `${lap.sessionKey}:${lap.driverNumber}:${lap.lapNumber}:${lap.start}:${lap.end}` || identities.has(lap.id)) fail('lap identity');
+    identities.add(lap.id);
+    const common = Object.fromEntries(Object.entries(d).filter(([key]) => key !== 'lap'));
+    return { ...common, number: i + 1 };
+  });
+  if (new Set(data.drivers.map(d => (d as FigureDriver).number)).size !== 1) fail('v2 same driver');
+  if (new Set(data.drivers.map(d => (d as FigureDriver).lap!.lapNumber)).size !== data.drivers.length) fail('two different lap numbers required');
+  const sourceScope = root.scope as PublicationScope;
+  validatePublicationScope(sourceScope);
+  if (sourceScope.driverNums.length !== 1 || sourceScope.lapNum !== (data.drivers[0] as FigureDriver).lap?.lapNumber) fail('v2 scope');
+  const channels = data.kind === 'speed' ? ['speed'] : ['throttle', 'brake'];
+  array(data.points, 2, MAX_POINTS, 'points');
+  let previous = -Infinity;
+  const points = data.points.map(value => {
+    const keys = channels.flatMap(channel => [...identities].map(id => `${channel}_${id}`));
+    const p = object(value, ['distance', ...keys], 'point');
+    finite(p.distance, domain[0], domain[1], 'point.distance');
+    if (p.distance <= previous) fail('distance order'); previous = p.distance;
+    const next: FigurePoint = { progress: (p.distance - domain[0]) / (domain[1] - domain[0]) * 100 };
+    [...identities].forEach((id, i) => channels.forEach(channel => { next[`${channel}_${i + 1}`] = p[`${channel}_${id}`] as number | null; }));
+    if (data.kind === 'pedals') keys.filter(k => k.startsWith('brake_')).forEach(k => { if (p[k] != null && p[k] !== 0 && p[k] !== -100) fail('brake application state'); });
+    return next;
+  });
+  array(data.guides, 0, 100, 'guides');
+  const guides = data.guides.map(value => {
+    const g = object(value, ['progress', 'label'], 'guide'); finite(g.progress, domain[0], domain[1], 'guide.distance');
+    if (!(axis.corners as CornerMarker[]).some(c => c.label === g.label && c.distance === g.progress)) fail('guide source');
+    return { ...g, progress: (g.progress - domain[0]) / (domain[1] - domain[0]) * 100 };
+  });
+  const provenance = object(root.provenance, ['source', 'method', 'guideExplanation', 'partialAcknowledged', 'drivers', 'validation'], 'provenance');
+  const validation = object(provenance.validation, ['lapStreams', 'timing'], 'validation');
+  array(validation.lapStreams, drivers.length, drivers.length, 'lapStreams');
+  validation.lapStreams.forEach((value, index) => {
+    const stream = object(value, ['lapId', 'quality'], 'lapStream');
+    if (stream.lapId !== [...identities][index]) fail('validation lap identity');
+    const quality = object(stream.quality, ['car', 'location', 'rejectedProjections', 'unsynchronized', 'rejectedLocationDates', 'unsynchronizedCarDates', 'brakeValues'], 'quality');
+    for (const key of ['car', 'location']) {
+      const q = object(quality[key], ['raw', 'accepted', 'rejected', 'nonMonotonic', 'medianIntervalMs', 'maxGapMs', 'startOffsetMs', 'endOffsetMs'], 'streamQuality');
+      for (const field of ['raw', 'accepted', 'rejected', 'nonMonotonic']) integer(q[field], 0, 100000, field);
+      if (Number(q.accepted) + Number(q.rejected) !== q.raw) fail('stream counts');
+      for (const field of ['medianIntervalMs', 'maxGapMs', 'startOffsetMs', 'endOffsetMs']) if (q[field] !== null) finite(q[field], 0, 2000000, field);
+    }
+    for (const key of ['rejectedProjections', 'unsynchronized']) integer(quality[key], 0, 100000, key);
+    for (const key of ['rejectedLocationDates', 'unsynchronizedCarDates']) {
+      array(quality[key], 0, 100000, key); quality[key].forEach(date => { text(date, 40, key); if (!Number.isFinite(Date.parse(date))) fail(key); });
+      if (quality[key].length !== quality[key === 'rejectedLocationDates' ? 'rejectedProjections' : 'unsynchronized']) fail('rejection count');
+    }
+    array(quality.brakeValues, 0, 110, 'brakeValues'); quality.brakeValues.forEach(value => finite(value, -1, 110, 'brakeValues'));
+  });
+  const timing = object(validation.timing, ['officialDelta', 'reconstructedDelta', 'toleranceSeconds', 'agrees', 'reason'], 'timing');
+  for (const key of ['officialDelta', 'reconstructedDelta']) if (timing[key] !== null) finite(timing[key], -2000, 2000, key);
+  finite(timing.toleranceSeconds, 0, 1, 'timing tolerance'); text(timing.reason, 500, 'timing reason');
+  if (typeof timing.agrees !== 'boolean' || timing.agrees !== (timing.officialDelta !== null && timing.reconstructedDelta !== null && Math.abs(Number(timing.officialDelta) - Number(timing.reconstructedDelta)) <= timing.toleranceSeconds)) fail('timing agreement');
+  array(provenance.drivers, drivers.length, drivers.length, 'provenance.drivers');
+  const provenanceDrivers = provenance.drivers.map((value, i) => {
+    const d = object(value, ['driverNumber', 'status', 'sampleCount'], 'provenance.driver');
+    if (d.driverNumber !== sourceScope.driverNums[0]) fail('provenance driver number');
+    return { ...d, driverNumber: i + 1 };
+  });
+  validateFigureBundle({ ...root, schemaVersion: 1, scope: { ...sourceScope, driverNums: drivers.map(d => d.number) },
+    provenance: { ...Object.fromEntries(Object.entries(provenance).filter(([key]) => key !== 'validation')), drivers: provenanceDrivers }, data: { kind: data.kind, axis: 'progress', drivers, points, guides } });
 }
