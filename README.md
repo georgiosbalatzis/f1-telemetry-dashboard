@@ -26,6 +26,32 @@ Safari / iOS / iPadOS 16.4+, Chrome and Edge 111+, Firefox 128+ (phones, tablets
 - The build includes the frozen Singapore 2026 Q3 figures, Greek report and datasets at `analysis/hamilton-singapore-2026/`.
 - `vite.config.ts` is configured with the `/f1-telemetry-dashboard/` base path required for GitHub Pages.
 
+## Moved to f1-stories.gr
+
+The dashboard is published at `https://f1-stories.gr/telemetry/`. [`pages-mode.json`](pages-mode.json) decides what
+`deploy.yml` publishes at `georgiosbalatzis.github.io/f1-telemetry-dashboard/`:
+
+- `"app"` (current): the app, as before.
+- `"legacy-redirects"`: `npm run build:legacy-redirects` builds the f1-stories.gr version, then
+  [`scripts/legacy-redirects.mjs`](scripts/legacy-redirects.mjs) replaces each of its pages with one that sends readers
+  to the same page on f1-stories.gr with the query string and hash, and links it as canonical (noindex where the
+  f1-stories.gr page is noindex). Figures, datasets and other files stay at their old URLs. Any other old path is handled
+  by `404.html`: the same page when it exists (any case, with or without the trailing slash), otherwise the landing page.
+
+GitHub Pages cannot send HTTP 301s; these are client-side redirects. Without JavaScript a meta refresh goes to the same
+page without the query and hash, and the page shows the link.
+
+Publishing (repository owner):
+
+1. **Settings → Pages → Source: GitHub Actions**, and stop publishing to `gh-pages`. Today the source is the `gh-pages`
+   branch, which is also pushed by hand; any later push there or deploy from it would replace the compatibility pages.
+2. Check that `https://f1-stories.gr/telemetry/` is live and its scheduled refresh is healthy (f1StoriesPage).
+3. Set `"mode": "legacy-redirects"` in a reviewed PR; merging it runs `deploy.yml`.
+
+Rollback: set `"mode": "app"` and merge; the next deploy publishes the app again. Roll this back **before** rolling
+f1-stories.gr back to a release without the tools: that release's `/telemetry/` pages point to github.io, and with the
+redirects live here readers would be sent back and forth.
+
 ## Branch discipline
 
 - `main` is the source branch. Do not commit generated `dist/`, `build/`, or root-level `assets/` output to it.
