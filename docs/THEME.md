@@ -21,7 +21,7 @@ Legacy keys, migrated once and then removed by the owning app:
 
 ## Telemetry
 
-Resolution order, run by the inline script in `index.html` before first paint (no flash). `readInitialThemeMode` in `DashboardContainer.tsx` repeats it for React state:
+Resolution order, run by `public/theme-init.js`, loaded blocking from `index.html`, before first paint (no flash). `readInitialThemeMode` in `DashboardContainer.tsx` repeats it for React state:
 
 1. `?theme=light|dark`: one view only; never stored. Used by embeds and share/embed links.
 2. `f1stories-theme` when it is `light` or `dark`.
@@ -38,7 +38,7 @@ Not supported, matching f1stories.gr:
 
 Storage failures (blocked storage, `SecurityError`) are swallowed. The page falls back to the OS preference.
 
-Tests: `src/components/__tests__/ThemeInit.test.ts` runs the real `index.html` script. `VisualWorkflow.test.tsx` covers the toggle and React's initial state.
+Tests: `src/components/__tests__/ThemeInit.test.ts` runs the real `public/theme-init.js`. `VisualWorkflow.test.tsx` covers the toggle and React's initial state.
 
 ## Origins: same contract, not yet shared state
 

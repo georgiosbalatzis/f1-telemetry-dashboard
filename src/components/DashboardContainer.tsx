@@ -61,7 +61,7 @@ function normalizeThemeMode(value: string | null | undefined): ThemeMode | null 
 }
 
 function readInitialThemeMode(): ThemeMode {
-  // Same order as the inline script in index.html: ?theme=, stored choice, OS preference, light paper.
+  // Same order as public/theme-init.js: ?theme=, stored choice, OS preference, light paper.
   if (typeof window === 'undefined') return 'light';
   const fromQuery = normalizeThemeMode(new URLSearchParams(window.location.search).get('theme'));
   if (fromQuery) return fromQuery;
