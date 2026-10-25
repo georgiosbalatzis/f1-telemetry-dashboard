@@ -12,6 +12,7 @@ assets
 build
 dist
 dist-interactive
+dist-legacy
 dist-ssr
 *.local
 

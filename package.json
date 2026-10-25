@@ -15,6 +15,7 @@
     "preview": "vite preview",
     "check:tokens": "node scripts/check-design-tokens.mjs",
     "build:f1stories": "node scripts/build-f1stories.mjs",
+    "build:legacy-redirects": "npm run build:f1stories && node scripts/legacy-redirects.mjs dist dist-legacy",
     "build:interactive": "vite build --config vite.interactive.config.ts",
     "postbuild": "node scripts/copy-publication-analysis.mjs"
   },

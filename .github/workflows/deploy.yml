@@ -20,6 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # pages-mode.json: "app" publishes the app here; "legacy-redirects" publishes pages that send readers to
+      # f1-stories.gr/telemetry/ (see README, "Moved to f1-stories.gr").
+      - id: mode
+        run: |
+          mode=$(jq -er .mode pages-mode.json)
+          case "$mode" in app|legacy-redirects) ;; *) echo "::error file=pages-mode.json::unknown mode '$mode'"; exit 1 ;; esac
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -29,11 +37,17 @@ jobs:
 
       - run: npm run ci
 
+      - name: Build the compatibility pages
+        if: steps.mode.outputs.mode == 'legacy-redirects'
+        run: |
+          npm run build:legacy-redirects
+          test -f dist-legacy/index.html && test -f dist-legacy/404.html
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: ${{ steps.mode.outputs.mode == 'app' && 'dist' || 'dist-legacy' }}
 
   deploy:
     needs: build
