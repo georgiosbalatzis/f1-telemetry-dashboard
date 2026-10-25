@@ -7,7 +7,7 @@ const { scope } = parseFigureBundle(JSON.stringify(fixture));
 const legacy = 'https://georgiosbalatzis.github.io/f1-telemetry-dashboard/';
 
 describe('explicit deployment links', () => {
-  it.each([legacy, 'https://f1stories.gr/telemetry/'])('round-trips scope and panel under %s', (base) => {
+  it.each([legacy, 'https://f1stories.gr/telemetry/', 'https://f1-stories.gr/telemetry/'])('round-trips scope and panel under %s', (base) => {
     const link = buildFigureAnalysisLink(base, scope, 'telemetry-speed-trace');
     expect(parseLegacyEmbedLink(link)).toEqual({ scope, panelId: 'telemetry-speed-trace' });
     expect(new URL(link).searchParams.has('embed')).toBe(false);

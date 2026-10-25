@@ -30,6 +30,7 @@ export function buildFigureAnalysisLink(baseUrl: string, scope: PublicationScope
 
 const LEGACY_BASES = [
   'https://georgiosbalatzis.github.io/f1-telemetry-dashboard/',
+  'https://f1-stories.gr/telemetry/',
   'https://f1stories.gr/telemetry/',
   'https://www.f1stories.gr/telemetry/',
 ];

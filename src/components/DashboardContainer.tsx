@@ -108,7 +108,7 @@ function buildIframeSnippet(
   return [
     `<iframe`,
     `  src="${src}"`,
-    `  title="f1stories.gr F1 Telemetry Dashboard"`,
+    `  title="f1-stories.gr F1 Telemetry Dashboard"`,
     `  width="100%"`,
     `  height="${iframeHeight}"`,
     `  loading="lazy"`,
@@ -290,7 +290,7 @@ export function DashboardContainer() {
     let failure = clipboard.error;
     try {
       if (navigator.share) {
-        await navigator.share({ title: `f1stories.gr ${TAB_LABELS[snapshot.tab]} view`, url });
+        await navigator.share({ title: `f1-stories.gr ${TAB_LABELS[snapshot.tab]} view`, url });
         setFeedback(`${label} shared`);
         return;
       }

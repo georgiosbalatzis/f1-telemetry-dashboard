@@ -182,7 +182,7 @@ export const copy = {
 
 // Mirrors f1StoriesPage/partials/nav.html. If the site nav changes, update this list too.
 const AGGREGATED = import.meta.env.VITE_F1STORIES_BUILD === 'true';
-export const SITE = AGGREGATED ? '' : 'https://f1stories.gr';
+export const SITE = AGGREGATED ? '' : 'https://f1-stories.gr';
 const BETCAST = AGGREGATED ? '/betcast/' : 'https://georgiosbalatzis.github.io/BetCastVisualisation/';
 export const SITE_NAV = [
   { label: 'Αρχική', href: `${SITE}/` },
@@ -215,7 +215,6 @@ export const SITE_SOCIAL_LINKS = [
   { label: 'F1 Stories στο YouTube', href: 'https://www.youtube.com/@f1_stories_original', icon: 'fa-youtube' },
   { label: 'F1 Stories στο Facebook', href: 'https://www.facebook.com/f1storiess', icon: 'fa-facebook-f' },
   { label: 'F1 Stories στο Instagram', href: 'https://www.instagram.com/myf1stories/', icon: 'fa-instagram' },
-  { label: 'F1 Stories στο TikTok', href: 'https://www.tiktok.com/@f1stories6', icon: 'fa-tiktok' },
   { label: 'Email στο F1 Stories', href: 'mailto:myf1stories@gmail.com', icon: 'fa-envelope' },
 ] as const;
 export const SITE_LEGAL = { home: `${SITE}/`, privacy: `${SITE}/privacy/privacy.html`, terms: `${SITE}/privacy/terms.html` } as const;
