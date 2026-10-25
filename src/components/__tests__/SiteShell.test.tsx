@@ -117,7 +117,7 @@ it('keeps F1 Stories footer hierarchy, legal destinations and product attributio
   expect(within(footer).getByRole('link', { name: 'Πολιτική Απορρήτου' })).toHaveAttribute('href', '/privacy/privacy.html');
   expect(within(footer).getByRole('link', { name: 'Όροι Χρήσης' })).toHaveAttribute('href', '/privacy/terms.html');
   expect(within(footer).getByRole('link', { name: /Δεδομένα από OpenF1/ })).toHaveAttribute('href', 'https://openf1.org/');
-  expect(container.querySelectorAll('.colophon-social a')).toHaveLength(5);
+  expect(container.querySelectorAll('.colophon-social a')).toHaveLength(4);
   expect(within(footer).getByRole('link', { name: 'Email στο F1 Stories' })).toHaveAttribute('href', 'mailto:myf1stories@gmail.com');
   for (const link of footer.querySelectorAll('[target="_blank"]')) expect(link.getAttribute('rel')).toMatch(/noopener|noreferrer/);
   expect(footer).toHaveTextContent(`© ${new Date().getFullYear()} F1 Stories.`);

@@ -3,6 +3,13 @@ import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+const env = loadEnv('production', '.', '')
+// Keep the standalone Pages target; aggregation sets APP_BASE=/telemetry/.
+const base = env.APP_BASE || '/f1-telemetry-dashboard/'
+// Canonical/OG URL: the f1-stories.gr build names the primary domain; the standalone build names its own page,
+// which is where it is served until the github.io site hands over to f1-stories.gr/telemetry/.
+const canonical = (env.VITE_F1STORIES_BUILD === 'true' ? 'https://f1-stories.gr' : 'https://georgiosbalatzis.github.io') + base
+
 // https://vite.dev/config/
 export default defineConfig({
   test: {
@@ -11,9 +18,12 @@ export default defineConfig({
     globals: true,
     css: false,
   },
-  plugins: [tailwindcss(), react()],
-  // Keep the standalone Pages target; aggregation sets APP_BASE=/telemetry/.
-  base: loadEnv('production', '.', '').APP_BASE || '/f1-telemetry-dashboard/',
+  plugins: [
+    tailwindcss(),
+    react(),
+    { name: 'canonical-url', transformIndexHtml: { order: 'pre', handler: (html) => html.replaceAll('%CANONICAL_URL%', canonical) } },
+  ],
+  base,
   build: {
     // Tailwind v4's floor (Safari 16.4, Chrome/Edge 111, Firefox 128); the CSS also relies on color-mix(), :has() and aspect-ratio.
     target: ['es2022', 'safari16.4', 'chrome111', 'edge111', 'firefox128'],
