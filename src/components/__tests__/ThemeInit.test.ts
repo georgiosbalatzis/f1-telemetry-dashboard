@@ -1,12 +1,19 @@
 import { afterEach, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 
-// Runs the real pre-paint script from index.html, so the shipped theme contract is what gets tested.
+// Runs the real pre-paint script (public/theme-init.js, loaded blocking by index.html), so the shipped theme
+// contract is what gets tested.
 const NODE_FS = 'node:fs';
 let script = '';
+let page = '';
 beforeAll(async () => {
   const { readFileSync } = await import(/* @vite-ignore */ NODE_FS);
-  const html: string = readFileSync('index.html', 'utf8');
-  script = html.match(/<script>([\s\S]*?)<\/script>/)![1];
+  page = readFileSync('index.html', 'utf8');
+  script = readFileSync('public/theme-init.js', 'utf8');
+});
+
+it('loads the pre-paint script blocking in <head>, with no executable inline script', () => {
+  expect(page.slice(0, page.indexOf('</head>'))).toMatch(/<script src="\/theme-init\.js"><\/script>/);
+  expect(page.match(/<script>([\s\S]*?)<\/script>/g)).toBeNull();
 });
 
 const KEY = 'f1stories-theme';
