@@ -186,21 +186,51 @@ export function buildUrl(endpoint: string, params: Record<string, QueryValue>, d
 
 // ─── Fetch with retry ────────────────────────────────────────────────────────
 
-// ponytail: one global FIFO pacer; a per-priority queue only if first paint suffers from it.
-let nextSlot = 0;
+// Pace actual provider starts in FIFO order; cancelled queued requests use no slot.
+let lastDispatch = -Infinity;
+let pacerTimer: number | undefined;
+const pending: Array<{ url: string; signal: AbortSignal; resolve: (response: Response) => void; reject: (reason: unknown) => void; onAbort: () => void }> = [];
 
-/** Resolves when this request may start. A request aborted while queued gives its slot back if nobody queued behind it. */
-async function takeSlot(signal: AbortSignal) {
-  const now = Date.now();
-  const at = Math.max(now, nextSlot);
-  nextSlot = at + MIN_GAP_MS;
-  if (at === now) return;
-  try {
-    await sleep(at - now, signal);
-  } catch (err) {
-    if (nextSlot === at + MIN_GAP_MS) nextSlot = at;
-    throw err;
+function dispatchNext() {
+  if (pacerTimer !== undefined || pending.length === 0) return;
+  const wait = Math.max(0, lastDispatch + MIN_GAP_MS - performance.now());
+  if (wait > 0) {
+    pacerTimer = window.setTimeout(() => {
+      pacerTimer = undefined;
+      dispatchNext();
+    }, wait);
+    return;
   }
+  const request = pending.shift()!;
+  request.signal.removeEventListener('abort', request.onAbort);
+  lastDispatch = performance.now();
+  try {
+    fetch(request.url, { signal: request.signal }).then(request.resolve, request.reject);
+  } catch (error) {
+    request.reject(error);
+  }
+  dispatchNext();
+}
+
+function pacedFetch(url: string, signal: AbortSignal): Promise<Response> {
+  return new Promise((resolve, reject) => {
+    const request = { url, signal, resolve, reject, onAbort: () => {
+      const index = pending.indexOf(request);
+      if (index !== -1) pending.splice(index, 1);
+      reject(signal.reason instanceof Error ? signal.reason : new DOMException('Request aborted', 'AbortError'));
+      if (pending.length === 0 && pacerTimer !== undefined) {
+        window.clearTimeout(pacerTimer);
+        pacerTimer = undefined;
+      }
+    } };
+    if (signal.aborted) {
+      request.onAbort();
+      return;
+    }
+    signal.addEventListener('abort', request.onAbort, { once: true });
+    pending.push(request);
+    queueMicrotask(dispatchNext);
+  });
 }
 
 function sleep(ms: number, signal?: AbortSignal) {
@@ -286,8 +316,7 @@ async function fetchJson<T>(url: string, options: RequestOptions = {}): Promise<
   try {
     for (let i = 0; i <= retries; i++) {
       try {
-        await takeSlot(signal);
-        const res = await fetch(url, { signal });
+        const res = await pacedFetch(url, signal);
         if (res.ok) {
           const data = await res.json();
           return Array.isArray(data) ? data : [];
