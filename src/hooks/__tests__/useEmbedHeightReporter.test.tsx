@@ -94,3 +94,62 @@ it('applies the hosting article theme only from the parent frame and origin', ()
   send({ type: 'f1s-telemetry:theme', theme: 'dark' });
   expect(onTheme).toHaveBeenCalledWith('dark');
 });
+
+it.each([
+  ['invalid theme', { type: 'f1s-telemetry:theme', theme: 'purple' }, parent],
+  ['unknown type', { type: 'f1s-telemetry:unknown' }, parent],
+  ['null', null, parent],
+  ['array', Object.assign([], { type: 'f1s-telemetry:measure' }), parent],
+  ['string', 'f1s-telemetry:measure', parent],
+  ['non-parent', { type: 'f1s-telemetry:measure' }, {}],
+  ['non-plain object', Object.assign(new Date(), { type: 'f1s-telemetry:measure' }), parent],
+])('rejects %s before binding and allows a later valid parent message', (_label, data, source) => {
+  vi.spyOn(document, 'referrer', 'get').mockReturnValue('');
+  const onTheme = vi.fn();
+  renderHook(() => useEmbedHeightReporter(true, onTheme));
+  flush();
+  postMessage.mockClear();
+  const send = (payload: unknown, from: unknown, origin: string) => act(() => {
+    window.dispatchEvent(new MessageEvent('message', { data: payload, source: from as MessageEventSource, origin }));
+  });
+  send(data, source, 'https://invalid.example');
+  flush();
+  expect(postMessage).not.toHaveBeenCalled();
+  expect(onTheme).not.toHaveBeenCalled();
+  send({ type: 'f1s-telemetry:measure', extra: 'ignored' }, parent, 'https://valid.example');
+  flush();
+  expect(postMessage).toHaveBeenCalledExactlyOnceWith({ type: 'f1s-telemetry:resize', height: 960 }, 'https://valid.example');
+  send({ type: 'f1s-telemetry:theme', theme: 'dark', extra: 'ignored' }, parent, 'https://valid.example');
+  expect(onTheme).toHaveBeenCalledExactlyOnceWith('dark');
+});
+
+it('binds a valid theme from the parent before a measurement in a no-referrer frame', () => {
+  vi.spyOn(document, 'referrer', 'get').mockReturnValue('');
+  const onTheme = vi.fn();
+  renderHook(() => useEmbedHeightReporter(true, onTheme));
+  flush();
+  postMessage.mockClear();
+  act(() => window.dispatchEvent(new MessageEvent('message', {
+    data: { type: 'f1s-telemetry:theme', theme: 'light', extra: true }, source: parent as unknown as Window, origin: 'https://valid.example',
+  })));
+  expect(onTheme).toHaveBeenCalledExactlyOnceWith('light');
+  expect(postMessage).not.toHaveBeenCalled();
+  act(() => window.dispatchEvent(new MessageEvent('message', {
+    data: { type: 'f1s-telemetry:measure' }, source: parent as unknown as Window, origin: 'https://valid.example',
+  })));
+  flush();
+  expect(postMessage).toHaveBeenCalledExactlyOnceWith({ type: 'f1s-telemetry:resize', height: 960 }, 'https://valid.example');
+});
+
+it('does not install the reporter in a top-level window', () => {
+  vi.spyOn(window, 'parent', 'get').mockReturnValue(window);
+  const windowPostMessage = vi.spyOn(window, 'postMessage').mockImplementation(() => {});
+  const onTheme = vi.fn();
+  renderHook(() => useEmbedHeightReporter(true, onTheme));
+  flush();
+  act(() => window.dispatchEvent(new MessageEvent('message', {
+    data: { type: 'f1s-telemetry:theme', theme: 'dark' }, source: window, origin: 'https://f1stories.gr',
+  })));
+  expect(windowPostMessage).not.toHaveBeenCalled();
+  expect(onTheme).not.toHaveBeenCalled();
+});
