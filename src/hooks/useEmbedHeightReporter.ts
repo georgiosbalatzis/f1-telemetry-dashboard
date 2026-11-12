@@ -28,15 +28,19 @@ export function useEmbedHeightReporter(embedMode: boolean, onTheme?: (theme: 'li
     };
     const onResize = () => schedule();
     const onMessage = (event: MessageEvent) => {
-      const type = event.data?.type;
-      if (event.source !== window.parent || (type !== 'f1s-telemetry:measure' && type !== 'f1s-telemetry:theme')) return;
+      const data = event.data;
+      if (event.source !== window.parent || !data || typeof data !== 'object' || Array.isArray(data)
+        || (Object.getPrototypeOf(data) !== Object.prototype && Object.getPrototypeOf(data) !== null)) return;
+      const type = data.type;
+      if ((type !== 'f1s-telemetry:measure' && type !== 'f1s-telemetry:theme')
+        || (type === 'f1s-telemetry:theme' && data.theme !== 'light' && data.theme !== 'dark')) return;
       // A reload can make document.referrer point to this frame itself. In that
       // case the hosting window's measurement request supplies its exact origin.
       if (event.origin !== parentOrigin && parentOrigin !== window.location.origin) return;
       parentOrigin = event.origin;
       if (type === 'f1s-telemetry:theme') {
         // The article owns the theme: its choice lives in f1stories.gr storage, unreadable from this origin.
-        const theme = event.data.theme;
+        const theme = data.theme;
         if (theme === 'light' || theme === 'dark') onTheme?.(theme);
         return;
       }
