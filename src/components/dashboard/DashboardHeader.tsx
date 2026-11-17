@@ -59,7 +59,7 @@ export const DashboardHeader = memo(function DashboardHeader({
   if (embedMode) {
     return (
       <header className="embed-bar">
-        <a href={`${SITE}/`} className="brand" aria-label={copy.masthead.homeAria}><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+        <a href={`${SITE}/`} className="brand" aria-label={copy.masthead.homeAria}><img className="brand-light" src={`${import.meta.env.BASE_URL}brand/f1s-header-light.svg`} alt="" width="1400" height="236" /><img className="brand-dark" src={`${import.meta.env.BASE_URL}brand/f1s-header-dark.svg`} alt="" width="1400" height="236" /></a>
         <h1 className="embed-bar-title">{heroSubtitle}</h1>
         <a className="embed-bar-open" href={openDashboardUrl} target="_blank" rel="noreferrer">{copy.embed.open}</a>
       </header>
@@ -78,7 +78,7 @@ export const DashboardHeader = memo(function DashboardHeader({
         if (menu && event.relatedTarget instanceof Node && !menu.contains(event.relatedTarget)) menu.open = false;
       }}>
         <div className="page-shell site-nav-inner">
-          <a href={`${SITE}/`} className="brand" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}logo-nav.webp`} alt="" width="38" height="38" decoding="async" /><span className="brand-wordmark">F1 STORIES<span>.</span></span></a>
+          <a href={`${SITE}/`} className="brand" aria-label={copy.masthead.homeAria}><img className="brand-light" src={`${import.meta.env.BASE_URL}brand/f1s-header-light.svg`} alt="" width="1400" height="236" /><img className="brand-dark" src={`${import.meta.env.BASE_URL}brand/f1s-header-dark.svg`} alt="" width="1400" height="236" /></a>
           <div className="site-nav-links"><SiteLinks /></div>
           <div className="site-nav-right">
             <NavCountdown meeting={nextMeeting} />

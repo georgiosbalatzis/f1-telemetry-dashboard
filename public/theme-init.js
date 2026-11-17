@@ -21,5 +21,7 @@
   if (t !== 'light' && t !== 'dark') t = stored;
   if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', t);
+  var icon = document.getElementById('theme-favicon');
+  if (icon) icon.href = icon.getAttribute(t === 'dark' ? 'data-dark' : 'data-light');
   document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#1b1a19' : '#f2eee4');
 })();
