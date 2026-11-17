@@ -1215,13 +1215,15 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .colophon :focus-visible { outline-color: var(--accent); }
 :root:not([data-theme="dark"]) .colophon :focus-visible { outline-color: var(--colophon-text); }
 
-.site-nav .brand img { width: 100%; max-width: calc(36px * 1400 / 236); height: auto; }
+.site-nav .brand { flex-basis: 182px; }
+.site-nav .brand img { width: 100%; height: auto; }
+.site-nav .brand .brand-dark, .embed-bar .brand .brand-dark { width: 95.054945%; }
 .brand-dark { display: none; }
 :root[data-theme="dark"] .brand-light { display: none; }
 :root[data-theme="dark"] .brand-dark { display: block; }
 .colophon-brand img { height: 28px; width: auto; }
-@media (max-width: 600px) { .site-nav .brand img { max-width: calc(30px * 1400 / 236); } }
+@media (max-width: 600px) { .site-nav .brand { flex-basis: calc(30px * 182 / 36); } }
 
-.embed-bar .brand { flex: 0 1 auto; min-width: 0; }
-.embed-bar .brand img { width: 100%; max-width: calc(24px * 1400 / 236); height: auto; }
+.embed-bar .brand { flex: 0 1 calc(24px * 182 / 36); min-width: 0; }
+.embed-bar .brand img { width: 100%; height: auto; }
 .embed-bar-open { flex-shrink: 0; }
