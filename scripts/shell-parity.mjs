@@ -15,7 +15,7 @@ try {
     try {
       const dir = join(OUT, 'shell-parity', engine);
       await mkdir(dir, { recursive: true });
-      for (const width of [1440, 1280, 1024, 768, 390, 375]) for (const theme of ['light', 'dark']) {
+      for (const width of [1440, 1280, 1024, 768, 390, 375, 359, 320]) for (const theme of ['light', 'dark']) {
         const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
         try {
           await replayOpenF1(context);

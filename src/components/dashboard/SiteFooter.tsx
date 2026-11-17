@@ -30,7 +30,7 @@ export function SiteFooter() {
     </section>
     <footer className="colophon">
       <div className="page-shell">
-        <div className="colophon-brand"><a href={SITE_LEGAL.home} className="brand-wordmark" aria-label={copy.masthead.homeAria}>F1 STORIES<span>.</span></a><p>{copy.footer.tagline}</p></div>
+        <div className="colophon-brand"><a href={SITE_LEGAL.home} className="brand-wordmark" aria-label={copy.masthead.homeAria}><img src={`${import.meta.env.BASE_URL}brand/f1s-header-dark.webp`} srcSet={`${import.meta.env.BASE_URL}brand/f1s-header-dark.webp 1x, ${import.meta.env.BASE_URL}brand/f1s-header-dark@2x.webp 2x`} alt="" width="173" height="36" /></a><p>{copy.footer.tagline}</p></div>
         <nav className="colophon-links" aria-label="Ενότητες">
           {SITE_FOOTER_LINKS.map((link) => <a key={link.label} href={link.href} {...('external' in link && link.external ? { target: '_blank', rel: 'noopener' } : {})}>{link.label}</a>)}
         </nav>

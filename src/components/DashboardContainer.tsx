@@ -253,6 +253,8 @@ export function DashboardContainer() {
     if (typeof window === 'undefined') return;
     const root = window.document.documentElement;
     root.setAttribute('data-theme', themeMode);
+    const icon = window.document.getElementById('theme-favicon');
+    if (icon) icon.setAttribute('href', icon.getAttribute(themeMode === 'dark' ? 'data-dark' : 'data-light') || '');
     const themeColor = themeMode === 'light' ? COLORS.fallback.iframeLight : COLORS.fallback.iframeDark;
     window.document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
   }, [themeMode]);
