@@ -910,7 +910,6 @@ option, optgroup { background: var(--surface); color: var(--text); }
 }
 
 /* P1 refinement: family masthead, compact setup, article embeds. */
-.brand .brand-wordmark { color: var(--text); }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; color: var(--text-muted); }
 .weather-metadata { font-size: 12px; color: var(--text-muted); line-height: 1.8; }
 @media (min-width: 1024px) {
@@ -931,8 +930,7 @@ option, optgroup { background: var(--surface); color: var(--text); }
 .site-nav-inner, .sponsor-strip > .page-shell, .colophon > .page-shell { max-width: 1476px; padding-inline: 48px; }
 .site-nav-inner { display: flex; align-items: center; gap: 28px; min-height: 75px; }
 .site-nav .brand { display: flex; align-items: center; flex: 0 1 auto; min-width: 0; gap: 8.8px; min-height: 44px; }
-.site-nav .brand-wordmark, .site-nav .theme-toggle { color: inherit; }
-.site-nav .brand-wordmark span { color: var(--signal); }
+.site-nav .theme-toggle { color: inherit; }
 .site-nav-links { display: none; align-self: stretch; gap: 22.4px; font-size: 14px; font-weight: 500; }
 .site-nav-links a { position: relative; display: inline-flex; align-items: center; min-height: 44px; }
 .site-nav-links a.is-current { font-weight: 600; }
